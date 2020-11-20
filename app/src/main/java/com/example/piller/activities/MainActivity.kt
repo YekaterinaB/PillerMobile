@@ -19,9 +19,10 @@ import com.rengwuxian.materialedittext.MaterialEditText
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
-
+import com.example.piller.utilities.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -118,7 +119,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun loginUserWindow(email: String, password: String) {
         //  Check if empty
         when {
@@ -162,8 +162,10 @@ class MainActivity : AppCompatActivity() {
         retrofit.registerUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showSnackBar(this@MainActivity,
-                        "Could not connect to server.")
+                    SnackBar.showSnackBar(
+                        this@MainActivity,
+                        "Could not connect to server."
+                    )
                 }
 
                 override fun onResponse(
@@ -171,8 +173,10 @@ class MainActivity : AppCompatActivity() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        SnackBar.showSnackBar(this@MainActivity,
-                            "A user with this email already exists.")
+                        SnackBar.showSnackBar(
+                            this@MainActivity,
+                            "A user with this email already exists."
+                        )
 
                     }
                 }
@@ -180,7 +184,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun loginUser(email: String, password: String){
+    private fun loginUser(email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
         val user = User(email = email, name = "", password = password)
         retrofit.loginUser(user).enqueue(
@@ -194,15 +198,25 @@ class MainActivity : AppCompatActivity() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        SnackBar.showSnackBar(this@MainActivity,
-                            "User does not exist, check your login information.")
-                    }else{
+                        SnackBar.showSnackBar(
+                            this@MainActivity,
+                            "User does not exist, check your login information."
+                        )
+                    } else {
+                        val jObject = JSONObject(response.body()!!.string())
                         //go to the next activity
                         val intent = Intent(
                             this@MainActivity,
                             CalendarActivity::class.java
                         )
-                        //intent.putExtra()
+                        intent.putExtra(
+                            DbConstants.LOGGED_USER_EMAIL,
+                            jObject.get("email").toString()
+                        )
+                        intent.putExtra(
+                            DbConstants.LOGGED_USER_NAME,
+                            jObject.get("name").toString()
+                        )
                         startActivity(intent)
                     }
                 }
