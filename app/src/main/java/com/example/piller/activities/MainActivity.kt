@@ -1,5 +1,6 @@
-package com.example.piller
+package com.example.piller.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -7,22 +8,25 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.materialdialogs.MaterialDialog
-import com.example.piller.Retrofit.IMyService
-import com.example.piller.Retrofit.RetrofitClient
+import com.example.piller.R
+import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
+import com.example.piller.api.ServiceBuilder
+import com.example.piller.api.UserAPI
+import com.example.piller.models.User
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Retrofit
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var iMyService: IMyService
     private var compositeDisposable = CompositeDisposable()
+
 
     override fun onStop() {
         compositeDisposable.clear()
@@ -33,9 +37,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         AppPreferences.init(this)
+        ServiceBuilder.updateRetrofit("http://10.0.2.2:3000")
 
-        val retrofit: Retrofit = RetrofitClient.getInstance()
-        iMyService = retrofit.create(IMyService::class.java)
+
 
         setOnClickListeners()
         //  update fields if user chose to remember email and password
@@ -48,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setOnClickListeners() {
         btn_login.setOnClickListener {
-            loginUser(edt_email.text.toString(), edt_password.text.toString())
+            loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
         }
 
         txt_create_account.setOnClickListener {
@@ -113,20 +117,9 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun registerUser(email: String, name: String, password: String) {
-        compositeDisposable.add(
-            iMyService.registerUser(email, name, password)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { result ->
-                    Toast.makeText(this@MainActivity, "" + result, Toast.LENGTH_SHORT)
-                        .show()
-                }
-        )
-    }
 
 
-    private fun loginUser(email: String, password: String) {
+    private fun loginUserWindow(email: String, password: String) {
         //  Check if empty
         when {
             TextUtils.isEmpty(email) -> {
@@ -151,15 +144,7 @@ class MainActivity : AppCompatActivity() {
                     updateAppPreferences(false, "", "")
                 }
 
-                compositeDisposable.add(
-                    iMyService.loginUser(email, password)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { result ->
-                            Toast.makeText(this@MainActivity, "" + result, Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                )
+                loginUser(email, password)
             }
         }
     }
@@ -168,5 +153,61 @@ class MainActivity : AppCompatActivity() {
         AppPreferences.isLogin = stayLogged
         AppPreferences.email = email
         AppPreferences.password = password
+    }
+
+
+    private fun registerUser(email: String, name: String, password: String) {
+        val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
+        val user = User(email = email, name = name, password = password)
+        retrofit.registerUser(user).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    SnackBar.showSnackBar(this@MainActivity,
+                        "Could not connect to server.")
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        SnackBar.showSnackBar(this@MainActivity,
+                            "A user with this email already exists.")
+
+                    }
+                }
+            }
+        )
+    }
+
+    private fun loginUser(email: String, password: String){
+        val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
+        val user = User(email = email, name = "", password = password)
+        retrofit.loginUser(user).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    SnackBar.showSnackBar(this@MainActivity, "Could not connect to server.")
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        SnackBar.showSnackBar(this@MainActivity,
+                            "User does not exist, check your login information.")
+                    }else{
+                        //go to the next activity
+                        val intent = Intent(
+                            this@MainActivity,
+                            CalendarActivity::class.java
+                        )
+                        //intent.putExtra()
+                        startActivity(intent)
+                    }
+                }
+            }
+        )
+
     }
 }
