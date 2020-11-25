@@ -20,7 +20,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var loggedUserName: String
     lateinit var toolbar: Toolbar
     private val eventInterpreter = EventInterpreter()
-    private lateinit var weekEvents: Array<List<CalendarEvent>>
+    private lateinit var weekEvents: Array<MutableList<CalendarEvent>>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +63,7 @@ class CalendarActivity : AppCompatActivity() {
         var jObject = JSONObject(calendarInfo.body()!!.string())
         var drugInfoList = jObject.get("drug_info_list")
 
-        val startDate = eventInterpreter.getLastDayOfWeek()
+        val startDate = eventInterpreter.getFirstDayOfWeek()
         val endDate = eventInterpreter.getLastDayOfWeek()
         weekEvents = eventInterpreter.getEventsForCalendarByDate(startDate, endDate,
             drugInfoList as JSONArray
