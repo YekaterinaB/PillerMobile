@@ -1,12 +1,17 @@
 package com.example.piller.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.EventInterpreter
 import com.example.piller.R
+import com.example.piller.SnackBar
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.listAdapters.EliAdapter
@@ -21,14 +26,15 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
+
 class CalendarActivity : AppCompatActivity() {
     private lateinit var loggedUserEmail: String
     private lateinit var loggedUserName: String
     lateinit var toolbar: Toolbar
     private val eventInterpreter = EventInterpreter()
-    private var weekEvents= Array(7, { mutableListOf<CalendarEvent>() })
-    private var eliAdapters=mutableListOf<EliAdapter>()
-    private  var eliRecycles=mutableListOf<RecyclerView>()
+    private var weekEvents = Array(7) { mutableListOf<CalendarEvent>() }
+    private var eliAdapters = mutableListOf<EliAdapter>()
+    private var eliRecycles = mutableListOf<RecyclerView>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,26 +51,24 @@ class CalendarActivity : AppCompatActivity() {
 
         toolbar = findViewById(R.id.calendar_toolbar)
 
-        toolbar.title = loggedUserName
         setSupportActionBar(toolbar)
     }
 
-    private  fun initRecyclersAndAdapters(){
-        eliRecycles.add( findViewById(R.id.calendar_sunday_list))
-        eliRecycles.add( findViewById(R.id.calendar_monday_list))
-        eliRecycles.add( findViewById(R.id.calendar_tuesday_list))
-        eliRecycles.add( findViewById(R.id.calendar_wednesday_list))
-        eliRecycles.add( findViewById(R.id.calendar_thursday_list))
-        eliRecycles.add( findViewById(R.id.calendar_friday_list))
-        eliRecycles.add( findViewById(R.id.calendar_saturday_list))
 
-        for(i in 0 until 7){
-            eliRecycles[i].layoutManager= LinearLayoutManager(this)
-            eliAdapters.add( EliAdapter(weekEvents[i]))
+    private fun initRecyclersAndAdapters() {
+        eliRecycles.add(findViewById(R.id.calendar_sunday_list))
+        eliRecycles.add(findViewById(R.id.calendar_monday_list))
+        eliRecycles.add(findViewById(R.id.calendar_tuesday_list))
+        eliRecycles.add(findViewById(R.id.calendar_wednesday_list))
+        eliRecycles.add(findViewById(R.id.calendar_thursday_list))
+        eliRecycles.add(findViewById(R.id.calendar_friday_list))
+        eliRecycles.add(findViewById(R.id.calendar_saturday_list))
+
+        for (i in 0 until 7) {
+            eliRecycles[i].layoutManager = LinearLayoutManager(this)
+            eliAdapters.add(EliAdapter(weekEvents[i]))
             eliRecycles[i].setAdapter(eliAdapters[i])
         }
-
-
     }
 
     private fun getCalendarByUser(email: String, name: String) {
@@ -81,12 +85,51 @@ class CalendarActivity : AppCompatActivity() {
                 ) {
                     if (response.raw().code() == 200) {
                         updateCalenderView(response)
-
                     }
                 }
             }
         )
 
+    }
+
+    private fun goToAccountManagement() {
+        val intent = Intent(
+            this@CalendarActivity,
+            ManageAccountActivity::class.java
+        )
+        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedUserEmail)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, loggedUserName)
+        startActivity(intent)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_manage_account -> {
+                goToAccountManagement()
+                true
+            }
+            R.id.menu_help -> {
+                SnackBar.showSnackBar(
+                    this@CalendarActivity,
+                    "Help"
+                )
+                true
+            }
+            R.id.menu_logout -> {
+                SnackBar.showSnackBar(
+                    this@CalendarActivity,
+                    "Logout"
+                )
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.mainmenu, menu)
+        return true
     }
 
 
@@ -96,11 +139,11 @@ class CalendarActivity : AppCompatActivity() {
 
         val startDate = eventInterpreter.getFirstDayOfWeek()
         val endDate = eventInterpreter.getLastDayOfWeek()
-        weekEvents = eventInterpreter.getEventsForCalendarByDate(startDate, endDate,
+        weekEvents = eventInterpreter.getEventsForCalendarByDate(
+            startDate, endDate,
             drugInfoList as JSONArray
         )
         initRecyclersAndAdapters()
-
     }
 }
 

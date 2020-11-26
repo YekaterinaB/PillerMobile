@@ -7,4 +7,11 @@
     <string name="thursday_label">Thursday</string>
     <string name="friday_label">Friday</string>
     <string name="saturday_label">Saturday</string>
+    <string name="manage_account_label">Manage Account</string>
+    <string name="help_label">Help</string>
+    <string name="log_out_label">Log out</string>
+    <string name="change_email_label">Change Email:</string>
+    <string name="change_name_label">Change Name:</string>
+    <string name="change_password_label">Change Password</string>
+    <string name="delete_account_label">Delete Account</string>
 </resources>
