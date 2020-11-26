@@ -72,8 +72,8 @@ class CalendarActivity : AppCompatActivity() {
             fragmentTransaction.commit()
         }
 
-        currentProfileTV=findViewById(R.id.calendar_current_profile)
-        currentProfileTV.text=currentProfile
+        currentProfileTV = findViewById(R.id.calendar_current_profile)
+        currentProfileTV.text = currentProfile
 
         //bottom navigation
         toolbarBottom = supportActionBar!!
@@ -132,23 +132,7 @@ class CalendarActivity : AppCompatActivity() {
         for (i in 0 until 7) {
             eliRecycles[i].layoutManager = LinearLayoutManager(this)
             eliAdapters.add(EliAdapter(weekEvents[i]))
-            eliRecycles[i].setAdapter(eliAdapters[i])
-        }
-
-
-    private fun initRecyclersAndAdapters() {
-        eliRecycles.add(findViewById(R.id.calendar_sunday_list))
-        eliRecycles.add(findViewById(R.id.calendar_monday_list))
-        eliRecycles.add(findViewById(R.id.calendar_tuesday_list))
-        eliRecycles.add(findViewById(R.id.calendar_wednesday_list))
-        eliRecycles.add(findViewById(R.id.calendar_thursday_list))
-        eliRecycles.add(findViewById(R.id.calendar_friday_list))
-        eliRecycles.add(findViewById(R.id.calendar_saturday_list))
-
-        for (i in 0 until 7) {
-            eliRecycles[i].layoutManager = LinearLayoutManager(this)
-            eliAdapters.add(EliAdapter(weekEvents[i]))
-            eliRecycles[i].setAdapter(eliAdapters[i])
+            eliRecycles[i].adapter = eliAdapters[i]
         }
     }
 
@@ -179,7 +163,7 @@ class CalendarActivity : AppCompatActivity() {
             ManageAccountActivity::class.java
         )
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedUserEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, loggedUserName)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
         startActivity(intent)
     }
 
@@ -215,8 +199,8 @@ class CalendarActivity : AppCompatActivity() {
 
 
     private fun initCalenderView(calendarInfo: Response<ResponseBody>) {
-        var jObject = JSONObject(calendarInfo.body()!!.string())
-        var drugInfoList = jObject.get("drug_info_list")
+        val jObject = JSONObject(calendarInfo.body()!!.string())
+        val drugInfoList = jObject.get("drug_info_list")
 
         val startDate = eventInterpreter.getFirstDayOfWeek()
         val endDate = eventInterpreter.getLastDayOfWeek()
@@ -228,4 +212,3 @@ class CalendarActivity : AppCompatActivity() {
         initRecyclersAndAdapters()
     }
 }
-
