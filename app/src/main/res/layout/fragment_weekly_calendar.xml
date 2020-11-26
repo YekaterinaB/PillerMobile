@@ -9,6 +9,7 @@
         android:id="@+id/calendar_upper_days_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:weightSum="4"
         app:layout_constraintBottom_toTopOf="@+id/calendar_lower_days_layout"
@@ -123,10 +124,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:baselineAligned="false"
+        android:orientation="horizontal"
         android:weightSum="3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar_upper_days_layout">
 
         <LinearLayout
             android:id="@+id/calendar_thursday_layout"
