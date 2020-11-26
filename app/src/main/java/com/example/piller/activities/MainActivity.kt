@@ -23,6 +23,9 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 import com.example.piller.utilities.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -107,12 +110,13 @@ class MainActivity : AppCompatActivity() {
                         return@SingleButtonCallback
                     }
                 }
-
-                registerUser(
-                    edtEmail.text.toString(),
-                    edtName.text.toString(),
-                    edtPassword.text.toString()
-                )
+                CoroutineScope(Dispatchers.IO).launch {
+                    registerUser(
+                        edtEmail.text.toString(),
+                        edtName.text.toString(),
+                        edtPassword.text.toString()
+                    )
+                }
             })
             .build()
             .show()
@@ -143,8 +147,9 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     updateAppPreferences(false, "", "")
                 }
-
-                loginUser(email, password)
+                CoroutineScope(Dispatchers.IO).launch {
+                    loginUser(email, password)
+                }
             }
         }
     }
@@ -203,6 +208,7 @@ class MainActivity : AppCompatActivity() {
                             "User does not exist, check your login information."
                         )
                     } else {
+
                         val jObject = JSONObject(response.body()!!.string())
                         //go to the next activity
                         val intent = Intent(
