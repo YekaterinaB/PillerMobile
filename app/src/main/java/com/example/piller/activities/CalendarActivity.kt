@@ -5,8 +5,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.EventInterpreter
@@ -14,9 +18,12 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
+import com.example.piller.fragments.ProfileFragment
+import com.example.piller.fragments.WeeklyCalendarFragment
 import com.example.piller.listAdapters.EliAdapter
 import com.example.piller.models.CalendarEvent
 import com.example.piller.utilities.DbConstants
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,8 +36,10 @@ import retrofit2.Response
 
 class CalendarActivity : AppCompatActivity() {
     private lateinit var loggedUserEmail: String
-    private lateinit var loggedUserName: String
+    private lateinit var currentProfile: String
+    private lateinit var currentProfileTV: TextView
     lateinit var toolbar: Toolbar
+    lateinit var toolbarBottom: ActionBar
     private val eventInterpreter = EventInterpreter()
     private var weekEvents = Array(7) { mutableListOf<CalendarEvent>() }
     private var eliAdapters = mutableListOf<EliAdapter>()
@@ -41,18 +50,90 @@ class CalendarActivity : AppCompatActivity() {
         //  todo: disable going back to login
         super.onCreate(savedInstanceState)
         loggedUserEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+        currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
 
         CoroutineScope(Dispatchers.IO).launch {
-            getCalendarByUser(loggedUserEmail, loggedUserName)
+            getCalendarByUser(loggedUserEmail, currentProfile)
         }
 
         setContentView(R.layout.activity_calendar)
 
+        // upper navigation
         toolbar = findViewById(R.id.calendar_toolbar)
-
+        toolbar.title = "Piller"
         setSupportActionBar(toolbar)
+
+        // fragments container
+        if (savedInstanceState == null) {
+            val f1 = WeeklyCalendarFragment()
+            val fragmentTransaction: FragmentTransaction =
+                supportFragmentManager.beginTransaction()
+            fragmentTransaction.add(R.id.container, f1)
+            fragmentTransaction.commit()
+        }
+
+        currentProfileTV=findViewById(R.id.calendar_current_profile)
+        currentProfileTV.text=currentProfile
+
+        //bottom navigation
+        toolbarBottom = supportActionBar!!
+        val bottomNavigation: BottomNavigationView = findViewById(R.id.BottomNavigationView)
+        bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
+
+
+    private val mOnNavigationItemSelectedListener =
+        BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    toolbar.title = "Piller"
+                    val weeklyCalendarFragment = WeeklyCalendarFragment.newInstance()
+                    openFragment(weeklyCalendarFragment)
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.navigation_profile -> {
+                    toolbar.title = "Profiles"
+                    val profileFragment = ProfileFragment.newInstance()
+                    openFragment(profileFragment)
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.navigation_drugs -> {
+
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.navigation_supervisors -> {
+
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.navigation_full_view -> {
+
+                    return@OnNavigationItemSelectedListener true
+                }
+            }
+            false
+        }
+
+    private fun openFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.container, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    private fun initRecyclersAndAdapters() {
+        eliRecycles.add(findViewById(R.id.calendar_sunday_list))
+        eliRecycles.add(findViewById(R.id.calendar_monday_list))
+        eliRecycles.add(findViewById(R.id.calendar_tuesday_list))
+        eliRecycles.add(findViewById(R.id.calendar_wednesday_list))
+        eliRecycles.add(findViewById(R.id.calendar_thursday_list))
+        eliRecycles.add(findViewById(R.id.calendar_friday_list))
+        eliRecycles.add(findViewById(R.id.calendar_saturday_list))
+
+        for (i in 0 until 7) {
+            eliRecycles[i].layoutManager = LinearLayoutManager(this)
+            eliAdapters.add(EliAdapter(weekEvents[i]))
+            eliRecycles[i].setAdapter(eliAdapters[i])
+        }
 
 
     private fun initRecyclersAndAdapters() {
@@ -84,7 +165,7 @@ class CalendarActivity : AppCompatActivity() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == 200) {
-                        updateCalenderView(response)
+                        initCalenderView(response)
                     }
                 }
             }
@@ -133,7 +214,7 @@ class CalendarActivity : AppCompatActivity() {
     }
 
 
-    private fun updateCalenderView(calendarInfo: Response<ResponseBody>) {
+    private fun initCalenderView(calendarInfo: Response<ResponseBody>) {
         var jObject = JSONObject(calendarInfo.body()!!.string())
         var drugInfoList = jObject.get("drug_info_list")
 
@@ -143,6 +224,7 @@ class CalendarActivity : AppCompatActivity() {
             startDate, endDate,
             drugInfoList as JSONArray
         )
+
         initRecyclersAndAdapters()
     }
 }
