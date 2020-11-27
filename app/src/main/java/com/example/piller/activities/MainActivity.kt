@@ -1,10 +1,14 @@
 package com.example.piller.activities
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.materialdialogs.MaterialDialog
@@ -14,23 +18,22 @@ import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
 import com.example.piller.models.User
+import com.example.piller.utilities.DbConstants
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
-import com.example.piller.utilities.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
     private var compositeDisposable = CompositeDisposable()
-
+    private lateinit var forgotPassword: TextView
 
     override fun onStop() {
         compositeDisposable.clear()
@@ -43,8 +46,6 @@ class MainActivity : AppCompatActivity() {
         AppPreferences.init(this)
         ServiceBuilder.updateRetrofit("http://10.0.2.2:3000")
 
-
-
         setOnClickListeners()
         //  update fields if user chose to remember email and password
         if (AppPreferences.isLogin) {
@@ -52,6 +53,75 @@ class MainActivity : AppCompatActivity() {
             edt_email.setText(AppPreferences.email)
             edt_password.setText(AppPreferences.password)
         }
+
+        initiateViews()
+        initiateListeners()
+    }
+
+    private fun initiateViews() {
+        forgotPassword = findViewById(R.id.login_reset_password)
+    }
+
+    private fun initiateListeners() {
+        forgotPassword.setOnClickListener {
+            val lp = LinearLayout.LayoutParams(700, 200)
+            val layout = LinearLayout(this@MainActivity)
+            layout.orientation = LinearLayout.HORIZONTAL
+            val emailLabel = TextView(this)
+            emailLabel.text = "Enter your email:"
+            emailLabel.setPadding(20, 0, 0, 0)
+            val emailInput = EditText(this)
+            emailInput.layoutParams = lp
+            emailInput.maxLines = 1
+            layout.addView(emailLabel)
+            layout.addView(emailInput)
+            val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@MainActivity)
+            alertDialog.setTitle("Reset Password")
+            alertDialog.setView(layout)
+
+            alertDialog.setPositiveButton("Send") { _, _ ->
+                val email = emailInput.text.toString()
+                if (email.isNotEmpty()) {
+                    sendEmailToResetPassword(email)
+                }
+            }
+
+            alertDialog.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+
+            alertDialog.show()
+        }
+    }
+
+    private fun sendEmailToResetPassword(email: String) {
+        val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
+        retrofit.resetPassword(email).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    SnackBar.showSnackBar(
+                        this@MainActivity,
+                        "Could not reset password."
+                    )
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        SnackBar.showSnackBar(
+                            this@MainActivity,
+                            jObjError["message"] as String
+                        )
+                    } else {
+                        SnackBar.showSnackBar(
+                            this@MainActivity,
+                            "Reset email sent!"
+                        )
+                    }
+                }
+            }
+        )
     }
 
     private fun setOnClickListeners() {

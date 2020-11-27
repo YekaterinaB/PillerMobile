@@ -68,7 +68,7 @@
 
         <CheckBox
             android:id="@+id/login_remember"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Remember Me"
             android:textColor="@color/myTextColor" />
@@ -85,4 +85,12 @@
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/login_reset_password"
+        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Forgot your password?"
+        android:textColor="@color/myTextColor" />
 </LinearLayout>
