@@ -11,69 +11,94 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.piller.EventInterpreter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
-import com.example.piller.api.CalendarAPI
-import com.example.piller.api.ServiceBuilder
 import com.example.piller.fragments.ProfileFragment
 import com.example.piller.fragments.WeeklyCalendarFragment
-import com.example.piller.listAdapters.EliAdapter
-import com.example.piller.models.CalendarEvent
 import com.example.piller.utilities.DbConstants
+import com.example.piller.viewModels.ProfileViewModel
+import com.example.piller.viewModels.WeeklyCalendarViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
-import org.json.JSONArray
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Response
+
+val WEEKLY_CALENDAR_FRAGMENT_ID = "weekly_calendar"
+val PROFILES_FRAGMENT_ID = "profiles"
 
 
 class CalendarActivity : AppCompatActivity() {
+    private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var weeklyCalendarViewModel: WeeklyCalendarViewModel
+
     private lateinit var loggedUserEmail: String
-    private lateinit var currentProfile: String
+    private lateinit var mainProfile: String
     private lateinit var currentProfileTV: TextView
     lateinit var toolbar: Toolbar
     lateinit var toolbarBottom: ActionBar
-    private val eventInterpreter = EventInterpreter()
-    private var weekEvents = Array(7) { mutableListOf<CalendarEvent>() }
-    private var eliAdapters = mutableListOf<EliAdapter>()
-    private var eliRecycles = mutableListOf<RecyclerView>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //  todo: disable going back to login
         super.onCreate(savedInstanceState)
         loggedUserEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
-
-        CoroutineScope(Dispatchers.IO).launch {
-            getCalendarByUser(loggedUserEmail, currentProfile)
-        }
+        mainProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
 
         setContentView(R.layout.activity_calendar)
+        currentProfileTV = findViewById(R.id.calendar_current_profile)
+        initializeNavigations()
 
+        //initiate view model
+        initializeViewModels()
+        initializeFragment(savedInstanceState)
+
+    }
+
+
+    private fun initializeViewModels() {
+        weeklyCalendarViewModel = ViewModelProvider(this).get(WeeklyCalendarViewModel::class.java)
+
+        weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.observe(
+            this,
+            Observer { calendar ->
+                calendar?.let {
+                    val myFragment =
+                        supportFragmentManager.findFragmentByTag(WEEKLY_CALENDAR_FRAGMENT_ID) as WeeklyCalendarFragment
+                    myFragment.changeCurrentCalendar(it)
+                    myFragment.updateRecyclersAndAdapters()
+                    //update current profile calendar
+                    profileViewModel.changeProfileCalendar(it)
+                }
+            })
+
+        profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        profileViewModel.setProfileAndEmail(mainProfile, loggedUserEmail)
+        profileViewModel.getProfileListByUser(mainProfile)
+        profileViewModel.mutableCurrentProfile.observe(this, Observer { profile ->
+            //update current profile
+            profile?.let {
+                currentProfileTV.text = it
+            }
+        })
+
+
+    }
+
+    private fun initializeFragment(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            val f1 = WeeklyCalendarFragment()
+            val fragmentTransaction: FragmentTransaction =
+                supportFragmentManager.beginTransaction()
+            fragmentTransaction.add(R.id.container, f1, WEEKLY_CALENDAR_FRAGMENT_ID)
+            fragmentTransaction.commit()
+        }
+    }
+
+    private fun initializeNavigations() {
         // upper navigation
         toolbar = findViewById(R.id.calendar_toolbar)
         toolbar.title = "Piller"
         setSupportActionBar(toolbar)
 
-        // fragments container
-        if (savedInstanceState == null) {
-            val f1 = WeeklyCalendarFragment()
-            val fragmentTransaction: FragmentTransaction =
-                supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.container, f1)
-            fragmentTransaction.commit()
-        }
-
-        currentProfileTV = findViewById(R.id.calendar_current_profile)
-        currentProfileTV.text = currentProfile
 
         //bottom navigation
         toolbarBottom = supportActionBar!!
@@ -88,13 +113,13 @@ class CalendarActivity : AppCompatActivity() {
                 R.id.navigation_home -> {
                     toolbar.title = "Piller"
                     val weeklyCalendarFragment = WeeklyCalendarFragment.newInstance()
-                    openFragment(weeklyCalendarFragment)
+                    openFragment(weeklyCalendarFragment, WEEKLY_CALENDAR_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_profile -> {
                     toolbar.title = "Profiles"
                     val profileFragment = ProfileFragment.newInstance()
-                    openFragment(profileFragment)
+                    openFragment(profileFragment, PROFILES_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_drugs -> {
@@ -113,49 +138,14 @@ class CalendarActivity : AppCompatActivity() {
             false
         }
 
-    private fun openFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
+    private fun openFragment(fragment: Fragment, id_fragment: String) {
+        val fragmentTransaction: FragmentTransaction =
+            this.supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.container, fragment, id_fragment)
+        fragmentTransaction.disallowAddToBackStack()
+        fragmentTransaction.commit()
     }
 
-    private fun initRecyclersAndAdapters() {
-        eliRecycles.add(findViewById(R.id.calendar_sunday_list))
-        eliRecycles.add(findViewById(R.id.calendar_monday_list))
-        eliRecycles.add(findViewById(R.id.calendar_tuesday_list))
-        eliRecycles.add(findViewById(R.id.calendar_wednesday_list))
-        eliRecycles.add(findViewById(R.id.calendar_thursday_list))
-        eliRecycles.add(findViewById(R.id.calendar_friday_list))
-        eliRecycles.add(findViewById(R.id.calendar_saturday_list))
-
-        for (i in 0 until 7) {
-            eliRecycles[i].layoutManager = LinearLayoutManager(this)
-            eliAdapters.add(EliAdapter(weekEvents[i]))
-            eliRecycles[i].adapter = eliAdapters[i]
-        }
-    }
-
-    private fun getCalendarByUser(email: String, name: String) {
-        val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
-        retrofit.getCalendarByUser(email, name).enqueue(
-            object : retrofit2.Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    //todo
-                }
-
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if (response.raw().code() == 200) {
-                        initCalenderView(response)
-                    }
-                }
-            }
-        )
-
-    }
 
     private fun goToAccountManagement() {
         val intent = Intent(
@@ -163,7 +153,7 @@ class CalendarActivity : AppCompatActivity() {
             ManageAccountActivity::class.java
         )
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedUserEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, mainProfile)
         startActivity(intent)
     }
 
@@ -198,17 +188,4 @@ class CalendarActivity : AppCompatActivity() {
     }
 
 
-    private fun initCalenderView(calendarInfo: Response<ResponseBody>) {
-        val jObject = JSONObject(calendarInfo.body()!!.string())
-        val drugInfoList = jObject.get("drug_info_list")
-
-        val startDate = eventInterpreter.getFirstDayOfWeek()
-        val endDate = eventInterpreter.getLastDayOfWeek()
-        weekEvents = eventInterpreter.getEventsForCalendarByDate(
-            startDate, endDate,
-            drugInfoList as JSONArray
-        )
-
-        initRecyclersAndAdapters()
-    }
 }
