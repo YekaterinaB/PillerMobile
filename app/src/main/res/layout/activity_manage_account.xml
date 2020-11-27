@@ -23,8 +23,10 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/manage_account_toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/manage_account_toolbar"
+        app:layout_constraintVertical_bias="1.0">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -70,13 +72,20 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:id="@+id/email_divider"
+            style="@style/Divider.Horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ma_email_layout" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ma_password_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ma_email_layout">
+            app:layout_constraintTop_toBottomOf="@+id/email_divider">
 
             <TextView
                 android:id="@+id/ma_password"
@@ -102,14 +111,20 @@
                 app:srcCompat="@drawable/ic_password" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:id="@+id/password_divider"
+            style="@style/Divider.Horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ma_password_layout" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ma_delete_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ma_password_layout">
+            app:layout_constraintTop_toBottomOf="@+id/password_divider">
 
             <TextView
                 android:id="@+id/ma_delete"
@@ -134,6 +149,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_delete" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
