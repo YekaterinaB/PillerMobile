@@ -24,4 +24,7 @@ interface UserAPI {
 
     @PUT("user/updatePassword/{email}")
     fun updatePassword(@Path("email") email: String, @Body user: JSONObject): Call<ResponseBody>
+
+    @GET("user/resetPassword/{email}")
+    fun resetPassword(@Path("email") email: String): Call<ResponseBody>
 }
