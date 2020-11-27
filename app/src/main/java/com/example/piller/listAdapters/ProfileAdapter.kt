@@ -1,44 +1,37 @@
 package com.example.piller.listAdapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.ExpandableListView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
-import com.example.piller.models.CalendarEvent
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.piller.models.Profile
 
-class EliAdapter(private var dataSet: MutableList<CalendarEvent>) :
-    RecyclerView.Adapter<EliAdapter.ViewHolder>() {
+class ProfileAdapter(private val dataSet: MutableList<Profile>,private val clickListener: (String)->Unit) :
+    RecyclerView.Adapter<ProfileAdapter.ViewHolder>() {
 
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val drugName: TextView
-        val intakeTime: TextView
-        val isTaken: CheckBox
+        val profileName: TextView
+
 
         init {
             // Define click listener for the ViewHolder's View.
-            drugName = view.findViewById(R.id.eli_drug_name)
-            intakeTime = view.findViewById(R.id.eli_time_intake)
-            isTaken = view.findViewById(R.id.eli_is_taken)
+            profileName = view.findViewById(R.id.profile_name)
+
         }
     }
-    fun setData(data:MutableList<CalendarEvent>){
-        dataSet=data
-    }
+
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.event_list_item, viewGroup, false)
+            .inflate(R.layout.profile_recycleview_item, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -49,11 +42,9 @@ class EliAdapter(private var dataSet: MutableList<CalendarEvent>) :
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val currentItem=dataSet[position]
-        viewHolder.drugName.text = currentItem.drug_name
-        val time = SimpleDateFormat("HH:mm").format(currentItem.intake_time)
-        viewHolder.intakeTime.text = time
-        viewHolder.isTaken.isChecked =currentItem.is_taken
-
+        val profileName=currentItem.getProfileName()
+        viewHolder.profileName.text = profileName
+        viewHolder.itemView.setOnClickListener{clickListener(profileName)}
     }
 
     // Return the size of your dataset (invoked by the layout manager)
