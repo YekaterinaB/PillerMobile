@@ -1,6 +1,7 @@
 package com.example.piller.activities
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -14,7 +15,12 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
+import com.example.piller.models.User
 import com.example.piller.utilities.DbConstants
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Response
 
 
 class ManageAccountActivity : AppCompatActivity() {
@@ -25,6 +31,7 @@ class ManageAccountActivity : AppCompatActivity() {
     private lateinit var currentEmailTV: TextView
     private lateinit var passwordLayout: ConstraintLayout
     private lateinit var deleteLayout: ConstraintLayout
+    private val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,81 +49,180 @@ class ManageAccountActivity : AppCompatActivity() {
         initListeners()
     }
 
+    private fun setUpdateEmailDialogViews(
+        emailLayout: LinearLayout,
+        emailLabel: TextView,
+        emailInput: EditText,
+        passwordLayout: LinearLayout,
+        passwordLabel: TextView,
+        passwordInput: EditText
+    ) {
+        val lp = LinearLayout.LayoutParams(700, 200)
+        emailLayout.orientation = LinearLayout.HORIZONTAL
+        emailLabel.setPadding(20, 0, 0, 0)
+        emailLabel.text = "Enter new email:"
+        emailInput.layoutParams = lp
+        emailInput.maxLines = 1
+        emailLayout.addView(emailLabel)
+        emailLayout.addView(emailInput)
+
+        passwordLayout.orientation = LinearLayout.HORIZONTAL
+        passwordLabel.setPadding(20, 0, 0, 0)
+        passwordLabel.text = "Enter your password:"
+        passwordInput.layoutParams = lp
+        passwordInput.maxLines = 1
+        passwordInput.transformationMethod = PasswordTransformationMethod.getInstance()
+        passwordLayout.addView(passwordLabel)
+        passwordLayout.addView(passwordInput)
+    }
+
+    private fun setUpdateEmailDialog() {
+        val emailLayout = LinearLayout(this@ManageAccountActivity)
+        val emailLabel = TextView(this@ManageAccountActivity)
+        val emailInput = EditText(this@ManageAccountActivity)
+        val passwordLayout = LinearLayout(this@ManageAccountActivity)
+        val passwordLabel = TextView(this@ManageAccountActivity)
+        val passwordInput = EditText(this@ManageAccountActivity)
+
+        setUpdateEmailDialogViews(
+            emailLayout,
+            emailLabel,
+            emailInput,
+            passwordLayout,
+            passwordLabel,
+            passwordInput
+        )
+
+        showPopupDialog(
+            "Update Email",
+            "Update",
+            arrayOf(emailLayout, passwordLayout),
+            callback = {
+                val newEmail = emailInput.text.toString()
+                val password = passwordInput.text.toString()
+                if (loggedUserEmail != emailInput.text.toString()
+                    && newEmail.isNotEmpty()
+                    && password.isNotEmpty()
+                ) {
+                    val updatedUser = User(newEmail, loggedUserName, password)
+                    sendRetrofitUpdateEmail(updatedUser, newEmail)
+                }
+            })
+    }
+
+    private fun sendRetrofitUpdateEmail(updatedUser: User, newEmail: String) {
+        retrofit.updateUser(loggedUserEmail, updatedUser).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    SnackBar.showSnackBar(
+                        this@ManageAccountActivity,
+                        "Could not update user."
+                    )
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        SnackBar.showSnackBar(
+                            this@ManageAccountActivity,
+                            "Error updating account. Please try again later."
+                        )
+                    } else {
+                        currentEmailTV.text = newEmail
+                        loggedUserEmail = newEmail
+                        SnackBar.showSnackBar(
+                            this@ManageAccountActivity,
+                            "User email updated."
+                        )
+                    }
+                }
+            }
+        )
+    }
+
     private fun initListeners() {
         emailLayout.setOnClickListener {
-            run {
-                val inputLayout = LinearLayout(this@ManageAccountActivity)
-                val label = TextView(this@ManageAccountActivity)
-                val input = EditText(this@ManageAccountActivity)
-                val lp = LinearLayout.LayoutParams(700, 200)
-
-                inputLayout.orientation = LinearLayout.HORIZONTAL
-                label.setPadding(20, 0, 0, 0)
-                label.text = "Enter new email:"
-                input.layoutParams = lp
-                input.maxLines = 1
-                inputLayout.addView(label)
-                inputLayout.addView(input)
-
-                showPopupDialog(
-                    "Update Email",
-                    "Update",
-                    arrayOf(inputLayout),
-                    callback = {
-                        if (loggedUserEmail != input.text.toString()) {
-                            SnackBar.showSnackBar(
-                                this@ManageAccountActivity,
-                                "TODO update email"
-                            )
-                        }
-                    })
-            }
+            setUpdateEmailDialog()
         }
 
         passwordLayout.setOnClickListener {
-            runPasswordClickEvent()
+            setUpdatePasswordDialog()
         }
 
         deleteLayout.setOnClickListener {
-            val label = TextView(this@ManageAccountActivity)
-            label.text = "Are you sure you want to delete your account?"
-            label.setPadding(80, 0, 0, 0)
-            showPopupDialog(
-                "Delete Account",
-                "Delete",
-                arrayOf(label),
-                callback = {
-                    SnackBar.showSnackBar(
-                        this@ManageAccountActivity,
-                        "TODO delete account"
-                    )
-                })
+            setDeleteAccountDialog()
         }
     }
 
-    private fun runPasswordClickEvent() {
+    private fun setDeleteAccountDialog() {
+        val label = TextView(this@ManageAccountActivity)
+        label.text = "Are you sure you want to delete your account?"
+        label.setPadding(85, 50, 0, 0)
+        showPopupDialog(
+            "Delete Account",
+            "Delete",
+            arrayOf(label),
+            callback = {
+                retrofit.deleteUser(loggedUserEmail).enqueue(
+                    object : retrofit2.Callback<ResponseBody> {
+                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                            SnackBar.showSnackBar(
+                                this@ManageAccountActivity,
+                                "Could not delete user."
+                            )
+                        }
+
+                        override fun onResponse(
+                            call: Call<ResponseBody>,
+                            response: Response<ResponseBody>
+                        ) {
+                            if (response.raw().code() == 200) {
+                                //  go back to login activity
+                                val intent = Intent(applicationContext, MainActivity::class.java)
+                                //  close all previous activities
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            } else {
+                                SnackBar.showSnackBar(
+                                    this@ManageAccountActivity,
+                                    "Error deleting account. Please try again later."
+                                )
+                            }
+                        }
+                    }
+                )
+                SnackBar.showSnackBar(
+                    this@ManageAccountActivity,
+                    "TODO delete account"
+                )
+            })
+    }
+
+    private fun setUpdatePasswordDialog() {
         val oldPassLayout = LinearLayout(this@ManageAccountActivity)
         val oldPasswordLabel = TextView(this@ManageAccountActivity)
-        val oldPassword = EditText(this@ManageAccountActivity)
+        val oldPasswordInput = EditText(this@ManageAccountActivity)
 
         val newPasswordLayout = LinearLayout(this@ManageAccountActivity)
         val newPasswordLabel = TextView(this@ManageAccountActivity)
-        val newPassword = EditText(this@ManageAccountActivity)
+        val newPasswordInput = EditText(this@ManageAccountActivity)
 
         val newPasswordConfLayout = LinearLayout(this@ManageAccountActivity)
         val newPasswordConfLabel = TextView(this@ManageAccountActivity)
-        val newPasswordConf = EditText(this@ManageAccountActivity)
+        val confNewPasswordInput = EditText(this@ManageAccountActivity)
 
         initiateDialogViews(
             oldPassLayout,
             oldPasswordLabel,
-            oldPassword,
+            oldPasswordInput,
             newPasswordLayout,
             newPasswordLabel,
-            newPassword,
+            newPasswordInput,
             newPasswordConfLayout,
             newPasswordConfLabel,
-            newPasswordConf
+            confNewPasswordInput
         )
 
         showPopupDialog(
@@ -128,13 +234,73 @@ class ManageAccountActivity : AppCompatActivity() {
                 newPasswordConfLayout
             ),
             callback = {
-                run {
+                updatePasswordCallback(oldPasswordInput, newPasswordInput, confNewPasswordInput)
+            })
+    }
+
+    private fun updatePasswordCallback(
+        oldPasswordInput: EditText,
+        newPasswordInput: EditText,
+        confNewPasswordInput: EditText
+    ) {
+        val oldPassword = oldPasswordInput.text.toString()
+        val newPassword = newPasswordInput.text.toString()
+        val confNewPassword = confNewPasswordInput.text.toString()
+        if (arePasswordsValid(oldPassword, newPassword, confNewPassword)) {
+            val updatedUser = JSONObject()
+            updatedUser.put("email", loggedUserEmail)
+            updatedUser.put("password", newPassword)
+            updatedUser.put("oldPassword", oldPassword)
+            sendRetrofitUpdatePassword(updatedUser)
+        }
+    }
+
+    private fun sendRetrofitUpdatePassword(updatedUser: JSONObject) {
+        retrofit.updatePassword(loggedUserEmail, updatedUser).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     SnackBar.showSnackBar(
                         this@ManageAccountActivity,
-                        "TODO update password"
+                        "Could not update password."
                     )
                 }
-            })
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        SnackBar.showSnackBar(
+                            this@ManageAccountActivity,
+                            jObjError["message"] as String
+                        )
+                    } else {
+                        SnackBar.showSnackBar(
+                            this@ManageAccountActivity,
+                            "User password updated."
+                        )
+                    }
+                }
+            }
+        )
+    }
+
+    private fun arePasswordsValid(
+        oldPassword: String,
+        newPassword: String,
+        confNewPassword: String
+    ): Boolean {
+        var valid = true
+        if (oldPassword.isEmpty() || newPassword.isEmpty() || confNewPassword.isEmpty()) {
+            valid = false
+        } else if (newPassword != confNewPassword) {
+            valid = false
+        } else if (newPassword == oldPassword) {
+            valid = false
+        }
+
+        return valid
     }
 
     private fun initiateDialogViews(
@@ -187,6 +353,8 @@ class ManageAccountActivity : AppCompatActivity() {
         layout.orientation = LinearLayout.VERTICAL
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@ManageAccountActivity)
         alertDialog.setTitle(title)
+
+        //  Add all views to the layout
         for (input in inputs) {
             layout.addView(input)
         }

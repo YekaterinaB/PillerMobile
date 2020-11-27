@@ -10,11 +10,21 @@ interface CalendarAPI {
     @Headers("Content-Type: application/json")
 
     @GET("calendar/{email}/{name}")
-    fun getCalendarByUser(@Path("email")email:String,@Path("name")name:String): Call<ResponseBody>
+    fun getCalendarByUser(
+        @Path("email") email: String,
+        @Path("name") name: String
+    ): Call<ResponseBody>
 
     @PUT("calendar/{email}/{name}")
-    fun updateCalendarByUser(@Path("email")email:String,@Path("name")name:String,@Body calendarEvent:CalendarEvent): Call<ResponseBody>
+    fun updateCalendarByUser(
+        @Path("email") email: String,
+        @Path("name") name: String,
+        @Body calendarEvent: CalendarEvent
+    ): Call<ResponseBody>
 
     @DELETE("calendar/{email}")
-    fun deleteCalendarByUser(@Path("email")email:String,@Body calendarEvent: CalendarEvent): Call<ResponseBody>
+    fun deleteCalendarByUser(
+        @Path("email") email: String,
+        @Body calendarEvent: CalendarEvent
+    ): Call<ResponseBody>
 }
