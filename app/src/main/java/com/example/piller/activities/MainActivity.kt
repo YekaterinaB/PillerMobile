@@ -9,31 +9,27 @@ import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.api.UserAPI
-import com.example.piller.models.User
 import com.example.piller.utilities.DbConstants
+import com.example.piller.viewModels.MainActivityViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var forgotPassword: TextView
+    private lateinit var viewModel: MainActivityViewModel
+
 
     override fun onStop() {
         compositeDisposable.clear()
@@ -43,10 +39,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        initObservers()
         AppPreferences.init(this)
         ServiceBuilder.updateRetrofit("http://10.0.2.2:3000")
 
-        setOnClickListeners()
         //  update fields if user chose to remember email and password
         if (AppPreferences.isLogin) {
             login_remember.isChecked = true
@@ -55,14 +52,56 @@ class MainActivity : AppCompatActivity() {
         }
 
         initiateViews()
-        initiateListeners()
+        setOnClickListeners()
+    }
+
+    private fun initObservers() {
+        viewModel.mutableToastError.observe(
+            this,
+            Observer { toastMessage ->
+                toastMessage?.let {
+                    SnackBar.showToastBar(this, toastMessage)
+                }
+            })
+
+        viewModel.mutableActivityChangeResponse.observe(
+            this,
+            Observer { response ->
+                response?.let {
+                    //go to calendar activity with response body given
+                    val jObject = JSONObject(response.body()!!.string())
+                    //go to the next activity
+                    val intent = Intent(
+                        this@MainActivity,
+                        CalendarActivity::class.java
+                    )
+                    intent.putExtra(
+                        DbConstants.LOGGED_USER_EMAIL,
+                        jObject.get("email").toString()
+                    )
+                    intent.putExtra(
+                        DbConstants.LOGGED_USER_NAME,
+                        jObject.get("name").toString()
+                    )
+                    startActivity(intent)
+
+                }
+            })
     }
 
     private fun initiateViews() {
         forgotPassword = findViewById(R.id.login_reset_password)
     }
 
-    private fun initiateListeners() {
+    private fun setOnClickListeners() {
+        btn_login.setOnClickListener {
+            loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
+        }
+
+        txt_create_account.setOnClickListener {
+            showRegistrationWindow()
+        }
+
         forgotPassword.setOnClickListener {
             val lp = LinearLayout.LayoutParams(700, 200)
             val layout = LinearLayout(this@MainActivity)
@@ -82,7 +121,7 @@ class MainActivity : AppCompatActivity() {
             alertDialog.setPositiveButton("Send") { _, _ ->
                 val email = emailInput.text.toString()
                 if (email.isNotEmpty()) {
-                    sendEmailToResetPassword(email)
+                    viewModel.sendEmailToResetPassword(email)
                 }
             }
 
@@ -92,47 +131,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendEmailToResetPassword(email: String) {
-        val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        retrofit.resetPassword(email).enqueue(
-            object : retrofit2.Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showSnackBar(
-                        this@MainActivity,
-                        "Could not reset password."
-                    )
-                }
-
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if (response.raw().code() != 200) {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        SnackBar.showSnackBar(
-                            this@MainActivity,
-                            jObjError["message"] as String
-                        )
-                    } else {
-                        SnackBar.showSnackBar(
-                            this@MainActivity,
-                            "Reset email sent!"
-                        )
-                    }
-                }
-            }
-        )
-    }
-
-    private fun setOnClickListeners() {
-        btn_login.setOnClickListener {
-            loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
-        }
-
-        txt_create_account.setOnClickListener {
-            showRegistrationWindow()
-        }
-    }
 
     private fun showRegistrationWindow() {
         val itemView = LayoutInflater.from(this@MainActivity)
@@ -156,37 +154,33 @@ class MainActivity : AppCompatActivity() {
 
                 when {
                     TextUtils.isEmpty(edtEmail.text.toString()) -> {
-                        Toast.makeText(
+                        SnackBar.showToastBar(
                             this@MainActivity,
-                            "Email cannot be null or empty",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            "Email cannot be null or empty"
+                        )
                         return@SingleButtonCallback
                     }
                     TextUtils.isEmpty(edtName.text.toString()) -> {
-                        Toast.makeText(
+                        SnackBar.showToastBar(
                             this@MainActivity,
-                            "Name cannot be null or empty",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            "Name cannot be null or empty"
+                        )
                         return@SingleButtonCallback
                     }
                     TextUtils.isEmpty(edtPassword.text.toString()) -> {
-                        Toast.makeText(
+                        SnackBar.showToastBar(
                             this@MainActivity,
-                            "Password cannot be null or empty",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            "Password cannot be null or empty"
+                        )
                         return@SingleButtonCallback
                     }
                 }
-                CoroutineScope(Dispatchers.IO).launch {
-                    registerUser(
-                        edtEmail.text.toString(),
-                        edtName.text.toString(),
-                        edtPassword.text.toString()
-                    )
-                }
+                viewModel.registerUser(
+                    edtEmail.text.toString(),
+                    edtName.text.toString(),
+                    edtPassword.text.toString()
+                )
+
             })
             .build()
             .show()
@@ -197,18 +191,17 @@ class MainActivity : AppCompatActivity() {
         //  Check if empty
         when {
             TextUtils.isEmpty(email) -> {
-                Toast.makeText(
+                SnackBar.showToastBar(
+
                     this@MainActivity,
-                    "Email cannot be null or empty",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    "Email cannot be null or empty"
+                )
             }
             TextUtils.isEmpty(password) -> {
-                Toast.makeText(
+                SnackBar.showToastBar(
                     this@MainActivity,
-                    "Password cannot be null or empty",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    "Password cannot be null or empty"
+                )
             }
             else -> {
                 //  remember email and password if the user wants to
@@ -217,19 +210,18 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     updateAppPreferences(false, "", "")
                 }
-                CoroutineScope(Dispatchers.IO).launch {
-                    loginUser(email, password)
-                }
+                viewModel.loginUser(email, password)
+
             }
         }
     }
+
 
     private fun updateAppPreferences(stayLogged: Boolean, email: String, password: String) {
         AppPreferences.isLogin = stayLogged
         AppPreferences.email = email
         AppPreferences.password = password
     }
-
 
     private fun registerUser(email: String, name: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)

@@ -46,7 +46,7 @@ class ManageAccountActivity : AppCompatActivity() {
         loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
 
         setCurrentUserProperties()
-        initListeners()
+        setOnClickListeners()
     }
 
     private fun setUpdateEmailDialogViews(
@@ -114,7 +114,7 @@ class ManageAccountActivity : AppCompatActivity() {
         retrofit.updateUser(loggedUserEmail, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showSnackBar(
+                    SnackBar.showToastBar(
                         this@ManageAccountActivity,
                         "Could not update user."
                     )
@@ -125,14 +125,14 @@ class ManageAccountActivity : AppCompatActivity() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        SnackBar.showSnackBar(
+                        SnackBar.showToastBar(
                             this@ManageAccountActivity,
                             "Error updating account. Please try again later."
                         )
                     } else {
                         currentEmailTV.text = newEmail
                         loggedUserEmail = newEmail
-                        SnackBar.showSnackBar(
+                        SnackBar.showToastBar(
                             this@ManageAccountActivity,
                             "User email updated."
                         )
@@ -142,7 +142,7 @@ class ManageAccountActivity : AppCompatActivity() {
         )
     }
 
-    private fun initListeners() {
+    private fun setOnClickListeners() {
         emailLayout.setOnClickListener {
             setUpdateEmailDialog()
         }
@@ -168,7 +168,7 @@ class ManageAccountActivity : AppCompatActivity() {
                 retrofit.deleteUser(loggedUserEmail).enqueue(
                     object : retrofit2.Callback<ResponseBody> {
                         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                            SnackBar.showSnackBar(
+                            SnackBar.showToastBar(
                                 this@ManageAccountActivity,
                                 "Could not delete user."
                             )
@@ -185,7 +185,7 @@ class ManageAccountActivity : AppCompatActivity() {
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                 startActivity(intent)
                             } else {
-                                SnackBar.showSnackBar(
+                                SnackBar.showToastBar(
                                     this@ManageAccountActivity,
                                     "Error deleting account. Please try again later."
                                 )
@@ -193,7 +193,7 @@ class ManageAccountActivity : AppCompatActivity() {
                         }
                     }
                 )
-                SnackBar.showSnackBar(
+                SnackBar.showToastBar(
                     this@ManageAccountActivity,
                     "TODO delete account"
                 )
@@ -259,7 +259,7 @@ class ManageAccountActivity : AppCompatActivity() {
         retrofit.updatePassword(loggedUserEmail, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showSnackBar(
+                    SnackBar.showToastBar(
                         this@ManageAccountActivity,
                         "Could not update password."
                     )
@@ -271,12 +271,12 @@ class ManageAccountActivity : AppCompatActivity() {
                 ) {
                     if (response.raw().code() != 200) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
-                        SnackBar.showSnackBar(
+                        SnackBar.showToastBar(
                             this@ManageAccountActivity,
                             jObjError["message"] as String
                         )
                     } else {
-                        SnackBar.showSnackBar(
+                        SnackBar.showToastBar(
                             this@ManageAccountActivity,
                             "User password updated."
                         )
