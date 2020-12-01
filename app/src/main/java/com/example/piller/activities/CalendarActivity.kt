@@ -56,27 +56,15 @@ class CalendarActivity : AppCompatActivity() {
 
     private fun initializeViewModels() {
         weeklyCalendarViewModel = ViewModelProvider(this).get(WeeklyCalendarViewModel::class.java)
-        weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value= Array(7) { mutableListOf<CalendarEvent>() }
-
-        weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.observe(
-            this,
-            Observer { calendar ->
-                calendar?.let {
-                    val myFragment =
-                        supportFragmentManager.findFragmentByTag(DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID) as WeeklyCalendarFragment
-                    myFragment.changeCurrentCalendar(it)
-                    myFragment.updateRecyclersAndAdapters()
-                    //update current profile calendar
-                    profileViewModel.changeProfileCalendar(it)
-                }
-            })
+        weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value =
+            Array(7) { mutableListOf<CalendarEvent>() }
 
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         profileViewModel.setMainProfileAndEmail(mainProfile, loggedUserEmail)
         profileViewModel.mutableListOfProfiles.value = mutableListOf<Profile>()
         profileViewModel.getProfileListFromDB(mainProfile)
         profileViewModel.mutableCurrentProfileName.observe(this, Observer { profile ->
-            //update current profile
+        //update current profile
             profile?.let {
                 currentProfileTV.text = it
             }
