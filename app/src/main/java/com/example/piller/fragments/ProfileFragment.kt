@@ -63,17 +63,20 @@ class ProfileFragment : Fragment() {
     }
 
 
-    fun updateRecyclersAndAdapters() {
+    private fun updateRecyclersAndAdapters() {
         profileAdapter.setData(viewModel.getListOfProfiles())
         profileAdapter.notifyDataSetChanged()
     }
 
-    fun initRecyclersAndAdapters() {
+    private fun initRecyclersAndAdapters() {
         profileRecycle = fragmentView.findViewById(R.id.profile_list)
         // initiate list of profiles with recyclers and adapters
         val profileList = viewModel.getListOfProfiles()
         profileRecycle.layoutManager = LinearLayoutManager(fragmentView.context)
-        profileAdapter = ProfileAdapter(profileList, clickListener = { clickOnAddProfile(it) })
+        profileAdapter = ProfileAdapter(
+            profileList,
+            clickOnItemListener = { clickOnAddProfile(it) },
+            clickOnButtonListener = {clickOnDeleteProfile(it)})
         profileRecycle.adapter = profileAdapter
     }
 
@@ -84,8 +87,13 @@ class ProfileFragment : Fragment() {
 
     }
 
-    fun clickOnAddProfile(profileName: String) {
-        viewModel.changeCurrentProfileName(profileName)
+    private fun clickOnAddProfile(profileName: String) {
+        viewModel.setCurrentProfileName(profileName)
+    }
+
+    private fun clickOnDeleteProfile(profileName: String) {
+        //todo add confirmation popup
+        viewModel.deleteOneProfile(profileName)
     }
 
     private fun showAddProfileToUserWindow() {
