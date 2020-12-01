@@ -17,6 +17,8 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.fragments.ProfileFragment
 import com.example.piller.fragments.WeeklyCalendarFragment
+import com.example.piller.models.CalendarEvent
+import com.example.piller.models.Profile
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
@@ -56,24 +58,15 @@ class CalendarActivity : AppCompatActivity() {
 
     private fun initializeViewModels() {
         weeklyCalendarViewModel = ViewModelProvider(this).get(WeeklyCalendarViewModel::class.java)
+        weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value= Array(7) { mutableListOf<CalendarEvent>() }
 
-        weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.observe(
-            this,
-            Observer { calendar ->
-                calendar?.let {
-                    val myFragment =
-                        supportFragmentManager.findFragmentByTag(WEEKLY_CALENDAR_FRAGMENT_ID) as WeeklyCalendarFragment
-                    myFragment.changeCurrentCalendar(it)
-                    myFragment.updateRecyclersAndAdapters()
-                    //update current profile calendar
-                    profileViewModel.changeProfileCalendar(it)
-                }
-            })
+
 
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
-        profileViewModel.setProfileAndEmail(mainProfile, loggedUserEmail)
-        profileViewModel.getProfileListByUser(mainProfile)
-        profileViewModel.mutableCurrentProfile.observe(this, Observer { profile ->
+        profileViewModel.setMainProfileAndEmail(mainProfile, loggedUserEmail)
+        profileViewModel.mutableListOfProfiles.value = mutableListOf<Profile>()
+        profileViewModel.getProfileListFromDB(mainProfile)
+        profileViewModel.mutableCurrentProfileName.observe(this, Observer { profile ->
             //update current profile
             profile?.let {
                 currentProfileTV.text = it
@@ -164,14 +157,14 @@ class CalendarActivity : AppCompatActivity() {
                 true
             }
             R.id.menu_help -> {
-                SnackBar.showSnackBar(
+                SnackBar.showToastBar(
                     this@CalendarActivity,
                     "Help"
                 )
                 true
             }
             R.id.menu_logout -> {
-                SnackBar.showSnackBar(
+                SnackBar.showToastBar(
                     this@CalendarActivity,
                     "Logout"
                 )

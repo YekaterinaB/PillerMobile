@@ -7,9 +7,10 @@ import android.widget.ExpandableListView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
+import com.example.piller.models.CalendarEvent
 import com.example.piller.models.Profile
 
-class ProfileAdapter(private val dataSet: MutableList<Profile>,private val clickListener: (String)->Unit) :
+class ProfileAdapter(private var dataSet: MutableList<Profile>,private val clickListener: (String)->Unit) :
     RecyclerView.Adapter<ProfileAdapter.ViewHolder>() {
 
     /**
@@ -25,6 +26,9 @@ class ProfileAdapter(private val dataSet: MutableList<Profile>,private val click
             profileName = view.findViewById(R.id.profile_name)
 
         }
+    }
+    fun setData(data:MutableList<Profile>){
+        dataSet=data
     }
 
     // Create new views (invoked by the layout manager)
