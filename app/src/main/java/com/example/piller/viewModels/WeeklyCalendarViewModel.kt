@@ -1,17 +1,12 @@
 package com.example.piller.viewModels
 
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.piller.EventInterpreter
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.Profile
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
