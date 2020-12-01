@@ -25,6 +25,7 @@ class ProfileViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
+    private lateinit var mainProfile:String
     private lateinit var loggedEmail: String
 
     fun getCurrentProfileName(): String {
@@ -40,12 +41,13 @@ class ProfileViewModel : ViewModel() {
         return mutableListOfProfiles.value!!
     }
 
-    fun changeCurrentProfileName(profile: String) {
+    fun setCurrentProfileName(profile: String) {
         mutableCurrentProfileName.value = profile
     }
 
-    fun setMainProfileAndEmail(profile: String, email: String) {
-        changeCurrentProfileName(profile)
+    fun setMainProfileAndEmail(profileName: String, email: String) {
+        setCurrentProfileName(profileName)
+        mainProfile=profileName
         loggedEmail = email
     }
 
@@ -77,6 +79,18 @@ class ProfileViewModel : ViewModel() {
     }
 
 
+    private fun initProfileList(
+        response: Response<ResponseBody>, mainProfile: String
+    ) {
+        addProfileToProfileList(mainProfile)
+        val jObject = JSONObject(response.body()!!.string())
+        val profileListBody = jObject.get("profile_list") as JSONArray
+        for (i in 0 until profileListBody.length()) {
+            addProfileToProfileList(
+                profileListBody[i].toString()
+            )
+        }
+    }
 
     fun addProfileToProfileList(profieName: String) {
         mutableListOfProfiles.value!!.add(
@@ -92,26 +106,42 @@ class ProfileViewModel : ViewModel() {
         for (i in 0 until mutableListOfProfiles.value!!.size) {
             if (mutableListOfProfiles.value!![i].getProfileName() == profieName) {
                 mutableListOfProfiles.value!!.removeAt(i)
+                break
             }
         }
         mutableListOfProfiles.notifyObserver()
     }
 
 
-    private fun initProfileList(
-        response: Response<ResponseBody>, mainProfile: String
-    ) {
-        addProfileToProfileList(mainProfile)
-        val jObject = JSONObject(response.body()!!.string())
-        val profileListBody = jObject.get("profile_list") as JSONArray
-        for (i in 0 until profileListBody.length()) {
-            addProfileToProfileList(
-                profileListBody[i].toString()
-            )
-
+    fun deleteOneProfile(profileName: String){
+        if (getCurrentProfileName() == profileName){
+            setCurrentProfileName(mainProfile)
         }
-
+        deleteProfileFromProfileList(profileName)
+        deleteProfileFromDB(profileName)
     }
+
+
+    private fun deleteProfileFromDB(profileName: String){
+        val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
+        retrofit.deleteProfile(loggedEmail,profileName).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    mutableToastError.value = "Could not connect to server."
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        mutableToastError.value = "Could not delete profile."
+                    }
+                }
+            }
+        )
+    }
+
 
     fun getProfileListFromDB(mainProfile: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
@@ -134,6 +164,7 @@ class ProfileViewModel : ViewModel() {
             }
         )
     }
+
 
     fun addProfileToDB(profileName: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
