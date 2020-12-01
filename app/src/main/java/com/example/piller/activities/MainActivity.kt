@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
@@ -97,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         retrofit.resetPassword(email).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showSnackBar(
+                    SnackBar.showToastBar(
                         this@MainActivity,
                         "Could not reset password."
                     )
@@ -109,12 +108,12 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     if (response.raw().code() != 200) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
-                        SnackBar.showSnackBar(
+                        SnackBar.showToastBar(
                             this@MainActivity,
                             jObjError["message"] as String
                         )
                     } else {
-                        SnackBar.showSnackBar(
+                        SnackBar.showToastBar(
                             this@MainActivity,
                             "Reset email sent!"
                         )
@@ -156,37 +155,33 @@ class MainActivity : AppCompatActivity() {
 
                 when {
                     TextUtils.isEmpty(edtEmail.text.toString()) -> {
-                        Toast.makeText(
+                        SnackBar.showToastBar(
                             this@MainActivity,
-                            "Email cannot be null or empty",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            "Email cannot be null or empty"
+                        )
                         return@SingleButtonCallback
                     }
                     TextUtils.isEmpty(edtName.text.toString()) -> {
-                        Toast.makeText(
+                        SnackBar.showToastBar(
                             this@MainActivity,
-                            "Name cannot be null or empty",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            "Name cannot be null or empty"
+                        )
                         return@SingleButtonCallback
                     }
                     TextUtils.isEmpty(edtPassword.text.toString()) -> {
-                        Toast.makeText(
+                        SnackBar.showToastBar(
                             this@MainActivity,
-                            "Password cannot be null or empty",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                            "Password cannot be null or empty"
+                        )
                         return@SingleButtonCallback
                     }
                 }
-                CoroutineScope(Dispatchers.IO).launch {
-                    registerUser(
-                        edtEmail.text.toString(),
-                        edtName.text.toString(),
-                        edtPassword.text.toString()
-                    )
-                }
+                registerUser(
+                    edtEmail.text.toString(),
+                    edtName.text.toString(),
+                    edtPassword.text.toString()
+                )
+
             })
             .build()
             .show()
@@ -197,18 +192,17 @@ class MainActivity : AppCompatActivity() {
         //  Check if empty
         when {
             TextUtils.isEmpty(email) -> {
-                Toast.makeText(
+                SnackBar.showToastBar(
+
                     this@MainActivity,
-                    "Email cannot be null or empty",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    "Email cannot be null or empty"
+                )
             }
             TextUtils.isEmpty(password) -> {
-                Toast.makeText(
+                SnackBar.showToastBar(
                     this@MainActivity,
-                    "Password cannot be null or empty",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    "Password cannot be null or empty"
+                )
             }
             else -> {
                 //  remember email and password if the user wants to
@@ -217,9 +211,8 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     updateAppPreferences(false, "", "")
                 }
-                CoroutineScope(Dispatchers.IO).launch {
-                    loginUser(email, password)
-                }
+                loginUser(email, password)
+
             }
         }
     }
@@ -237,7 +230,7 @@ class MainActivity : AppCompatActivity() {
         retrofit.registerUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showSnackBar(
+                    SnackBar.showToastBar(
                         this@MainActivity,
                         "Could not connect to server."
                     )
@@ -248,7 +241,7 @@ class MainActivity : AppCompatActivity() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        SnackBar.showSnackBar(
+                        SnackBar.showToastBar(
                             this@MainActivity,
                             "A user with this email already exists."
                         )
@@ -265,7 +258,7 @@ class MainActivity : AppCompatActivity() {
         retrofit.loginUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showSnackBar(this@MainActivity, "Could not connect to server.")
+                    SnackBar.showToastBar(this@MainActivity, "Could not connect to server.")
                 }
 
                 override fun onResponse(
@@ -273,7 +266,7 @@ class MainActivity : AppCompatActivity() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        SnackBar.showSnackBar(
+                        SnackBar.showToastBar(
                             this@MainActivity,
                             "User does not exist, check your login information."
                         )
