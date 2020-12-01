@@ -14,17 +14,17 @@ import retrofit2.Response
 
 class ProfileViewModel : ViewModel() {
     private val profileList = mutableListOf<Profile>()
-    val mutableCurrentProfile : MutableLiveData<String> by lazy{
+    val mutableCurrentProfile: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
-    lateinit var currentProfile:String
+    lateinit var currentProfile: String
     private lateinit var loggedEmail: String
 
 
-    fun getCurrentProfile():Profile{
+    fun getCurrentProfile(): Profile {
         val list = getProfileList()
-        val curProfile=getCurrentProfileName()
-        var profile=Profile(curProfile, emptyArray())
+        val curProfile = getCurrentProfileName()
+        var profile = Profile(curProfile, emptyArray(), emptyArray())
         for (i in 0 until list.size) {
             if (list[i].getProfileName() == curProfile) {
                 profile = list[i]
@@ -33,9 +33,9 @@ class ProfileViewModel : ViewModel() {
         return profile
     }
 
-    fun changeProfileCalendar(weeklyCalendar:Array<MutableList<CalendarEvent>>){
+    fun changeProfileCalendar(weeklyCalendar: Array<MutableList<CalendarEvent>>) {
         val list = getProfileList()
-        val curProfile=getCurrentProfileName()
+        val curProfile = getCurrentProfileName()
         for (i in 0 until list.size) {
             if (list[i].getProfileName() == curProfile) {
                 list[i].setWeeklyCalendar(weeklyCalendar)
@@ -45,13 +45,13 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun getCurrentProfileName(): String {
-      return currentProfile
+        return currentProfile
     }
 
     fun getCurrentEmail(): String {
         return loggedEmail
     }
-    
+
 
     fun getProfileList(): MutableList<Profile> {
         return profileList
@@ -59,7 +59,7 @@ class ProfileViewModel : ViewModel() {
 
     fun changeCurrentProfileLiveAndRegular(profile: String) {
         mutableCurrentProfile.value = profile
-        currentProfile=profile
+        currentProfile = profile
     }
 
     fun setProfileAndEmail(profile: String, email: String) {
@@ -94,6 +94,7 @@ class ProfileViewModel : ViewModel() {
         profileList.add(
             Profile(
                 mainProfile,
+                emptyArray(),
                 emptyArray()
             )
         )
@@ -103,6 +104,7 @@ class ProfileViewModel : ViewModel() {
             profileList.add(
                 Profile(
                     profileListBody[i].toString(),
+                    emptyArray(),
                     emptyArray()
                 )
             )

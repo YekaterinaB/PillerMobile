@@ -273,9 +273,10 @@ class MainActivity : AppCompatActivity() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
                         SnackBar.showSnackBar(
                             this@MainActivity,
-                            "User does not exist, check your login information."
+                            jObjError["message"] as String
                         )
                     } else {
 

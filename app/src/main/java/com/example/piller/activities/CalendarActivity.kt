@@ -15,15 +15,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.fragments.FullViewFragment
 import com.example.piller.fragments.ProfileFragment
 import com.example.piller.fragments.WeeklyCalendarFragment
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
-val WEEKLY_CALENDAR_FRAGMENT_ID = "weekly_calendar"
-val PROFILES_FRAGMENT_ID = "profiles"
 
 
 class CalendarActivity : AppCompatActivity() {
@@ -62,7 +60,7 @@ class CalendarActivity : AppCompatActivity() {
             Observer { calendar ->
                 calendar?.let {
                     val myFragment =
-                        supportFragmentManager.findFragmentByTag(WEEKLY_CALENDAR_FRAGMENT_ID) as WeeklyCalendarFragment
+                        supportFragmentManager.findFragmentByTag(DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID) as WeeklyCalendarFragment
                     myFragment.changeCurrentCalendar(it)
                     myFragment.updateRecyclersAndAdapters()
                     //update current profile calendar
@@ -88,7 +86,7 @@ class CalendarActivity : AppCompatActivity() {
             val f1 = WeeklyCalendarFragment()
             val fragmentTransaction: FragmentTransaction =
                 supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.container, f1, WEEKLY_CALENDAR_FRAGMENT_ID)
+            fragmentTransaction.add(R.id.container, f1, DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
             fragmentTransaction.commit()
         }
     }
@@ -113,17 +111,16 @@ class CalendarActivity : AppCompatActivity() {
                 R.id.navigation_home -> {
                     toolbar.title = "Piller"
                     val weeklyCalendarFragment = WeeklyCalendarFragment.newInstance()
-                    openFragment(weeklyCalendarFragment, WEEKLY_CALENDAR_FRAGMENT_ID)
+                    openFragment(weeklyCalendarFragment, DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_profile -> {
                     toolbar.title = "Profiles"
                     val profileFragment = ProfileFragment.newInstance()
-                    openFragment(profileFragment, PROFILES_FRAGMENT_ID)
+                    openFragment(profileFragment, DbConstants.PROFILES_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_drugs -> {
-
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_supervisors -> {
@@ -131,7 +128,9 @@ class CalendarActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_full_view -> {
-
+                    toolbar.title = "Full View"
+                    val fullViewFragment = FullViewFragment.newInstance()
+                    openFragment(fullViewFragment, DbConstants.FULL_VIEW_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
             }
