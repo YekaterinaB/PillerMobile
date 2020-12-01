@@ -25,7 +25,7 @@ class ProfileViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
-    private lateinit var mainProfile:String
+    private lateinit var mainProfile: String
 
     private lateinit var loggedEmail: String
 
@@ -48,7 +48,7 @@ class ProfileViewModel : ViewModel() {
 
     fun setMainProfileAndEmail(profileName: String, email: String) {
         setCurrentProfileName(profileName)
-        mainProfile=profileName
+        mainProfile = profileName
         loggedEmail = email
     }
 
@@ -56,8 +56,8 @@ class ProfileViewModel : ViewModel() {
     fun getCurrentProfile(): Profile {
         val list = getListOfProfiles()
         val curProfile = getCurrentProfileName()
-        var profile = Profile(curProfile, Array(7) { mutableListOf<CalendarEvent>() })
-      
+        var profile = Profile(curProfile, Array(7) { mutableListOf<CalendarEvent>() }, emptyArray())
+
         //find profile from list
         for (i in 0 until list.size) {
             if (list[i].getProfileName() == curProfile) {
@@ -82,7 +82,6 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-
     private fun initProfileList(
         response: Response<ResponseBody>, mainProfile: String
     ) {
@@ -96,11 +95,13 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
+
     fun addProfileToProfileList(profieName: String) {
         mutableListOfProfiles.value!!.add(
             Profile(
                 profieName,
-                Array(7) { mutableListOf<CalendarEvent>() }
+                Array(7) { mutableListOf<CalendarEvent>() },
+                emptyArray()
             )
         )
         mutableListOfProfiles.notifyObserver()
@@ -117,8 +118,8 @@ class ProfileViewModel : ViewModel() {
     }
 
 
-    fun deleteOneProfile(profileName: String){
-        if (getCurrentProfileName() == profileName){
+    fun deleteOneProfile(profileName: String) {
+        if (getCurrentProfileName() == profileName) {
             setCurrentProfileName(mainProfile)
         }
         deleteProfileFromProfileList(profileName)
@@ -126,9 +127,9 @@ class ProfileViewModel : ViewModel() {
     }
 
 
-    private fun deleteProfileFromDB(profileName: String){
+    private fun deleteProfileFromDB(profileName: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.deleteProfile(loggedEmail,profileName).enqueue(
+        retrofit.deleteProfile(loggedEmail, profileName).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -169,28 +170,6 @@ class ProfileViewModel : ViewModel() {
         )
     }
 
-
-    private fun initProfileList(
-        response: Response<ResponseBody>, mainProfile: String
-    ) {
-        profileList.add(
-            Profile(
-                mainProfile,
-                emptyArray(),
-                emptyArray()
-            )
-        )
-        val jObject = JSONObject(response.body()!!.string())
-        val profileListBody = jObject.get("profile_list") as JSONArray
-        for (i in 0 until profileListBody.length()) {
-            profileList.add(
-                Profile(
-                    profileListBody[i].toString(),
-                    emptyArray(),
-                    emptyArray()
-                )
-            )
-        }
 
     fun addProfileToDB(profileName: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
