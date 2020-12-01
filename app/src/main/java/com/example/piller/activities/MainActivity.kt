@@ -223,5 +223,74 @@ class MainActivity : AppCompatActivity() {
         AppPreferences.password = password
     }
 
+    private fun registerUser(email: String, name: String, password: String) {
+        val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
+        val user = User(email = email, name = name, password = password)
+        retrofit.registerUser(user).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    SnackBar.showSnackBar(
+                        this@MainActivity,
+                        "Could not connect to server."
+                    )
+                }
 
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        SnackBar.showSnackBar(
+                            this@MainActivity,
+                            "A user with this email already exists."
+                        )
+
+                    }
+                }
+            }
+        )
+    }
+
+    private fun loginUser(email: String, password: String) {
+        val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
+        val user = User(email = email, name = "", password = password)
+        retrofit.loginUser(user).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    SnackBar.showSnackBar(this@MainActivity, "Could not connect to server.")
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        SnackBar.showSnackBar(
+                            this@MainActivity,
+                            jObjError["message"] as String
+                        )
+                    } else {
+
+                        val jObject = JSONObject(response.body()!!.string())
+                        //go to the next activity
+                        val intent = Intent(
+                            this@MainActivity,
+                            CalendarActivity::class.java
+                        )
+                        intent.putExtra(
+                            DbConstants.LOGGED_USER_EMAIL,
+                            jObject.get("email").toString()
+                        )
+                        intent.putExtra(
+                            DbConstants.LOGGED_USER_NAME,
+                            jObject.get("name").toString()
+                        )
+                        startActivity(intent)
+                    }
+                }
+            }
+        )
+
+    }
 }

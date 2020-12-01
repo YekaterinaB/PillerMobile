@@ -26,6 +26,7 @@ class ProfileViewModel : ViewModel() {
     }
 
     private lateinit var mainProfile:String
+
     private lateinit var loggedEmail: String
 
     fun getCurrentProfileName(): String {
@@ -56,6 +57,7 @@ class ProfileViewModel : ViewModel() {
         val list = getListOfProfiles()
         val curProfile = getCurrentProfileName()
         var profile = Profile(curProfile, Array(7) { mutableListOf<CalendarEvent>() })
+      
         //find profile from list
         for (i in 0 until list.size) {
             if (list[i].getProfileName() == curProfile) {
@@ -65,8 +67,10 @@ class ProfileViewModel : ViewModel() {
         return profile
     }
 
+
     fun changeCalendarForCurrentProfile(weeklyCalendar: Array<MutableList<CalendarEvent>>) {
         val list = getListOfProfiles()
+
         val curProfile = getCurrentProfileName()
         for (i in 0 until list.size) {
             if (list[i].getProfileName() == curProfile) {
@@ -165,6 +169,28 @@ class ProfileViewModel : ViewModel() {
         )
     }
 
+
+    private fun initProfileList(
+        response: Response<ResponseBody>, mainProfile: String
+    ) {
+        profileList.add(
+            Profile(
+                mainProfile,
+                emptyArray(),
+                emptyArray()
+            )
+        )
+        val jObject = JSONObject(response.body()!!.string())
+        val profileListBody = jObject.get("profile_list") as JSONArray
+        for (i in 0 until profileListBody.length()) {
+            profileList.add(
+                Profile(
+                    profileListBody[i].toString(),
+                    emptyArray(),
+                    emptyArray()
+                )
+            )
+        }
 
     fun addProfileToDB(profileName: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)

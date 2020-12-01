@@ -1,29 +1,26 @@
 package com.example.piller
 
 import com.example.piller.models.CalendarEvent
-import com.google.gson.JsonArray
-import com.squareup.moshi.Json
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class EventInterpreter {
-
     fun getEventsForCalendarByDate(
         start: Date,
         end: Date,
         drugList: JSONArray
     ): Array<MutableList<CalendarEvent>> {
         val daysBetween = getDaysBetween(start, end) + 1
-        var eventList = Array(daysBetween, { mutableListOf<CalendarEvent>() })
+        val eventList = Array(daysBetween) { mutableListOf<CalendarEvent>() }
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
             val drugName = drug.get("drug") as String
             val drugInfo = drug.get("drug_info") as JSONObject
             val drugEventList = getDrugEvent(drugName, drugInfo, start, end)
             // put all event in array
-            if (!drugEventList.isEmpty()) {
+            if (drugEventList.isNotEmpty()) {
                 for (j in 0 until drugEventList.size) {
                     val indexDay = drugEventList[j].index_day
                     eventList[indexDay].add(drugEventList[j])
@@ -34,12 +31,8 @@ class EventInterpreter {
     }
 
     private fun getDaysBetween(first: Date, second: Date): Int {
-        val calendarFirst = Calendar.getInstance()
-        calendarFirst.time = first
-
-        val calendarSecond = Calendar.getInstance()
-        calendarSecond.time = second
-        return calendarSecond.get(Calendar.DAY_OF_WEEK) - calendarFirst.get(Calendar.DAY_OF_WEEK)
+        val diff: Long = second.time - first.time
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
     }
 
     private fun getDrugEvent(
@@ -92,7 +85,7 @@ class EventInterpreter {
 
     private fun isInRepeat(current: Int, repeat: List<Int>): Boolean {
         var isIn = false
-        for (i in 0 until repeat.size) {
+        for (i in repeat.indices) {
             if (repeat[i] == -1 || repeat[i] == current) {
                 isIn = true
                 break
@@ -104,25 +97,25 @@ class EventInterpreter {
     fun getFirstDayOfWeek(): Date {
         // get start of this week in milliseconds
         val cal: Calendar = Calendar.getInstance()
-        cal.set(Calendar.DAY_OF_WEEK, cal.firstDayOfWeek);
+        cal.set(Calendar.DAY_OF_WEEK, cal.firstDayOfWeek)
         return cal.time
     }
 
     fun getLastDayOfWeek(): Date {
         val cal: Calendar = Calendar.getInstance()
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
         return cal.time
     }
 
     fun getFirstDayOfMonth(): Date {
         val cal: Calendar = Calendar.getInstance()
-        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.DAY_OF_MONTH, 1)
         return cal.time
     }
 
     fun getLastDayOfMonth(): Date {
         val cal: Calendar = Calendar.getInstance()
-        cal.set(Calendar.DAY_OF_MONTH, -1);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
         return cal.time
     }
 }
