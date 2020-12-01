@@ -46,7 +46,7 @@ class ManageAccountActivity : AppCompatActivity() {
         loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
 
         setCurrentUserProperties()
-        initListeners()
+        setOnClickListeners()
     }
 
     private fun setUpdateEmailDialogViews(
@@ -142,7 +142,7 @@ class ManageAccountActivity : AppCompatActivity() {
         )
     }
 
-    private fun initListeners() {
+    private fun setOnClickListeners() {
         emailLayout.setOnClickListener {
             setUpdateEmailDialog()
         }

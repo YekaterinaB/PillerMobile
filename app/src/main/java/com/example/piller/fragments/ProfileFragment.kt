@@ -19,9 +19,6 @@ import com.example.piller.viewModels.ProfileViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.fragment_profile.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
     private val viewModel: ProfileViewModel by activityViewModels()
@@ -82,7 +79,7 @@ class ProfileFragment : Fragment() {
 
     private fun setOnClickListeners() {
         fragmentView.add_profile_button.setOnClickListener {
-            addProfileToUserPopUp()
+            showAddProfileToUserWindow()
         }
 
     }
@@ -91,7 +88,7 @@ class ProfileFragment : Fragment() {
         viewModel.changeCurrentProfileName(profileName)
     }
 
-    private fun addProfileToUserPopUp() {
+    private fun showAddProfileToUserWindow() {
         val itemView = LayoutInflater.from(this.context)
             .inflate(R.layout.add_profile_layout, null)
 

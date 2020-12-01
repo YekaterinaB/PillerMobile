@@ -54,6 +54,7 @@ class ProfileViewModel : ViewModel() {
         val list = getListOfProfiles()
         val curProfile = getCurrentProfileName()
         var profile = Profile(curProfile, Array(7) { mutableListOf<CalendarEvent>() })
+        //find profile from list
         for (i in 0 until list.size) {
             if (list[i].getProfileName() == curProfile) {
                 profile = list[i]
