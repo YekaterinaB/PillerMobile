@@ -62,7 +62,9 @@ class CalendarActivity : AppCompatActivity() {
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         profileViewModel.setMainProfileAndEmail(mainProfile, loggedUserEmail)
         profileViewModel.mutableListOfProfiles.value = mutableListOf<Profile>()
-        profileViewModel.getProfileListFromDB(mainProfile)
+        // add main profile to profile list and get profile list from db
+        profileViewModel.addProfileToProfileList(mainProfile)
+        profileViewModel.initProfileListFromDB(mainProfile)
         profileViewModel.mutableCurrentProfileName.observe(this, Observer { profile ->
         //update current profile
             profile?.let {

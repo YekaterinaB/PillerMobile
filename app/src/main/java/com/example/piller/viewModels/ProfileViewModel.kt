@@ -82,10 +82,9 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    private fun initProfileList(
-        response: Response<ResponseBody>, mainProfile: String
+    private fun initSecondaryProfileList(
+        response: Response<ResponseBody>
     ) {
-        addProfileToProfileList(mainProfile)
         val jObject = JSONObject(response.body()!!.string())
         val profileListBody = jObject.get("profile_list") as JSONArray
         for (i in 0 until profileListBody.length()) {
@@ -147,10 +146,9 @@ class ProfileViewModel : ViewModel() {
         )
     }
 
-
-    fun getProfileListFromDB(mainProfile: String) {
+    fun initProfileListFromDB(mainProfile: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.getAllProfilesByEmail(loggedEmail).enqueue(
+        retrofit.initProfileList(loggedEmail,mainProfile).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -163,7 +161,30 @@ class ProfileViewModel : ViewModel() {
                     if (response.raw().code() != 200) {
                         mutableToastError.value = "Could not get profile list."
                     } else {
-                        initProfileList(response, mainProfile)
+                        getProfileListFromDB()
+                    }
+                }
+            }
+        )
+    }
+
+
+    fun getProfileListFromDB() {
+        val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
+        retrofit.getAllProfilesByEmail(loggedEmail).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    mutableToastError.value = "Could not connect to server."
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        mutableToastError.value = "Could not init profile list."
+                    } else {
+                        initSecondaryProfileList(response)
                     }
                 }
             }

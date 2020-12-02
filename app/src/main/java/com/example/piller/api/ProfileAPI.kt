@@ -8,16 +8,25 @@ interface ProfileAPI {
     @Headers("Content-Type: application/json")
 
     @GET("profile/{email}")
-    fun getAllProfilesByEmail(@Path("email")email:String): Call<ResponseBody>
+    fun getAllProfilesByEmail(@Path("email") email: String): Call<ResponseBody>
 
-    @POST("profile/{email}/{name}")
-    fun addProfileToUser(@Path("email")email:String,@Path("name")name:String): Call<ResponseBody>
+    @POST("profile/{email}/{mainProfile}")
+    fun initProfileList(
+        @Path("email") email: String,
+        @Path("mainProfile") mainProfile: String
+    ): Call<ResponseBody>
+
+    @PUT("profile/{email}/{name}")
+    fun addProfileToUser(
+        @Path("email") email: String,
+        @Path("name") name: String
+    ): Call<ResponseBody>
 
     @DELETE("profile/{email}")
-    fun deleteAllProfiles(@Path("email")email:String): Call<ResponseBody>
+    fun deleteAllProfiles(@Path("email") email: String): Call<ResponseBody>
 
     @DELETE("profile/{email}/{name}")
-    fun deleteProfile(@Path("email")email:String,@Path("name")name:String): Call<ResponseBody>
+    fun deleteProfile(@Path("email") email: String, @Path("name") name: String): Call<ResponseBody>
 
 
 }
