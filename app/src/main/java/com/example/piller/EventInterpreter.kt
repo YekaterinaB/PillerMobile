@@ -31,7 +31,14 @@ class EventInterpreter {
     }
 
     private fun getDaysBetween(first: Date, second: Date): Int {
-        val diff: Long = second.time - first.time
+        val firstCal = Calendar.getInstance()
+        firstCal.time = first
+        firstCal.set(Calendar.HOUR_OF_DAY, 0)
+        val secondCal = Calendar.getInstance()
+        secondCal.time = second
+        secondCal.set(Calendar.HOUR_OF_DAY, 0)
+
+        val diff: Long = secondCal.timeInMillis - firstCal.timeInMillis
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
     }
 
@@ -117,5 +124,13 @@ class EventInterpreter {
         val cal: Calendar = Calendar.getInstance()
         cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
         return cal.time
+    }
+
+    fun getFirstAndLastDaysOfSpecificMonth(calendar: Calendar): Pair<Date, Date> {
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        val firstDay = calendar.time
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+        val lastDay = calendar.time
+        return Pair(firstDay, lastDay)
     }
 }
