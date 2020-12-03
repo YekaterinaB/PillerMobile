@@ -17,10 +17,6 @@
         android:icon="@drawable/ic_add_drug"
         android:title="Add Drugs"/>
 
-    <item
-        android:id="@+id/navigation_supervisors"
-        android:icon="@drawable/ic_supervisors"
-        android:title="Supervisors"/>
 
     <item
         android:id="@+id/navigation_profile"
