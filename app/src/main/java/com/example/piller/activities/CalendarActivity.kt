@@ -115,10 +115,7 @@ class CalendarActivity : AppCompatActivity() {
                 R.id.navigation_drugs -> {
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.navigation_supervisors -> {
 
-                    return@OnNavigationItemSelectedListener true
-                }
                 R.id.navigation_full_view -> {
                     toolbar.title = "Full View"
                     val fullViewFragment = FullViewFragment.newInstance()

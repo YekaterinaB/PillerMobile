@@ -23,6 +23,7 @@ import org.json.JSONObject
 class ManageAccountActivity : AppCompatActivity() {
     private lateinit var viewModel: ManageAccountViewModel
     private lateinit var toolbar: Toolbar
+    private lateinit var supervisorsLayout: ConstraintLayout
     private lateinit var emailLayout: ConstraintLayout
     private lateinit var currentEmailTV: TextView
     private lateinit var passwordLayout: ConstraintLayout
@@ -30,17 +31,19 @@ class ManageAccountActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initViewModels()
+        viewModel.loggedUserEmail.value = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        viewModel.loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+
         setContentView(R.layout.activity_manage_account)
         toolbar = findViewById(R.id.manage_account_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        initViewModels()
         initViews()
         setOnClickListeners()
         setViewModelsObservers()
 
-        viewModel.loggedUserEmail.value = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        viewModel.loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+
     }
 
     private fun initViewModels() {
@@ -143,6 +146,22 @@ class ManageAccountActivity : AppCompatActivity() {
 
         deleteLayout.setOnClickListener {
             setDeleteAccountDialog()
+        }
+
+        supervisorsLayout.setOnClickListener{
+            val intent = Intent(
+                this@ManageAccountActivity,
+                ManageSupervisorsActivity::class.java
+            )
+            intent.putExtra(
+                DbConstants.LOGGED_USER_EMAIL,
+                viewModel.loggedUserEmail.value!!
+            )
+            intent.putExtra(
+                DbConstants.LOGGED_USER_NAME,
+                viewModel.loggedUserName
+            )
+            startActivity(intent)
         }
     }
 
@@ -302,6 +321,7 @@ class ManageAccountActivity : AppCompatActivity() {
         currentEmailTV = findViewById(R.id.ma_current_email)
         passwordLayout = findViewById(R.id.ma_password_layout)
         deleteLayout = findViewById(R.id.ma_delete_layout)
+        supervisorsLayout=findViewById(R.id.ma_manage_supervisors_layout)
     }
 
     override fun onSupportNavigateUp(): Boolean {
