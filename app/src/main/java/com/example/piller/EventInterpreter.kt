@@ -58,9 +58,15 @@ class EventInterpreter {
         var calendarCurrent = Calendar.getInstance()
         calendarCurrent.time = start
         val calendarStartRepeat = Calendar.getInstance()
+        calendarStartRepeat.timeInMillis = repeatStart
+        //  set calendar to end date plus 1 day and set it to hour 00:00, that way when we check whether
+        //  an event is between the start day and the end day -  it will surely be in time
+        val calendarEnd = Calendar.getInstance()
+        calendarEnd.time = end
+        calendarEnd.add(Calendar.DATE, 1)
+        calendarEnd.set(Calendar.HOUR_OF_DAY, 0)
 
         // if the start intake is after start day
-        calendarStartRepeat.setTimeInMillis(repeatStart)
         if (calendarCurrent.time.before(calendarStartRepeat.time)) {
             calendarCurrent = calendarStartRepeat
         }
@@ -68,7 +74,7 @@ class EventInterpreter {
         // check days between actual start date and the new start date
         var indexDay = getDaysBetween(start, calendarCurrent.time)
 
-        while (calendarCurrent.time < end) {
+        while (calendarCurrent.time < calendarEnd.time) {
             val dayOfWeek: Int = calendarCurrent.get(Calendar.DAY_OF_WEEK)
             val numberOfWeek: Int = calendarCurrent.get(Calendar.WEEK_OF_MONTH)
             val dayOfMonth: Int = calendarCurrent.get(Calendar.DAY_OF_MONTH)
