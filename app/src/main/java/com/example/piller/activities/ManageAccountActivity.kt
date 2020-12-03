@@ -11,27 +11,22 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
-import com.example.piller.api.ServiceBuilder
-import com.example.piller.api.UserAPI
-import com.example.piller.models.User
 import com.example.piller.utilities.DbConstants
-import okhttp3.ResponseBody
+import com.example.piller.viewModels.ManageAccountViewModel
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Response
 
 
 class ManageAccountActivity : AppCompatActivity() {
+    private lateinit var viewModel: ManageAccountViewModel
     private lateinit var toolbar: Toolbar
-    private lateinit var loggedUserEmail: String
-    private lateinit var loggedUserName: String
     private lateinit var emailLayout: ConstraintLayout
     private lateinit var currentEmailTV: TextView
     private lateinit var passwordLayout: ConstraintLayout
     private lateinit var deleteLayout: ConstraintLayout
-    private val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +34,42 @@ class ManageAccountActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.manage_account_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        initViewModels()
         initViews()
-
-        loggedUserEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
-
-        setCurrentUserProperties()
         setOnClickListeners()
+        setViewModelsObservers()
+
+        viewModel.loggedUserEmail.value = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        viewModel.loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+    }
+
+    private fun initViewModels() {
+        viewModel = ViewModelProvider(this).get(ManageAccountViewModel::class.java)
+    }
+
+    private fun setViewModelsObservers() {
+        viewModel.loggedUserEmail.observe(this, Observer { loggedEmail ->
+            //update current logged email
+            currentEmailTV.text = loggedEmail
+        })
+
+        viewModel.snackBarMessage.observe(this, Observer { message ->
+            run {
+                if (message.isNotEmpty()) {
+                    SnackBar.showToastBar(this, message)
+                }
+            }
+        })
+
+        viewModel.goToMainActivity.observe(this, Observer { goToMainActivity ->
+            if (goToMainActivity) {
+                //  go back to login activity
+                val intent = Intent(applicationContext, MainActivity::class.java)
+                //  close all previous activities
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+            }
+        })
     }
 
     private fun setUpdateEmailDialogViews(
@@ -100,46 +123,13 @@ class ManageAccountActivity : AppCompatActivity() {
             callback = {
                 val newEmail = emailInput.text.toString()
                 val password = passwordInput.text.toString()
-                if (loggedUserEmail != emailInput.text.toString()
+                if (viewModel.loggedUserEmail.value != emailInput.text.toString()
                     && newEmail.isNotEmpty()
                     && password.isNotEmpty()
                 ) {
-                    val updatedUser = User(newEmail, loggedUserName, password)
-                    sendRetrofitUpdateEmail(updatedUser, newEmail)
+                    viewModel.updateUserEmail(newEmail, password, this)
                 }
             })
-    }
-
-    private fun sendRetrofitUpdateEmail(updatedUser: User, newEmail: String) {
-        retrofit.updateUser(loggedUserEmail, updatedUser).enqueue(
-            object : retrofit2.Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showToastBar(
-                        this@ManageAccountActivity,
-                        "Could not update user."
-                    )
-                }
-
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if (response.raw().code() != 200) {
-                        SnackBar.showToastBar(
-                            this@ManageAccountActivity,
-                            "Error updating account. Please try again later."
-                        )
-                    } else {
-                        currentEmailTV.text = newEmail
-                        loggedUserEmail = newEmail
-                        SnackBar.showToastBar(
-                            this@ManageAccountActivity,
-                            "User email updated."
-                        )
-                    }
-                }
-            }
-        )
     }
 
     private fun setOnClickListeners() {
@@ -164,40 +154,7 @@ class ManageAccountActivity : AppCompatActivity() {
             "Delete Account",
             "Delete",
             arrayOf(label),
-            callback = {
-                retrofit.deleteUser(loggedUserEmail).enqueue(
-                    object : retrofit2.Callback<ResponseBody> {
-                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                            SnackBar.showToastBar(
-                                this@ManageAccountActivity,
-                                "Could not delete user."
-                            )
-                        }
-
-                        override fun onResponse(
-                            call: Call<ResponseBody>,
-                            response: Response<ResponseBody>
-                        ) {
-                            if (response.raw().code() == 200) {
-                                //  go back to login activity
-                                val intent = Intent(applicationContext, MainActivity::class.java)
-                                //  close all previous activities
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                startActivity(intent)
-                            } else {
-                                SnackBar.showToastBar(
-                                    this@ManageAccountActivity,
-                                    "Error deleting account. Please try again later."
-                                )
-                            }
-                        }
-                    }
-                )
-                SnackBar.showToastBar(
-                    this@ManageAccountActivity,
-                    "TODO delete account"
-                )
-            })
+            callback = { viewModel.deleteUser() })
     }
 
     private fun setUpdatePasswordDialog() {
@@ -248,43 +205,13 @@ class ManageAccountActivity : AppCompatActivity() {
         val confNewPassword = confNewPasswordInput.text.toString()
         if (arePasswordsValid(oldPassword, newPassword, confNewPassword)) {
             val updatedUser = JSONObject()
-            updatedUser.put("email", loggedUserEmail)
+            updatedUser.put("email", viewModel.loggedUserEmail.value)
             updatedUser.put("password", newPassword)
             updatedUser.put("oldPassword", oldPassword)
-            sendRetrofitUpdatePassword(updatedUser)
+            viewModel.updatePassword(updatedUser)
         }
     }
 
-    private fun sendRetrofitUpdatePassword(updatedUser: JSONObject) {
-        retrofit.updatePassword(loggedUserEmail, updatedUser).enqueue(
-            object : retrofit2.Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    SnackBar.showToastBar(
-                        this@ManageAccountActivity,
-                        "Could not update password."
-                    )
-                }
-
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if (response.raw().code() != 200) {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        SnackBar.showToastBar(
-                            this@ManageAccountActivity,
-                            jObjError["message"] as String
-                        )
-                    } else {
-                        SnackBar.showToastBar(
-                            this@ManageAccountActivity,
-                            "User password updated."
-                        )
-                    }
-                }
-            }
-        )
-    }
 
     private fun arePasswordsValid(
         oldPassword: String,
@@ -375,10 +302,6 @@ class ManageAccountActivity : AppCompatActivity() {
         currentEmailTV = findViewById(R.id.ma_current_email)
         passwordLayout = findViewById(R.id.ma_password_layout)
         deleteLayout = findViewById(R.id.ma_delete_layout)
-    }
-
-    private fun setCurrentUserProperties() {
-        currentEmailTV.text = loggedUserEmail
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -66,13 +66,11 @@ class CalendarActivity : AppCompatActivity() {
         profileViewModel.addProfileToProfileList(mainProfile)
         profileViewModel.initProfileListFromDB(mainProfile)
         profileViewModel.mutableCurrentProfileName.observe(this, Observer { profile ->
-        //update current profile
+            //update current profile
             profile?.let {
                 currentProfileTV.text = it
             }
         })
-
-
     }
 
     private fun initializeFragment(savedInstanceState: Bundle?) {
