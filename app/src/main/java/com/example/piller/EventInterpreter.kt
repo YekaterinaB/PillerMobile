@@ -120,16 +120,34 @@ class EventInterpreter {
         return cal.time
     }
 
-    fun getFirstDayOfMonth(): Date {
+    fun getFirstDayOfSpecificMonth(date: Date): Date {
         val cal: Calendar = Calendar.getInstance()
+        cal.time = date
+        //  set time to 00:00:00
         cal.set(Calendar.DAY_OF_MONTH, 1)
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        return cal.time
+    }
+
+    fun getFirstDayOfMonth(): Date {
+        return getFirstDayOfSpecificMonth(Calendar.getInstance().time)
+    }
+
+    fun getLastDayOfSpecificMonth(date: Date): Date {
+        val cal: Calendar = Calendar.getInstance()
+        cal.time = date
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
+        //  set time to 23:59:59
+        cal.set(Calendar.HOUR_OF_DAY, 11)
+        cal.set(Calendar.MINUTE, 59)
+        cal.set(Calendar.SECOND, 59)
         return cal.time
     }
 
     fun getLastDayOfMonth(): Date {
-        val cal: Calendar = Calendar.getInstance()
-        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
-        return cal.time
+        return getLastDayOfSpecificMonth(Calendar.getInstance().time)
     }
 
     fun getFirstAndLastDaysOfSpecificMonth(calendar: Calendar): Pair<Date, Date> {

@@ -1,6 +1,5 @@
 package com.example.piller.listAdapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
 import java.text.SimpleDateFormat
-import java.util.*
 
 class EliAdapter(private var dataSet: MutableList<CalendarEvent>) :
     RecyclerView.Adapter<EliAdapter.ViewHolder>() {
@@ -31,9 +29,11 @@ class EliAdapter(private var dataSet: MutableList<CalendarEvent>) :
             isTaken = view.findViewById(R.id.eli_is_taken)
         }
     }
-    fun setData(data:MutableList<CalendarEvent>){
-        dataSet=data
+
+    fun setData(data: MutableList<CalendarEvent>) {
+        dataSet = data
     }
+
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
@@ -48,11 +48,11 @@ class EliAdapter(private var dataSet: MutableList<CalendarEvent>) :
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        val currentItem=dataSet[position]
+        val currentItem = dataSet[position]
         viewHolder.drugName.text = currentItem.drug_name
         val time = SimpleDateFormat("HH:mm").format(currentItem.intake_time)
         viewHolder.intakeTime.text = time
-        viewHolder.isTaken.isChecked =currentItem.is_taken
+        viewHolder.isTaken.isChecked = currentItem.is_taken
 
     }
 

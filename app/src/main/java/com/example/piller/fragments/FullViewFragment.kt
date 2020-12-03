@@ -13,13 +13,16 @@ import androidx.lifecycle.Lifecycle
 import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.FullViewViewModel
 import com.example.piller.viewModels.ProfileViewModel
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 class FullViewFragment : Fragment() {
     private val eventInterpreter = EventInterpreter()
@@ -70,6 +73,45 @@ class FullViewFragment : Fragment() {
 
         calendarView.setOnPreviousPageChangeListener(listener = monthClickListener)
         calendarView.setOnForwardPageChangeListener(listener = monthClickListener)
+
+        calendarView.setOnDayClickListener(object :
+            OnDayClickListener {
+            override fun onDayClick(eventDay: EventDay) {
+//                val startCal = Calendar.getInstance()
+//                startCal.time = eventDay.calendar.time
+//                startCal.add(Calendar.MINUTE, 1)
+//                val firstDayOfCurrentMonth =
+//                    eventInterpreter.getFirstDayOfSpecificMonth(eventDay.calendar.time)
+//                if ((startCal.time.after(firstDayOfCurrentMonth)
+//                            || startCal.time == firstDayOfCurrentMonth)
+//                    && startCal.time.before(eventInterpreter.getLastDayOfSpecificMonth(eventDay.calendar.time))
+//                ) {
+                    dayClicked(eventDay)
+//                }
+            }
+        })
+    }
+
+    private fun dayClicked(eventDay: EventDay) {
+        val fvpDayFragment: FullviewPopupFragment = FullviewPopupFragment.newInstance()
+        val arguments = Bundle()
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+        val date = sdf.format(eventDay.calendar.time)
+        arguments.putString(
+            FullviewPopupFragment.ARG_DATE_STRING,
+            date
+        )
+        //  we need to reduce it by 1 because the get day of month starts from 1 (and our list starts from 0..)
+        arguments.putParcelableArray(
+            FullviewPopupFragment.ARG_EVENTS_LIST,
+            viewModel.mutableCurrentMonthlyCalendar.value?.get(
+                eventDay.calendar.get(
+                    Calendar.DAY_OF_MONTH
+                ) - 1
+            )?.toTypedArray()
+        )
+        fvpDayFragment.arguments = arguments
+        activity?.supportFragmentManager?.let { fvpDayFragment.show(it, "FullViewPopupFragment") }
     }
 
     private fun initViews() {
