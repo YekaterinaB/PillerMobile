@@ -13,6 +13,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
+import java.util.*
 
 class FullViewViewModel : ViewModel() {
     private val eventInterpreter = EventInterpreter()
@@ -20,47 +21,52 @@ class FullViewViewModel : ViewModel() {
         MutableLiveData<Array<MutableList<CalendarEvent>>>()
     }
 
-    fun initiateMonthEvents(loggedUserEmail: String, profile: Profile) {
+    fun initiateMonthEvents(
+        loggedUserEmail: String,
+        profile: Profile,
+        startDate: Date,
+        endDate: Date
+    ) {
         if (profile.getMonthlyCalendar().isEmpty()) {
-            getCalendarByUser(loggedUserEmail, profile)
+            updateCalendarByUser(loggedUserEmail, profile, startDate, endDate)
         } else {
             // update mutable calendar
             changeMutableMonthlyCalendar(profile.getMonthlyCalendar())
         }
     }
 
-    private fun getCalendarByUser(email: String, profile: Profile) {
+    fun updateCalendarByUser(email: String, profile: Profile, startDate: Date, endDate: Date) {
         val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
         retrofit.getCalendarByUser(email, profile.getProfileName()).enqueue(
             object : retrofit2.Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {}
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == 200) {
-                        initCalenderView(response)
+                        initCalenderView(response, startDate, endDate)
                     } else {
                         //  todo handle error
                     }
                 }
             }
         )
-
     }
 
     private fun changeMutableMonthlyCalendar(monthEvents: Array<MutableList<CalendarEvent>>) {
         mutableCurrentMonthlyCalendar.value = monthEvents
     }
 
-    private fun initCalenderView(calendarInfo: Response<ResponseBody>) {
+    private fun initCalenderView(
+        calendarInfo: Response<ResponseBody>,
+        startDate: Date,
+        endDate: Date
+    ) {
         val jObject = JSONObject(calendarInfo.body()!!.string())
         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
 
-        val startDate = eventInterpreter.getFirstDayOfMonth()
-        val endDate = eventInterpreter.getLastDayOfMonth()
         val monthEvents = eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate,
             drugInfoList as JSONArray

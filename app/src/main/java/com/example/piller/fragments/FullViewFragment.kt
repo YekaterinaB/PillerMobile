@@ -12,6 +12,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.EventDay
+import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
+import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.FullViewViewModel
@@ -20,6 +22,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class FullViewFragment : Fragment() {
+    private val eventInterpreter = EventInterpreter()
     private val viewModel: FullViewViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
     private lateinit var fragmentView: View
@@ -27,7 +30,7 @@ class FullViewFragment : Fragment() {
     private val eventDayCircleRadius = DbConstants.EVENTDAY_DRAWABLE_CIRCLE_RADIUS
     private val eventDayBitMapWidth = 256
     private val eventDayBitMapHeight = 128
-
+    private var currentFirstDayOfMonth = eventInterpreter.getFirstDayOfMonth()
 
     companion object {
         fun newInstance() = FullViewFragment()
@@ -39,8 +42,34 @@ class FullViewFragment : Fragment() {
     ): View? {
         fragmentView = inflater.inflate(R.layout.full_view_fragment, container, false)
         initViews()
+        //  create the dots that appear on the calendar
         initEvents()
+        setOnClickListeners()
         return fragmentView
+    }
+
+    private fun updateEventsOnMonthChange() {
+        val cal: Calendar = Calendar.getInstance()
+        cal.time = calendarView.currentPageDate.time
+        val firstAndLastDays = eventInterpreter.getFirstAndLastDaysOfSpecificMonth(cal)
+        currentFirstDayOfMonth = firstAndLastDays.first
+        viewModel.updateCalendarByUser(
+            profileViewModel.getCurrentEmail(),
+            profileViewModel.getCurrentProfile(),
+            firstAndLastDays.first,
+            firstAndLastDays.second
+        )
+    }
+
+    private fun setOnClickListeners() {
+        val monthClickListener = object : OnCalendarPageChangeListener {
+            override fun onChange() {
+                updateEventsOnMonthChange()
+            }
+        }
+
+        calendarView.setOnPreviousPageChangeListener(listener = monthClickListener)
+        calendarView.setOnForwardPageChangeListener(listener = monthClickListener)
     }
 
     private fun initViews() {
@@ -76,22 +105,31 @@ class FullViewFragment : Fragment() {
     }
 
     private fun initEvents() {
+        val startDate = eventInterpreter.getFirstDayOfMonth()
+        val endDate = eventInterpreter.getLastDayOfMonth()
+        //  get all the events for the selected month
         viewModel.initiateMonthEvents(
             profileViewModel.getCurrentEmail(),
-            profileViewModel.getCurrentProfile()
+            profileViewModel.getCurrentProfile(),
+            startDate,
+            endDate
         )
 
+        //  when the data arrives, set a dot for each day that has at least one event
         viewModel.mutableCurrentMonthlyCalendar.observe(
             viewLifecycleOwner,
             androidx.lifecycle.Observer { eventsArray ->
                 eventsArray?.let {
                     if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+
                         val events: MutableList<EventDay> = ArrayList()
                         // for each day that has at least one event - add an EventDay object in the calendar view
                         for ((i, day) in it.withIndex()) {
                             if (day.isNotEmpty()) {
-                                //  for each day to add create a calendar, do not reuse the same on because it won't work!
-                                val tempCalendar: Calendar = Calendar.getInstance()
+                                //  for each day to add create a calendar, do not reuse the same calendar because it won't work!
+                                val firstDateOfMonth = Calendar.getInstance()
+                                firstDateOfMonth.time = currentFirstDayOfMonth
+                                val tempCalendar: Calendar = firstDateOfMonth
                                 tempCalendar.add(Calendar.DATE, i)
                                 val circleBitmap =
                                     getDrawableText(null, color = Color.BLACK, size = 15)
