@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activities.ManageSupervisorsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ManageAccountActivity" />
+        </activity>
         <activity android:name=".activities.ManageAccountActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

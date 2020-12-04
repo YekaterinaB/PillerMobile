@@ -16,4 +16,22 @@
     <string name="delete_account_label">Delete Account</string>
     <string name="supervisors">Supervisors</string>
     <string name="manage_supervisors">Manage supervisors</string>
+    <string name="supervisors_list">Supervisors list</string>
+    <string name="supervisors_nlist">Supervisors\nlist</string>
+    <string name="select_number_of_missed_days">Select number of missed days:</string>
+    <string name="note_supervisors_will_be_notified_by_email_each_ntime_the_main_profile_user_will_miss_his_drug_intake">
+        Note: Supervisors will be notified by email each\ntime the main profile user will miss his drug intake.</string>
+    <string name="add_a_nnew_supervisor">Add a\nnew supervisor</string>
+
+    <string-array name="threshold_alarm">
+        <item>None</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
 </resources>
