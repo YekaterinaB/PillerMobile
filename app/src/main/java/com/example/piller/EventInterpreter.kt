@@ -65,6 +65,9 @@ class EventInterpreter {
         calendarEnd.time = end
         calendarEnd.add(Calendar.DATE, 1)
         calendarEnd.set(Calendar.HOUR_OF_DAY, 0)
+        calendarEnd.set(Calendar.MINUTE, 0)
+        calendarEnd.set(Calendar.SECOND, 0)
+        calendarEnd.add(Calendar.SECOND, -1)
 
         // if the start intake is after start day
         if (calendarCurrent.time.before(calendarStartRepeat.time)) {
