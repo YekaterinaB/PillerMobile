@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:id="@+id/add_supervisor_layout">
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/supervisor_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Supervisor name"
+        android:inputType="text"
+        android:padding="8dp"
+        app:met_baseColor="@color/myTextColor"
+        app:met_iconPadding="0sp"
+        app:met_iconRight="@drawable/ic_profile"
+        app:met_primaryColor="@color/myTextColor"
+        app:met_textColorHint="@color/myTextColor" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/supervisor_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Supervisor email"
+        android:inputType="textEmailAddress"
+        android:padding="8dp"
+        app:met_baseColor="@color/myTextColor"
+        app:met_iconPadding="0sp"
+        app:met_iconRight="@drawable/ic_profile"
+        app:met_primaryColor="@color/myTextColor"
+        app:met_textColorHint="@color/myTextColor" />
+
+
+</LinearLayout>

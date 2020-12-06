@@ -11,8 +11,8 @@ import com.example.piller.models.Supervisor
 
 class SupervisorsAdapter(
     private var dataSet: MutableList<Supervisor>,
-    private val clickOnDeleteButtonListener: (String) -> Unit,
-    private val clickOnEditButtonListener: (String,String) -> Unit
+    private val clickOnDeleteButtonListener: (String) -> Unit
+    //private val clickOnEditButtonListener: (String,String) -> Unit
 ) :
     RecyclerView.Adapter<SupervisorsAdapter.ViewHolder>() {
 
@@ -23,7 +23,7 @@ class SupervisorsAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val supervisorName: TextView
         val supervisorEmail: TextView
-        val editButton: ImageButton
+        //val editButton: ImageButton
         val deleteButton: ImageButton
 
 
@@ -31,7 +31,7 @@ class SupervisorsAdapter(
             // Define click listener for the ViewHolder's View.
             supervisorName = view.findViewById(R.id.supervisor_name)
             supervisorEmail = view.findViewById(R.id.supervisor_email)
-            editButton = view.findViewById(R.id.edit_supervisor_button)
+            //editButton = view.findViewById(R.id.edit_supervisor_button)
             deleteButton = view.findViewById(R.id.delete_supervisor_button)
         }
     }
@@ -61,7 +61,7 @@ class SupervisorsAdapter(
         viewHolder.supervisorEmail.text = email
 
         viewHolder.deleteButton.setOnClickListener { clickOnDeleteButtonListener(email) }
-        viewHolder.editButton.setOnClickListener { clickOnEditButtonListener(name,email) }
+        //viewHolder.editButton.setOnClickListener { clickOnEditButtonListener(name,email) }
 
     }
 
