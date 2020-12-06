@@ -1,6 +1,8 @@
 package com.example.piller.activities
 
 import android.os.Bundle
+import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -12,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.listAdapters.SupervisorsAdapter
@@ -19,6 +22,10 @@ import com.example.piller.models.Supervisor
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.DbConstants.DEFAULT_SUPERVISOR_THRESHOLD
 import com.example.piller.viewModels.ManageSupervisorsViewModel
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
+import com.rengwuxian.materialedittext.MaterialEditText
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.manage_supervisors_layout.*
 
 
 class ManageSupervisorsActivity : AppCompatActivity() {
@@ -38,10 +45,65 @@ class ManageSupervisorsActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.manage_supervisors_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //todo nav back elad
 
-        setSpinnerThreshold()
+        setClickListeners()
         initRecyclersAndAdapters()
 
+    }
+
+    private fun setClickListeners() {
+        setSpinnerThreshold()
+        supervisors_add_button.setOnClickListener {
+            showAddSupervisorWindow()
+        }
+    }
+
+    private fun showAddSupervisorWindow() {
+        val itemView = LayoutInflater.from(this)
+            .inflate(R.layout.add_supervisor_layout, null)
+
+        // create pop up window for add profile
+        MaterialStyledDialog.Builder(this)
+            .setIcon(R.drawable.ic_supervisors)
+            .setTitle("ADD A NEW SUPERVISOR")
+            .setCustomView(itemView)
+            .setNegativeText("CANCEL")
+            .onNegative { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveText("ADD SUPERVISOR")
+            .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
+                val supervisorName =
+                    itemView.findViewById<View>(R.id.supervisor_name) as MaterialEditText
+                val supervisorEmail =
+                    itemView.findViewById<View>(R.id.supervisor_email) as MaterialEditText
+
+                when {
+                    TextUtils.isEmpty(supervisorName.text.toString()) -> {
+                        SnackBar.showToastBar(
+                            this,
+                            "Supervisor name cannot be empty"
+                        )
+                        return@SingleButtonCallback
+                    }
+
+                    TextUtils.isEmpty(supervisorEmail.text.toString()) -> {
+                        SnackBar.showToastBar(
+                            this,
+                            "Supervisor email cannot be empty"
+                        )
+                        return@SingleButtonCallback
+                    }
+                }
+                viewModel.addSupervisorsToDB(
+                    supervisorName.text.toString(),
+                    supervisorEmail.text.toString()
+                )
+
+            })
+            .build()
+            .show()
     }
 
 
@@ -58,23 +120,15 @@ class ManageSupervisorsActivity : AppCompatActivity() {
         supervisorRecycle.layoutManager = LinearLayoutManager(this)
         supervisorAdapter = SupervisorsAdapter(
             supervisorList,
-            clickOnDeleteButtonListener = { clickOnDeleteSupervisorButton(it) },
-            clickOnEditButtonListener = { s: String, s1: String ->
-                clickOnEditSupervisorButton(
-                    s,
-                    s1
-                )
-            })
+            clickOnDeleteButtonListener = { clickOnDeleteSupervisorButton(it) })
         supervisorRecycle.adapter = supervisorAdapter
     }
 
     private fun clickOnDeleteSupervisorButton(supervisorEmail: String) {
-        viewModel.deleteSupervisor(supervisorEmail)
+        viewModel.deleteSupervisorsFromDB(supervisorEmail)
     }
 
-    private fun clickOnEditSupervisorButton(supervisorName: String, supervisorEmail: String) {
-        //todo
-    }
+
 
     private fun initObservers() {
         viewModel.mutableSupervisorThreshold.observe(

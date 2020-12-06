@@ -2,13 +2,8 @@ package com.example.piller.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.piller.R
-import com.example.piller.SnackBar
-import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.SupervisorsAPI
-import com.example.piller.models.CalendarEvent
-import com.example.piller.models.Profile
 import com.example.piller.models.Supervisor
 import com.example.piller.utilities.notifyObserver
 import okhttp3.ResponseBody
@@ -39,7 +34,7 @@ class ManageSupervisorsViewModel : ViewModel() {
         loggedUserName = name
     }
 
-    fun getSupervisorsFromDB(){
+    fun getSupervisorsFromDB() {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.getSupervisors(loggedUserEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -52,14 +47,16 @@ class ManageSupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        mutableToastError.value = "Could not get supervisors."
-                    }else{
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        mutableToastError.value = jObjError["message"] as String
+                    } else {
                         val jObject = JSONObject(response.body()!!.string())
-                        val supervisors=jObject.get("supervisorsList") as JSONArray
+                        val supervisors = jObject.get("supervisorsList") as JSONArray
                         for (i in 0 until supervisors.length()) {
-                            val name= supervisors.getJSONObject(i).get("supervisorName") as String
-                            val email=supervisors.getJSONObject(i).get("supervisorEmail") as String
-                            mutableSupervisorList.value!!.add(Supervisor(name,email))
+                            val name = supervisors.getJSONObject(i).get("supervisorName") as String
+                            val email =
+                                supervisors.getJSONObject(i).get("supervisorEmail") as String
+                            mutableSupervisorList.value!!.add(Supervisor(name, email))
                         }
                         mutableSupervisorList.notifyObserver()
 
@@ -69,9 +66,18 @@ class ManageSupervisorsViewModel : ViewModel() {
         )
     }
 
-    fun addSupervisorsToDB(supervisorName:String,supervisorEmail:String){
+
+    private fun addSupervisorsToList(supervisorName: String, supervisorEmail: String) {
+        mutableSupervisorList.value!!.add(
+            Supervisor(supervisorName, supervisorEmail)
+        )
+
+        mutableSupervisorList.notifyObserver()
+    }
+
+    fun addSupervisorsToDB(supervisorName: String, supervisorEmail: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
-        retrofit.addSupervisor(loggedUserEmail,supervisorName,supervisorEmail).enqueue(
+        retrofit.addSupervisor(loggedUserEmail, supervisorName, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -82,14 +88,17 @@ class ManageSupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        mutableToastError.value = "Could not add supervisor."
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        mutableToastError.value = jObjError["message"] as String
+                    } else {
+                        addSupervisorsToList(supervisorName, supervisorEmail)
                     }
                 }
             }
         )
     }
 
-    fun deleteSupervisor(supervisorEmail:String){
+    private fun deleteSupervisorFromList(supervisorEmail: String) {
         for (i in 0 until mutableSupervisorList.value!!.size) {
             if (mutableSupervisorList.value!![i].getsupervisorEmail() == supervisorEmail) {
                 mutableSupervisorList.value!!.removeAt(i)
@@ -97,12 +106,11 @@ class ManageSupervisorsViewModel : ViewModel() {
             }
         }
         mutableSupervisorList.notifyObserver()
-        deleteSupervisorsFromDB(supervisorEmail)
     }
 
-    private fun deleteSupervisorsFromDB(supervisorEmail:String){
+    fun deleteSupervisorsFromDB(supervisorEmail: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
-        retrofit.deleteSupervisor(loggedUserEmail,supervisorEmail).enqueue(
+        retrofit.deleteSupervisor(loggedUserEmail, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -113,7 +121,10 @@ class ManageSupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        mutableToastError.value = "Could not delete supervisor."
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        mutableToastError.value = jObjError["message"] as String
+                    } else {
+                        deleteSupervisorFromList(supervisorEmail)
                     }
                 }
             }
@@ -121,10 +132,7 @@ class ManageSupervisorsViewModel : ViewModel() {
     }
 
 
-
-
-
-    fun getThresholdFromDB(){
+    fun getThresholdFromDB() {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.getThreshold(loggedUserEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -152,7 +160,7 @@ class ManageSupervisorsViewModel : ViewModel() {
     fun updateThresholdInDB(
         stringThreshold: String
     ) {
-        val threshold:Int
+        val threshold: Int
         if (stringThreshold == "None") {
             threshold = 0
         } else {
