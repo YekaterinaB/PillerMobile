@@ -10,8 +10,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.listAdapters.SupervisorsAdapter
 import com.example.piller.models.Supervisor
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.DbConstants.DEFAULT_SUPERVISOR_THRESHOLD
@@ -20,7 +23,10 @@ import com.example.piller.viewModels.ManageSupervisorsViewModel
 
 class ManageSupervisorsActivity : AppCompatActivity() {
     private lateinit var toolbar: Toolbar
+    private lateinit var thresholdSpinner: Spinner
     private lateinit var viewModel: ManageSupervisorsViewModel
+    private lateinit var supervisorAdapter: SupervisorsAdapter
+    private lateinit var supervisorRecycle: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +40,40 @@ class ManageSupervisorsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         setSpinnerThreshold()
+        initRecyclersAndAdapters()
 
+    }
+
+
+    private fun updateRecyclersAndAdapters() {
+        supervisorAdapter.setData(viewModel.mutableSupervisorList.value!!)
+        supervisorAdapter.notifyDataSetChanged()
+    }
+
+
+    private fun initRecyclersAndAdapters() {
+        supervisorRecycle = this.findViewById(R.id.supervisors_list)
+        // initiate list of profiles with recyclers and adapters
+        val supervisorList = viewModel.mutableSupervisorList.value!!
+        supervisorRecycle.layoutManager = LinearLayoutManager(this)
+        supervisorAdapter = SupervisorsAdapter(
+            supervisorList,
+            clickOnDeleteButtonListener = { clickOnDeleteSupervisorButton(it) },
+            clickOnEditButtonListener = { s: String, s1: String ->
+                clickOnEditSupervisorButton(
+                    s,
+                    s1
+                )
+            })
+        supervisorRecycle.adapter = supervisorAdapter
+    }
+
+    private fun clickOnDeleteSupervisorButton(supervisorEmail: String) {
+        viewModel.deleteSupervisor(supervisorEmail)
+    }
+
+    private fun clickOnEditSupervisorButton(supervisorName: String, supervisorEmail: String) {
+        //todo
     }
 
     private fun initObservers() {
@@ -42,7 +81,9 @@ class ManageSupervisorsActivity : AppCompatActivity() {
             this,
             Observer { threshold ->
                 threshold?.let {
-                    //todo change spinner to selected value
+                    if (this.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        thresholdSpinner.setSelection(viewModel.mutableSupervisorThreshold.value!!)
+                    }
                 }
             })
 
@@ -58,12 +99,11 @@ class ManageSupervisorsActivity : AppCompatActivity() {
             this,
             Observer { supervisorList ->
                 supervisorList?.let {
-                    //todo supervisors list
+                    updateRecyclersAndAdapters()
                 }
             })
 
     }
-
 
 
     private fun setSpinnerThreshold() {
@@ -71,15 +111,17 @@ class ManageSupervisorsActivity : AppCompatActivity() {
         val daysThreshold = resources.getStringArray(R.array.threshold_alarm)
 
         // access the spinner
-        val spinner = findViewById<Spinner>(R.id.supervisors_alarm_threshold_spinner)
-        if (spinner != null) {
+        thresholdSpinner = findViewById<Spinner>(R.id.supervisors_alarm_threshold_spinner)
+        if (thresholdSpinner != null) {
             val adapter = ArrayAdapter(
                 this,
                 android.R.layout.simple_spinner_item, daysThreshold
             )
-            spinner.adapter = adapter
+            thresholdSpinner.adapter = adapter
+            //false to not invoke listener on create
+            thresholdSpinner.setSelection(viewModel.mutableSupervisorThreshold.value!!, false)
 
-            spinner.onItemSelectedListener = object :
+            thresholdSpinner.onItemSelectedListener = object :
                 AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>,

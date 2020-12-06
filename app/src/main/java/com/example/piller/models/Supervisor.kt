@@ -8,7 +8,7 @@ class Supervisor(
     private var supervisorName=name
     private var supervisorEmail=email
 
-    fun supervisorName():String{
+    fun getSupervisorName():String{
 
         return supervisorName
     }
