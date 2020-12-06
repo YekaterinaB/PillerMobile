@@ -33,6 +33,7 @@ class ManageSupervisorsViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
+
     fun setEmailAndName(email: String, name: String) {
         loggedUserEmail = email
         loggedUserName = name
@@ -88,7 +89,18 @@ class ManageSupervisorsViewModel : ViewModel() {
         )
     }
 
-    fun deleteSupervisorsToDB(supervisorEmail:String){
+    fun deleteSupervisor(supervisorEmail:String){
+        for (i in 0 until mutableSupervisorList.value!!.size) {
+            if (mutableSupervisorList.value!![i].getsupervisorEmail() == supervisorEmail) {
+                mutableSupervisorList.value!!.removeAt(i)
+                break
+            }
+        }
+        mutableSupervisorList.notifyObserver()
+        deleteSupervisorsFromDB(supervisorEmail)
+    }
+
+    private fun deleteSupervisorsFromDB(supervisorEmail:String){
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.deleteSupervisor(loggedUserEmail,supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -107,6 +119,8 @@ class ManageSupervisorsViewModel : ViewModel() {
             }
         )
     }
+
+
 
 
 
@@ -140,7 +154,7 @@ class ManageSupervisorsViewModel : ViewModel() {
     ) {
         val threshold:Int
         if (stringThreshold == "None") {
-            threshold = -1
+            threshold = 0
         } else {
             threshold = stringThreshold.toInt()
         }
@@ -159,8 +173,8 @@ class ManageSupervisorsViewModel : ViewModel() {
                         mutableToastError.value = "Could not update threshold for supervisors."
                     } else {
                         mutableSupervisorThreshold.value = threshold
-                        mutableToastError.value =
-                            "Selected missed days before notification: $stringThreshold"
+//                        mutableToastError.value =
+//                            "Selected missed days before notification: $stringThreshold"
                     }
                 }
             }
