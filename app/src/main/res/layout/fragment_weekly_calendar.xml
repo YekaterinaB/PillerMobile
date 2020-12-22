@@ -125,7 +125,7 @@
         android:layout_height="0dp"
         android:baselineAligned="false"
         android:orientation="horizontal"
-        android:weightSum="3"
+        android:weightSum="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -205,6 +205,107 @@
                 android:layout_height="match_parent"
                 android:layout_margin="4dp" />
         </LinearLayout>
+
     </LinearLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/calendar_fab_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/calendar_new_drag_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@android:color/white"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="#F06292"
+        app:srcCompat="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/calendar_drug_camera_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/fab_pill_image_label"
+        android:textColor="@android:color/white"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/calendar_add_drug_camera"
+        app:layout_constraintEnd_toStartOf="@+id/calendar_add_drug_camera" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/calendar_add_drug_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@android:color/white"
+        android:visibility="invisible"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toTopOf="@+id/calendar_new_drag_fab"
+        app:layout_constraintEnd_toEndOf="@+id/calendar_new_drag_fab"
+        app:srcCompat="@drawable/pill" />
+
+    <TextView
+        android:id="@+id/calendar_drug_box_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/fab_box_image"
+        android:textColor="@android:color/white"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/calendar_add_drug_box"
+        app:layout_constraintEnd_toStartOf="@+id/calendar_add_drug_box" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/calendar_add_drug_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@android:color/white"
+        android:visibility="invisible"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toTopOf="@+id/calendar_add_drug_camera"
+        app:layout_constraintEnd_toEndOf="@+id/calendar_add_drug_camera"
+        app:srcCompat="@drawable/ic_box" />
+
+    <TextView
+        android:id="@+id/calendar_drug_name_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/fab_drug_name"
+        android:textColor="@android:color/white"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/calendar_add_drug_name"
+        app:layout_constraintEnd_toStartOf="@+id/calendar_add_drug_name" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/calendar_add_drug_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@android:color/white"
+        android:visibility="invisible"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toTopOf="@+id/calendar_add_drug_box"
+        app:layout_constraintEnd_toEndOf="@+id/calendar_add_drug_box"
+        app:srcCompat="@drawable/ic_edit" />
 </androidx.constraintlayout.widget.ConstraintLayout>
