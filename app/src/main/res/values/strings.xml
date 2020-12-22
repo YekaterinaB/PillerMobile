@@ -33,5 +33,13 @@
         <item>6</item>
         <item>7</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fab_pill_image_label">Pill Image</string>
+    <string name="fab_box_image">Box Image</string>
+    <string name="fab_drug_name">Drug Name</string>
+    <string name="bottom_nav_home_label">Home</string>
+    <string name="bottom_nav_full_view_label">Full View</string>
+    <string name="bottom_nav_profile_label">Profile</string>
 
 </resources>

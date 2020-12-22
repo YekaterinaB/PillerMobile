@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home"
-        android:title="Home"/>
+        android:title="@string/bottom_nav_home_label" />
 
     <item
         android:id="@+id/navigation_full_view"
         android:icon="@drawable/ic_full_view"
-        android:title="Full View"/>
-
-
-    <item
-        android:id="@+id/navigation_drugs"
-        android:icon="@drawable/ic_add_drug"
-        android:title="Add Drugs"/>
-
+        android:title="@string/bottom_nav_full_view_label" />
 
     <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_profile"
-        android:title="Profile" />
+        android:title="@string/bottom_nav_profile_label" />
 
 </menu>

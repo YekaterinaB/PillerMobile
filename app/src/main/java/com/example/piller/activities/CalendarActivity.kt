@@ -112,9 +112,6 @@ class CalendarActivity : AppCompatActivity() {
                     openFragment(profileFragment, DbConstants.PROFILES_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
-                R.id.navigation_drugs -> {
-                    return@OnNavigationItemSelectedListener true
-                }
 
                 R.id.navigation_full_view -> {
                     toolbar.title = "Full View"
@@ -174,6 +171,4 @@ class CalendarActivity : AppCompatActivity() {
         inflater.inflate(R.menu.mainmenu, menu)
         return true
     }
-
-
 }

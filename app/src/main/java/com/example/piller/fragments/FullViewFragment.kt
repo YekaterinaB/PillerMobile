@@ -77,6 +77,7 @@ class FullViewFragment : Fragment() {
         calendarView.setOnDayClickListener(object :
             OnDayClickListener {
             override fun onDayClick(eventDay: EventDay) {
+//                todo fix click on previous month
 //                val startCal = Calendar.getInstance()
 //                startCal.time = eventDay.calendar.time
 //                startCal.add(Calendar.MINUTE, 1)
