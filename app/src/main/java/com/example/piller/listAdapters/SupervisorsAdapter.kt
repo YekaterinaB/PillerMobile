@@ -23,6 +23,7 @@ class SupervisorsAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val supervisorName: TextView
         val supervisorEmail: TextView
+        val supervisorConfirmationText :TextView
         //val editButton: ImageButton
         val deleteButton: ImageButton
 
@@ -33,6 +34,7 @@ class SupervisorsAdapter(
             supervisorEmail = view.findViewById(R.id.supervisor_email)
             //editButton = view.findViewById(R.id.edit_supervisor_button)
             deleteButton = view.findViewById(R.id.delete_supervisor_button)
+            supervisorConfirmationText=view.findViewById(R.id.waiting_for_confirmation_text)
         }
     }
 
@@ -57,8 +59,14 @@ class SupervisorsAdapter(
         val currentItem = dataSet[position]
         val email = currentItem.getsupervisorEmail()
         val name = currentItem.getSupervisorName()
+        val isConfirmed=currentItem.getIsConfirmed()
         viewHolder.supervisorName.text = name
         viewHolder.supervisorEmail.text = email
+        if (isConfirmed){
+            viewHolder.supervisorConfirmationText.visibility = View.INVISIBLE
+        }else{
+            viewHolder.supervisorConfirmationText.visibility = View.VISIBLE
+        }
 
         viewHolder.deleteButton.setOnClickListener { clickOnDeleteButtonListener(email) }
         //viewHolder.editButton.setOnClickListener { clickOnEditButtonListener(name,email) }

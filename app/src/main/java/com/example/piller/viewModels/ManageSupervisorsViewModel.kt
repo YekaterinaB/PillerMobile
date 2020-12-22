@@ -56,7 +56,8 @@ class ManageSupervisorsViewModel : ViewModel() {
                             val name = supervisors.getJSONObject(i).get("supervisorName") as String
                             val email =
                                 supervisors.getJSONObject(i).get("supervisorEmail") as String
-                            mutableSupervisorList.value!!.add(Supervisor(name, email))
+                            val isPending=supervisors.getJSONObject(i).get("isConfirmed") as Boolean
+                            mutableSupervisorList.value!!.add(Supervisor(name, email,isPending))
                         }
                         mutableSupervisorList.notifyObserver()
 
@@ -69,7 +70,7 @@ class ManageSupervisorsViewModel : ViewModel() {
 
     private fun addSupervisorsToList(supervisorName: String, supervisorEmail: String) {
         mutableSupervisorList.value!!.add(
-            Supervisor(supervisorName, supervisorEmail)
+            Supervisor(supervisorName, supervisorEmail,false)
         )
 
         mutableSupervisorList.notifyObserver()
