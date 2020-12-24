@@ -5,13 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.fragments.NewDrugByNameFragment
 import com.example.piller.fragments.NewDrugOccurrencesFragment
 import com.example.piller.utilities.DbConstants
+import com.example.piller.viewModels.AddNewDrugViewModel
 
 class AddNewDrugActivity : AppCompatActivity() {
+    private lateinit var viewModel: AddNewDrugViewModel
+
     private lateinit var toolbar: Toolbar
     private lateinit var addType: String
 
@@ -19,11 +23,16 @@ class AddNewDrugActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_new_drug)
         initViews()
+        initViewModels()
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
 
         selectFragment(addType)
+    }
+
+    private fun initViewModels() {
+        viewModel = ViewModelProvider(this).get(AddNewDrugViewModel::class.java)
     }
 
     private fun selectFragment(fragmentID: String, data: String = "") {

@@ -43,5 +43,6 @@
     <string name="bottom_nav_profile_label">Profile</string>
     <string name="nd_enter_drug_name_label">Enter Drug Name</string>
     <string name="nd_search_label">Search</string>
+    <string name="nd_select_btn_text">Select</string>
 
 </resources>

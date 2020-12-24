@@ -1,11 +1,14 @@
 package com.example.piller.fragments
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.piller.R
+import java.util.*
+import javax.xml.datatype.DatatypeConstants.MONTHS
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -32,7 +35,34 @@ class NewDrugOccurrencesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_drug_occurrences, container, false)
+        val newFragment = inflater.inflate(R.layout.fragment_new_drug_occurrences, container, false)
+
+        return newFragment
+    }
+
+    private fun initDatePickerDialog() {
+//        val c = Calendar.getInstance()
+//        val year = c.get(Calendar.YEAR)
+//        val month = c.get(Calendar.MONTH)
+//        val day = c.get(Calendar.DAY_OF_MONTH)
+//
+//        val dpd =
+//            activity?.let {
+//                DatePickerDialog(
+//                    it,
+//                    DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+//
+//                        // Display Selected date in textbox
+//                        lblDate.setText("" + dayOfMonth + " " + MONTHS[monthOfYear] + ", " + year)
+//
+//                    },
+//                    year,
+//                    month,
+//                    day
+//                )
+//            }
+//
+//        dpd?.show()
     }
 
     companion object {
