@@ -1,17 +1,21 @@
 package com.example.piller.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.AddNewDrugActivity
+import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.viewModels.AddNewDrugViewModel
 import com.google.android.material.textfield.TextInputLayout
 
@@ -30,6 +34,8 @@ class NewDrugByNameFragment : Fragment() {
 
     private lateinit var viewModel: AddNewDrugViewModel
 
+    private lateinit var drugAdapter: NewDrugByNameAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -45,24 +51,62 @@ class NewDrugByNameFragment : Fragment() {
         // Inflate the layout for this fragment
         val newFragment = inflater.inflate(R.layout.fragment_new_drug_by_name, container, false)
         initViews(newFragment)
-        initListeners()
+        initListeners(newFragment)
         viewModel = ViewModelProvider(this).get(AddNewDrugViewModel::class.java)
         setViewModelsObservers()
+        initAdapter(newFragment)
         return newFragment
+    }
+
+    private fun updateRecyclersAndAdapters() {
+        viewModel.drugsSearchResult.value?.let { drugAdapter.setData(it) }
+        drugAdapter.notifyDataSetChanged()
+    }
+
+    private fun initAdapter(fragment: View) {
+        drugOptionsList.layoutManager = LinearLayoutManager(fragment.context)
+        drugAdapter = NewDrugByNameAdapter(
+            mutableListOf(),
+            clickOnItemListener = { drug -> clickOnDrug(drug) })
+
+        drugOptionsList.adapter = drugAdapter
+    }
+
+    private fun clickOnDrug(rxcui: Int) {
+        val drug = viewModel.getDrugByRxcui(rxcui)
+        if (drug != null) {
+            (activity as AddNewDrugActivity).fragmentResult(drug)
+        }
     }
 
     private fun setViewModelsObservers() {
         activity?.let {
-            viewModel.drugsSearchResult.observe(it, Observer { updatedDrugsList ->
-                SnackBar.showToastBar(it, "FOUND!")
+            viewModel.drugsSearchResult.observe(it, Observer {
+                updateRecyclersAndAdapters()
+                setButtonsEnabled(true)
+            })
+
+            viewModel.snackBarMessage.observe(it, Observer { message ->
+                SnackBar.showToastBar(it, message)
             })
         }
     }
 
-    private fun initListeners() {
+    private fun initListeners(fragment: View) {
         searchBtn.setOnClickListener {
+            setButtonsEnabled(false)
+            //  close the keyboard when clicking search
+            val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(fragment.windowToken, 0)
+            //  todo check if the drug name changed from before??
             searchDrug()
         }
+    }
+
+    private fun setButtonsEnabled(enabled: Boolean) {
+        searchBtn.isEnabled = enabled
+        drugSelectedBtn.isEnabled = enabled
+        drugNameTIL.editText?.isEnabled = enabled
     }
 
     private fun searchDrug() {
@@ -78,7 +122,6 @@ class NewDrugByNameFragment : Fragment() {
         }
 
         viewModel.searchDrugByName(drugName.trim())
-        (activity as AddNewDrugActivity).fragmentResult(drugName)
     }
 
     private fun initViews(fragment: View) {
