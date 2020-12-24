@@ -1,5 +1,6 @@
 package com.example.piller.fragments
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.activities.AddNewDrugActivity
+import com.example.piller.activities.ManageAccountActivity
 import com.example.piller.listAdapters.EliAdapter
+import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -162,10 +166,12 @@ class WeeklyCalendarFragment : Fragment() {
         }
 
         newDrugNameFAB.setOnClickListener {
-            SnackBar.showToastBar(
-                this.context,
-                "Add by name!"
+            val intent = Intent(
+                activity,
+                AddNewDrugActivity::class.java
             )
+            intent.putExtra(DbConstants.ADD_DRUG_TYPE, DbConstants.DRUG_BY_NAME)
+            startActivity(intent)
         }
 
         newDrugLayout.setOnClickListener {
