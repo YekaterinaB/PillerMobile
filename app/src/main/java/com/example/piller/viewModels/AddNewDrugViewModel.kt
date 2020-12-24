@@ -21,6 +21,14 @@ class AddNewDrugViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
+    fun getDrugByRxcui(rxcui: Int): Drug? {
+        val filteredArray = drugsSearchResult.value?.filter { drug -> drug.rxcui == rxcui }
+        if (filteredArray != null && filteredArray.isNotEmpty()) {
+            return filteredArray[0]
+        }
+        return null
+    }
+
     fun searchDrugByName(drugName: String) {
         if (drugName.isNotEmpty()) {
             drugsSearchResult.value?.clear()
@@ -35,8 +43,7 @@ class AddNewDrugViewModel : ViewModel() {
                         response: Response<ResponseBody>
                     ) {
                         if (response.raw().code() == 200) {
-                            val drugListBody = JSONArray(response.body()!!.string())
-                            drugsSearchResult.value = parseDrugList(drugListBody)
+                            updateDrugsList(response)
                         } else {
                             val jObjError = JSONObject(response.errorBody()!!.string())
                             snackBarMessage.value = jObjError["message"] as String
@@ -46,6 +53,14 @@ class AddNewDrugViewModel : ViewModel() {
             )
         } else {
             snackBarMessage.value = "Please enter a valid drug name"
+        }
+    }
+
+    private fun updateDrugsList(response: Response<ResponseBody>) {
+        val drugListBody = JSONArray(response.body()!!.string())
+        drugsSearchResult.value = parseDrugList(drugListBody)
+        if (drugsSearchResult.value!!.size == 0) {
+            snackBarMessage.value = "No drugs found!"
         }
     }
 

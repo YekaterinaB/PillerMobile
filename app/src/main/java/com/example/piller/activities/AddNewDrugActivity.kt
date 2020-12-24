@@ -10,6 +10,7 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.fragments.NewDrugByNameFragment
 import com.example.piller.fragments.NewDrugOccurrencesFragment
+import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.AddNewDrugViewModel
 
@@ -54,8 +55,8 @@ class AddNewDrugActivity : AppCompatActivity() {
         }
     }
 
-    fun fragmentResult(data: String) {
-        SnackBar.showToastBar(this, data)
+    fun fragmentResult(drug: Drug) {
+        SnackBar.showToastBar(this, drug.drug_name)
         selectFragment(DbConstants.DRUG_OCCURRENCE)
     }
 
