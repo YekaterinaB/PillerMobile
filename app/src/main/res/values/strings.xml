@@ -34,4 +34,6 @@
         <item>7</item>
     </string-array>
 
+    <string name="notification_channel_description">It\'s time to take your medicine!</string>
+
 </resources>

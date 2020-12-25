@@ -31,6 +31,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ManageAccountActivity" />
         </activity>
+
+
+        <receiver
+            android:name=".notifications.AlarmReceiver"
+            android:enabled="true" />
+
+        <service
+            android:name=".notifications.NotificationService"
+            android:enabled="true" />
+
+        <activity
+            android:name=".activities.DrugInformation"
+            android:excludeFromRecents="true"
+            android:label="Notification"
+            android:launchMode="singleTask"
+            android:taskAffinity="" />
+
     </application>
 
 </manifest>
