@@ -45,4 +45,6 @@
     <string name="nd_search_label">Search</string>
     <string name="nd_select_btn_text">Select</string>
 
+    <string name="notification_channel_description">It\'s time to take your medicine!</string>
+
 </resources>

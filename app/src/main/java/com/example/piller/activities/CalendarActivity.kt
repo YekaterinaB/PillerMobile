@@ -20,10 +20,12 @@ import com.example.piller.fragments.ProfileFragment
 import com.example.piller.fragments.WeeklyCalendarFragment
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.Profile
+import com.example.piller.notifications.NotificationUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.util.*
 
 
 class CalendarActivity : AppCompatActivity() {
@@ -44,6 +46,13 @@ class CalendarActivity : AppCompatActivity() {
         mainProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
 
         setContentView(R.layout.activity_calendar)
+
+        //todo notification
+        val mNotificationTime = Calendar.getInstance().timeInMillis + 5000 //Set after 5 seconds from the current time.
+        NotificationUtils().setNotification(mNotificationTime, this)
+
+
+
         currentProfileTV = findViewById(R.id.calendar_current_profile)
         initializeNavigations()
 
