@@ -15,10 +15,18 @@ object DbConstants {
     //  calendar
     const val WEEKLY_CALENDAR_FRAGMENT_ID = "weekly_calendar"
     const val PROFILES_FRAGMENT_ID = "profiles"
+    const val DRUGS_FRAGMENT_ID = "drugs"
     const val FULL_VIEW_FRAGMENT_ID = "full_view"
 
-    //supervisors
-    const val DEFAULT_SUPERVISOR_THRESHOLD=3
+    //  supervisors
+    const val DEFAULT_SUPERVISOR_THRESHOLD = 3
 
+    //  adding drugs
+    const val DRUG_BY_NAME = "add_drug_by_name"
+    const val DRUG_BY_CAMERA = "add_drug_by_camera"
+    const val DRUG_BY_BOX = "add_drug_by_box"
+    const val DRUG_OCCURRENCE = "add_drug_occurrence"
+    const val DRUG_RESULT_NAME = "add_drug_result_name"
+    const val ADD_DRUG_TYPE = "add_drug_type"
 
 }
