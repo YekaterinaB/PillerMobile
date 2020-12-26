@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.piller.fragments.NewDrugByNameFragment">
+    tools:context="com.example.piller.fragments.DrugByNameFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nd_drug_search_til"

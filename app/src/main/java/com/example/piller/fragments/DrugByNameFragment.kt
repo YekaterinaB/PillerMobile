@@ -20,7 +20,7 @@ import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.viewModels.AddNewDrugViewModel
 import com.google.android.material.textfield.TextInputLayout
 
-class NewDrugByNameFragment : Fragment() {
+class DrugByNameFragment : Fragment() {
     private lateinit var drugNameTIL: TextInputLayout
     private lateinit var searchBtn: Button
     private lateinit var drugSelectedBtn: Button
@@ -139,7 +139,7 @@ class NewDrugByNameFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance() =
-            NewDrugByNameFragment().apply {
+            DrugByNameFragment().apply {
                 arguments = Bundle().apply {}
             }
     }
