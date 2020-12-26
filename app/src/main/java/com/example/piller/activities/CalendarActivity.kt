@@ -87,7 +87,7 @@ class CalendarActivity : AppCompatActivity() {
             val f1 = WeeklyCalendarFragment()
             val fragmentTransaction: FragmentTransaction =
                 supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.container, f1, DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
+            fragmentTransaction.add(R.id.calender_weekly_container_fragment, f1, DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
             fragmentTransaction.commit()
         }
     }
@@ -135,7 +135,7 @@ class CalendarActivity : AppCompatActivity() {
     private fun openFragment(fragment: Fragment, id_fragment: String) {
         val fragmentTransaction: FragmentTransaction =
             this.supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.container, fragment, id_fragment)
+        fragmentTransaction.replace(R.id.calender_weekly_container_fragment, fragment, id_fragment)
         fragmentTransaction.disallowAddToBackStack()
         fragmentTransaction.commit()
     }

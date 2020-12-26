@@ -31,6 +31,8 @@ class WeeklyCalendarFragment : Fragment() {
     private val weeklyCalendarViewModel: WeeklyCalendarViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
+
+    // add drug animation
     private val rotateOpen: Animation by lazy {
         AnimationUtils.loadAnimation(
             this.context,
@@ -171,6 +173,8 @@ class WeeklyCalendarFragment : Fragment() {
                 AddNewDrugActivity::class.java
             )
             intent.putExtra(DbConstants.ADD_DRUG_TYPE, DbConstants.DRUG_BY_NAME)
+            intent.putExtra(DbConstants.LOGGED_USER_EMAIL,profileViewModel.getCurrentEmail())
+            intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
             startActivity(intent)
         }
 

@@ -1,56 +1,50 @@
 package com.example.piller.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.fragments.DrugByNameFragment
+import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.AddNewDrugViewModel
 
 class AddNewDrugActivity : AppCompatActivity() {
     private lateinit var viewModel: AddNewDrugViewModel
-
+    private lateinit var drugOptionsList: RecyclerView
+    private lateinit var drugSelectedBtn: Button
+    private lateinit var drugAdapter: NewDrugByNameAdapter
+    private lateinit var currentProfile: String
+    private lateinit var loggedEmail: String
     private lateinit var toolbar: Toolbar
     private lateinit var addType: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
-        selectFragment(savedInstanceState, addType)
+        currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+        loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        initViewModels()
         setContentView(R.layout.activity_add_new_drug)
         initViews()
-        initViewModels()
+        initRecyclersAndAdapters()
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         initObservers()
-    }
+        selectFragment(savedInstanceState, addType)
 
-    private fun initializeFragment(savedInstanceState: Bundle?, fragment: Fragment) {
-        if (savedInstanceState == null) {
-            val fragmentTransaction: FragmentTransaction =
-                supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.container, fragment)
-            fragmentTransaction.commit()
-        }
-    }
 
-    private fun initObservers() {
-        viewModel.addedDrugSuccess.observe(
-            this,
-            Observer {
-                //  added drug successfully, close activity
-                if (it) {
-                    finish()
-                }
-            })
     }
 
     private fun initViewModels() {
@@ -72,12 +66,76 @@ class AddNewDrugActivity : AppCompatActivity() {
         }
     }
 
-    fun fragmentResult(drug: Drug) {
-        viewModel.newDrug.value = drug
-        selectFragment(DbConstants.DRUG_OCCURRENCE, drug)
+    private fun initializeFragment(savedInstanceState: Bundle?, fragment: Fragment) {
+        if (savedInstanceState == null) {
+            val fragmentTransaction: FragmentTransaction =
+                supportFragmentManager.beginTransaction()
+            fragmentTransaction.add(R.id.nd_container_fragment, fragment)
+            fragmentTransaction.commit()
+        }
+    }
+
+    private fun initObservers() {
+        viewModel.addedDrugSuccess.observe(
+            this,
+            Observer {
+                //  added drug successfully, close activity
+                if (it) {
+                    finish()
+                }
+            })
+
+        viewModel.drugsSearchResult.observe(this, Observer {
+            updateRecyclersAndAdapters()
+            setButtonsEnabled(true)
+        })
+
+        viewModel.snackBarMessage.observe(this, Observer { message ->
+            SnackBar.showToastBar(this, message)
+        })
+
     }
 
     private fun initViews() {
         toolbar = findViewById(R.id.nd_toolbar)
+        drugSelectedBtn=findViewById(R.id.nd_drug_selected_btn)
+
     }
+
+    private fun updateRecyclersAndAdapters() {
+        viewModel.drugsSearchResult.value?.let { drugAdapter.setData(it) }
+        drugAdapter.notifyDataSetChanged()
+    }
+
+    private fun initRecyclersAndAdapters() {
+        drugOptionsList = findViewById(R.id.nd_drug_options_list)
+        drugOptionsList.layoutManager = LinearLayoutManager(this)
+        drugAdapter = NewDrugByNameAdapter(
+            mutableListOf(),
+            clickOnItemListener = { drug -> clickOnDrug(drug) })
+
+        drugOptionsList.adapter = drugAdapter
+    }
+
+
+    private fun clickOnDrug(rxcui: Int) {
+        val drug = viewModel.getDrugByRxcui(rxcui)
+        if (drug != null) {
+            viewModel.newDrug.value = drug
+            val intent = Intent(
+                this,
+                DrugOccurrencesActivity::class.java
+            )
+            intent.putExtra(DbConstants.FULL_DRUG_NAME, drug.drug_name)
+            intent.putExtra(DbConstants.DRUG_RXCUI, drug.rxcui)
+            intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
+            intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
+            startActivity(intent)
+        }
+    }
+
+    fun setButtonsEnabled(enabled: Boolean) {
+        drugSelectedBtn.isEnabled = enabled
+    }
+
 }
