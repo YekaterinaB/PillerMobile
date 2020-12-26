@@ -2,6 +2,7 @@ package com.example.piller.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.piller.api.CalendarAPI
 import com.example.piller.api.DrugAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.Drug
@@ -12,13 +13,47 @@ import retrofit2.Call
 import retrofit2.Response
 
 class AddNewDrugViewModel : ViewModel() {
-    private val retrofit = ServiceBuilder.buildService(DrugAPI::class.java)
+    private val drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
+    private val calendarRetrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
 
     val drugsSearchResult: MutableLiveData<MutableList<Drug>> by lazy {
         MutableLiveData<MutableList<Drug>>()
     }
+
     val snackBarMessage: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
+    }
+
+    val newDrug: MutableLiveData<Drug> by lazy {
+        MutableLiveData<Drug>()
+    }
+
+    val addedDrugSuccess: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+
+    fun addNewDrugToUser(email: String, name: String) {
+        newDrug.value?.let {
+            calendarRetrofit.addDrugCalendarByUser(email, name, it).enqueue(
+                object : retrofit2.Callback<ResponseBody> {
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        snackBarMessage.value = "Could not add drug."
+                    }
+
+                    override fun onResponse(
+                        call: Call<ResponseBody>,
+                        response: Response<ResponseBody>
+                    ) {
+                        if (response.raw().code() == 200) {
+                            addedDrugSuccess.value = true
+                        } else {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            snackBarMessage.value = jObjError["message"] as String
+                        }
+                    }
+                }
+            )
+        }
     }
 
     fun getDrugByRxcui(rxcui: Int): Drug? {
@@ -32,7 +67,7 @@ class AddNewDrugViewModel : ViewModel() {
     fun searchDrugByName(drugName: String) {
         if (drugName.isNotEmpty()) {
             drugsSearchResult.value?.clear()
-            retrofit.findDrugByName(drugName).enqueue(
+            drugAPIRetrofit.findDrugByName(drugName).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         snackBarMessage.value = "Could not delete user."

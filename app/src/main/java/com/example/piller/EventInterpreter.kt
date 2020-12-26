@@ -16,7 +16,7 @@ class EventInterpreter {
         val eventList = Array(daysBetween) { mutableListOf<CalendarEvent>() }
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
-            val drugName = drug.get("drug") as String
+            val drugName = drug.get("name") as String
             val drugInfo = drug.get("drug_info") as JSONObject
             val drugEventList = getDrugEvent(drugName, drugInfo, start, end)
             // put all event in array
