@@ -11,6 +11,8 @@ object DbConstants {
     const val DRUG_INFO_LIST = "drug_info_list"
     const val FULL_DRUG_NAME="full_drug_name"
     const val INTAKE_DATE="intake_time"
+    const val DRUG_RXCUI ="drug_rxcui"
+
 
     //  calendar
     const val WEEKLY_CALENDAR_FRAGMENT_ID = "weekly_calendar"
