@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
@@ -28,15 +29,26 @@ class AddNewDrugActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
-
+        initObservers()
         selectFragment(addType)
+    }
+
+    private fun initObservers() {
+        viewModel.addedDrugSuccess.observe(
+            this,
+            Observer {
+                //  added drug successfully, close activity
+                if (it) {
+                    finish()
+                }
+            })
     }
 
     private fun initViewModels() {
         viewModel = ViewModelProvider(this).get(AddNewDrugViewModel::class.java)
     }
 
-    private fun selectFragment(fragmentID: String, data: String = "") {
+    private fun selectFragment(fragmentID: String, drug: Drug? = null) {
         when (fragmentID) {
             DbConstants.DRUG_BY_CAMERA -> {
                 SnackBar.showToastBar(this@AddNewDrugActivity, "Add by Camera!")
@@ -49,15 +61,15 @@ class AddNewDrugActivity : AppCompatActivity() {
                 openFragment(drugByNameFragment, DbConstants.DRUG_BY_NAME)
             }
             DbConstants.DRUG_OCCURRENCE -> {
-                val drugOccurrencesFragment = NewDrugOccurrencesFragment.newInstance(data)
+                val drugOccurrencesFragment = NewDrugOccurrencesFragment.newInstance(drug!!)
                 openFragment(drugOccurrencesFragment, DbConstants.DRUG_OCCURRENCE)
             }
         }
     }
 
     fun fragmentResult(drug: Drug) {
-        SnackBar.showToastBar(this, drug.drug_name)
-        selectFragment(DbConstants.DRUG_OCCURRENCE)
+        viewModel.newDrug.value = drug
+        selectFragment(DbConstants.DRUG_OCCURRENCE, drug)
     }
 
     private fun openFragment(fragment: Fragment, id_fragment: String) {
