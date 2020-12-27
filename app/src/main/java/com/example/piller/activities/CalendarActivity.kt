@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
@@ -35,8 +34,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var loggedUserEmail: String
     private lateinit var mainProfile: String
     private lateinit var currentProfileTV: TextView
-    lateinit var toolbar: Toolbar
-    lateinit var toolbarBottom: ActionBar
+    private lateinit var toolbarBottom: ActionBar
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +46,8 @@ class CalendarActivity : AppCompatActivity() {
         setContentView(R.layout.activity_calendar)
 
         //todo notification
-        val mNotificationTime = Calendar.getInstance().timeInMillis + 5000 //Set after 5 seconds from the current time.
+        val mNotificationTime =
+            Calendar.getInstance().timeInMillis + 5000 //Set after 5 seconds from the current time.
         NotificationUtils().setNotification(mNotificationTime, this)
 
 
@@ -87,17 +86,18 @@ class CalendarActivity : AppCompatActivity() {
             val f1 = WeeklyCalendarFragment()
             val fragmentTransaction: FragmentTransaction =
                 supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.calender_weekly_container_fragment, f1, DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
+            fragmentTransaction.add(
+                R.id.calender_weekly_container_fragment,
+                f1,
+                DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID
+            )
             fragmentTransaction.commit()
         }
     }
 
     private fun initializeNavigations() {
         // upper navigation
-        toolbar = findViewById(R.id.calendar_toolbar)
-        toolbar.title = "Piller"
-        setSupportActionBar(toolbar)
-
+        supportActionBar?.title = "Piller"
 
         //bottom navigation
         toolbarBottom = supportActionBar!!
@@ -110,20 +110,20 @@ class CalendarActivity : AppCompatActivity() {
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    toolbar.title = "Piller"
+                    supportActionBar?.title = "Piller"
                     val weeklyCalendarFragment = WeeklyCalendarFragment.newInstance()
                     openFragment(weeklyCalendarFragment, DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_profile -> {
-                    toolbar.title = "Profiles"
+                    supportActionBar?.title = "Profiles"
                     val profileFragment = ProfileFragment.newInstance()
                     openFragment(profileFragment, DbConstants.PROFILES_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
 
                 R.id.navigation_full_view -> {
-                    toolbar.title = "Full View"
+                    supportActionBar?.title = "Full View"
                     val fullViewFragment = FullViewFragment.newInstance()
                     openFragment(fullViewFragment, DbConstants.FULL_VIEW_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true

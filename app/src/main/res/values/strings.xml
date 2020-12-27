@@ -44,7 +44,7 @@
     <string name="nd_enter_drug_name_label">Enter Drug Name</string>
     <string name="nd_search_label">Search</string>
     <string name="nd_select_btn_text">Select</string>
-    <string name="ndo_new_drug_name">New Drug Name</string>
+    <string name="ndo_new_drug_name_label">New Drug Name</string>
     <string name="ndo_first_occurrence_date">First Occurrence Date</string>
     <string name="ndo_first_occurrence_time">First Occurrence Time</string>
     <string name="ndo_add_drug">Add Drug</string>

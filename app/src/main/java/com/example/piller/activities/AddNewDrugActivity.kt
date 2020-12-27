@@ -1,11 +1,9 @@
 package com.example.piller.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
@@ -16,7 +14,6 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.fragments.DrugByNameFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
-import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.AddNewDrugViewModel
 
@@ -27,7 +24,6 @@ class AddNewDrugActivity : AppCompatActivity() {
     private lateinit var drugAdapter: NewDrugByNameAdapter
     private lateinit var currentProfile: String
     private lateinit var loggedEmail: String
-    private lateinit var toolbar: Toolbar
     private lateinit var addType: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,12 +35,9 @@ class AddNewDrugActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_new_drug)
         initViews()
         initRecyclersAndAdapters()
-        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initObservers()
         selectFragment(savedInstanceState, addType)
-
-
     }
 
     private fun initViewModels() {
@@ -97,9 +90,7 @@ class AddNewDrugActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        toolbar = findViewById(R.id.nd_toolbar)
-        drugSelectedBtn=findViewById(R.id.nd_drug_selected_btn)
-
+        drugSelectedBtn = findViewById(R.id.nd_drug_selected_btn)
     }
 
     private fun updateRecyclersAndAdapters() {
@@ -117,17 +108,15 @@ class AddNewDrugActivity : AppCompatActivity() {
         drugOptionsList.adapter = drugAdapter
     }
 
-
     private fun clickOnDrug(rxcui: Int) {
         val drug = viewModel.getDrugByRxcui(rxcui)
         if (drug != null) {
             viewModel.newDrug.value = drug
             val intent = Intent(
                 this,
-                DrugOccurrencesActivity::class.java
+                DrugOccurrenceActivity::class.java
             )
-            intent.putExtra(DbConstants.FULL_DRUG_NAME, drug.drug_name)
-            intent.putExtra(DbConstants.DRUG_RXCUI, drug.rxcui)
+            intent.putExtra(DbConstants.DRUG_OBJECT, drug)
             intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
             intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
             startActivity(intent)
@@ -138,4 +127,8 @@ class AddNewDrugActivity : AppCompatActivity() {
         drugSelectedBtn.isEnabled = enabled
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
 }

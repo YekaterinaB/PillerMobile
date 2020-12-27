@@ -9,7 +9,6 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,7 +21,6 @@ import org.json.JSONObject
 
 class ManageAccountActivity : AppCompatActivity() {
     private lateinit var viewModel: ManageAccountViewModel
-    private lateinit var toolbar: Toolbar
     private lateinit var supervisorsLayout: ConstraintLayout
     private lateinit var emailLayout: ConstraintLayout
     private lateinit var currentEmailTV: TextView
@@ -36,14 +34,10 @@ class ManageAccountActivity : AppCompatActivity() {
         viewModel.loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
 
         setContentView(R.layout.activity_manage_account)
-        toolbar = findViewById(R.id.manage_account_toolbar)
-        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initViews()
         setOnClickListeners()
         setViewModelsObservers()
-
-
     }
 
     private fun initViewModels() {
@@ -148,7 +142,7 @@ class ManageAccountActivity : AppCompatActivity() {
             setDeleteAccountDialog()
         }
 
-        supervisorsLayout.setOnClickListener{
+        supervisorsLayout.setOnClickListener {
             val intent = Intent(
                 this@ManageAccountActivity,
                 ManageSupervisorsActivity::class.java
@@ -321,7 +315,7 @@ class ManageAccountActivity : AppCompatActivity() {
         currentEmailTV = findViewById(R.id.ma_current_email)
         passwordLayout = findViewById(R.id.ma_password_layout)
         deleteLayout = findViewById(R.id.ma_delete_layout)
-        supervisorsLayout=findViewById(R.id.ma_manage_supervisors_layout)
+        supervisorsLayout = findViewById(R.id.ma_manage_supervisors_layout)
     }
 
     override fun onSupportNavigateUp(): Boolean {

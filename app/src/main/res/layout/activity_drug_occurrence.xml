@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.piller.fragments.NewDrugOccurrencesFragment">
+    tools:context="com.example.piller.activities.DrugOccurrencesActivity">
 
     <TextView
         android:id="@+id/ndo_new_drug_name"
@@ -17,7 +17,7 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:scrollHorizontally="true"
-        android:text="@string/ndo_new_drug_name"
+        android:text="@string/ndo_new_drug_name_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
