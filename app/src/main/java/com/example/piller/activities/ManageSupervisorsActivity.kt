@@ -8,7 +8,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,12 +23,10 @@ import com.example.piller.utilities.DbConstants.DEFAULT_SUPERVISOR_THRESHOLD
 import com.example.piller.viewModels.ManageSupervisorsViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.manage_supervisors_layout.*
 
 
 class ManageSupervisorsActivity : AppCompatActivity() {
-    private lateinit var toolbar: Toolbar
     private lateinit var thresholdSpinner: Spinner
     private lateinit var viewModel: ManageSupervisorsViewModel
     private lateinit var supervisorAdapter: SupervisorsAdapter
@@ -40,12 +37,7 @@ class ManageSupervisorsActivity : AppCompatActivity() {
         initViewModels()
         initObservers()
         setContentView(R.layout.manage_supervisors_layout)
-
-        //toolbar
-        toolbar = findViewById(R.id.manage_supervisors_toolbar)
-        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        //todo nav back elad
 
         setClickListeners()
         initRecyclersAndAdapters()
@@ -129,7 +121,6 @@ class ManageSupervisorsActivity : AppCompatActivity() {
     }
 
 
-
     private fun initObservers() {
         viewModel.mutableSupervisorThreshold.observe(
             this,
@@ -201,5 +192,10 @@ class ManageSupervisorsActivity : AppCompatActivity() {
         viewModel.mutableSupervisorThreshold.value = DEFAULT_SUPERVISOR_THRESHOLD
         viewModel.getSupervisorsFromDB()
         viewModel.getThresholdFromDB()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }

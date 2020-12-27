@@ -6,18 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.piller.activities.CalendarActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/calendar_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
     <TextView
         android:id="@+id/calendar_current_profile"
         android:layout_width="match_parent"
@@ -26,17 +14,17 @@
         android:text="name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar_toolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/calender_weekly_container_fragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toTopOf="@+id/BottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar_current_profile"
-        app:layout_constraintBottom_toTopOf="@+id/BottomNavigationView"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+        app:layout_constraintTop_toBottomOf="@+id/calendar_current_profile">
 
 
     </FrameLayout>

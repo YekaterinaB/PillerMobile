@@ -1,23 +1,23 @@
 package com.example.piller.activities
 
-
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.piller.R
+import com.example.piller.SnackBar
 import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val ARG_NEW_DRUG = "new drug"
-
-class DrugOccurrencesActivity : AppCompatActivity() {
+class DrugOccurrenceActivity : AppCompatActivity() {
     //  todo check if already has the drug by rxcui
     //  todo - add X button on top so the user will be able to cancel
     private lateinit var newDrugName: TextView
@@ -25,24 +25,21 @@ class DrugOccurrencesActivity : AppCompatActivity() {
     private lateinit var drugOccurrencesTime: TextView
     private lateinit var drugRepeatSpinner: Spinner
     private lateinit var drugRepeatContainer: ConstraintLayout
-    private lateinit var drug:Drug
+    private lateinit var drug: Drug
     private lateinit var currentProfile: String
     private lateinit var loggedEmail: String
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        drug.drug_name = intent.getStringExtra(DbConstants.FULL_DRUG_NAME)!!
-        drug.rxcui = intent.getIntExtra(DbConstants.DRUG_RXCUI, 0)
+        setContentView(R.layout.activity_drug_occurrence)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        drug = intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!
         currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        setContentView(R.layout.activity_add_new_drug)
         initViews()
         initViewsInitialData()
         initListeners()
-
     }
-
 
     private fun initViewsInitialData() {
         //  initiate start date
@@ -66,19 +63,18 @@ class DrugOccurrencesActivity : AppCompatActivity() {
             showTimePickerDialog()
         }
 
-//        newDrugName.setOnLongClickListener {
-//            viewModel.newDrug.value?.drug_name?.let { drugName ->
-//                SnackBar.showToastBar(
-//                    this,
-//                    drugName
-//                )
-//            }
-//            return@setOnLongClickListener true
-//        }
+        newDrugName.setOnLongClickListener {
+            SnackBar.showToastBar(
+                this,
+                drug.drug_name
+            )
+            return@setOnLongClickListener true
+        }
     }
 
     private fun initViews() {
         newDrugName = findViewById(R.id.ndo_new_drug_name)
+        newDrugName.text = drug.drug_name
         drugOccurrencesDate = findViewById(R.id.ndo_first_occurrence_date)
         drugOccurrencesTime = findViewById(R.id.ndo_first_occurrence_time)
         drugRepeatSpinner = findViewById(R.id.ndo_repeat_spinner)
@@ -144,6 +140,12 @@ class DrugOccurrencesActivity : AppCompatActivity() {
         dpd.show()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.new_drug_occurrence_menu, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //  todo get email and name
         return when (item.itemId) {
@@ -158,26 +160,8 @@ class DrugOccurrencesActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.new_drug_occurrence_menu, menu)
-//        super.onCreateOptionsMenu(menu, inflater)
-//    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param newDrug Drug to add
-         * @return A new instance of fragment NewDrugOccurrencesFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-//        @JvmStatic
-//        fun newInstance(newDrug: Drug) =
-//            NewDrugOccurrencesFragment().apply {
-//                arguments = Bundle().apply {
-//                    putParcelable(ARG_NEW_DRUG, newDrug)
-//                }
-//            }
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }

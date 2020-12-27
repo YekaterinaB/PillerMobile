@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.AddNewDrugActivity
@@ -31,13 +32,11 @@ class DrugByNameFragment : Fragment() {
         fragmentView = inflater.inflate(R.layout.fragment_new_drug_by_name, container, false)
         initViews()
         initListeners()
+        initObservers()
         return fragmentView
     }
 
-
-
     private fun initListeners() {
-
         searchBtn.setOnClickListener {
             searchDrugCommand()
         }
@@ -49,6 +48,12 @@ class DrugByNameFragment : Fragment() {
             }
             return@setOnEditorActionListener false
         }
+    }
+
+    private fun initObservers() {
+        viewModel.drugsSearchResult.observe(requireActivity(), Observer {
+            setButtonsEnabled(true)
+        })
     }
 
     private fun searchDrug() {

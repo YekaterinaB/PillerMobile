@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.hide()
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         initObservers()
         AppPreferences.init(this)
