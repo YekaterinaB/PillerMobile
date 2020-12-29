@@ -22,19 +22,6 @@ class DrugOccurrenceViewModel : ViewModel() {
     private val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
 
     fun addNewDrugToUser(email: String, name: String, newDrug: Drug) {
-        if (!userHasDrug(email, name, newDrug)) {
-            sendDrugToServer(email, name, newDrug)
-        } else {
-            snackBarMessage.value = "User already has this drug."
-        }
-    }
-
-    private fun userHasDrug(email: String, name: String, newDrug: Drug): Boolean {
-        //  todo check if the user already has it
-        return false
-    }
-
-    private fun sendDrugToServer(email: String, name: String, newDrug: Drug) {
         retrofit.addDrugCalendarByUser(email, name, newDrug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
