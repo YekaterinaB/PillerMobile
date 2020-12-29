@@ -2,18 +2,21 @@ package com.example.piller.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
+import com.example.piller.viewModels.DrugOccurrenceViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,19 +29,35 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var drugRepeatSpinner: Spinner
     private lateinit var drugRepeatContainer: ConstraintLayout
     private lateinit var drug: Drug
-    private lateinit var currentProfile: String
+    private lateinit var currentProfileName: String
     private lateinit var loggedEmail: String
+    private lateinit var viewModel: DrugOccurrenceViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drug_occurrence)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         drug = intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!
-        currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+        currentProfileName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        viewModel = ViewModelProvider(this).get(DrugOccurrenceViewModel::class.java)
         initViews()
         initViewsInitialData()
         initListeners()
+        initViewModelObservers()
+    }
+
+    private fun initViewModelObservers() {
+        viewModel.snackBarMessage.observe(this, Observer { message ->
+            SnackBar.showToastBar(this, message)
+        })
+
+        viewModel.addedDrugSuccess.observe(this, Observer { added ->
+            if (added) {
+                SnackBar.showToastBar(this, "Drug added!")
+                finish()
+            }
+        })
     }
 
     private fun initViewsInitialData() {
@@ -103,17 +122,15 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
 
         val tpd =
-            this.let {
-                TimePickerDialog(
-                    it,
-                    TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
-                        setTimeLabel(hourOfDay, minute)
-                    },
-                    calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE),
-                    true
-                )
-            }
+            TimePickerDialog(
+                this,
+                TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                    setTimeLabel(hourOfDay, minute)
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+            )
 
         tpd.show()
     }
@@ -125,17 +142,15 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val dpd =
-            this.let {
-                DatePickerDialog(
-                    it,
-                    DatePickerDialog.OnDateSetListener { _, yearSelected, monthOfYear, dayOfMonth ->
-                        setDateLabel(dayOfMonth, monthOfYear, yearSelected)
-                    },
-                    year,
-                    month,
-                    day
-                )
-            }
+            DatePickerDialog(
+                this,
+                DatePickerDialog.OnDateSetListener { _, yearSelected, monthOfYear, dayOfMonth ->
+                    setDateLabel(dayOfMonth, monthOfYear, yearSelected)
+                },
+                year,
+                month,
+                day
+            )
 
         dpd.show()
     }
@@ -147,13 +162,14 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        //  todo get email and name
+        //  todo set drug occurrences before sending to server!!
         return when (item.itemId) {
             R.id.ndo_menu_add_drug -> {
-//                viewModel.addNewDrugToUser(
-//                    profileViewModel.getCurrentEmail(),
-//                    profileViewModel.getCurrentProfileName()
-//                )
+                viewModel.addNewDrugToUser(
+                    loggedEmail,
+                    currentProfileName,
+                    drug
+                )
                 true
             }
             else -> super.onOptionsItemSelected(item)
