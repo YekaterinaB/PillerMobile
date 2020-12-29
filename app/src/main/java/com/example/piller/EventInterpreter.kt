@@ -110,16 +110,24 @@ class EventInterpreter {
         return isIn
     }
 
+    private fun setCalendarTime(calendar: Calendar, hour: Int, minutes: Int, seconds: Int) {
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minutes)
+        calendar.set(Calendar.SECOND, seconds)
+    }
+
     fun getFirstDayOfWeek(): Date {
         // get start of this week in milliseconds
         val cal: Calendar = Calendar.getInstance()
         cal.set(Calendar.DAY_OF_WEEK, cal.firstDayOfWeek)
+        setCalendarTime(cal, 0, 0, 0)
         return cal.time
     }
 
     fun getLastDayOfWeek(): Date {
         val cal: Calendar = Calendar.getInstance()
         cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
+        setCalendarTime(cal, 23, 59, 59)
         return cal.time
     }
 
@@ -128,9 +136,7 @@ class EventInterpreter {
         cal.time = date
         //  set time to 00:00:00
         cal.set(Calendar.DAY_OF_MONTH, 1)
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0)
+        setCalendarTime(cal, 0, 0, 0)
         return cal.time
     }
 
@@ -143,9 +149,7 @@ class EventInterpreter {
         cal.time = date
         cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
         //  set time to 23:59:59
-        cal.set(Calendar.HOUR_OF_DAY, 11)
-        cal.set(Calendar.MINUTE, 59)
-        cal.set(Calendar.SECOND, 59)
+        setCalendarTime(cal, 23, 59, 59)
         return cal.time
     }
 

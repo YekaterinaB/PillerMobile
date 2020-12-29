@@ -77,9 +77,7 @@ class WeeklyCalendarViewModel : ViewModel() {
         val jObject = JSONObject(calendarInfo.body()!!.string())
         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
 
-        //  todo set time to 00:00:00
         val startDate = eventInterpreter.getFirstDayOfWeek()
-        //  todo set time to 23:59:59
         val endDate = eventInterpreter.getLastDayOfWeek()
         val weekEvents = eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate,
