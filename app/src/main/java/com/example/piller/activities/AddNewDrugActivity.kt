@@ -15,10 +15,10 @@ import com.example.piller.SnackBar
 import com.example.piller.fragments.DrugByNameFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.utilities.DbConstants
-import com.example.piller.viewModels.AddNewDrugViewModel
+import com.example.piller.viewModels.DrugSearchViewModel
 
 class AddNewDrugActivity : AppCompatActivity() {
-    private lateinit var viewModel: AddNewDrugViewModel
+    private lateinit var searchViewModel: DrugSearchViewModel
     private lateinit var drugOptionsList: RecyclerView
     private lateinit var drugSelectedBtn: Button
     private lateinit var drugAdapter: NewDrugByNameAdapter
@@ -41,7 +41,7 @@ class AddNewDrugActivity : AppCompatActivity() {
     }
 
     private fun initViewModels() {
-        viewModel = ViewModelProvider(this).get(AddNewDrugViewModel::class.java)
+        searchViewModel = ViewModelProvider(this).get(DrugSearchViewModel::class.java)
     }
 
     private fun selectFragment(savedInstanceState: Bundle?, fragmentID: String) {
@@ -69,7 +69,7 @@ class AddNewDrugActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        viewModel.addedDrugSuccess.observe(
+        searchViewModel.addedDrugSuccess.observe(
             this,
             Observer {
                 //  added drug successfully, close activity
@@ -78,12 +78,12 @@ class AddNewDrugActivity : AppCompatActivity() {
                 }
             })
 
-        viewModel.drugsSearchResult.observe(this, Observer {
+        searchViewModel.drugsSearchResult.observe(this, Observer {
             updateRecyclersAndAdapters()
             setButtonsEnabled(true)
         })
 
-        viewModel.snackBarMessage.observe(this, Observer { message ->
+        searchViewModel.snackBarMessage.observe(this, Observer { message ->
             SnackBar.showToastBar(this, message)
         })
 
@@ -94,7 +94,7 @@ class AddNewDrugActivity : AppCompatActivity() {
     }
 
     private fun updateRecyclersAndAdapters() {
-        viewModel.drugsSearchResult.value?.let { drugAdapter.setData(it) }
+        searchViewModel.drugsSearchResult.value?.let { drugAdapter.setData(it) }
         drugAdapter.notifyDataSetChanged()
     }
 
@@ -109,9 +109,9 @@ class AddNewDrugActivity : AppCompatActivity() {
     }
 
     private fun clickOnDrug(rxcui: Int) {
-        val drug = viewModel.getDrugByRxcui(rxcui)
+        val drug = searchViewModel.getDrugByRxcui(rxcui)
         if (drug != null) {
-            viewModel.newDrug.value = drug
+            searchViewModel.newDrug.value = drug
             val intent = Intent(
                 this,
                 DrugOccurrenceActivity::class.java

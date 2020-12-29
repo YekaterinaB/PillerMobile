@@ -14,14 +14,14 @@ import androidx.lifecycle.Observer
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.AddNewDrugActivity
-import com.example.piller.viewModels.AddNewDrugViewModel
+import com.example.piller.viewModels.DrugSearchViewModel
 import com.google.android.material.textfield.TextInputLayout
 
 class DrugByNameFragment : Fragment() {
     private lateinit var drugNameTIL: TextInputLayout
     private lateinit var searchBtn: Button
     private lateinit var fragmentView: View
-    private val viewModel: AddNewDrugViewModel by activityViewModels()
+    private val searchViewModel: DrugSearchViewModel by activityViewModels()
 
 
     override fun onCreateView(
@@ -51,7 +51,7 @@ class DrugByNameFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.drugsSearchResult.observe(requireActivity(), Observer {
+        searchViewModel.drugsSearchResult.observe(requireActivity(), Observer {
             setButtonsEnabled(true)
         })
     }
@@ -67,7 +67,7 @@ class DrugByNameFragment : Fragment() {
                 return
             }
         }
-        viewModel.searchDrugByName(drugName.trim())
+        searchViewModel.searchDrugByName(drugName.trim())
     }
 
     private fun searchDrugCommand() {

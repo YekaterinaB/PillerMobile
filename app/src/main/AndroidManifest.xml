@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.DrugOccurrenceActivity"
+        <activity
+            android:name=".activities.DrugOccurrenceActivity"
             android:parentActivityName=".activities.AddNewDrugActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -29,11 +30,6 @@
                 android:value=".activities.MainActivity" />
         </activity>
         <activity android:name=".activities.CalendarActivity" />
-        <activity android:name=".activities.DrugOccurrencesActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.AddNewDrugActivity" />
-        </activity>
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
