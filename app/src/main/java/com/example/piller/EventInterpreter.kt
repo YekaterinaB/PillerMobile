@@ -50,24 +50,26 @@ class EventInterpreter {
     ): MutableList<CalendarEvent> {
         val eventList: MutableList<CalendarEvent> = mutableListOf()
         val repeatStart = (drugInfo.get("repeat_start") as String).toLong()
-        val repeatYear = (drugInfo.get("repeat_year") as String).split(',').map(String::toInt)
-        val repeatMonth = (drugInfo.get("repeat_month") as String).split(',').map(String::toInt)
-        val repeatDay = (drugInfo.get("repeat_day") as String).split(',').map(String::toInt)
-        val repeatWeek = (drugInfo.get("repeat_week") as String).split(',').map(String::toInt)
+        val repeatYear = drugInfo.get("repeat_year") as Int
+        val repeatMonth = drugInfo.get("repeat_month") as Int
+        val repeatDay = drugInfo.get("repeat_day") as Int
+        val repeatWeek = drugInfo.get("repeat_week") as Int
         val repeatWeekday = (drugInfo.get("repeat_weekday") as String).split(',').map(String::toInt)
+
         var calendarCurrent = Calendar.getInstance()
         calendarCurrent.time = start
-        val calendarStartRepeat = Calendar.getInstance()
-        calendarStartRepeat.timeInMillis = repeatStart
-        //  set calendar to end date plus 1 day and set it to hour 00:00, that way when we check whether
-        //  an event is between the start day and the end day -  it will surely be in time
+
         val calendarEnd = Calendar.getInstance()
         calendarEnd.time = end
-        calendarEnd.add(Calendar.DATE, 1)
-        calendarEnd.set(Calendar.HOUR_OF_DAY, 0)
-        calendarEnd.set(Calendar.MINUTE, 0)
-        calendarEnd.set(Calendar.SECOND, 0)
-        calendarEnd.add(Calendar.SECOND, -1)
+
+        // start repeat count
+        val calendarStartRepeat = Calendar.getInstance()
+        calendarStartRepeat.timeInMillis = repeatStart
+        //save intake time
+        val hourOfDay = calendarStartRepeat.get(Calendar.HOUR_OF_DAY)
+        val minuteOfDay = calendarStartRepeat.get(Calendar.MINUTE)
+        // start of day at 00:00
+        setCalendarTime(calendarStartRepeat, 0, 0, 0)
 
         // if the start intake is after start day
         if (calendarCurrent.time.before(calendarStartRepeat.time)) {
@@ -76,39 +78,159 @@ class EventInterpreter {
 
         // check days between actual start date and the new start date
         var indexDay = getDaysBetween(start, calendarCurrent.time)
-
+        val calendarClosestRepeat = Calendar.getInstance()
+        calendarClosestRepeat.timeInMillis = calendarStartRepeat.timeInMillis
+        val onlyOnce = isOnlyRepeat(repeatYear, repeatMonth, repeatWeek, repeatDay)
         while (calendarCurrent.time < calendarEnd.time) {
-            val dayOfWeek: Int = calendarCurrent.get(Calendar.DAY_OF_WEEK)
-            val numberOfWeek: Int = calendarCurrent.get(Calendar.WEEK_OF_MONTH)
-            val dayOfMonth: Int = calendarCurrent.get(Calendar.DAY_OF_MONTH)
-            val monthOfYear: Int = calendarCurrent.get(Calendar.MONTH)
-            val year: Int = calendarCurrent.get(Calendar.YEAR)
-            if (isInRepeat(year, repeatYear) && isInRepeat(monthOfYear, repeatMonth) &&
-                isInRepeat(dayOfMonth, repeatDay) && isInRepeat(numberOfWeek, repeatWeek) &&
-                isInRepeat(dayOfWeek, repeatWeekday)
-            ) {
+            val isInRepeat = isDateInRepeat(
+                repeatYear,
+                repeatMonth,
+                repeatWeek,
+                repeatWeekday,
+                repeatDay,
+                calendarCurrent,
+                calendarClosestRepeat,
+                onlyOnce
+            )
+            if (isInRepeat) {
                 //event is in repeats
+                calendarCurrent.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                calendarCurrent.set(Calendar.MINUTE, minuteOfDay)
                 val event = CalendarEvent(drugName, indexDay, calendarCurrent.time, false)
                 //todo is taken
                 eventList.add(event)
+                setCalendarTime(calendarCurrent, 0, 0, 0)
             }
-
+            if (onlyOnce) {
+                //  if the event happens only once - stop the loop (whether we added it or not)
+                break
+            }
             calendarCurrent.add(Calendar.DATE, 1)
             indexDay += 1
         }
         return eventList
     }
 
-    private fun isInRepeat(current: Int, repeat: List<Int>): Boolean {
-        var isIn = false
-        for (i in repeat.indices) {
-            if (repeat[i] == -1 || repeat[i] == current) {
-                isIn = true
-                break
+
+    private fun isOnlyRepeat(
+        repeatYear: Int = 1,
+        repeatMonth: Int = 1,
+        repeatWeek: Int = 1,
+        repeatDay: Int = 1
+    ): Boolean = (repeatYear == 0 && repeatMonth == 0 && repeatWeek == 0 && repeatDay == 0)
+
+
+    private fun isDateInRepeat(
+        repeatYear: Int = 1,
+        repeatMonth: Int = 1,
+        repeatWeek: Int = 1,
+        repeatDayOfWeek: List<Int> = emptyList(),
+        repeatDay: Int = 1,
+        currentDate: Calendar,
+        calendarClosestRepeat: Calendar,
+        isOnlyRepeat: Boolean
+    ): Boolean {
+        var isInRepeat = false
+
+        when {
+            (isOnlyRepeat && currentDate.time == calendarClosestRepeat.time) -> {
+                //  check whether it's a one time event (all the fields are equal to 0)
+                isInRepeat = true
+            }
+            (repeatYear != 0) -> {
+                isInRepeat =
+                    setRepeatEvent(currentDate, repeatYear, calendarClosestRepeat, Calendar.YEAR)
+            }
+            (repeatMonth != 0) -> {
+                isInRepeat =
+                    setRepeatEvent(currentDate, repeatMonth, calendarClosestRepeat, Calendar.MONTH)
+            }
+            (repeatDay != 0) -> {
+                isInRepeat =
+                    setRepeatEvent(currentDate, repeatDay, calendarClosestRepeat, Calendar.DATE)
+            }
+            (repeatWeek != 0) -> {
+                isInRepeat =
+                    setRepeatWeekEvent(
+                        currentDate,
+                        repeatMonth,
+                        calendarClosestRepeat,
+                        repeatDayOfWeek
+                    )
             }
         }
+//        if (repeatYear == 0 && repeatMonth == 0 && repeatWeek == 0 && repeatDay == 0) {
+//            //current is already the firstRepeat
+//            onlyOnceRepeat = true
+//            if (currentDate.time == calendarClosestRepeat.time) {
+//                isInRepeat = true
+//            }
+//        } else if (repeatYear != 1) {
+//            isInRepeat =
+//                setRepeatEvent(currentDate, repeatYear, calendarClosestRepeat, Calendar.YEAR)
+//        } else if (repeatMonth != 1) {
+//            isInRepeat =
+//                setRepeatEvent(currentDate, repeatMonth, calendarClosestRepeat, Calendar.MONTH)
+//        } else if (repeatWeek != 1) {
+//            isInRepeat =
+//                setRepeatWeekEvent(currentDate, repeatMonth, calendarClosestRepeat, repeatDayOfWeek)
+//        } else if (repeatDay != 1) {
+//            isInRepeat =
+//                setRepeatEvent(currentDate, repeatDay, calendarClosestRepeat, Calendar.DATE)
+//        }
+        // if all of the fields above equal to 1, then it means we should repeat every day,
+        // therefore we can just return the current date
+        return isInRepeat
+    }
+
+    private fun setRepeatWeekEvent(
+        currentDate: Calendar,
+        repeat: Int,
+        calendarClosestRepeat: Calendar,
+        daysOfWeek: List<Int>
+    ): Boolean {
+        var isIn = false
+        val calenderRunFromStartToCurrent = Calendar.getInstance()
+        calenderRunFromStartToCurrent.timeInMillis = calendarClosestRepeat.timeInMillis
+
+        while (calenderRunFromStartToCurrent.time < currentDate.time) {
+            calenderRunFromStartToCurrent.add(Calendar.WEEK_OF_MONTH, repeat)
+        }
+        if (currentDate.get(Calendar.DAY_OF_WEEK) in daysOfWeek &&
+            calenderRunFromStartToCurrent.get(Calendar.WEEK_OF_YEAR) == currentDate.get(Calendar.WEEK_OF_YEAR)
+        ) {
+            //  all the days of week in the list are at the same week, so we can add all of them
+            isIn = true
+        }
+
+        calendarClosestRepeat.timeInMillis = calenderRunFromStartToCurrent.timeInMillis
+
         return isIn
     }
+
+
+    private fun setRepeatEvent(
+        currentDate: Calendar,
+        repeat: Int,
+        calendarClosestRepeat: Calendar,
+        addTimeUnit: Int
+    ): Boolean {
+        var isIn = false
+        val calenderRunFromStartToCurrent = Calendar.getInstance()
+        calenderRunFromStartToCurrent.timeInMillis = calendarClosestRepeat.timeInMillis
+
+        while (calenderRunFromStartToCurrent.time < currentDate.time) {
+            calenderRunFromStartToCurrent.add(addTimeUnit, repeat)
+        }
+        if (calenderRunFromStartToCurrent.time == currentDate.time) {
+            isIn = true
+        }
+
+        calendarClosestRepeat.timeInMillis = calenderRunFromStartToCurrent.timeInMillis
+
+        return isIn
+    }
+
 
     private fun setCalendarTime(calendar: Calendar, hour: Int, minutes: Int, seconds: Int) {
         calendar.set(Calendar.HOUR_OF_DAY, hour)
