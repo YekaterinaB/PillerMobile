@@ -17,8 +17,9 @@ class EventInterpreter {
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
             val drugName = drug.get("name") as String
+            val drugRxcui = drug.get("rxcui").toString()
             val drugInfo = drug.get("drug_info") as JSONObject
-            val drugEventList = getDrugEvent(drugName, drugInfo, start, end)
+            val drugEventList = getDrugEvent(drugName, drugRxcui, drugInfo, start, end)
             // put all event in array
             if (drugEventList.isNotEmpty()) {
                 for (j in 0 until drugEventList.size) {
@@ -44,6 +45,7 @@ class EventInterpreter {
 
     private fun getDrugEvent(
         drugName: String,
+        drugRxcui: String,
         drugInfo: JSONObject,
         start: Date,
         end: Date
@@ -72,7 +74,7 @@ class EventInterpreter {
         setCalendarTime(calendarStartRepeat, 0, 0, 0)
 
         // if the start intake is after start day
-        if (calendarCurrent.time.before(calendarStartRepeat.time)) {
+        if (isDateBefore(calendarCurrent, calendarStartRepeat)) {
             calendarCurrent = calendarStartRepeat
         }
 
@@ -81,7 +83,7 @@ class EventInterpreter {
         val calendarClosestRepeat = Calendar.getInstance()
         calendarClosestRepeat.timeInMillis = calendarStartRepeat.timeInMillis
         val onlyOnce = isOnlyRepeat(repeatYear, repeatMonth, repeatWeek, repeatDay)
-        while (calendarCurrent.time < calendarEnd.time) {
+        while (isDateBefore(calendarCurrent, calendarEnd)) {
             val isInRepeat = isDateInRepeat(
                 repeatYear,
                 repeatMonth,
@@ -96,7 +98,8 @@ class EventInterpreter {
                 //event is in repeats
                 calendarCurrent.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 calendarCurrent.set(Calendar.MINUTE, minuteOfDay)
-                val event = CalendarEvent(drugName, indexDay, calendarCurrent.time, false)
+                val event =
+                    CalendarEvent(drugName, drugRxcui, indexDay, calendarCurrent.time, false)
                 //todo is taken
                 eventList.add(event)
                 setCalendarTime(calendarCurrent, 0, 0, 0)
@@ -133,30 +136,56 @@ class EventInterpreter {
         var isInRepeat = false
 
         when {
-            (isOnlyRepeat && currentDate.time == calendarClosestRepeat.time) -> {
+            (isOnlyRepeat && areDatesEqual(currentDate, calendarClosestRepeat)) -> {
                 //  check whether it's a one time event (all the fields are equal to 0)
                 isInRepeat = true
             }
             (repeatYear != 0) -> {
-                isInRepeat =
-                    setRepeatEvent(currentDate, repeatYear, calendarClosestRepeat, Calendar.YEAR)
+                if (repeatYear == 1) {
+                    isInRepeat = true
+                } else {
+                    isInRepeat =
+                        setRepeatEvent(
+                            currentDate,
+                            repeatYear,
+                            calendarClosestRepeat,
+                            Calendar.YEAR
+                        )
+                }
             }
             (repeatMonth != 0) -> {
-                isInRepeat =
-                    setRepeatEvent(currentDate, repeatMonth, calendarClosestRepeat, Calendar.MONTH)
+                if (repeatMonth == 1) {
+                    isInRepeat = true
+                } else {
+                    isInRepeat =
+                        setRepeatEvent(
+                            currentDate,
+                            repeatMonth,
+                            calendarClosestRepeat,
+                            Calendar.MONTH
+                        )
+                }
             }
             (repeatDay != 0) -> {
-                isInRepeat =
-                    setRepeatEvent(currentDate, repeatDay, calendarClosestRepeat, Calendar.DATE)
+                if (repeatDay == 1) {
+                    isInRepeat = true
+                } else {
+                    isInRepeat =
+                        setRepeatEvent(currentDate, repeatDay, calendarClosestRepeat, Calendar.DATE)
+                }
             }
             (repeatWeek != 0) -> {
-                isInRepeat =
-                    setRepeatWeekEvent(
-                        currentDate,
-                        repeatMonth,
-                        calendarClosestRepeat,
-                        repeatDayOfWeek
-                    )
+                if (repeatWeek == 1) {
+                    isInRepeat = true
+                } else {
+                    isInRepeat =
+                        setRepeatWeekEvent(
+                            currentDate,
+                            repeatWeek,
+                            calendarClosestRepeat,
+                            repeatDayOfWeek
+                        )
+                }
             }
         }
 //        if (repeatYear == 0 && repeatMonth == 0 && repeatWeek == 0 && repeatDay == 0) {
@@ -192,11 +221,11 @@ class EventInterpreter {
         var isIn = false
         val calenderRunFromStartToCurrent = Calendar.getInstance()
         calenderRunFromStartToCurrent.timeInMillis = calendarClosestRepeat.timeInMillis
-
-        while (calenderRunFromStartToCurrent.time < currentDate.time) {
+        while (isDateBefore(calenderRunFromStartToCurrent, currentDate)) {
             calenderRunFromStartToCurrent.add(Calendar.WEEK_OF_MONTH, repeat)
         }
         if (currentDate.get(Calendar.DAY_OF_WEEK) in daysOfWeek &&
+            calenderRunFromStartToCurrent.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR) &&
             calenderRunFromStartToCurrent.get(Calendar.WEEK_OF_YEAR) == currentDate.get(Calendar.WEEK_OF_YEAR)
         ) {
             //  all the days of week in the list are at the same week, so we can add all of them
@@ -219,10 +248,12 @@ class EventInterpreter {
         val calenderRunFromStartToCurrent = Calendar.getInstance()
         calenderRunFromStartToCurrent.timeInMillis = calendarClosestRepeat.timeInMillis
 
-        while (calenderRunFromStartToCurrent.time < currentDate.time) {
+        //calenderRunFromStartToCurrent.time < currentDate.time
+        while (isDateBefore(calenderRunFromStartToCurrent, currentDate)) {
             calenderRunFromStartToCurrent.add(addTimeUnit, repeat)
         }
-        if (calenderRunFromStartToCurrent.time == currentDate.time) {
+//        calenderRunFromStartToCurrent.time == currentDate.time
+        if (areDatesEqual(calenderRunFromStartToCurrent, currentDate)) {
             isIn = true
         }
 
@@ -231,6 +262,18 @@ class EventInterpreter {
         return isIn
     }
 
+    private fun areDatesEqual(date1: Calendar, date2: Calendar): Boolean {
+        return date1.get(Calendar.DATE) == date2.get(Calendar.DATE)
+                && date1.get(Calendar.HOUR_OF_DAY) == date2.get(Calendar.HOUR_OF_DAY)
+                && date1.get(Calendar.MINUTE) == date2.get(Calendar.MINUTE)
+    }
+
+    private fun isDateBefore(date1: Calendar, date2: Calendar): Boolean {
+        if (date1.time < date2.time) {
+            return !areDatesEqual(date1, date2)
+        }
+        return false
+    }
 
     private fun setCalendarTime(calendar: Calendar, hour: Int, minutes: Int, seconds: Int) {
         calendar.set(Calendar.HOUR_OF_DAY, hour)
