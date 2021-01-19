@@ -33,8 +33,19 @@
         <item>6</item>
         <item>7</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="drug_should_repeat">
+        <item>Does not repeat</item>
+        <item>Repeat on…</item>
+    </string-array>
+
+    <string-array name="drug_repeat_options">
+        <item>Day</item>
+        <item>Week</item>
+        <item>Month</item>
+        <item>Year</item>
+    </string-array>
+
     <string name="fab_pill_image_label">Pill Image</string>
     <string name="fab_box_image">Box Image</string>
     <string name="fab_drug_name">Drug Name</string>
@@ -50,5 +61,11 @@
     <string name="ndo_add_drug">Add Drug</string>
 
     <string name="notification_channel_description">It\'s time to take your medicine!</string>
+    <string name="ndo_repeats_on_label">Repeats Every</string>
+    <string name="ndo_weekday_s">S</string>
+    <string name="ndo_weekday_m">M</string>
+    <string name="ndo_weekday_t">T</string>
+    <string name="ndo_weekday_w">W</string>
+    <string name="ndo_weekday_f">F</string>
 
 </resources>

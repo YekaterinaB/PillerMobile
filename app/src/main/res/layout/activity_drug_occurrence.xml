@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.piller.activities.DrugOccurrencesActivity">
+    tools:context="com.example.piller.activities.DrugOccurrenceActivity">
 
     <TextView
         android:id="@+id/ndo_new_drug_name"
@@ -58,12 +58,13 @@
         app:layout_constraintTop_toBottomOf="@id/ndo_first_occurrence_date" />
 
     <Spinner
-        android:id="@+id/ndo_repeat_spinner"
+        android:id="@+id/ndo_should_repeat_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view2" />
@@ -73,11 +74,142 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ndo_repeat_spinner">
+        app:layout_constraintTop_toBottomOf="@+id/ndo_should_repeat_spinner">
 
+        <Spinner
+            android:id="@+id/ndo_repeat_options_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ndo_repeat_every_number"
+            app:layout_constraintTop_toTopOf="@+id/ndo_repeat_every_number" />
+
+        <EditText
+            android:id="@+id/ndo_repeat_every_number"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:autofillHints="1"
+            android:ems="10"
+            android:inputType="numberSigned"
+            android:maxLength="2"
+            android:maxLines="1"
+            android:text="1"
+            android:textAlignment="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/ndo_repeats_on_label"
+            android:textAllCaps="true"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ndo_weekday_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ndo_repeat_options_spinner">
+
+            <com.example.piller.customWidgets.CheckboxWithTextInside
+                android:id="@+id/ndo_weekday_sun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:button="@null"
+                android:checked="false"
+                android:text="@string/ndo_weekday_s"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.piller.customWidgets.CheckboxWithTextInside
+                android:id="@+id/ndo_weekday_mon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:button="@null"
+                android:checked="false"
+                android:text="@string/ndo_weekday_m"
+                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_sun"
+                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+            <com.example.piller.customWidgets.CheckboxWithTextInside
+                android:id="@+id/ndo_weekday_tue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:button="@null"
+                android:checked="false"
+                android:text="@string/ndo_weekday_t"
+                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_mon"
+                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+            <com.example.piller.customWidgets.CheckboxWithTextInside
+                android:id="@+id/ndo_weekday_wed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:button="@null"
+                android:checked="false"
+                android:text="@string/ndo_weekday_w"
+                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_tue"
+                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+            <com.example.piller.customWidgets.CheckboxWithTextInside
+                android:id="@+id/ndo_weekday_thu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:button="@null"
+                android:checked="false"
+                android:text="@string/ndo_weekday_t"
+                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_wed"
+                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+            <com.example.piller.customWidgets.CheckboxWithTextInside
+                android:id="@+id/ndo_weekday_fri"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:button="@null"
+                android:checked="false"
+                android:text="@string/ndo_weekday_f"
+                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_thu"
+                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+            <com.example.piller.customWidgets.CheckboxWithTextInside
+                android:id="@+id/ndo_weekday_sat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:button="@null"
+                android:checked="false"
+                android:text="@string/ndo_weekday_s"
+                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_fri"
+                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

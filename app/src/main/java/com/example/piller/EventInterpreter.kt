@@ -176,7 +176,10 @@ class EventInterpreter {
             }
             (repeatWeek != 0) -> {
                 if (repeatWeek == 1) {
-                    isInRepeat = true
+                    if (currentDate.get(Calendar.DAY_OF_WEEK) in repeatDayOfWeek) {
+                        //  all the days of week in the list are at the same week, so we can add all of them
+                        isInRepeat = true
+                    }
                 } else {
                     isInRepeat =
                         setRepeatWeekEvent(
