@@ -34,16 +34,16 @@
         <item>7</item>
     </string-array>
 
-    <string-array name="drug_should_repeat">
-        <item>Does not repeat</item>
-        <item>Repeat on…</item>
-    </string-array>
-
     <string-array name="drug_repeat_options">
         <item>Day</item>
         <item>Week</item>
         <item>Month</item>
         <item>Year</item>
+    </string-array>
+
+    <string-array name="drug_should_repeat">
+        <item>Does not repeat</item>
+        <item>Repeat on…</item>
     </string-array>
 
     <string name="fab_pill_image_label">Pill Image</string>

@@ -124,6 +124,7 @@ class CalendarActivity : AppCompatActivity() {
                 }
 
                 R.id.navigation_full_view -> {
+                    // todo don't create new one if already in full view!
                     supportActionBar?.title = "Full View"
                     val fullViewFragment = FullViewFragment.newInstance()
                     openFragment(fullViewFragment, DbConstants.FULL_VIEW_FRAGMENT_ID)

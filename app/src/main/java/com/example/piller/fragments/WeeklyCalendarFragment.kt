@@ -117,7 +117,7 @@ class WeeklyCalendarFragment : Fragment() {
             })
     }
 
-    fun updateRecyclersAndAdapters() {
+    private fun updateRecyclersAndAdapters() {
         for (i in 0 until 7) {
             val newList = weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value!!.get(i)
             eliAdapters[i].setData(newList)
@@ -125,7 +125,7 @@ class WeeklyCalendarFragment : Fragment() {
         }
     }
 
-    fun initRecyclersAndAdapters() {
+    private fun initRecyclersAndAdapters() {
         eliRecycles.add(fragmentView.findViewById(R.id.calendar_sunday_list))
         eliRecycles.add(fragmentView.findViewById(R.id.calendar_monday_list))
         eliRecycles.add(fragmentView.findViewById(R.id.calendar_tuesday_list))

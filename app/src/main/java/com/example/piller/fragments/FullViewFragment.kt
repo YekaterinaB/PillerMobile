@@ -87,7 +87,7 @@ class FullViewFragment : Fragment() {
 //                            || startCal.time == firstDayOfCurrentMonth)
 //                    && startCal.time.before(eventInterpreter.getLastDayOfSpecificMonth(eventDay.calendar.time))
 //                ) {
-                    dayClicked(eventDay)
+                dayClicked(eventDay)
 //                }
             }
         })
@@ -108,7 +108,7 @@ class FullViewFragment : Fragment() {
             viewModel.mutableCurrentMonthlyCalendar.value?.get(
                 eventDay.calendar.get(
                     Calendar.DAY_OF_MONTH
-                ) - 1
+                )
             )?.toTypedArray()
         )
         fvpDayFragment.arguments = arguments
@@ -173,7 +173,8 @@ class FullViewFragment : Fragment() {
                                 val firstDateOfMonth = Calendar.getInstance()
                                 firstDateOfMonth.time = currentFirstDayOfMonth
                                 val tempCalendar: Calendar = firstDateOfMonth
-                                tempCalendar.add(Calendar.DATE, i)
+                                //  add 1 because the model starts from 0 (0 = first day)
+                                tempCalendar.add(Calendar.DATE, i + 1)
                                 val circleBitmap =
                                     getDrawableText(null, color = Color.BLACK, size = 15)
                                 events.add(EventDay(tempCalendar, circleBitmap as Drawable))
