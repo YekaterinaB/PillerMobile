@@ -16,6 +16,7 @@ import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import com.example.piller.EventInterpreter
 import com.example.piller.R
+import com.example.piller.models.CalendarEvent
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.FullViewViewModel
 import com.example.piller.viewModels.ProfileViewModel
@@ -108,7 +109,7 @@ class FullViewFragment : Fragment() {
             viewModel.mutableCurrentMonthlyCalendar.value?.get(
                 eventDay.calendar.get(
                     Calendar.DAY_OF_MONTH
-                )
+                ) - 1
             )?.toTypedArray()
         )
         fvpDayFragment.arguments = arguments
@@ -164,26 +165,28 @@ class FullViewFragment : Fragment() {
             androidx.lifecycle.Observer { eventsArray ->
                 eventsArray?.let {
                     if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
-
-                        val events: MutableList<EventDay> = ArrayList()
-                        // for each day that has at least one event - add an EventDay object in the calendar view
-                        for ((i, day) in it.withIndex()) {
-                            if (day.isNotEmpty()) {
-                                //  for each day to add create a calendar, do not reuse the same calendar because it won't work!
-                                val firstDateOfMonth = Calendar.getInstance()
-                                firstDateOfMonth.time = currentFirstDayOfMonth
-                                val tempCalendar: Calendar = firstDateOfMonth
-                                //  add 1 because the model starts from 0 (0 = first day)
-                                tempCalendar.add(Calendar.DATE, i + 1)
-                                val circleBitmap =
-                                    getDrawableText(null, color = Color.BLACK, size = 15)
-                                events.add(EventDay(tempCalendar, circleBitmap as Drawable))
-                            }
-                        }
-
-                        calendarView.setEvents(events)
+                        setEvents(it)
                     }
                 }
             })
+    }
+
+    private fun setEvents(calendarEvents: Array<MutableList<CalendarEvent>>) {
+        val eventsUI: MutableList<EventDay> = ArrayList()
+        // for each day that has at least one event - add an EventDay object in the calendar view
+        for ((i, day) in calendarEvents.withIndex()) {
+            if (day.isNotEmpty()) {
+                //  for each day to add create a calendar, do not reuse the same calendar because it won't work!
+                val firstDateOfMonth = Calendar.getInstance()
+                firstDateOfMonth.time = currentFirstDayOfMonth
+                val tempCalendar: Calendar = firstDateOfMonth
+                tempCalendar.add(Calendar.DATE, i)
+                val circleBitmap =
+                    getDrawableText(null, color = Color.BLACK, size = 15)
+                eventsUI.add(EventDay(tempCalendar, circleBitmap as Drawable))
+            }
+        }
+
+        calendarView.setEvents(eventsUI)
     }
 }
