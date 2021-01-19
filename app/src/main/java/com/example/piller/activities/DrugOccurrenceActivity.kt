@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.customWidgets.CheckboxWithTextInside
+import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugOccurrenceViewModel
 import java.text.SimpleDateFormat
@@ -52,12 +53,18 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         currentProfileName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
         viewModel = ViewModelProvider(this).get(DrugOccurrenceViewModel::class.java)
-        viewModel.setDrug(intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!)
+        setDrug(intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!)
         initViews()
         initViewsInitialData()
         initListeners()
         initViewModelObservers()
         initSpinners()
+    }
+
+    private fun setDrug(drug: Drug) {
+        val calendar = Calendar.getInstance()
+        drug.repeatStart = calendar.timeInMillis
+        viewModel.setDrug(drug)
     }
 
     private fun initSpinners() {

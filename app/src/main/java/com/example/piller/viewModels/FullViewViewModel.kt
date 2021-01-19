@@ -31,7 +31,7 @@ class FullViewViewModel : ViewModel() {
             updateCalendarByUser(loggedUserEmail, profile, startDate, endDate)
         } else {
             // update mutable calendar
-            changeMutableMonthlyCalendar(profile.getMonthlyCalendar())
+            setMutableMonthlyCalendar(profile.getMonthlyCalendar())
         }
     }
 
@@ -55,7 +55,7 @@ class FullViewViewModel : ViewModel() {
         )
     }
 
-    private fun changeMutableMonthlyCalendar(monthEvents: Array<MutableList<CalendarEvent>>) {
+    private fun setMutableMonthlyCalendar(monthEvents: Array<MutableList<CalendarEvent>>) {
         mutableCurrentMonthlyCalendar.value = monthEvents
     }
 
@@ -71,6 +71,6 @@ class FullViewViewModel : ViewModel() {
             startDate, endDate,
             drugInfoList as JSONArray
         )
-        changeMutableMonthlyCalendar(monthEvents)
+        setMutableMonthlyCalendar(monthEvents)
     }
 }

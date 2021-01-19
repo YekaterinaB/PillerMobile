@@ -34,10 +34,10 @@ class EventInterpreter {
     private fun getDaysBetween(first: Date, second: Date): Int {
         val firstCal = Calendar.getInstance()
         firstCal.time = first
-        firstCal.set(Calendar.HOUR_OF_DAY, 0)
+        setCalendarTime(firstCal, 0, 0, 0)
         val secondCal = Calendar.getInstance()
         secondCal.time = second
-        secondCal.set(Calendar.HOUR_OF_DAY, 0)
+        setCalendarTime(secondCal, 0, 0, 0)
 
         val diff: Long = secondCal.timeInMillis - firstCal.timeInMillis
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
@@ -282,6 +282,7 @@ class EventInterpreter {
         calendar.set(Calendar.HOUR_OF_DAY, hour)
         calendar.set(Calendar.MINUTE, minutes)
         calendar.set(Calendar.SECOND, seconds)
+        calendar.set(Calendar.MILLISECOND, 0)
     }
 
     fun getFirstDayOfWeek(): Date {
