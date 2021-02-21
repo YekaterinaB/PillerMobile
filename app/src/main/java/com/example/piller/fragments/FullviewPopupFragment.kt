@@ -1,5 +1,6 @@
 package com.example.piller.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +10,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
+import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.listAdapters.EliAdapter
 import com.example.piller.models.CalendarEvent
+import com.example.piller.utilities.DbConstants
 
 class FullviewPopupFragment : DialogFragment() {
     private var dateString: String? = null
@@ -36,7 +39,20 @@ class FullviewPopupFragment : DialogFragment() {
 
         eventsList = fragment.findViewById(R.id.fvp_events_list)
         eventsList.layoutManager = LinearLayoutManager(fragment.context)
-        eventsList.adapter = eventsData?.toMutableList()?.let { EliAdapter(it) }
+        eventsList.adapter = eventsData?.toMutableList()
+            ?.let { EliAdapter(it) { calendarEvent -> showDrugInfo(calendarEvent) } }
+    }
+
+    private fun showDrugInfo(calendarEvent: CalendarEvent) {
+        val intent = Intent(
+            requireContext(),
+            DrugInfoActivity::class.java
+        )
+        intent.putExtra(
+            DbConstants.CALENDAR_EVENT,
+            calendarEvent
+        )
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -8,9 +8,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
+import com.example.piller.models.Drug
 import java.text.SimpleDateFormat
+import java.util.*
 
-class EliAdapter(private var dataSet: MutableList<CalendarEvent>) :
+class EliAdapter(
+    private var dataSet: MutableList<CalendarEvent>,
+    private val itemClickCallback: (CalendarEvent) -> Unit
+) :
     RecyclerView.Adapter<EliAdapter.ViewHolder>() {
 
     /**
@@ -18,16 +23,9 @@ class EliAdapter(private var dataSet: MutableList<CalendarEvent>) :
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val drugName: TextView
-        val intakeTime: TextView
-        val isTaken: CheckBox
-
-        init {
-            // Define click listener for the ViewHolder's View.
-            drugName = view.findViewById(R.id.eli_drug_name)
-            intakeTime = view.findViewById(R.id.eli_time_intake)
-            isTaken = view.findViewById(R.id.eli_is_taken)
-        }
+        val drugName: TextView = view.findViewById(R.id.eli_drug_name)
+        val intakeTime: TextView = view.findViewById(R.id.eli_time_intake)
+        val isTaken: CheckBox = view.findViewById(R.id.eli_is_taken)
     }
 
     fun setData(data: MutableList<CalendarEvent>) {
@@ -45,15 +43,14 @@ class EliAdapter(private var dataSet: MutableList<CalendarEvent>) :
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val currentItem = dataSet[position]
         viewHolder.drugName.text = currentItem.drug_name
-        val time = SimpleDateFormat("HH:mm").format(currentItem.intake_time)
+        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(currentItem.intake_time)
         viewHolder.intakeTime.text = time
         viewHolder.isTaken.isChecked = currentItem.is_taken
-
+        viewHolder.drugName.setOnClickListener { itemClickCallback(currentItem) }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
