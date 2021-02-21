@@ -83,12 +83,18 @@ class WeeklyCalendarFragment : Fragment() {
         initViews(fragmentView)
         initListeners()
         initObservers()
+        initMissedDaysThreshold()
         weeklyCalendarViewModel.getWeekEvents(
             profileViewModel.getCurrentEmail(),
             profileViewModel.getCurrentProfile()
         )
         initRecyclersAndAdapters()
         return fragmentView
+    }
+
+    private fun initMissedDaysThreshold() {
+        val maxMissDaysThreshold = resources.getStringArray(R.array.threshold_alarm)
+        weeklyCalendarViewModel.maxMissDaysThreshold = maxMissDaysThreshold.last().toInt()
     }
 
     private fun initObservers() {

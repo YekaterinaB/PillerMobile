@@ -49,8 +49,21 @@ class EliAdapter(
         viewHolder.drugName.text = currentItem.drug_name
         val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(currentItem.intake_time)
         viewHolder.intakeTime.text = time
-        viewHolder.isTaken.isChecked = currentItem.is_taken
+        setTakenCheckbox(viewHolder, currentItem.showTakenCheckBox, currentItem.is_taken)
         viewHolder.drugName.setOnClickListener { itemClickCallback(currentItem) }
+    }
+
+    private fun setTakenCheckbox(
+        viewHolder: ViewHolder,
+        showTakenCheckBox: Boolean,
+        is_taken: Boolean
+    ) {
+        if (showTakenCheckBox) {
+            viewHolder.isTaken.visibility = View.VISIBLE
+            viewHolder.isTaken.isChecked = is_taken
+        } else {
+            viewHolder.isTaken.visibility = View.GONE
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
