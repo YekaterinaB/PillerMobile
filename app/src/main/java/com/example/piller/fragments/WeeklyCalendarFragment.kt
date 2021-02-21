@@ -19,8 +19,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.AddNewDrugActivity
-import com.example.piller.activities.ManageAccountActivity
+import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.listAdapters.EliAdapter
+import com.example.piller.models.CalendarEvent
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
@@ -138,10 +139,22 @@ class WeeklyCalendarFragment : Fragment() {
         for (i in 0 until 7) {
             eliRecycles[i].layoutManager = LinearLayoutManager(fragmentView.context)
             // add as empty list
-            eliAdapters.add(EliAdapter(weeklyEvents[i]))
+            eliAdapters.add(EliAdapter(weeklyEvents[i]) { showDrugInfo(it) })
             eliRecycles[i].adapter = eliAdapters[i]
         }
 
+    }
+
+    private fun showDrugInfo(calendarEvent: CalendarEvent) {
+        val intent = Intent(
+            requireContext(),
+            DrugInfoActivity::class.java
+        )
+        intent.putExtra(
+            DbConstants.CALENDAR_EVENT,
+            calendarEvent
+        )
+        startActivity(intent)
     }
 
     companion object {
@@ -173,7 +186,7 @@ class WeeklyCalendarFragment : Fragment() {
                 AddNewDrugActivity::class.java
             )
             intent.putExtra(DbConstants.ADD_DRUG_TYPE, DbConstants.DRUG_BY_NAME)
-            intent.putExtra(DbConstants.LOGGED_USER_EMAIL,profileViewModel.getCurrentEmail())
+            intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
             intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
             startActivity(intent)
         }

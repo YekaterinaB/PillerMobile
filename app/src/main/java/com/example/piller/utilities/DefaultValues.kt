@@ -21,6 +21,9 @@ object DbConstants {
     const val DRUGS_FRAGMENT_ID = "drugs"
     const val FULL_VIEW_FRAGMENT_ID = "full_view"
 
+    // calendar events
+    const val CALENDAR_EVENT = "Calendar_event"
+
     //  supervisors
     const val DEFAULT_SUPERVISOR_THRESHOLD = 3
 
