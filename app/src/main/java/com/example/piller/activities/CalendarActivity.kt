@@ -61,9 +61,14 @@ class CalendarActivity : AppCompatActivity() {
 
     }
 
+    private fun initMissedDaysThreshold() {
+        val maxMissDaysThreshold = resources.getStringArray(R.array.threshold_alarm)
+        weeklyCalendarViewModel.maxMissDaysThreshold = maxMissDaysThreshold.last().toInt()
+    }
 
     private fun initializeViewModels() {
         weeklyCalendarViewModel = ViewModelProvider(this).get(WeeklyCalendarViewModel::class.java)
+        initMissedDaysThreshold()
         weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value =
             Array(7) { mutableListOf<CalendarEvent>() }
 

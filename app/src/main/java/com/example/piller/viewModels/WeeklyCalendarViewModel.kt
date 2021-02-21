@@ -25,6 +25,8 @@ class WeeklyCalendarViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
+    var maxMissDaysThreshold: Int = 1
+
     fun getWeekEvents(
         loggedUserEmail: String,
         profile: Profile
@@ -81,7 +83,8 @@ class WeeklyCalendarViewModel : ViewModel() {
         val endDate = eventInterpreter.getLastDayOfWeek()
         val weekEvents = eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate,
-            drugInfoList as JSONArray
+            drugInfoList as JSONArray,
+            maxMissDaysThreshold
         )
         changeMutableWeeklyCalendar(weekEvents)
 

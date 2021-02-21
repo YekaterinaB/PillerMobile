@@ -10,7 +10,8 @@ class EventInterpreter {
     fun getEventsForCalendarByDate(
         start: Date,
         end: Date,
-        drugList: JSONArray
+        drugList: JSONArray,
+        maxMissDaysThreshold: Int = 0
     ): Array<MutableList<CalendarEvent>> {
         val daysBetween = getDaysBetween(start, end) + 1
         val eventList = Array(daysBetween) { mutableListOf<CalendarEvent>() }
@@ -22,6 +23,7 @@ class EventInterpreter {
             val drugEventList = getDrugEvent(drugName, drugRxcui, drugInfo, start, end)
             // put all event in array
             if (drugEventList.isNotEmpty()) {
+                updateMissedDaysCheckboxVisibility(maxMissDaysThreshold, drugEventList)
                 for (j in 0 until drugEventList.size) {
                     val indexDay = drugEventList[j].index_day
                     eventList[indexDay].add(drugEventList[j])
@@ -29,6 +31,22 @@ class EventInterpreter {
             }
         }
         return eventList
+    }
+
+    private fun updateMissedDaysCheckboxVisibility(
+        maxMissDaysThreshold: Int,
+        drugEventList: MutableList<CalendarEvent>
+    ) {
+        //  set limit to max between: (drugEventList.size - maxMissDaysThreshold) and (drugEventList.size)
+        var limit = maxMissDaysThreshold
+        if (maxMissDaysThreshold > drugEventList.size) {
+            limit = drugEventList.size
+        }
+
+        //  show the checkbox only for the events that are in the last maxMissDaysThreshold occurrences
+        for (j in drugEventList.size - 1 downTo drugEventList.size - limit) {
+            drugEventList[j].showTakenCheckBox = true
+        }
     }
 
     private fun getDaysBetween(first: Date, second: Date): Int {
