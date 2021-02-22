@@ -7,7 +7,7 @@
 
 
     <TextView
-        android:id="@+id/fvp_date_tv"
+        android:id="@+id/fv_popup_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -17,11 +17,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fvp_events_list"
+        android:id="@+id/fv_popup_list_tv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fvp_date_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/fv_popup_title_tv" />
 </androidx.constraintlayout.widget.ConstraintLayout>
