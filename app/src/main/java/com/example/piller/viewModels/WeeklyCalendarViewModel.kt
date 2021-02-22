@@ -13,6 +13,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
+import java.util.*
 
 class WeeklyCalendarViewModel : ViewModel() {
     private val eventInterpreter = EventInterpreter()
@@ -26,7 +27,7 @@ class WeeklyCalendarViewModel : ViewModel() {
     }
 
     val mutableDeleteSuccess: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
+        MutableLiveData<Boolean>(false)
     }
 
     var maxMissDaysThreshold: Int = 1
@@ -49,6 +50,29 @@ class WeeklyCalendarViewModel : ViewModel() {
         for (calendarEvents in mutableCurrentWeeklyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
                 if (calendarEvents[index].drug_rxcui == calendarEvent.drug_rxcui) {
+                    calendarEvents.removeAt(index)
+                }
+            }
+        }
+
+        //  do the next line in order to notify the observers (because the for loop above doesn't
+        //  update mutableCurrentWeeklyCalendar.value directly, but its list content
+        mutableDeleteSuccess.value = true
+    }
+
+    fun deleteFutureDrug(calendarEvent: CalendarEvent) {
+        val eventInterpreter = EventInterpreter()
+        val calendarTomorrow = Calendar.getInstance()
+        calendarTomorrow.timeInMillis =
+            eventInterpreter.getTomorrowDateInMillis(calendarEvent.intake_time)
+        for (calendarEvents in mutableCurrentWeeklyCalendar.value!!) {
+            for (index in calendarEvents.size - 1 downTo 0) {
+                //  remove drug if the intake date is after the day after the given date of calendarEvent
+                if (calendarEvents[index].drug_rxcui == calendarEvent.drug_rxcui
+                    && eventInterpreter.isDateAfter(
+                        calendarEvents[index].intake_time, calendarTomorrow.time
+                    )
+                ) {
                     calendarEvents.removeAt(index)
                 }
             }
@@ -82,8 +106,6 @@ class WeeklyCalendarViewModel : ViewModel() {
                 }
             }
         )
-
-
     }
 
     private fun changeMutableWeeklyCalendar(weekEvents: Array<MutableList<CalendarEvent>>) {
@@ -104,7 +126,5 @@ class WeeklyCalendarViewModel : ViewModel() {
             maxMissDaysThreshold
         )
         changeMutableWeeklyCalendar(weekEvents)
-
     }
-
 }

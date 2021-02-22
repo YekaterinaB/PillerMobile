@@ -9,10 +9,10 @@ import android.view.*
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
@@ -59,8 +59,20 @@ class DrugInfoActivity : AppCompatActivity() {
             this,
             Observer { success ->
                 if (success) {
+                    viewModel.deleteSuccess.value = false
                     val returnIntent = Intent()
                     setResult(Activity.RESULT_OK, returnIntent)
+                    finish()
+                }
+            })
+
+        viewModel.deleteFutureSuccess.observe(
+            this,
+            Observer { success ->
+                if (success) {
+                    viewModel.deleteFutureSuccess.value = false
+                    val returnIntent = Intent()
+                    setResult(DbConstants.REMOVE_DRUG_FUTURE, returnIntent)
                     finish()
                 }
             })
@@ -121,17 +133,25 @@ class DrugInfoActivity : AppCompatActivity() {
         ),
             DialogInterface.OnClickListener { dialog, which ->
                 when (which) {
+                    //  delete all occurrences
                     0 -> viewModel.deleteAllOccurrencesOfDrug(
                         loggedEmail,
                         loggedName,
                         calendarEvent.drug_rxcui
                     )
 
-                    1 -> Toast.makeText(
-                        this@DrugInfoActivity,
-                        "Delete future occurrences",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    //  delete future occurrences
+                    1 -> {
+                        val eventInterpreter = EventInterpreter()
+                        val tomorrow =
+                            eventInterpreter.getTomorrowDateInMillis(viewModel.getCalendarEvent().intake_time)
+                        viewModel.deleteFutureOccurrencesOfDrug(
+                            loggedEmail,
+                            loggedName,
+                            calendarEvent.drug_rxcui,
+                            tomorrow.toString()
+                        )
+                    }
 
                     else -> {
                         return@OnClickListener

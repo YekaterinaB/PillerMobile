@@ -36,7 +36,6 @@ class FullViewFragment : Fragment() {
     private val eventDayBitMapWidth = 256
     private val eventDayBitMapHeight = 128
     private var currentFirstDayOfMonth = eventInterpreter.getFirstDayOfMonth()
-    private var rxcuisToDelete = mutableListOf<String>()
 
     companion object {
         fun newInstance() = FullViewFragment()
@@ -205,17 +204,14 @@ class FullViewFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            DbConstants.DRUGDELETEPOPUP -> {
-                viewModel.deleteDrugs(
-                    data?.getStringArrayExtra(DbConstants.DRUGSLIST)!!.toList()
-                )
-                rxcuisToDelete.clear()
-            }
-        }
-    }
 
-    fun setDrugToDelete(data: List<String>) {
-        rxcuisToDelete = data.toMutableList()
+        if (requestCode == DbConstants.DRUGDELETEPOPUP || requestCode == DbConstants.REMOVE_DRUG_FUTURE) {
+            viewModel.deleteDrugs(data?.getStringArrayExtra(DbConstants.DRUGSLIST)!!.toList())
+            data.getParcelableArrayExtra(DbConstants.FUTURE_DRUGSLIST)
+                ?.map { list -> list as CalendarEvent }?.let {
+                    viewModel.deleteFutureDrug(it)
+                }
+        }
+
     }
 }

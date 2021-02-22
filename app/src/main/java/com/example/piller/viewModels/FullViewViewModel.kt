@@ -40,10 +40,41 @@ class FullViewViewModel : ViewModel() {
     }
 
     fun deleteDrugs(rxcuisToDelete: List<String>) {
+        if (rxcuisToDelete.isEmpty()) {
+            return
+        }
         for (calendarEvents in mutableCurrentMonthlyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
                 for (rxcuiToDelete in rxcuisToDelete) {
                     if (calendarEvents[index].drug_rxcui == rxcuiToDelete) {
+                        calendarEvents.removeAt(index)
+                    }
+                }
+            }
+        }
+
+        //  do the next line in order to notify the observers (because the for loop above doesn't
+        //  update mutableCurrentWeeklyCalendar.value directly, but its list content
+        mutableDeleteSuccess.value = true
+    }
+
+    fun deleteFutureDrug(rxcuisToDelete: List<CalendarEvent>) {
+        if (rxcuisToDelete.isEmpty()) {
+            return
+        }
+        val eventInterpreter = EventInterpreter()
+        for (calendarEvents in mutableCurrentMonthlyCalendar.value!!) {
+            for (index in calendarEvents.size - 1 downTo 0) {
+                val calendarTomorrow = Calendar.getInstance()
+                for (rxcuiToDelete in rxcuisToDelete) {
+                    calendarTomorrow.timeInMillis =
+                        eventInterpreter.getTomorrowDateInMillis(rxcuiToDelete.intake_time)
+                    if (calendarEvents[index].drug_rxcui == rxcuiToDelete.drug_rxcui
+                        && eventInterpreter.isDateAfter(
+                            calendarEvents[index].intake_time,
+                            calendarTomorrow.time
+                        )
+                    ) {
                         calendarEvents.removeAt(index)
                     }
                 }

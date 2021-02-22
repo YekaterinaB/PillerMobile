@@ -13,5 +13,6 @@ data class Drug(
     @SerializedName("repeat_day") var repeatDay: String = "0",
     @SerializedName("repeat_week") var repeatWeek: String = "0",
     @SerializedName("repeat_weekday") var repeatWeekday: String = "0",
-    @SerializedName("repeat_start") var repeatStart: Long = 0
+    @SerializedName("repeat_start") var repeatStart: Long = 0,
+    @SerializedName("repeat_end") var repeatEnd: Long = 0
 ) : Parcelable
