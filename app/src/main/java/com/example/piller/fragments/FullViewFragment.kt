@@ -1,5 +1,6 @@
 package com.example.piller.fragments
 
+import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -35,6 +36,7 @@ class FullViewFragment : Fragment() {
     private val eventDayBitMapWidth = 256
     private val eventDayBitMapHeight = 128
     private var currentFirstDayOfMonth = eventInterpreter.getFirstDayOfMonth()
+    private var rxcuisToDelete = mutableListOf<String>()
 
     companion object {
         fun newInstance() = FullViewFragment()
@@ -99,10 +101,7 @@ class FullViewFragment : Fragment() {
         val arguments = Bundle()
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
         val date = sdf.format(eventDay.calendar.time)
-        arguments.putString(
-            FullviewPopupFragment.ARG_DATE_STRING,
-            date
-        )
+        arguments.putString(FullviewPopupFragment.ARG_DATE_STRING, date)
         //  we need to reduce it by 1 because the get day of month starts from 1 (and our list starts from 0..)
         arguments.putParcelableArray(
             FullviewPopupFragment.ARG_EVENTS_LIST,
@@ -112,7 +111,11 @@ class FullViewFragment : Fragment() {
                 ) - 1
             )?.toTypedArray()
         )
+
+        arguments.putString(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
+        arguments.putString(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
         fvpDayFragment.arguments = arguments
+        fvpDayFragment.setTargetFragment(this, DbConstants.DRUGDELETEPOPUP)
         activity?.supportFragmentManager?.let { fvpDayFragment.show(it, "FullViewPopupFragment") }
     }
 
@@ -169,6 +172,16 @@ class FullViewFragment : Fragment() {
                     }
                 }
             })
+
+        viewModel.mutableDeleteSuccess.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { eventsArray ->
+                eventsArray?.let {
+                    if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        setEvents(viewModel.mutableCurrentMonthlyCalendar.value!!)
+                    }
+                }
+            })
     }
 
     private fun setEvents(calendarEvents: Array<MutableList<CalendarEvent>>) {
@@ -188,5 +201,21 @@ class FullViewFragment : Fragment() {
         }
 
         calendarView.setEvents(eventsUI)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            DbConstants.DRUGDELETEPOPUP -> {
+                viewModel.deleteDrugs(
+                    data?.getStringArrayExtra(DbConstants.DRUGSLIST)!!.toList()
+                )
+                rxcuisToDelete.clear()
+            }
+        }
+    }
+
+    fun setDrugToDelete(data: List<String>) {
+        rxcuisToDelete = data.toMutableList()
     }
 }

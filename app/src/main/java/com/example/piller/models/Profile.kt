@@ -6,20 +6,20 @@ class Profile(
     weeklyCal: Array<MutableList<CalendarEvent>>,
     monthlyCal: Array<MutableList<CalendarEvent>>
 ) {
-    private var profileName=name
-    private var weeklyCalendar=weeklyCal
+    private var profileName = name
+    private var weeklyCalendar = weeklyCal
     private var monthlyCalendar = monthlyCal
-    private var isInitialized=false
+    private var isInitialized = false
 
-    fun getIsInitialized():Boolean{
+    fun getIsInitialized(): Boolean {
         return isInitialized
     }
 
-    fun profileInitialized(){
-        isInitialized=true
+    fun profileInitialized() {
+        isInitialized = true
     }
-    fun getProfileName():String{
 
+    fun getProfileName(): String {
         return profileName
     }
 

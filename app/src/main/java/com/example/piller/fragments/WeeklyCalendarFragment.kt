@@ -1,5 +1,6 @@
 package com.example.piller.fragments
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -32,6 +33,7 @@ class WeeklyCalendarFragment : Fragment() {
     private val weeklyCalendarViewModel: WeeklyCalendarViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
+    private val DRUG_INFO_INTENT_ID = 1
 
     // add drug animation
     private val rotateOpen: Animation by lazy {
@@ -64,6 +66,7 @@ class WeeklyCalendarFragment : Fragment() {
     private var eliAdapters = mutableListOf<EliAdapter>()
     private var eliRecycles = mutableListOf<RecyclerView>()
     private lateinit var fragmentView: View
+    private lateinit var currentRxcui: CalendarEvent
 
     private lateinit var newDrugFAB: FloatingActionButton
     private lateinit var newDrugCameraFAB: FloatingActionButton
@@ -108,7 +111,6 @@ class WeeklyCalendarFragment : Fragment() {
                         //update current profile calendar
                         profileViewModel.changeCalendarForCurrentProfile(it)
                     }
-
                 }
             })
 
@@ -120,6 +122,16 @@ class WeeklyCalendarFragment : Fragment() {
                         SnackBar.showToastBar(this.requireContext(), toastMessage)
                     }
 
+                }
+            })
+
+        weeklyCalendarViewModel.mutableDeleteSuccess.observe(
+            viewLifecycleOwner,
+            Observer { deleteSuccess ->
+                if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED && deleteSuccess) {
+                    //update view
+                    updateRecyclersAndAdapters()
+                    weeklyCalendarViewModel.mutableDeleteSuccess.value = false
                 }
             })
     }
@@ -152,15 +164,12 @@ class WeeklyCalendarFragment : Fragment() {
     }
 
     private fun showDrugInfo(calendarEvent: CalendarEvent) {
-        val intent = Intent(
-            requireContext(),
-            DrugInfoActivity::class.java
-        )
-        intent.putExtra(
-            DbConstants.CALENDAR_EVENT,
-            calendarEvent
-        )
-        startActivity(intent)
+        currentRxcui = calendarEvent
+        val intent = Intent(requireContext(), DrugInfoActivity::class.java)
+        intent.putExtra(DbConstants.CALENDAR_EVENT, calendarEvent)
+        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
+        startActivityForResult(intent, DRUG_INFO_INTENT_ID)
     }
 
     companion object {
@@ -285,5 +294,15 @@ class WeeklyCalendarFragment : Fragment() {
         newDrugCameraLabel = fragment.findViewById(R.id.calendar_drug_camera_label)
         newDrugBoxLabel = fragment.findViewById(R.id.calendar_drug_box_label)
         newDrugNameLabel = fragment.findViewById(R.id.calendar_drug_name_label)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == DRUG_INFO_INTENT_ID) {
+            if (resultCode == Activity.RESULT_OK) {
+                weeklyCalendarViewModel.deleteDrug(currentRxcui)
+            }
+        }
     }
 }
