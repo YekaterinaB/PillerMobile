@@ -7,6 +7,7 @@ object DbConstants {
     //  fullview fragment
     const val EVENTDAY_DRAWABLE_CIRCLE_RADIUS = 20F
     const val DRUGSLIST = "drug_list"
+    const val FUTURE_DRUGSLIST = "future_drug_list"
     const val DRUGDELETEPOPUP = 1
 
     //  drugs - general
@@ -37,4 +38,6 @@ object DbConstants {
     const val DRUG_RESULT_NAME = "add_drug_result_name"
     const val ADD_DRUG_TYPE = "add_drug_type"
 
+    //  drug information
+    const val REMOVE_DRUG_FUTURE = 999
 }

@@ -21,6 +21,10 @@ class DrugInfoViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
+    val deleteFutureSuccess: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+
     fun setCalendarEvent(newCalendarEvent: CalendarEvent) {
         calendarEvent = newCalendarEvent
     }
@@ -44,6 +48,32 @@ class DrugInfoViewModel : ViewModel() {
                         deleteSuccess.value = true
                     } else {
                         mutableToastError.value = "Could not delete drug."
+                    }
+                }
+            }
+        )
+    }
+
+    fun deleteFutureOccurrencesOfDrug(
+        email: String,
+        name: String,
+        rxcui: String,
+        repeatEnd: String
+    ) {
+        retrofit.deleteFutureOccurrencesOfDrugByUser(email, name, rxcui, repeatEnd).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    mutableToastError.value = "Could not connect to server."
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() == 200) {
+                        deleteFutureSuccess.value = true
+                    } else {
+                        mutableToastError.value = "Could not delete future occurrences drug."
                     }
                 }
             }

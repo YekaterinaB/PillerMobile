@@ -42,4 +42,12 @@ interface CalendarAPI {
         @Path("name") name: String,
         @Query("rxcui") drugRxcui: String
     ): Call<ResponseBody>
+
+    @PUT("calendar/deleteFutureOccurrencesOfDrugByUser/{email}/{name}")
+    fun deleteFutureOccurrencesOfDrugByUser(
+        @Path("email") email: String,
+        @Path("name") name: String,
+        @Query("rxcui") rxcui: String,
+        @Query("repeat_end") repeatEnd: String
+    ): Call<ResponseBody>
 }

@@ -25,7 +25,8 @@ class FullviewPopupFragment : DialogFragment() {
     private lateinit var loggedEmail: String
     private lateinit var loggedName: String
     private val drugsToDelete = mutableListOf<String>()
-    private lateinit var drugToDelete: String
+    private val futureDrugsToDelete = mutableListOf<CalendarEvent>()
+    private lateinit var drugToDelete: CalendarEvent
     private val DRUG_INFO_DELETE_CODE = 1
 
     override fun onCreateView(
@@ -56,7 +57,7 @@ class FullviewPopupFragment : DialogFragment() {
     }
 
     private fun showDrugInfo(calendarEvent: CalendarEvent) {
-        drugToDelete = calendarEvent.drug_rxcui
+        drugToDelete = calendarEvent
         val intent = Intent(requireContext(), DrugInfoActivity::class.java)
         intent.putExtra(DbConstants.CALENDAR_EVENT, calendarEvent)
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
@@ -91,29 +92,32 @@ class FullviewPopupFragment : DialogFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        when (requestCode) {
-            DRUG_INFO_DELETE_CODE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    drugsToDelete.add(drugToDelete)
-                    removeDrugFromList()
-                    setEventsData()
-                }
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                drugsToDelete.add(drugToDelete.drug_rxcui)
+                removeDrugFromList()
+                setEventsData()
+            }
+
+            DbConstants.REMOVE_DRUG_FUTURE -> {
+                futureDrugsToDelete.add(drugToDelete)
             }
         }
     }
 
     private fun removeDrugFromList() {
         for (index in eventsData.indices) {
-            if (eventsData[index].drug_rxcui == drugToDelete) {
+            if (eventsData[index].drug_rxcui == drugToDelete.drug_rxcui) {
                 eventsData.removeAt(index)
                 break
             }
         }
     }
 
-    private fun SendResultToParent() {
+    private fun sendResultToParent() {
         val intent = Intent()
         intent.putExtra(DbConstants.DRUGSLIST, drugsToDelete.toTypedArray())
+        intent.putExtra(DbConstants.FUTURE_DRUGSLIST, futureDrugsToDelete.toTypedArray())
         targetFragment!!.onActivityResult(
             targetRequestCode,
             DbConstants.DRUGDELETEPOPUP,
@@ -123,8 +127,8 @@ class FullviewPopupFragment : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if (drugsToDelete.isNotEmpty()) {
-            SendResultToParent()
+        if (drugsToDelete.isNotEmpty() || futureDrugsToDelete.isNotEmpty()) {
+            sendResultToParent()
         }
     }
 

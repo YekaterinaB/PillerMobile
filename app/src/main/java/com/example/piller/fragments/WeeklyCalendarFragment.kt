@@ -128,7 +128,7 @@ class WeeklyCalendarFragment : Fragment() {
         weeklyCalendarViewModel.mutableDeleteSuccess.observe(
             viewLifecycleOwner,
             Observer { deleteSuccess ->
-                if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED && deleteSuccess) {
+                if (deleteSuccess) {
                     //update view
                     updateRecyclersAndAdapters()
                     weeklyCalendarViewModel.mutableDeleteSuccess.value = false
@@ -302,6 +302,8 @@ class WeeklyCalendarFragment : Fragment() {
         if (requestCode == DRUG_INFO_INTENT_ID) {
             if (resultCode == Activity.RESULT_OK) {
                 weeklyCalendarViewModel.deleteDrug(currentRxcui)
+            } else if (resultCode == DbConstants.REMOVE_DRUG_FUTURE) {
+                weeklyCalendarViewModel.deleteFutureDrug(currentRxcui)
             }
         }
     }

@@ -70,6 +70,7 @@ class EventInterpreter {
     ): MutableList<CalendarEvent> {
         val eventList: MutableList<CalendarEvent> = mutableListOf()
         val repeatStart = (drugInfo.get("repeat_start") as String).toLong()
+        val repeatEnd = (drugInfo.get("repeat_end") as String).toLong()
         val repeatYear = drugInfo.get("repeat_year") as Int
         val repeatMonth = drugInfo.get("repeat_month") as Int
         val repeatDay = drugInfo.get("repeat_day") as Int
@@ -81,6 +82,14 @@ class EventInterpreter {
 
         val calendarEnd = Calendar.getInstance()
         calendarEnd.time = end
+
+        val calendarRepeatEnd = Calendar.getInstance()
+        //  the next lines are: if repeatEnd != 0 then set calendarCurrent to repeatEnd
+        //  otherwise set it to calendarEnd time
+        calendarRepeatEnd.timeInMillis = when (repeatEnd != 0.toLong()) {
+            true -> repeatEnd
+            false -> calendarEnd.timeInMillis
+        }
 
         // start repeat count
         val calendarStartRepeat = Calendar.getInstance()
@@ -101,7 +110,11 @@ class EventInterpreter {
         val calendarClosestRepeat = Calendar.getInstance()
         calendarClosestRepeat.timeInMillis = calendarStartRepeat.timeInMillis
         val onlyOnce = isOnlyRepeat(repeatYear, repeatMonth, repeatWeek, repeatDay)
-        while (isDateBefore(calendarCurrent, calendarEnd)) {
+        while (isDateBefore(calendarCurrent, calendarEnd) && isDateBefore(
+                calendarCurrent,
+                calendarRepeatEnd
+            )
+        ) {
             val isInRepeat = isDateInRepeat(
                 repeatYear,
                 repeatMonth,
@@ -296,11 +309,32 @@ class EventInterpreter {
         return false
     }
 
+    fun isDateAfter(date1: Date, date2: Date): Boolean {
+        val calendar1 = Calendar.getInstance()
+        calendar1.time = date1
+        val calendar2 = Calendar.getInstance()
+        calendar2.time = date2
+        return !isDateBefore(calendar1, calendar2)
+    }
+
+    fun isDateAfter(date1: Calendar, date2: Calendar): Boolean {
+        return !isDateBefore(date1, date2)
+    }
+
     private fun setCalendarTime(calendar: Calendar, hour: Int, minutes: Int, seconds: Int) {
         calendar.set(Calendar.HOUR_OF_DAY, hour)
         calendar.set(Calendar.MINUTE, minutes)
         calendar.set(Calendar.SECOND, seconds)
         calendar.set(Calendar.MILLISECOND, 0)
+    }
+
+    fun getTomorrowDateInMillis(startDate: Date): Long {
+        // get start of this week in milliseconds
+        val cal: Calendar = Calendar.getInstance()
+        cal.time = startDate
+        cal.add(Calendar.DATE, 1)
+        setCalendarTime(cal, 0, 0, 0)
+        return cal.timeInMillis
     }
 
     fun getFirstDayOfWeek(): Date {
