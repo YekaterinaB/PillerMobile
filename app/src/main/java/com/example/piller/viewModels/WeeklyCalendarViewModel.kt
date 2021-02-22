@@ -25,6 +25,10 @@ class WeeklyCalendarViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
+    val mutableDeleteSuccess: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
+
     var maxMissDaysThreshold: Int = 1
 
     fun getWeekEvents(
@@ -41,6 +45,19 @@ class WeeklyCalendarViewModel : ViewModel() {
         }
     }
 
+    fun deleteDrug(calendarEvent: CalendarEvent) {
+        for (calendarEvents in mutableCurrentWeeklyCalendar.value!!) {
+            for (index in calendarEvents.size - 1 downTo 0) {
+                if (calendarEvents[index].drug_rxcui == calendarEvent.drug_rxcui) {
+                    calendarEvents.removeAt(index)
+                }
+            }
+        }
+
+        //  do the next line in order to notify the observers (because the for loop above doesn't
+        //  update mutableCurrentWeeklyCalendar.value directly, but its list content
+        mutableDeleteSuccess.value = true
+    }
 
     private fun getCalendarByUser(
         email: String,

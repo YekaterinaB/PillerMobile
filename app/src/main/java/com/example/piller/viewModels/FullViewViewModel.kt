@@ -21,6 +21,10 @@ class FullViewViewModel : ViewModel() {
         MutableLiveData<Array<MutableList<CalendarEvent>>>()
     }
 
+    val mutableDeleteSuccess: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+
     fun initiateMonthEvents(
         loggedUserEmail: String,
         profile: Profile,
@@ -33,6 +37,22 @@ class FullViewViewModel : ViewModel() {
             // update mutable calendar
             setMutableMonthlyCalendar(profile.getMonthlyCalendar())
         }
+    }
+
+    fun deleteDrugs(rxcuisToDelete: List<String>) {
+        for (calendarEvents in mutableCurrentMonthlyCalendar.value!!) {
+            for (index in calendarEvents.size - 1 downTo 0) {
+                for (rxcuiToDelete in rxcuisToDelete) {
+                    if (calendarEvents[index].drug_rxcui == rxcuiToDelete) {
+                        calendarEvents.removeAt(index)
+                    }
+                }
+            }
+        }
+
+        //  do the next line in order to notify the observers (because the for loop above doesn't
+        //  update mutableCurrentWeeklyCalendar.value directly, but its list content
+        mutableDeleteSuccess.value = true
     }
 
     fun updateCalendarByUser(email: String, profile: Profile, startDate: Date, endDate: Date) {

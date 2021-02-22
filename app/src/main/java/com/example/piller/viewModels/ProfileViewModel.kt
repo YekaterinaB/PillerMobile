@@ -1,7 +1,9 @@
 package com.example.piller.viewModels
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider.NewInstanceFactory
 import com.example.piller.api.ProfileAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.CalendarEvent
@@ -148,7 +150,7 @@ class ProfileViewModel : ViewModel() {
 
     fun initProfileListFromDB(mainProfile: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.initProfileList(loggedEmail,mainProfile).enqueue(
+        retrofit.initProfileList(loggedEmail, mainProfile).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."

@@ -1,5 +1,7 @@
 package com.example.piller.fragments
 
+import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,9 +19,14 @@ import com.example.piller.utilities.DbConstants
 
 class FullviewPopupFragment : DialogFragment() {
     private var dateString: String? = null
-    private var eventsData: Array<CalendarEvent>? = null
+    private var eventsData = mutableListOf<CalendarEvent>()
     private lateinit var dateTV: TextView
     private lateinit var eventsList: RecyclerView
+    private lateinit var loggedEmail: String
+    private lateinit var loggedName: String
+    private val drugsToDelete = mutableListOf<String>()
+    private lateinit var drugToDelete: String
+    private val DRUG_INFO_DELETE_CODE = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,38 +46,86 @@ class FullviewPopupFragment : DialogFragment() {
 
         eventsList = fragment.findViewById(R.id.fvp_events_list)
         eventsList.layoutManager = LinearLayoutManager(fragment.context)
-        eventsList.adapter = eventsData?.toMutableList()
-            ?.let { EliAdapter(it) { calendarEvent -> showDrugInfo(calendarEvent) } }
+        setEventsData()
+    }
+
+    private fun setEventsData() {
+        eventsList.adapter =
+            EliAdapter(eventsData.toMutableList()) { calendarEvent -> showDrugInfo(calendarEvent) }
+        eventsList.adapter?.notifyDataSetChanged()
     }
 
     private fun showDrugInfo(calendarEvent: CalendarEvent) {
-        val intent = Intent(
-            requireContext(),
-            DrugInfoActivity::class.java
-        )
-        intent.putExtra(
-            DbConstants.CALENDAR_EVENT,
-            calendarEvent
-        )
-        startActivity(intent)
+        drugToDelete = calendarEvent.drug_rxcui
+        val intent = Intent(requireContext(), DrugInfoActivity::class.java)
+        intent.putExtra(DbConstants.CALENDAR_EVENT, calendarEvent)
+        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, loggedName)
+        startActivityForResult(intent, DRUG_INFO_DELETE_CODE)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             dateString = it.getString(ARG_DATE_STRING)
-            eventsData =
+            val a =
                 it.getParcelableArray(ARG_EVENTS_LIST)?.map { list -> list as CalendarEvent }
                     ?.toTypedArray()
+            if (a != null) {
+                eventsData = a.toMutableList()
+            }
+
+            loggedEmail = it.getString(DbConstants.LOGGED_USER_EMAIL).toString()
+            loggedName = it.getString(DbConstants.LOGGED_USER_NAME).toString()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        //  set size
+        //  set window size
         val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
         val height = (resources.displayMetrics.heightPixels * 0.40).toInt()
         dialog!!.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            DRUG_INFO_DELETE_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    drugsToDelete.add(drugToDelete)
+                    removeDrugFromList()
+                    setEventsData()
+                }
+            }
+        }
+    }
+
+    private fun removeDrugFromList() {
+        for (index in eventsData.indices) {
+            if (eventsData[index].drug_rxcui == drugToDelete) {
+                eventsData.removeAt(index)
+                break
+            }
+        }
+    }
+
+    private fun SendResultToParent() {
+        val intent = Intent()
+        intent.putExtra(DbConstants.DRUGSLIST, drugsToDelete.toTypedArray())
+        targetFragment!!.onActivityResult(
+            targetRequestCode,
+            DbConstants.DRUGDELETEPOPUP,
+            intent
+        )
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (drugsToDelete.isNotEmpty()) {
+            SendResultToParent()
+        }
     }
 
     companion object {
