@@ -11,4 +11,11 @@ interface DrugAPI {
 
     @GET("drugApiCalls/drugByName/{drugName}")
     fun findDrugByName(@Path("drugName") drugName: String): Call<ResponseBody>
+
+    @GET("drugApiCalls/findInteractions/{email}/{profileName}/{newRxcui}")
+    fun findInteractionList(
+        @Path("email") email: String, @Path("profileName") profileName: String
+        , @Path("newRxcui") drugName: String
+    ): Call<ResponseBody>
+
 }

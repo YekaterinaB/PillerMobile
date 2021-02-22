@@ -123,7 +123,7 @@ class FullViewFragment : Fragment() {
         calendarView = fragmentView.findViewById(R.id.fv_calendar)
     }
 
-    private fun getDrawableText(typeface: Int?, color: Int, size: Int): Any {
+    private fun getDrawableText(typeface: Int?, color: Int): Any {
         //  create a circle bitmapdrawable item
         val bitmap =
             Bitmap.createBitmap(eventDayBitMapWidth, eventDayBitMapHeight, Bitmap.Config.ARGB_8888)
@@ -195,7 +195,7 @@ class FullViewFragment : Fragment() {
                 val tempCalendar: Calendar = firstDateOfMonth
                 tempCalendar.add(Calendar.DATE, i)
                 val circleBitmap =
-                    getDrawableText(null, color = Color.BLACK, size = 15)
+                    getDrawableText(null, color = Color.BLACK)
                 eventsUI.add(EventDay(tempCalendar, circleBitmap as Drawable))
             }
         }

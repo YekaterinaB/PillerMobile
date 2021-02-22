@@ -41,10 +41,10 @@ class FullviewPopupFragment : DialogFragment() {
     }
 
     private fun initViews(fragment: View) {
-        dateTV = fragment.findViewById(R.id.fvp_date_tv)
+        dateTV = fragment.findViewById(R.id.fv_popup_title_tv)
         dateTV.text = dateString
 
-        eventsList = fragment.findViewById(R.id.fvp_events_list)
+        eventsList = fragment.findViewById(R.id.fv_popup_list_tv)
         eventsList.layoutManager = LinearLayoutManager(fragment.context)
         setEventsData()
     }
@@ -84,7 +84,7 @@ class FullviewPopupFragment : DialogFragment() {
         super.onStart()
         //  set window size
         val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.40).toInt()
+        //val height = (resources.displayMetrics.heightPixels * 0.40).toInt()
         dialog!!.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 

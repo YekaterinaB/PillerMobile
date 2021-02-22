@@ -34,10 +34,10 @@ class ManageAccountViewModel : ViewModel() {
         context: Context
     ) {
         val updatedUser = User(newEmail, loggedUserName, password)
-        sendRetrofitUpdateEmail(updatedUser, newEmail, context)
+        sendRetrofitUpdateEmail(updatedUser, newEmail)
     }
 
-    private fun sendRetrofitUpdateEmail(updatedUser: User, newEmail: String, context: Context) {
+    private fun sendRetrofitUpdateEmail(updatedUser: User, newEmail: String) {
         loggedUserEmail.value?.let {
             retrofit.updateUser(it, updatedUser).enqueue(
                 object : retrofit2.Callback<ResponseBody> {

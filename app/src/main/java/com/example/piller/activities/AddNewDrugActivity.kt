@@ -13,9 +13,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.fragments.DrugByNameFragment
+import com.example.piller.fragments.FullviewPopupFragment
+import com.example.piller.fragments.InteractionPopupFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
+import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugSearchViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AddNewDrugActivity : AppCompatActivity() {
     private lateinit var searchViewModel: DrugSearchViewModel
@@ -28,6 +33,7 @@ class AddNewDrugActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
         currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
@@ -87,6 +93,17 @@ class AddNewDrugActivity : AppCompatActivity() {
             SnackBar.showToastBar(this, message)
         })
 
+        searchViewModel.drugsInteractionResult.observe(this, Observer {
+            if(!it.isBlank()){
+                //go to fragment with the interactions
+                val popupInteraction: InteractionPopupFragment = InteractionPopupFragment.newInstance(it)
+                supportFragmentManager.let { popupInteraction.show(it, "InteractionPopupFragment") }
+            }else{
+                //no interactions
+                goToAddOccurrenceActivity()
+            }
+        })
+
     }
 
     private fun initViews() {
@@ -112,14 +129,7 @@ class AddNewDrugActivity : AppCompatActivity() {
         val drug = searchViewModel.getDrugByRxcui(rxcui)
         if (drug != null) {
             searchViewModel.newDrug.value = drug
-            val intent = Intent(
-                this,
-                DrugOccurrenceActivity::class.java
-            )
-            intent.putExtra(DbConstants.DRUG_OBJECT, drug)
-            intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
-            intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
-            startActivity(intent)
+            searchViewModel.getInteractionList(loggedEmail,currentProfile, drug.rxcui)
         }
     }
 
@@ -131,4 +141,16 @@ class AddNewDrugActivity : AppCompatActivity() {
         onBackPressed()
         return true
     }
+
+    fun goToAddOccurrenceActivity(){
+        val intent = Intent(
+            this,
+            DrugOccurrenceActivity::class.java
+        )
+        intent.putExtra(DbConstants.DRUG_OBJECT, searchViewModel.newDrug.value!!)
+        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
+        startActivity(intent)
+    }
+
 }

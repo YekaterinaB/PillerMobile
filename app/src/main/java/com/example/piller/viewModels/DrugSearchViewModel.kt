@@ -14,6 +14,10 @@ import retrofit2.Response
 class DrugSearchViewModel : ViewModel() {
     private val drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
 
+    val drugsInteractionResult: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+
     val drugsSearchResult: MutableLiveData<MutableList<Drug>> by lazy {
         MutableLiveData<MutableList<Drug>>()
     }
@@ -38,6 +42,7 @@ class DrugSearchViewModel : ViewModel() {
         }
         return null
     }
+
 
     fun searchDrugByName(drugName: String) {
         if (drugName.isNotEmpty()) {
@@ -64,6 +69,42 @@ class DrugSearchViewModel : ViewModel() {
         } else {
             snackBarMessage.value = "Please enter a valid drug name"
         }
+    }
+
+    fun getInteractionList(email:String,profileName:String,rxcui: Int) {
+        drugAPIRetrofit.findInteractionList(email,profileName,rxcui.toString()).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    snackBarMessage.value = "Could not search interactions."
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() == 200) {
+                        updateInteractionList(response)
+                    } else {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        snackBarMessage.value = jObjError["message"] as String
+                    }
+                }
+            }
+        )
+    }
+
+
+    private fun updateInteractionList(response: Response<ResponseBody>) {
+        var result=""
+        val drugInterBody = JSONArray(response.body()!!.string())
+        for (i in 0 until drugInterBody.length()) {
+            val interaction=drugInterBody.getJSONObject(i)
+            result+="\n#" + (
+                    interaction.get("interaction")as JSONObject).get("name")+"\nDescription:\n" +(
+                    interaction.get("description")as String)+"\n"
+        }
+
+        drugsInteractionResult.value=result
     }
 
     private fun updateDrugsList(response: Response<ResponseBody>) {
@@ -98,4 +139,6 @@ class DrugSearchViewModel : ViewModel() {
             .replace("\"]", "")
             .trim()
     }
+
+
 }
