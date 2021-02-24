@@ -53,6 +53,11 @@ class DrugByNameFragment : Fragment() {
     private fun initObservers() {
         searchViewModel.drugsSearchResult.observe(requireActivity(), Observer {
             setButtonsEnabled(true)
+            if (it.isEmpty()) {
+                searchViewModel.drugSearchNoResult.value = drugNameTIL.editText!!.text.toString()
+            } else {
+                searchViewModel.drugSearchNoResult.value = ""
+            }
         })
     }
 

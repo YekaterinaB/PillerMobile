@@ -41,11 +41,12 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var weekdayThursdayCB: CheckboxWithTextInside
     private lateinit var weekdayFridayCB: CheckboxWithTextInside
     private lateinit var weekdaySaturdayCB: CheckboxWithTextInside
-    private lateinit var repeatOnEnum: DrugOccurrenceViewModel.RepeatOn
     private lateinit var currentProfileName: String
     private lateinit var loggedEmail: String
     private lateinit var viewModel: DrugOccurrenceViewModel
     private var drugIntakeTime: Date=Date()
+    private var repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,6 +129,9 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                     "Year" -> {
                         repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.YEAR
                         drugWeekdayContainer.visibility = View.GONE
+                    }
+                    else -> {
+                        repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
                     }
                 }
             }
