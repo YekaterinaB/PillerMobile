@@ -181,6 +181,16 @@ class CalendarActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+//
+//    override fun onNewIntent(intent: Intent?) {
+//        super.onNewIntent(intent)
+//
+//        if (intent!!.hasExtra(DbConstants.NEW_DRUG_ADDED)) {
+//            if (intent.getBooleanExtra(DbConstants.NEW_DRUG_ADDED, false)) {
+//                profileViewModel.getCurrentProfile().
+//            }
+//        }
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater

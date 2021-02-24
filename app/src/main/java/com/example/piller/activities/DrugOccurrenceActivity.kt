@@ -2,6 +2,7 @@ package com.example.piller.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -44,9 +45,9 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var currentProfileName: String
     private lateinit var loggedEmail: String
     private lateinit var viewModel: DrugOccurrenceViewModel
-    private var drugIntakeTime: Date=Date()
+    private var drugIntakeTime: Date = Date()
     private var repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
-
+    private var isInEditMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +55,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         currentProfileName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        drugIntakeTime.time = intent.getLongExtra(DbConstants.INTAKE_DATE,-1) // not -1 in edit
+        initDrugIntakeTime(intent.getLongExtra(DbConstants.INTAKE_DATE, -1))
         viewModel = ViewModelProvider(this).get(DrugOccurrenceViewModel::class.java)
         setDrug(intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!)
         initViews()
@@ -62,6 +63,16 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         initListeners()
         initViewModelObservers()
         initSpinners()
+    }
+
+    private fun initDrugIntakeTime(intakeFromIntent: Long) {
+        if (intakeFromIntent > -1) {
+            isInEditMode = true
+            drugIntakeTime.time = intakeFromIntent
+        } else {
+            val calendar = Calendar.getInstance()
+            drugIntakeTime.time = calendar.timeInMillis
+        }
     }
 
     private fun setDrug(drug: Drug) {
@@ -147,22 +158,30 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
         viewModel.addedDrugSuccess.observe(this, Observer { added ->
             if (added) {
-                SnackBar.showToastBar(this, "Drug added!")
-                finish()
+                goBackToCalendarActivity("New drug added!")
             }
         })
 
         viewModel.updatedDrugSuccess.observe(this, Observer { added ->
             if (added) {
-                SnackBar.showToastBar(this, "Drug occurrence was updated!")
-                finish()
+                goBackToCalendarActivity("Drug occurrence was updated!")
             }
         })
+    }
+
+    private fun goBackToCalendarActivity(toastBarMessage: String) {
+        SnackBar.showToastBar(this, toastBarMessage)
+        val intent = Intent(this@DrugOccurrenceActivity, CalendarActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfileName)
+        startActivity(intent)
     }
 
     private fun initViewsInitialData() {
         //  initiate start date
         val calendar = Calendar.getInstance()
+        calendar.timeInMillis = drugIntakeTime.time
         setDateLabel(
             calendar.get(Calendar.DAY_OF_MONTH),
             calendar.get(Calendar.MONTH),
@@ -260,43 +279,50 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private fun setTimeLabel(hour: Int, minutes: Int) {
         val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
         val calTime: Date
-        if (drugIntakeTime.time > -1) {
-            //edit
+        if (isInEditMode) {
             calTime = drugIntakeTime
+            //  set isInEditMode to false so we won't enter this if again (and then the user
+            //  won't br able to update intake date)
+            isInEditMode = false
         } else {
             val calendar = Calendar.getInstance()
+            calendar.timeInMillis = drugIntakeTime.time
             calendar.set(Calendar.HOUR_OF_DAY, hour)
             calendar.set(Calendar.MINUTE, minutes)
             calTime = calendar.time
-
         }
+
         drugOccurrencesTime.text = formatter.format(calTime)
-
-
+        drugIntakeTime.time = calTime.time
     }
 
     private fun setDateLabel(day: Int, month: Int, year: Int) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val calDate: Date
-        if (drugIntakeTime.time > -1) {
+        if (isInEditMode) {
             calDate = drugIntakeTime
+            //  set isInEditMode to false so we won't enter this if again (and then the user
+            //  won't br able to update intake time)
+            isInEditMode = false
         } else {
             val calendar = Calendar.getInstance()
+            calendar.timeInMillis = drugIntakeTime.time
             calendar.set(year, month, day)
             calDate = calendar.time
         }
 
         // Display Selected date in textbox
         drugOccurrencesDate.text = sdf.format(calDate)
+        drugIntakeTime.time = calDate.time
     }
 
     private fun showTimePickerDialog() {
         val calendar = Calendar.getInstance()
-
+        calendar.timeInMillis = drugIntakeTime.time
         val tpd =
             TimePickerDialog(
                 this,
-                TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                { _, hourOfDay, minute ->
                     viewModel.setDrugRepeatStartTime(hourOfDay, minute)
                     setTimeLabel(hourOfDay, minute)
                 },
@@ -310,6 +336,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
+        calendar.timeInMillis = drugIntakeTime.time
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -317,7 +344,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         val dpd =
             DatePickerDialog(
                 this,
-                DatePickerDialog.OnDateSetListener { _, yearSelected, monthOfYear, dayOfMonth ->
+                { _, yearSelected, monthOfYear, dayOfMonth ->
                     viewModel.setDrugRepeatStartDate(yearSelected, monthOfYear, dayOfMonth)
                     setDateLabel(dayOfMonth, monthOfYear, yearSelected)
                 },
