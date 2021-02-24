@@ -14,7 +14,6 @@ class DrugInformation : AppCompatActivity() {
         fullDrugName = intent.getStringExtra(DbConstants.FULL_DRUG_NAME)!!
         intakeDate = intent.getStringExtra(DbConstants.INTAKE_DATE)!!
 
-        setContentView(R.layout.activity_drug_information)
 
 
 

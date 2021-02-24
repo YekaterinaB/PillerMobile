@@ -28,6 +28,11 @@ class DrugOccurrenceViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
+    val updatedDrugSuccess: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+
+
     fun setDrug(newDrug: Drug) {
         drug = newDrug
     }
@@ -103,6 +108,29 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         addedDrugSuccess.value = true
+                    } else {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        snackBarMessage.value = jObjError["message"] as String
+                    }
+                }
+            }
+        )
+    }
+
+    fun updateDrugOccurrence(email: String, name: String, repeatOn: RepeatOn?, repeatValue: String?) {
+        repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
+        retrofit.updateDrugOccurrence(email, name, drug).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    snackBarMessage.value = "Could not add drug."
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() == 200) {
+                        updatedDrugSuccess.value = true
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String

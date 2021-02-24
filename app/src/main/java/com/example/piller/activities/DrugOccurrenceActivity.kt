@@ -45,6 +45,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var currentProfileName: String
     private lateinit var loggedEmail: String
     private lateinit var viewModel: DrugOccurrenceViewModel
+    private var drugIntakeTime: Date=Date()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +53,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         currentProfileName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        drugIntakeTime.time = intent.getLongExtra(DbConstants.INTAKE_DATE,-1) // not -1 in edit
         viewModel = ViewModelProvider(this).get(DrugOccurrenceViewModel::class.java)
         setDrug(intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!)
         initViews()
@@ -142,6 +144,13 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         viewModel.addedDrugSuccess.observe(this, Observer { added ->
             if (added) {
                 SnackBar.showToastBar(this, "Drug added!")
+                finish()
+            }
+        })
+
+        viewModel.updatedDrugSuccess.observe(this, Observer { added ->
+            if (added) {
+                SnackBar.showToastBar(this, "Drug occurrence was updated!")
                 finish()
             }
         })
@@ -245,21 +254,36 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     }
 
     private fun setTimeLabel(hour: Int, minutes: Int) {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, hour)
-        calendar.set(Calendar.MINUTE, minutes)
-        val calTime = calendar.time
         val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val calTime: Date
+        if (drugIntakeTime.time > -1) {
+            //edit
+            calTime = drugIntakeTime
+        } else {
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.HOUR_OF_DAY, hour)
+            calendar.set(Calendar.MINUTE, minutes)
+            calTime = calendar.time
 
+        }
         drugOccurrencesTime.text = formatter.format(calTime)
+
+
     }
 
     private fun setDateLabel(day: Int, month: Int, year: Int) {
-        val calendar = Calendar.getInstance()
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        calendar.set(year, month, day)
+        val calDate: Date
+        if (drugIntakeTime.time > -1) {
+            calDate = drugIntakeTime
+        } else {
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, day)
+            calDate = calendar.time
+        }
+
         // Display Selected date in textbox
-        drugOccurrencesDate.text = sdf.format(calendar.time)
+        drugOccurrencesDate.text = sdf.format(calDate)
     }
 
     private fun showTimePickerDialog() {
@@ -311,12 +335,23 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         //  todo set drug occurrences before sending to server!!
         return when (item.itemId) {
             R.id.ndo_menu_add_drug -> {
-                viewModel.addNewDrugToUser(
-                    loggedEmail,
-                    currentProfileName,
-                    repeatOnEnum,
-                    drugRepeatsOnEditText.text.toString()
-                )
+                if (drugIntakeTime.time > -1) {
+                    //edit
+                    viewModel.updateDrugOccurrence(
+                        loggedEmail,
+                        currentProfileName,
+                        repeatOnEnum,
+                        drugRepeatsOnEditText.text.toString()
+                    )
+
+                } else {
+                    viewModel.addNewDrugToUser(
+                        loggedEmail,
+                        currentProfileName,
+                        repeatOnEnum,
+                        drugRepeatsOnEditText.text.toString()
+                    )
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)

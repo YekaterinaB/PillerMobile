@@ -35,6 +35,13 @@ interface CalendarAPI {
         @Body drug_info: Drug
     ): Call<ResponseBody>
 
+    @POST("calendar/updateDrug/{email}/{name}")
+    fun updateDrugOccurrence(
+        @Path("email") email: String,
+        @Path("name") name: String,
+        @Body drug_info: Drug
+    ): Call<ResponseBody>
+
     //  @Query means that it'll be in the end of the url with ?rxcui=12345
     @HTTP(method = "DELETE", path = "/calendar/deleteDrug/{email}/{name}", hasBody = true)
     fun deleteDrugByUser(
