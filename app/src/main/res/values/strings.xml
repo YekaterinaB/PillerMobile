@@ -72,5 +72,7 @@
     <string name="di_00_00">00:00</string>
     <string name="di_drug_name">Drug Name</string>
     <string name="di_menu_delete">Delete</string>
+    <string name="di_menu_edit">Edit</string>
+
 
 </resources>

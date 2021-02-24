@@ -10,7 +10,6 @@ import retrofit2.Call
 import retrofit2.Response
 
 class DrugInfoViewModel : ViewModel() {
-    private lateinit var calendarEvent: CalendarEvent
     private val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
 
     val mutableToastError: MutableLiveData<String> by lazy {
@@ -23,14 +22,6 @@ class DrugInfoViewModel : ViewModel() {
 
     val deleteFutureSuccess: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
-    }
-
-    fun setCalendarEvent(newCalendarEvent: CalendarEvent) {
-        calendarEvent = newCalendarEvent
-    }
-
-    fun getCalendarEvent(): CalendarEvent {
-        return calendarEvent
     }
 
     fun deleteAllOccurrencesOfDrug(email: String, name: String, rxcui: String) {

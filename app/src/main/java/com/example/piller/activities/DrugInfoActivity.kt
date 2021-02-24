@@ -16,61 +16,62 @@ import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
+import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugInfoViewModel
 import com.example.piller.viewModels.ProfileViewModel
-import kotlinx.android.synthetic.main.activity_drug_occurrence.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class DrugInfoActivity : AppCompatActivity() {
-    private lateinit var viewModel: DrugInfoViewModel
-    private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var _viewModel: DrugInfoViewModel
+    private lateinit var _profileViewModel: ProfileViewModel
 
-    private lateinit var drugNameTV: TextView
-    private lateinit var drugIntakeTimeTV: TextView
-    private lateinit var drugTakenCB: CheckBox
-    private lateinit var drugImageIV: ImageView
+    private lateinit var _drugNameTV: TextView
+    private lateinit var _drugIntakeTimeTV: TextView
+    private lateinit var _drugTakenCB: CheckBox
+    private lateinit var _drugImageIV: ImageView
 
-    private lateinit var loggedEmail: String
-    private lateinit var loggedName: String
-
+    private lateinit var _loggedEmail: String
+    private lateinit var _currentProfile: String
+    private lateinit var _calendarEvent: CalendarEvent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drug_info)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        loggedName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+        _loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        _currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+        _calendarEvent = intent.getParcelableExtra(DbConstants.CALENDAR_EVENT)!!
         initViewModels()
         initViews()
         initObservers()
     }
 
     private fun initObservers() {
-        viewModel.mutableToastError.observe(
+        _viewModel.mutableToastError.observe(
             this,
             Observer { toastMessage ->
                 toastMessage?.let { SnackBar.showToastBar(this, toastMessage) }
             })
 
-        viewModel.deleteSuccess.observe(
+        _viewModel.deleteSuccess.observe(
             this,
             Observer { success ->
                 if (success) {
-                    viewModel.deleteSuccess.value = false
+                    _viewModel.deleteSuccess.value = false
                     val returnIntent = Intent()
                     setResult(Activity.RESULT_OK, returnIntent)
                     finish()
                 }
             })
 
-        viewModel.deleteFutureSuccess.observe(
+        _viewModel.deleteFutureSuccess.observe(
             this,
             Observer { success ->
                 if (success) {
-                    viewModel.deleteFutureSuccess.value = false
+                    _viewModel.deleteFutureSuccess.value = false
                     val returnIntent = Intent()
                     setResult(DbConstants.REMOVE_DRUG_FUTURE, returnIntent)
                     finish()
@@ -79,26 +80,25 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        drugNameTV = findViewById(R.id.di_drug_name)
-        drugIntakeTimeTV = findViewById(R.id.di_drug_intake_time)
-        drugTakenCB = findViewById(R.id.di_drug_taken)
-        drugImageIV = findViewById(R.id.di_drug_image)
+        _drugNameTV = findViewById(R.id.di_drug_name)
+        _drugIntakeTimeTV = findViewById(R.id.di_drug_intake_time)
+        _drugTakenCB = findViewById(R.id.di_drug_taken)
+        _drugImageIV = findViewById(R.id.di_drug_image)
 
         initViewsData()
     }
 
     private fun initViewsData() {
-        val calendarEvent: CalendarEvent = viewModel.getCalendarEvent()
-        drugNameTV.text = calendarEvent.drug_name
+        _drugNameTV.text = _calendarEvent.drug_name
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        drugIntakeTimeTV.text = sdf.format(calendarEvent.intake_time)
-        drugTakenCB.isChecked = calendarEvent.is_taken
+        _drugIntakeTimeTV.text = sdf.format(_calendarEvent.intake_time)
+        _drugTakenCB.isChecked = _calendarEvent.is_taken
     }
 
     private fun initViewModels() {
-        viewModel = ViewModelProvider(this).get(DrugInfoViewModel::class.java)
-        viewModel.setCalendarEvent(intent.getParcelableExtra(DbConstants.CALENDAR_EVENT)!!)
-        profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        _viewModel = ViewModelProvider(this).get(DrugInfoViewModel::class.java)
+        _profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -118,12 +118,32 @@ class DrugInfoActivity : AppCompatActivity() {
                 showDeletePopup()
                 true
             }
+            R.id.di_menu_edit -> {
+                goToEditActivity()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    private fun goToEditActivity() {
+        val intent = Intent(
+            this,
+            DrugOccurrenceActivity::class.java
+        )
+        intent.putExtra(
+            DbConstants.DRUG_OBJECT,
+            Drug(_calendarEvent.drug_name, _calendarEvent.drug_rxcui.toInt())
+        )
+        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, _currentProfile)
+        intent.putExtra(DbConstants.INTAKE_DATE, _calendarEvent.intake_time.time)
+
+        startActivity(intent)
+
+    }
+
     private fun showDeletePopup() {
-        val calendarEvent: CalendarEvent = viewModel.getCalendarEvent()
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle("Are you sure you want to delete this drug?")
         builder.setItems(arrayOf<CharSequence>(
@@ -134,21 +154,21 @@ class DrugInfoActivity : AppCompatActivity() {
             DialogInterface.OnClickListener { dialog, which ->
                 when (which) {
                     //  delete all occurrences
-                    0 -> viewModel.deleteAllOccurrencesOfDrug(
-                        loggedEmail,
-                        loggedName,
-                        calendarEvent.drug_rxcui
+                    0 -> _viewModel.deleteAllOccurrencesOfDrug(
+                        _loggedEmail,
+                        _currentProfile,
+                        _calendarEvent.drug_rxcui
                     )
 
                     //  delete future occurrences
                     1 -> {
                         val eventInterpreter = EventInterpreter()
                         val tomorrow =
-                            eventInterpreter.getTomorrowDateInMillis(viewModel.getCalendarEvent().intake_time)
-                        viewModel.deleteFutureOccurrencesOfDrug(
-                            loggedEmail,
-                            loggedName,
-                            calendarEvent.drug_rxcui,
+                            eventInterpreter.getTomorrowDateInMillis(_calendarEvent.intake_time)
+                        _viewModel.deleteFutureOccurrencesOfDrug(
+                            _loggedEmail,
+                            _currentProfile,
+                            _calendarEvent.drug_rxcui,
                             tomorrow.toString()
                         )
                     }
