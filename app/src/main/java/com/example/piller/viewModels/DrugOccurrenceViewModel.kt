@@ -13,7 +13,7 @@ import java.util.*
 
 class DrugOccurrenceViewModel : ViewModel() {
     enum class RepeatOn {
-        DAY, WEEK, MONTH, YEAR
+        DAY, WEEK, MONTH, YEAR, NO_REPEAT
     }
 
     private val weekdayRepeat = mutableSetOf<Int>()
@@ -85,6 +85,8 @@ class DrugOccurrenceViewModel : ViewModel() {
             }
             RepeatOn.YEAR -> {
                 drug.repeatYear = repeatValue
+            }
+            else -> {
             }
         }
     }

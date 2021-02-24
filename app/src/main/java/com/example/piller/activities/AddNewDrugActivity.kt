@@ -2,6 +2,7 @@ package com.example.piller.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -13,23 +14,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.fragments.DrugByNameFragment
-import com.example.piller.fragments.FullviewPopupFragment
 import com.example.piller.fragments.InteractionPopupFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.models.Drug
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugSearchViewModel
-import java.text.SimpleDateFormat
 import java.util.*
 
 class AddNewDrugActivity : AppCompatActivity() {
     private lateinit var searchViewModel: DrugSearchViewModel
     private lateinit var drugOptionsList: RecyclerView
-    private lateinit var drugSelectedBtn: Button
+    private lateinit var selectDrugAnywayBtn: Button
     private lateinit var drugAdapter: NewDrugByNameAdapter
     private lateinit var currentProfile: String
     private lateinit var loggedEmail: String
     private lateinit var addType: String
+    private lateinit var drugSearchNoResult: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +40,19 @@ class AddNewDrugActivity : AppCompatActivity() {
         initViewModels()
         setContentView(R.layout.activity_add_new_drug)
         initViews()
+        initListeners()
         initRecyclersAndAdapters()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initObservers()
         selectFragment(savedInstanceState, addType)
+    }
+
+    private fun initListeners() {
+        selectDrugAnywayBtn.setOnClickListener {
+            //  no need to show interaction
+            searchViewModel.newDrug.value = Drug(drugSearchNoResult, 0)
+            goToAddOccurrenceActivity()
+        }
     }
 
     private fun initViewModels() {
@@ -74,6 +83,16 @@ class AddNewDrugActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateSelectAnywayButtonVisibility(visible: Boolean) {
+        if (visible) {
+            selectDrugAnywayBtn.visibility = View.VISIBLE
+            selectDrugAnywayBtn.isEnabled = true
+        } else {
+            selectDrugAnywayBtn.visibility = View.INVISIBLE
+            selectDrugAnywayBtn.isEnabled = false
+        }
+    }
+
     private fun initObservers() {
         searchViewModel.addedDrugSuccess.observe(
             this,
@@ -85,8 +104,16 @@ class AddNewDrugActivity : AppCompatActivity() {
             })
 
         searchViewModel.drugsSearchResult.observe(this, Observer {
+//            updateSelectAnywayButtonVisibility(it.isEmpty())
+            selectDrugAnywayBtn.visibility = View.VISIBLE
             updateRecyclersAndAdapters()
             setButtonsEnabled(true)
+        })
+
+        searchViewModel.drugSearchNoResult.observe(this, Observer {
+            if (it.isNotEmpty()) {
+                drugSearchNoResult = it
+            }
         })
 
         searchViewModel.snackBarMessage.observe(this, Observer { message ->
@@ -94,11 +121,12 @@ class AddNewDrugActivity : AppCompatActivity() {
         })
 
         searchViewModel.drugsInteractionResult.observe(this, Observer {
-            if(!it.isBlank()){
+            if (it.isNotBlank()) {
                 //go to fragment with the interactions
-                val popupInteraction: InteractionPopupFragment = InteractionPopupFragment.newInstance(it)
+                val popupInteraction: InteractionPopupFragment =
+                    InteractionPopupFragment.newInstance(it)
                 supportFragmentManager.let { popupInteraction.show(it, "InteractionPopupFragment") }
-            }else{
+            } else {
                 //no interactions
                 goToAddOccurrenceActivity()
             }
@@ -107,7 +135,7 @@ class AddNewDrugActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        drugSelectedBtn = findViewById(R.id.nd_drug_selected_btn)
+        selectDrugAnywayBtn = findViewById(R.id.nd_select_anyway_btn)
     }
 
     private fun updateRecyclersAndAdapters() {
@@ -129,12 +157,12 @@ class AddNewDrugActivity : AppCompatActivity() {
         val drug = searchViewModel.getDrugByRxcui(rxcui)
         if (drug != null) {
             searchViewModel.newDrug.value = drug
-            searchViewModel.getInteractionList(loggedEmail,currentProfile, drug.rxcui)
+            searchViewModel.getInteractionList(loggedEmail, currentProfile, drug.rxcui)
         }
     }
 
     fun setButtonsEnabled(enabled: Boolean) {
-        drugSelectedBtn.isEnabled = enabled
+        selectDrugAnywayBtn.isEnabled = enabled
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -142,7 +170,7 @@ class AddNewDrugActivity : AppCompatActivity() {
         return true
     }
 
-    fun goToAddOccurrenceActivity(){
+    fun goToAddOccurrenceActivity() {
         val intent = Intent(
             this,
             DrugOccurrenceActivity::class.java

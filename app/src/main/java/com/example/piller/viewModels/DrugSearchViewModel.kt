@@ -18,6 +18,11 @@ class DrugSearchViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
+    //  this will hold the name that the user searched but no drug was found
+    val drugSearchNoResult: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+
     val drugsSearchResult: MutableLiveData<MutableList<Drug>> by lazy {
         MutableLiveData<MutableList<Drug>>()
     }
@@ -50,7 +55,7 @@ class DrugSearchViewModel : ViewModel() {
             drugAPIRetrofit.findDrugByName(drugName).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        snackBarMessage.value = "Could not delete user."
+                        snackBarMessage.value = "Could connect to server."
                     }
 
                     override fun onResponse(
@@ -71,8 +76,8 @@ class DrugSearchViewModel : ViewModel() {
         }
     }
 
-    fun getInteractionList(email:String,profileName:String,rxcui: Int) {
-        drugAPIRetrofit.findInteractionList(email,profileName,rxcui.toString()).enqueue(
+    fun getInteractionList(email: String, profileName: String, rxcui: Int) {
+        drugAPIRetrofit.findInteractionList(email, profileName, rxcui.toString()).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not search interactions."
@@ -95,16 +100,16 @@ class DrugSearchViewModel : ViewModel() {
 
 
     private fun updateInteractionList(response: Response<ResponseBody>) {
-        var result=""
+        var result = ""
         val drugInterBody = JSONArray(response.body()!!.string())
         for (i in 0 until drugInterBody.length()) {
-            val interaction=drugInterBody.getJSONObject(i)
-            result+="\n#" + (
-                    interaction.get("interaction")as JSONObject).get("name")+"\nDescription:\n" +(
-                    interaction.get("description")as String)+"\n"
+            val interaction = drugInterBody.getJSONObject(i)
+            result += "\n#" + (
+                    interaction.get("interaction") as JSONObject).get("name") + "\nDescription:\n" + (
+                    interaction.get("description") as String) + "\n"
         }
 
-        drugsInteractionResult.value=result
+        drugsInteractionResult.value = result
     }
 
     private fun updateDrugsList(response: Response<ResponseBody>) {
