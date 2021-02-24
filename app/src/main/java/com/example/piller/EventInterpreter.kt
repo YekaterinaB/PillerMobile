@@ -37,9 +37,9 @@ class EventInterpreter {
         maxMissDaysThreshold: Int,
         drugEventList: MutableList<CalendarEvent>
     ) {
-        //  set limit to max between: (drugEventList.size - maxMissDaysThreshold) and (drugEventList.size)
+        //  set limit to min between: maxMissDaysThreshold and drugEventList.size
         var limit = maxMissDaysThreshold
-        if (maxMissDaysThreshold > drugEventList.size) {
+        if (limit > drugEventList.size) {
             limit = drugEventList.size
         }
 
