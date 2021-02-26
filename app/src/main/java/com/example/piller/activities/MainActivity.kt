@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
@@ -17,6 +18,9 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
+import com.example.piller.models.CalendarEvent
+import com.example.piller.notif.AlarmScheduler
+import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.MainActivityViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
@@ -24,6 +28,7 @@ import com.rengwuxian.materialedittext.MaterialEditText
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private var compositeDisposable = CompositeDisposable()
@@ -54,6 +59,24 @@ class MainActivity : AppCompatActivity() {
 
         initiateViews()
         setOnClickListeners()
+
+        createChannelForNotification()
+
+        //check if works- needs to be moved
+        val date1 = Date(Calendar.getInstance().timeInMillis + 10000)
+        val date2 = Date(Calendar.getInstance().timeInMillis + 15000)
+        val events:Array<MutableList<CalendarEvent>> =  arrayOf(mutableListOf(CalendarEvent("acamol","1234",6, date1,false),
+            CalendarEvent("acamol2","1234",6, date2,false)))
+
+        AlarmScheduler.scheduleAlarmsForReminder(this,events,"katya.btsh@","katya1")
+
+    }
+
+
+    private fun createChannelForNotification(){
+        NotificationHelper.createNotificationChannel(this,
+            NotificationManagerCompat.IMPORTANCE_HIGH,  true,
+            getString(R.string.app_name), "App notification channel.")
     }
 
     private fun initObservers() {

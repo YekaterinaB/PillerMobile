@@ -74,5 +74,6 @@
     <string name="di_menu_delete">Delete</string>
     <string name="di_menu_edit">Edit</string>
 
+    <string name="action_notify_medication">It\'s time to take your medicine!</string>
 
 </resources>
