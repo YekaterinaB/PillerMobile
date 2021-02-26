@@ -90,9 +90,22 @@ class DrugInfoActivity : AppCompatActivity() {
 
     private fun initViewsData() {
         _drugNameTV.text = _calendarEvent.drug_name
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        _drugIntakeTimeTV.text = sdf.format(_calendarEvent.intake_time)
+        setIntakeTimeTextView()
         _drugTakenCB.isChecked = _calendarEvent.is_taken
+    }
+
+    private fun setIntakeTimeTextView() {
+        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val calTime: Date
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = _calendarEvent.intake_time.time
+        calTime = calendar.time
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val intakeTime = "${sdf.format(_calendarEvent.intake_time)}, ${formatter.format(calTime)}"
+        _drugIntakeTimeTV.text = intakeTime
+
     }
 
     private fun initViewModels() {
