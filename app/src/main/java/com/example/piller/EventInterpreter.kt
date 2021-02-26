@@ -5,6 +5,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 class EventInterpreter {
     fun getEventsForCalendarByDate(
@@ -130,7 +131,13 @@ class EventInterpreter {
                 calendarCurrent.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 calendarCurrent.set(Calendar.MINUTE, minuteOfDay)
                 val event =
-                    CalendarEvent(drugName, drugRxcui, indexDay, calendarCurrent.time, false)
+                    CalendarEvent(
+                        drugName,
+                        drugRxcui,
+                        indexDay,
+                        calendarCurrent.time,
+                        false
+                    )
                 //todo is taken
                 eventList.add(event)
                 setCalendarTime(calendarCurrent, 0, 0, 0)

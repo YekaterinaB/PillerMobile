@@ -19,7 +19,7 @@ import com.example.piller.fragments.ProfileFragment
 import com.example.piller.fragments.WeeklyCalendarFragment
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.Profile
-import com.example.piller.notifications.NotificationUtils
+import com.example.piller.notif.AlarmScheduler
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
@@ -45,19 +45,13 @@ class CalendarActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_calendar)
 
-        //todo notification
-        val mNotificationTime =
-            Calendar.getInstance().timeInMillis + 5000 //Set after 5 seconds from the current time.
-        NotificationUtils().setNotification(mNotificationTime, this)
-
-
-
         currentProfileTV = findViewById(R.id.calendar_current_profile)
         initializeNavigations()
 
         //initiate view model
         initializeViewModels()
         initializeFragment(savedInstanceState)
+
 
     }
 

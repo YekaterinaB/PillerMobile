@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <receiver android:name=".notif.AlarmReceiver" />
         <activity android:name=".activities.DrugInfoActivity" />
         <activity
             android:name=".activities.DrugOccurrenceActivity"
@@ -44,20 +45,6 @@
                 android:value=".activities.ManageAccountActivity" />
         </activity>
 
-        <receiver
-            android:name=".notifications.AlarmReceiver"
-            android:enabled="true" />
-
-        <service
-            android:name=".notifications.NotificationService"
-            android:enabled="true" />
-
-        <activity
-            android:name=".activities.DrugInformation"
-            android:excludeFromRecents="true"
-            android:label="Notification"
-            android:launchMode="singleTask"
-            android:taskAffinity="" />
     </application>
 
 </manifest>
