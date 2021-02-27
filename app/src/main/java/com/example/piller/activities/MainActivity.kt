@@ -18,8 +18,6 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.models.CalendarEvent
-import com.example.piller.notif.AlarmScheduler
 import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.MainActivityViewModel
@@ -48,27 +46,29 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         initObservers()
         AppPreferences.init(this)
-        ServiceBuilder.updateRetrofit("http://10.0.2.2:3000")
+        ServiceBuilder.updateRetrofit(DbConstants.SERVER_URL)
 
-        //  update fields if user chose to remember email and password
+        //  update fields if user chose to remember email and password, and auto login
         if (AppPreferences.isLogin) {
             login_remember.isChecked = true
             edt_email.setText(AppPreferences.email)
             edt_password.setText(AppPreferences.password)
+            loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
         }
 
         initiateViews()
         setOnClickListeners()
 
         createChannelForNotification()
-
     }
 
 
-    private fun createChannelForNotification(){
-        NotificationHelper.createNotificationChannel(this,
-            NotificationManagerCompat.IMPORTANCE_HIGH,  true,
-            getString(R.string.app_name), "App notification channel.")
+    private fun createChannelForNotification() {
+        NotificationHelper.createNotificationChannel(
+            this,
+            NotificationManagerCompat.IMPORTANCE_HIGH, true,
+            getString(R.string.app_name), "App notification channel."
+        )
     }
 
     private fun initObservers() {
