@@ -177,6 +177,7 @@ class CalendarActivity : AppCompatActivity() {
 //    override fun onNewIntent(intent: Intent?) {
 //        super.onNewIntent(intent)
 //
+//        setIntent(intent)
 //        if (intent!!.hasExtra(DbConstants.NEW_DRUG_ADDED)) {
 //            if (intent.getBooleanExtra(DbConstants.NEW_DRUG_ADDED, false)) {
 //                profileViewModel.getCurrentProfile().
