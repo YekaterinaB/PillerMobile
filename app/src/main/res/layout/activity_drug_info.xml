@@ -35,7 +35,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/di_i_took_the_medicine"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/di_drug_intake_time" />
@@ -48,6 +47,6 @@
         android:contentDescription="@string/di_drug_image_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/di_drug_intake_time"
+        app:layout_constraintTop_toBottomOf="@+id/di_drug_taken"
         app:srcCompat="@drawable/pill" />
 </androidx.constraintlayout.widget.ConstraintLayout>

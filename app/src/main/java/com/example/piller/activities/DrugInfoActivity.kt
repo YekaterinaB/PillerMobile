@@ -47,6 +47,13 @@ class DrugInfoActivity : AppCompatActivity() {
         initViewModels()
         initViews()
         initObservers()
+        initListeners()
+    }
+
+    private fun initListeners() {
+        _drugTakenCB.setOnClickListener {
+
+        }
     }
 
     private fun initObservers() {
@@ -84,6 +91,10 @@ class DrugInfoActivity : AppCompatActivity() {
         _drugIntakeTimeTV = findViewById(R.id.di_drug_intake_time)
         _drugTakenCB = findViewById(R.id.di_drug_taken)
         _drugImageIV = findViewById(R.id.di_drug_image)
+
+        if (!_calendarEvent.showTakenCheckBox) {
+            _drugTakenCB.visibility = View.GONE
+        }
 
         initViewsData()
     }
