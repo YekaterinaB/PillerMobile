@@ -41,11 +41,11 @@ object NotificationHelper {
     }
 
     fun createNotification(
-        context: Context, drug: DrugOccurrence, event_id: String,
+        context: Context, drug: DrugOccurrence,
         currentProfile: String,
         email: String
     ) {
-        val id = event_id.hashCode()
+        val id = drug.event_id.hashCode()
         val notificationBuilder = buildNotification(context, drug, currentProfile, email)
 
         val notificationManager = NotificationManagerCompat.from(context)

@@ -18,11 +18,10 @@ object AlarmScheduler {
         context: Context,
         email: String,
         currentProfile: String,
-        drug: DrugOccurrence,
-        event_id: String
+        drug: DrugOccurrence
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent = createPendingIntent(context, email, currentProfile, drug, event_id)
+        val alarmIntent = createPendingIntent(context, email, currentProfile, drug)
         scheduleAlarm(drug, alarmIntent, alarmMgr)
 
 
@@ -33,8 +32,7 @@ object AlarmScheduler {
         context: Context,
         email: String,
         currentProfile: String,
-        drug: DrugOccurrence,
-        event_id: String
+        drug: DrugOccurrence
     ): PendingIntent? {
         val bundleDrugObject = Bundle()
         bundleDrugObject.putParcelable(DbConstants.DRUG_OBJECT, drug)
@@ -43,12 +41,11 @@ object AlarmScheduler {
             // 2
             action = context.getString(R.string.action_notify_medication)
             // 3
-            type = "${event_id}-${drug.rxcui}"
+            type = "${drug.event_id}-${drug.rxcui}"
             // 4
             putExtra(DbConstants.DRUG_OBJECT, bundleDrugObject)
             putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
             putExtra(DbConstants.LOGGED_USER_EMAIL, email)
-            putExtra(DbConstants.EVENT_ID, event_id)
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
         // 5

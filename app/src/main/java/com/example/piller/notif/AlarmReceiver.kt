@@ -23,19 +23,17 @@ class AlarmReceiver : BroadcastReceiver() {
                     // 2
                     val currentProfile = intent.extras!!.getString(DbConstants.LOGGED_USER_NAME)
                     val email = intent.extras!!.getString(DbConstants.LOGGED_USER_EMAIL)
-                    val event_id = intent.extras!!.getString(DbConstants.EVENT_ID)
                     // could not get parceble data to intent
                     val bundleCalendarEvent = intent.extras!!.getBundle(DbConstants.DRUG_OBJECT)
                     // 3
                     if (currentProfile != null && email != null
-                        && event_id != null && bundleCalendarEvent != null
+                        && bundleCalendarEvent != null
                     ) {
                         val drug =
                             bundleCalendarEvent.getParcelable<DrugOccurrence>(DbConstants.DRUG_OBJECT)!!
                         NotificationHelper.createNotification(
                             context,
                             drug,
-                            event_id,
                             currentProfile,
                             email
                         )
@@ -46,8 +44,7 @@ class AlarmReceiver : BroadcastReceiver() {
                                 context,
                                 email,
                                 currentProfile,
-                                drug,
-                                event_id
+                                drug
                             )
                         }
                     }
