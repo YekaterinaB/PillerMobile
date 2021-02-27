@@ -51,8 +51,6 @@ class CalendarActivity : AppCompatActivity() {
         //initiate view model
         initializeViewModels()
         initializeFragment(savedInstanceState)
-
-
     }
 
     private fun initMissedDaysThreshold() {

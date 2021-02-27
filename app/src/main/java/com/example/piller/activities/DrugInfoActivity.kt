@@ -16,7 +16,7 @@ import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.Drug
+import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugInfoViewModel
 import com.example.piller.viewModels.ProfileViewModel
@@ -41,9 +41,7 @@ class DrugInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drug_info)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        _loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        _currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
-        _calendarEvent = intent.getParcelableExtra(DbConstants.CALENDAR_EVENT)!!
+        initIntent()
         initViewModels()
         initViews()
         initObservers()
@@ -54,6 +52,22 @@ class DrugInfoActivity : AppCompatActivity() {
         _drugTakenCB.setOnClickListener {
 
         }
+    }
+
+    private fun initIntent() {
+        _loggedEmail = intent.extras!!.getString(DbConstants.LOGGED_USER_EMAIL)!!
+        _currentProfile = intent.extras!!.getString(DbConstants.LOGGED_USER_NAME)!!
+
+        val bundleCalendarEvent = intent.extras!!.getBundle(DbConstants.CALENDAR_EVENT)
+        if (bundleCalendarEvent != null) {
+            _calendarEvent =
+                bundleCalendarEvent.getParcelable<CalendarEvent>(DbConstants.CALENDAR_EVENT)!!
+        } else {
+            _calendarEvent = intent.getParcelableExtra(DbConstants.CALENDAR_EVENT)!!
+
+        }
+
+
     }
 
     private fun initObservers() {
@@ -157,7 +171,7 @@ class DrugInfoActivity : AppCompatActivity() {
         )
         intent.putExtra(
             DbConstants.DRUG_OBJECT,
-            Drug(_calendarEvent.drug_name, _calendarEvent.drug_rxcui.toInt())
+            DrugOccurrence(_calendarEvent.drug_name, _calendarEvent.drug_rxcui.toInt())
         )
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
         intent.putExtra(DbConstants.LOGGED_USER_NAME, _currentProfile)

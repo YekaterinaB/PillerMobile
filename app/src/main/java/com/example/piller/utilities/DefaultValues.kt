@@ -3,6 +3,7 @@ package com.example.piller.utilities
 object DbConstants {
     const val LOGGED_USER_EMAIL = "LOGGED_USER_EMAIL"
     const val LOGGED_USER_NAME = "LOGGED_USER_NAME"
+    const val EVENT_ID = "event_id"
 
     //  fullview fragment
     const val EVENTDAY_DRAWABLE_CIRCLE_RADIUS = 20F

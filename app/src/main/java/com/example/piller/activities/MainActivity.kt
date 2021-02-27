@@ -62,14 +62,6 @@ class MainActivity : AppCompatActivity() {
 
         createChannelForNotification()
 
-        //check if works- needs to be moved
-        val date1 = Date(Calendar.getInstance().timeInMillis + 10000)
-        val date2 = Date(Calendar.getInstance().timeInMillis + 15000)
-        val events:Array<MutableList<CalendarEvent>> =  arrayOf(mutableListOf(CalendarEvent("acamol","1234",6, date1,false),
-            CalendarEvent("acamol2","1234",6, date2,false)))
-
-        AlarmScheduler.scheduleAlarmsForReminder(this,events,"katya.btsh@","katya1")
-
     }
 
 
