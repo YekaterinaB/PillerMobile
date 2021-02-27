@@ -44,4 +44,7 @@ object DbConstants {
 
     //  drug information
     const val REMOVE_DRUG_FUTURE = 999
+
+    // server
+    const val SERVER_URL = "http://10.0.2.2:3000"
 }
