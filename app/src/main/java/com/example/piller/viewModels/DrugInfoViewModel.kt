@@ -24,8 +24,8 @@ class DrugInfoViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
-    fun deleteAllOccurrencesOfDrug(email: String, name: String, rxcui: String) {
-        retrofit.deleteDrugByUser(email, name, rxcui).enqueue(
+    fun deleteAllOccurrencesOfDrug(email: String, name: String, event_id: String) {
+        retrofit.deleteDrugByUser(email, name, event_id).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -37,6 +37,7 @@ class DrugInfoViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         deleteSuccess.value = true
+                        //todo delete notifi with event id
                     } else {
                         mutableToastError.value = "Could not delete drug."
                     }
@@ -48,10 +49,10 @@ class DrugInfoViewModel : ViewModel() {
     fun deleteFutureOccurrencesOfDrug(
         email: String,
         name: String,
-        rxcui: String,
+        event_id: String,
         repeatEnd: String
     ) {
-        retrofit.deleteFutureOccurrencesOfDrugByUser(email, name, rxcui, repeatEnd).enqueue(
+        retrofit.deleteFutureOccurrencesOfDrugByUser(email, name, event_id, repeatEnd).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -63,6 +64,7 @@ class DrugInfoViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         deleteFutureSuccess.value = true
+                        //todo delete notification with event_id
                     } else {
                         mutableToastError.value = "Could not delete future occurrences drug."
                     }

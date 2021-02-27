@@ -15,12 +15,12 @@ interface CalendarAPI {
         @Path("name") name: String
     ): Call<ResponseBody>
 
-    @PUT("calendar/{email}/{name}")
-    fun updateCalendarByUser(
-        @Path("email") email: String,
-        @Path("name") name: String,
-        @Body calendarEvent: CalendarEvent
-    ): Call<ResponseBody>
+//    @PUT("calendar/{email}/{name}")
+//    fun updateCalendarByUser(
+//        @Path("email") email: String,
+//        @Path("name") name: String,
+//        @Body calendarEvent: CalendarEvent
+//    ): Call<ResponseBody>
 
     @DELETE("calendar/{email}")
     fun deleteCalendarByUser(
@@ -35,10 +35,11 @@ interface CalendarAPI {
         @Body drug_info: DrugOccurrence
     ): Call<ResponseBody>
 
-    @POST("calendar/updateDrug/{email}/{name}")
+    @POST("calendar/updateDrug/{email}/{name}/{event_id}")
     fun updateDrugOccurrence(
         @Path("email") email: String,
         @Path("name") name: String,
+        @Path("event_id") event_id: String,
         @Body drug_info: DrugOccurrence
     ): Call<ResponseBody>
 
@@ -47,14 +48,14 @@ interface CalendarAPI {
     fun deleteDrugByUser(
         @Path("email") email: String,
         @Path("name") name: String,
-        @Query("rxcui") drugRxcui: String
+        @Query("event_id") event_id: String
     ): Call<ResponseBody>
 
     @PUT("calendar/deleteFutureOccurrencesOfDrugByUser/{email}/{name}")
     fun deleteFutureOccurrencesOfDrugByUser(
         @Path("email") email: String,
         @Path("name") name: String,
-        @Query("rxcui") rxcui: String,
+        @Query("event_id") event_id: String,
         @Query("repeat_end") repeatEnd: String
     ): Call<ResponseBody>
 }

@@ -106,6 +106,7 @@ object NotificationHelper {
             drug.rxcui.toString(),
             cal[DAY_OF_WEEK],
             cal.time,
+            drug.event_id,
             false,
             true
         )

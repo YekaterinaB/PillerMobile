@@ -25,8 +25,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DrugOccurrenceActivity : AppCompatActivity() {
-    //  todo check if already has the drug by rxcui
-    //  todo - add X button on top so the user will be able to cancel
     private lateinit var newDrugName: TextView
     private lateinit var drugOccurrencesDate: TextView
     private lateinit var drugOccurrencesTime: TextView
@@ -373,6 +371,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                         currentProfileName,
                         repeatOnEnum,
                         drugRepeatsOnEditText.text.toString()
+
                     )
 
                 } else {

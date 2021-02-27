@@ -8,6 +8,7 @@ import kotlinx.android.parcel.Parcelize
 data class DrugOccurrence(
     @SerializedName("name") var drug_name: String,
     @SerializedName("rxcui") var rxcui: Int,
+    @SerializedName("event_id") var event_id: String="",
     @SerializedName("repeat_year") var repeatYear: String = "0",
     @SerializedName("repeat_month") var repeatMonth: String = "0",
     @SerializedName("repeat_day") var repeatDay: String = "0",

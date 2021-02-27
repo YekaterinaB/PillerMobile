@@ -20,8 +20,9 @@ class EventInterpreter {
             val drug = drugList.getJSONObject(i)
             val drugName = drug.get("name") as String
             val drugRxcui = drug.get("rxcui").toString()
+            val event_id = drug.get("event_id").toString()
             val drugInfo = drug.get("drug_info") as JSONObject
-            val drugEventList = getDrugEvent(drugName, drugRxcui, drugInfo, start, end)
+            val drugEventList = getDrugEvent(drugName, drugRxcui, drugInfo, start, end,event_id)
             // put all event in array
             if (drugEventList.isNotEmpty()) {
                 updateMissedDaysCheckboxVisibility(maxMissDaysThreshold, drugEventList)
@@ -67,7 +68,8 @@ class EventInterpreter {
         drugRxcui: String,
         drugInfo: JSONObject,
         start: Date,
-        end: Date
+        end: Date,
+        event_id:String
     ): MutableList<CalendarEvent> {
         val eventList: MutableList<CalendarEvent> = mutableListOf()
         val repeatStart = (drugInfo.get("repeat_start") as String).toLong()
@@ -136,6 +138,7 @@ class EventInterpreter {
                         drugRxcui,
                         indexDay,
                         calendarCurrent.time,
+                        event_id,
                         false
                     )
                 //todo is taken

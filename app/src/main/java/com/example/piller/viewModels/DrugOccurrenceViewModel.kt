@@ -126,7 +126,7 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     fun updateDrugOccurrence(email: String, name: String, repeatOn: RepeatOn?, repeatValue: String?) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.updateDrugOccurrence(email, name, drug).enqueue(
+        retrofit.updateDrugOccurrence(email, name, drug.event_id,drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not add drug."
@@ -138,6 +138,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         updatedDrugSuccess.value = true
+                        //todo remove old notif and replace with new (response has new eventn_id)
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String
