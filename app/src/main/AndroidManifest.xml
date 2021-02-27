@@ -13,6 +13,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <receiver android:name=".notif.AlarmReceiver" />
+
         <activity android:name=".activities.DrugInfoActivity" />
         <activity
             android:name=".activities.DrugOccurrenceActivity"

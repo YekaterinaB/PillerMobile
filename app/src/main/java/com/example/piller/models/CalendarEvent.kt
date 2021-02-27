@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
-
 @Parcelize
 data class CalendarEvent(
     @SerializedName("drug_name") var drug_name: String,
@@ -14,5 +13,4 @@ data class CalendarEvent(
     @SerializedName("intake_time") var intake_time: Date,
     @SerializedName("is_taken") var is_taken: Boolean,
     @SerializedName("showTakenCheckBox") var showTakenCheckBox: Boolean = false
-
 ) : Parcelable

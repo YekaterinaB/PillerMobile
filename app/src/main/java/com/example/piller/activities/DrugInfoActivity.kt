@@ -58,16 +58,12 @@ class DrugInfoActivity : AppCompatActivity() {
         _loggedEmail = intent.extras!!.getString(DbConstants.LOGGED_USER_EMAIL)!!
         _currentProfile = intent.extras!!.getString(DbConstants.LOGGED_USER_NAME)!!
 
-        val bundleCalendarEvent = intent.extras!!.getBundle(DbConstants.CALENDAR_EVENT)
-        if (bundleCalendarEvent != null) {
-            _calendarEvent =
-                bundleCalendarEvent.getParcelable<CalendarEvent>(DbConstants.CALENDAR_EVENT)!!
-        } else {
+        try {
+            _calendarEvent = intent.extras!!.getBundle(DbConstants.CALENDAR_EVENT_BUNDLE)
+                ?.getParcelable<CalendarEvent>(DbConstants.CALENDAR_EVENT)!!
+        } catch (e: Exception) {
             _calendarEvent = intent.getParcelableExtra(DbConstants.CALENDAR_EVENT)!!
-
         }
-
-
     }
 
     private fun initObservers() {
