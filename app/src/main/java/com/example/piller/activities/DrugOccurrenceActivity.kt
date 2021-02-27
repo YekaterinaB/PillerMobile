@@ -170,7 +170,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private fun goBackToCalendarActivity(toastBarMessage: String) {
         SnackBar.showToastBar(this, toastBarMessage)
         val intent = Intent(this@DrugOccurrenceActivity, CalendarActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
         intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfileName)
         startActivity(intent)
