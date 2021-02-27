@@ -28,6 +28,7 @@ object DbConstants {
 
     // calendar events
     const val CALENDAR_EVENT = "Calendar_event"
+    const val CALENDAR_EVENT_BUNDLE = "Calendar_event_bundle"
 
     //  supervisors
     const val DEFAULT_SUPERVISOR_THRESHOLD = 3

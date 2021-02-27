@@ -63,7 +63,7 @@ object NotificationHelper {
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
         return NotificationCompat.Builder(context, channelId).apply {
             setSmallIcon(R.drawable.pill)
-            setContentTitle(currentProfile + ", It's time to take your medicine!")
+            setContentTitle("$currentProfile, It's time to take your medicine!")
             setAutoCancel(true)
             // 2
             val drawable = R.drawable.pill
@@ -81,14 +81,15 @@ object NotificationHelper {
             bundleDrugObject.putParcelable(DbConstants.CALENDAR_EVENT, calEvent)
 
             val intent = Intent(context, DrugInfoActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                 action = context.getString(R.string.action_notify_medication)
 
-                putExtra(DbConstants.CALENDAR_EVENT, bundleDrugObject)
+                putExtra(DbConstants.CALENDAR_EVENT_BUNDLE, bundleDrugObject)
                 putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
                 putExtra(DbConstants.LOGGED_USER_EMAIL, email)
             }
-            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            val pendingIntent =
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
             setContentIntent(pendingIntent)
         }
     }
@@ -107,8 +108,8 @@ object NotificationHelper {
             cal[DAY_OF_WEEK],
             cal.time,
             drug.event_id,
-            false,
-            true
+            is_taken = false,
+            showTakenCheckBox = true
         )
     }
 }
