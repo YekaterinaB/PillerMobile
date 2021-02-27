@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.customWidgets.CheckboxWithTextInside
-import com.example.piller.models.Drug
+import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugOccurrenceViewModel
 import java.text.SimpleDateFormat
@@ -75,7 +75,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
     }
 
-    private fun setDrug(drug: Drug) {
+    private fun setDrug(drug: DrugOccurrence) {
         val calendar = Calendar.getInstance()
         drug.repeatStart = calendar.timeInMillis
         viewModel.setDrug(drug)
@@ -366,7 +366,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         //  todo set drug occurrences before sending to server!!
         return when (item.itemId) {
             R.id.ndo_menu_add_drug -> {
-                if (drugIntakeTime.time > -1) {
+                if (isInEditMode) {
                     //edit
                     viewModel.updateDrugOccurrence(
                         loggedEmail,
@@ -380,7 +380,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                         loggedEmail,
                         currentProfileName,
                         repeatOnEnum,
-                        drugRepeatsOnEditText.text.toString()
+                        drugRepeatsOnEditText.text.toString(),
+                        this
                     )
                 }
                 true

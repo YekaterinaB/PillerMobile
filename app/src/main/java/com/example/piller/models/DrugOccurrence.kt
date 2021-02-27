@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Drug(
+data class DrugOccurrence(
     @SerializedName("name") var drug_name: String,
     @SerializedName("rxcui") var rxcui: Int,
     @SerializedName("repeat_year") var repeatYear: String = "0",

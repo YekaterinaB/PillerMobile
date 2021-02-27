@@ -1,10 +1,12 @@
 package com.example.piller.viewModels
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.models.Drug
+import com.example.piller.models.DrugOccurrence
+import com.example.piller.notif.AlarmScheduler
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -17,7 +19,7 @@ class DrugOccurrenceViewModel : ViewModel() {
     }
 
     private val weekdayRepeat = mutableSetOf<Int>()
-    private lateinit var drug: Drug
+    private lateinit var drug: DrugOccurrence
     private val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
 
     val snackBarMessage: MutableLiveData<String> by lazy {
@@ -33,11 +35,11 @@ class DrugOccurrenceViewModel : ViewModel() {
     }
 
 
-    fun setDrug(newDrug: Drug) {
+    fun setDrug(newDrug: DrugOccurrence) {
         drug = newDrug
     }
 
-    fun getDrug(): Drug {
+    fun getDrug(): DrugOccurrence {
         return drug
     }
 
@@ -96,9 +98,9 @@ class DrugOccurrenceViewModel : ViewModel() {
         }
     }
 
-    fun addNewDrugToUser(email: String, name: String, repeatOn: RepeatOn?, repeatValue: String?) {
+    fun addNewDrugToUser(email: String, profileName: String, repeatOn: RepeatOn?, repeatValue: String?,context: Context) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.addDrugCalendarByUser(email, name, drug).enqueue(
+        retrofit.addDrugCalendarByUser(email, profileName, drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not add drug."
@@ -110,6 +112,9 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         addedDrugSuccess.value = true
+                        val event_id=response.body()!!.string()
+                        //create notification
+                        AlarmScheduler.scheduleAlarmsForReminder(context,email,profileName,drug,event_id)
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String

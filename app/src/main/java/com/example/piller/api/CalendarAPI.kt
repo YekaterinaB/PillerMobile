@@ -1,7 +1,7 @@
 package com.example.piller.api
 
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.Drug
+import com.example.piller.models.DrugOccurrence
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -32,14 +32,14 @@ interface CalendarAPI {
     fun addDrugCalendarByUser(
         @Path("email") email: String,
         @Path("name") name: String,
-        @Body drug_info: Drug
+        @Body drug_info: DrugOccurrence
     ): Call<ResponseBody>
 
     @POST("calendar/updateDrug/{email}/{name}")
     fun updateDrugOccurrence(
         @Path("email") email: String,
         @Path("name") name: String,
-        @Body drug_info: Drug
+        @Body drug_info: DrugOccurrence
     ): Call<ResponseBody>
 
     //  @Query means that it'll be in the end of the url with ?rxcui=12345

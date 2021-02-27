@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.piller.api.DrugAPI
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.models.Drug
+import com.example.piller.models.DrugOccurrence
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
@@ -23,16 +23,16 @@ class DrugSearchViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
-    val drugsSearchResult: MutableLiveData<MutableList<Drug>> by lazy {
-        MutableLiveData<MutableList<Drug>>()
+    val drugsSearchResult: MutableLiveData<MutableList<DrugOccurrence>> by lazy {
+        MutableLiveData<MutableList<DrugOccurrence>>()
     }
 
     val snackBarMessage: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
 
-    val newDrug: MutableLiveData<Drug> by lazy {
-        MutableLiveData<Drug>()
+    val newDrug: MutableLiveData<DrugOccurrence> by lazy {
+        MutableLiveData<DrugOccurrence>()
     }
 
     val addedDrugSuccess: MutableLiveData<Boolean> by lazy {
@@ -40,7 +40,7 @@ class DrugSearchViewModel : ViewModel() {
     }
 
 
-    fun getDrugByRxcui(rxcui: Int): Drug? {
+    fun getDrugByRxcui(rxcui: Int): DrugOccurrence? {
         val filteredArray = drugsSearchResult.value?.filter { drug -> drug.rxcui == rxcui }
         if (filteredArray != null && filteredArray.isNotEmpty()) {
             return filteredArray[0]
@@ -120,14 +120,14 @@ class DrugSearchViewModel : ViewModel() {
         }
     }
 
-    private fun parseDrugList(drugListBody: JSONArray): MutableList<Drug> {
-        val drugs = mutableListOf<Drug>()
+    private fun parseDrugList(drugListBody: JSONArray): MutableList<DrugOccurrence> {
+        val drugs = mutableListOf<DrugOccurrence>()
         for (i in 0 until drugListBody.length()) {
             val item = drugListBody[i] as JSONArray
             for (j in 0 until item.length()) {
                 val drugItem = item.get(j) as JSONObject
                 drugs.add(
-                    Drug(
+                    DrugOccurrence(
                         drug_name = removeParenthesis(drugItem.getString("name")),
                         rxcui = removeParenthesis(drugItem.get("rxcui").toString()).toInt()
                     )

@@ -1,11 +1,9 @@
 package com.example.piller.models
 
-import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import java.util.*
-import kotlin.random.Random
 
 
 @Parcelize
@@ -15,8 +13,6 @@ data class CalendarEvent(
     @SerializedName("index_day") var index_day: Int,// 0-first day of the asked timeline...
     @SerializedName("intake_time") var intake_time: Date,
     @SerializedName("is_taken") var is_taken: Boolean,
-    @SerializedName("showTakenCheckBox") var showTakenCheckBox: Boolean = false,
-    @SerializedName("id") var id: Int = Random.nextInt()
-
+    @SerializedName("showTakenCheckBox") var showTakenCheckBox: Boolean = false
 
 ) : Parcelable

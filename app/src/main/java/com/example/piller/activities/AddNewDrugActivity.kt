@@ -16,10 +16,9 @@ import com.example.piller.SnackBar
 import com.example.piller.fragments.DrugByNameFragment
 import com.example.piller.fragments.InteractionPopupFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
-import com.example.piller.models.Drug
+import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugSearchViewModel
-import java.util.*
 
 class AddNewDrugActivity : AppCompatActivity() {
     private lateinit var searchViewModel: DrugSearchViewModel
@@ -50,7 +49,7 @@ class AddNewDrugActivity : AppCompatActivity() {
     private fun initListeners() {
         selectDrugAnywayBtn.setOnClickListener {
             //  no need to show interaction
-            searchViewModel.newDrug.value = Drug(drugSearchNoResult, 0)
+            searchViewModel.newDrug.value = DrugOccurrence(drugSearchNoResult, 0)
             goToAddOccurrenceActivity()
         }
     }

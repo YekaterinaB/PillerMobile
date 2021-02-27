@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
-import com.example.piller.models.Drug
+import com.example.piller.models.DrugOccurrence
 
 class NewDrugByNameAdapter(
-    private var dataSet: MutableList<Drug>,
+    private var dataSet: MutableList<DrugOccurrence>,
     private val clickOnItemListener: (Int) -> Unit
 ) : RecyclerView.Adapter<NewDrugByNameAdapter.ViewHolder>() {
 
@@ -25,7 +25,7 @@ class NewDrugByNameAdapter(
         return ViewHolder(view)
     }
 
-    fun setData(data: MutableList<Drug>) {
+    fun setData(data: MutableList<DrugOccurrence>) {
         dataSet = data
     }
 

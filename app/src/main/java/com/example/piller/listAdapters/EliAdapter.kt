@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.Drug
 import java.text.SimpleDateFormat
 import java.util.*
 
