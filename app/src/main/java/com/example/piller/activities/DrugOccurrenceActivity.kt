@@ -46,6 +46,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private var drugIntakeTime: Date = Date()
     private var repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
     private var isInEditMode = false
+    private var firstClickOnLabel= true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -277,11 +278,11 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private fun setTimeLabel(hour: Int, minutes: Int) {
         val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
         val calTime: Date
-        if (isInEditMode) {
+        if (isInEditMode && firstClickOnLabel) {
             calTime = drugIntakeTime
             //  set isInEditMode to false so we won't enter this if again (and then the user
             //  won't br able to update intake date)
-            isInEditMode = false
+            firstClickOnLabel = false
         } else {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = drugIntakeTime.time
@@ -297,11 +298,11 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private fun setDateLabel(day: Int, month: Int, year: Int) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val calDate: Date
-        if (isInEditMode) {
+        if (isInEditMode && firstClickOnLabel) {
             calDate = drugIntakeTime
             //  set isInEditMode to false so we won't enter this if again (and then the user
             //  won't br able to update intake time)
-            isInEditMode = false
+            firstClickOnLabel = false
         } else {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = drugIntakeTime.time

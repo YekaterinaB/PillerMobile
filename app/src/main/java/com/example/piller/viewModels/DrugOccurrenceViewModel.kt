@@ -112,9 +112,9 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         addedDrugSuccess.value = true
-                        val event_id=response.body()!!.string()
+                        drug.event_id=response.body()!!.string()
                         //create notification
-                        AlarmScheduler.scheduleAlarmsForReminder(context,email,profileName,drug,event_id)
+                        AlarmScheduler.scheduleAlarmsForReminder(context,email,profileName,drug)
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String
@@ -138,6 +138,8 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         updatedDrugSuccess.value = true
+                        val old_event_id=drug.event_id
+                        drug.event_id=response.body()!!.string()
                         //todo remove old notif and replace with new (response has new eventn_id)
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
