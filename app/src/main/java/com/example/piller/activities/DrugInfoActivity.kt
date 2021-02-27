@@ -167,7 +167,7 @@ class DrugInfoActivity : AppCompatActivity() {
         )
         intent.putExtra(
             DbConstants.DRUG_OBJECT,
-            DrugOccurrence(_calendarEvent.drug_name, _calendarEvent.drug_rxcui.toInt())
+            DrugOccurrence(_calendarEvent.drug_name, _calendarEvent.drug_rxcui.toInt(), _calendarEvent.event_id)
         )
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
         intent.putExtra(DbConstants.LOGGED_USER_NAME, _currentProfile)
@@ -191,7 +191,7 @@ class DrugInfoActivity : AppCompatActivity() {
                     0 -> _viewModel.deleteAllOccurrencesOfDrug(
                         _loggedEmail,
                         _currentProfile,
-                        _calendarEvent.drug_rxcui
+                        _calendarEvent.event_id
                     )
 
                     //  delete future occurrences
@@ -202,7 +202,7 @@ class DrugInfoActivity : AppCompatActivity() {
                         _viewModel.deleteFutureOccurrencesOfDrug(
                             _loggedEmail,
                             _currentProfile,
-                            _calendarEvent.drug_rxcui,
+                            _calendarEvent.event_id,
                             tomorrow.toString()
                         )
                     }

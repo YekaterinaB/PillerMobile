@@ -66,7 +66,7 @@ class WeeklyCalendarFragment : Fragment() {
     private var eliAdapters = mutableListOf<EliAdapter>()
     private var eliRecycles = mutableListOf<RecyclerView>()
     private lateinit var fragmentView: View
-    private lateinit var currentRxcui: CalendarEvent
+    private lateinit var currentCalendarEvent: CalendarEvent
 
     private lateinit var newDrugFAB: FloatingActionButton
     private lateinit var newDrugCameraFAB: FloatingActionButton
@@ -164,7 +164,7 @@ class WeeklyCalendarFragment : Fragment() {
     }
 
     private fun showDrugInfo(calendarEvent: CalendarEvent) {
-        currentRxcui = calendarEvent
+        currentCalendarEvent = calendarEvent
         val intent = Intent(requireContext(), DrugInfoActivity::class.java)
         intent.putExtra(DbConstants.CALENDAR_EVENT, calendarEvent)
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
@@ -301,9 +301,9 @@ class WeeklyCalendarFragment : Fragment() {
 
         if (requestCode == DRUG_INFO_INTENT_ID) {
             if (resultCode == Activity.RESULT_OK) {
-                weeklyCalendarViewModel.deleteDrug(currentRxcui)
+                weeklyCalendarViewModel.deleteDrug(currentCalendarEvent)
             } else if (resultCode == DbConstants.REMOVE_DRUG_FUTURE) {
-                weeklyCalendarViewModel.deleteFutureDrug(currentRxcui)
+                weeklyCalendarViewModel.deleteFutureDrug(currentCalendarEvent)
             }
         }
     }

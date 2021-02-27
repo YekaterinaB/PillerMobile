@@ -49,7 +49,7 @@ class WeeklyCalendarViewModel : ViewModel() {
     fun deleteDrug(calendarEvent: CalendarEvent) {
         for (calendarEvents in mutableCurrentWeeklyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
-                if (calendarEvents[index].drug_rxcui == calendarEvent.drug_rxcui) {
+                if (calendarEvents[index].event_id == calendarEvent.event_id) {
                     calendarEvents.removeAt(index)
                 }
             }
@@ -68,7 +68,7 @@ class WeeklyCalendarViewModel : ViewModel() {
         for (calendarEvents in mutableCurrentWeeklyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
                 //  remove drug if the intake date is after the day after the given date of calendarEvent
-                if (calendarEvents[index].drug_rxcui == calendarEvent.drug_rxcui
+                if (calendarEvents[index].event_id == calendarEvent.event_id
                     && eventInterpreter.isDateAfter(
                         calendarEvents[index].intake_time, calendarTomorrow.time
                     )
