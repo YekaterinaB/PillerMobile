@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.piller.EventInterpreter
+import com.example.piller.DateUtils
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
@@ -205,9 +205,8 @@ class DrugInfoActivity : AppCompatActivity() {
 
                     //  delete future occurrences
                     1 -> {
-                        val eventInterpreter = EventInterpreter()
                         val tomorrow =
-                            eventInterpreter.getTomorrowDateInMillis(_calendarEvent.intake_time)
+                            DateUtils.getTomorrowDateInMillis(_calendarEvent.intake_time)
                         _viewModel.deleteFutureOccurrencesOfDrug(
                             email =  _loggedEmail,
                             currentProfile =  _currentProfile,

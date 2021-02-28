@@ -15,6 +15,7 @@ import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
+import com.example.piller.DateUtils
 import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
@@ -35,7 +36,7 @@ class FullViewFragment : Fragment() {
     private val eventDayCircleRadius = DbConstants.EVENTDAY_DRAWABLE_CIRCLE_RADIUS
     private val eventDayBitMapWidth = 256
     private val eventDayBitMapHeight = 128
-    private var currentFirstDayOfMonth = eventInterpreter.getFirstDayOfMonth()
+    private var currentFirstDayOfMonth = DateUtils.getFirstDayOfMonth()
 
     companion object {
         fun newInstance() = FullViewFragment()
@@ -56,7 +57,7 @@ class FullViewFragment : Fragment() {
     private fun updateEventsOnMonthChange() {
         val cal: Calendar = Calendar.getInstance()
         cal.time = calendarView.currentPageDate.time
-        val firstAndLastDays = eventInterpreter.getFirstAndLastDaysOfSpecificMonth(cal)
+        val firstAndLastDays = DateUtils.getFirstAndLastDaysOfSpecificMonth(cal)
         currentFirstDayOfMonth = firstAndLastDays.first
         viewModel.updateCalendarByUser(
             profileViewModel.getCurrentEmail(),
@@ -151,8 +152,8 @@ class FullViewFragment : Fragment() {
     }
 
     private fun initEvents() {
-        val startDate = eventInterpreter.getFirstDayOfMonth()
-        val endDate = eventInterpreter.getLastDayOfMonth()
+        val startDate = DateUtils.getFirstDayOfMonth()
+        val endDate = DateUtils.getLastDayOfMonth()
         //  get all the events for the selected month
         viewModel.initiateMonthEvents(
             profileViewModel.getCurrentEmail(),
