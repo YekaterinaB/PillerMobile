@@ -1,21 +1,17 @@
 package com.example.piller.notif
 
 import android.app.AlarmManager
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat.getSystemService
 import com.example.piller.R
-import com.example.piller.activities.CalendarActivity
-import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 import java.util.*
 import java.util.Calendar.*
-
+import kotlin.math.ceil
 
 
 object AlarmScheduler {
@@ -71,8 +67,12 @@ object AlarmScheduler {
             alarmMgr.set(AlarmManager.RTC_WAKEUP, datetimeToAlarm.timeInMillis, alarmIntent)
         } else if (drug.repeatMonth.toInt() != 0) {
             //repeatMonth calculated differently
-            val nextOccur = getInstance()
-            setScheduleAlarmForMonth(drug, nextOccur, datetimeToAlarm, alarmIntent, alarmMgr)
+            setScheduleAlarmForMonth(
+                repeat = drug.repeatMonth.toInt(),
+                datetimeToAlarm = datetimeToAlarm,
+                alarmIntent = alarmIntent,
+                alarmMgr = alarmMgr
+            )
         } else { // repeat year,week,day
             setScheduleAlarmForYear_Week_Day(drug, datetimeToAlarm, alarmIntent, alarmMgr)
         }
@@ -80,59 +80,63 @@ object AlarmScheduler {
     }
 
     private fun setScheduleAlarmForMonth(
-        drug: DrugOccurrence, nextOccur: Calendar,
+        repeat: Int,
         datetimeToAlarm: Calendar, alarmIntent: PendingIntent?,
         alarmMgr: AlarmManager
     ) {
-
+        var foundDate=false
+        var skipMonth=repeat // to
         val dayOfMonth = datetimeToAlarm[DAY_OF_MONTH]
-        if (isDateToNotifyPassedInMonth(datetimeToAlarm, nextOccur)) {
-
-            //get nextMonth
-            nextOccur.set(DAY_OF_MONTH, drug.repeatMonth.toInt())
-            nextOccur.add(Calendar.MONTH, 1)
-        }
-        //set time
-        nextOccur.set(HOUR_OF_DAY, datetimeToAlarm[HOUR_OF_DAY])
-        nextOccur.set(MINUTE, datetimeToAlarm[MINUTE])
-        nextOccur.set(SECOND, datetimeToAlarm[SECOND])
-        nextOccur.set(MILLISECOND, datetimeToAlarm[MILLISECOND])
-        nextOccur.set(DAY_OF_MONTH, dayOfMonth)
+        val nextOccur = getInstance()
+        nextOccur.time = datetimeToAlarm.time
+        nextOccur.set(DAY_OF_MONTH, 1)
+        setMonthToFirstMonthAlarmAfterCurrent(nextOccur,repeat)
+        var monthToAlarm=nextOccur[MONTH]
+        //check if there is a date in that month
         nextOccur.isLenient = false
-        try {
-            nextOccur.time
-        } catch (e: Exception) {
-            //no such date in month
-            nextOccur.set(DAY_OF_MONTH, 1)
-            nextOccur.add(Calendar.MONTH, drug.repeatMonth.toInt())
-            setScheduleAlarmForMonth(drug, nextOccur, datetimeToAlarm, alarmIntent, alarmMgr)
+        while (!foundDate) {
+            //set time
+            nextOccur.set(HOUR_OF_DAY, datetimeToAlarm[HOUR_OF_DAY])
+            nextOccur.set(MINUTE, datetimeToAlarm[MINUTE])
+            nextOccur.set(SECOND, datetimeToAlarm[SECOND])
+            nextOccur.set(MILLISECOND, datetimeToAlarm[MILLISECOND])
+            nextOccur.set(DAY_OF_MONTH, dayOfMonth)
+            try {
+                nextOccur.time
+                foundDate = true
+            } catch (e: Exception) {
+                //no such date in month
+                nextOccur.set(DAY_OF_MONTH, 1)
+                // skip to the month according to the amout of months we could not find date in
+                nextOccur.set(MONTH, (monthToAlarm + skipMonth) % 12)
+                if(monthToAlarm + skipMonth >= 12){
+                    nextOccur.add(YEAR,1)
+                    monthToAlarm =(monthToAlarm + skipMonth) % 12
+                    skipMonth=0
+                }
+                skipMonth += repeat
+            }
         }
         alarmMgr.set(AlarmManager.RTC_WAKEUP, nextOccur.timeInMillis, alarmIntent)
     }
 
-    private fun isDateToNotifyPassedInMonth(datetimeToAlarm: Calendar, today: Calendar): Boolean {
-        var result = false
-        if (today[DAY_OF_MONTH] > datetimeToAlarm[DAY_OF_MONTH]) {
-            result = true
-        } else if (today[DAY_OF_MONTH] == datetimeToAlarm[DAY_OF_MONTH]) {
-            if (today[HOUR_OF_DAY] > datetimeToAlarm[HOUR_OF_DAY]) {
-                result = true
-            } else if (today[HOUR_OF_DAY] == datetimeToAlarm[HOUR_OF_DAY]) {
-                if (today[MINUTE] > datetimeToAlarm[MINUTE]) {
-                    result = true
-                } else if (today[MINUTE] == datetimeToAlarm[MINUTE]) {
-                    if (today[SECOND] > datetimeToAlarm[SECOND]) {
-                        result = true
-                    } else if (today[SECOND] == datetimeToAlarm[SECOND]) {
-                        if (today[MILLISECOND] >= datetimeToAlarm[MILLISECOND]) {
-                            result = true
-                        }
-                    }
-                }
-            }
+
+    private fun setMonthToFirstMonthAlarmAfterCurrent(nextOccur:Calendar,repeat:Int){
+        val currentDate = getInstance()
+
+        // get the closest month to alarm after current day
+        var currentMonth = currentDate[MONTH]
+        // if curr=3, next=12 -> curr=15, next=12, (15-12)/repeat will give us how many repeats we need to add to get after curr
+        if (currentMonth < nextOccur[MONTH]) {
+            currentMonth += 12 // month start from 0
         }
-        return result
+        val addToRepeatGetToCurrMonth =
+            (ceil((currentMonth - nextOccur[MONTH]) / repeat.toFloat())).toInt()
+        val monthToAlarm= (nextOccur[MONTH] + (addToRepeatGetToCurrMonth * repeat))%12
+        nextOccur.set(MONTH, monthToAlarm)
+        nextOccur.set(YEAR,currentDate[YEAR])
     }
+
 
     private fun setScheduleAlarmForYear_Week_Day(
         drug: DrugOccurrence, datetimeToAlarm: Calendar, alarmIntent: PendingIntent?,

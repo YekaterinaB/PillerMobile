@@ -2,6 +2,7 @@ package com.example.piller.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.piller.DateUtils
 import com.example.piller.EventInterpreter
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
@@ -68,9 +69,9 @@ class FullViewViewModel : ViewModel() {
                 val calendarTomorrow = Calendar.getInstance()
                 for (rxcuiToDelete in rxcuisToDelete) {
                     calendarTomorrow.timeInMillis =
-                        eventInterpreter.getTomorrowDateInMillis(rxcuiToDelete.intake_time)
+                        DateUtils.getTomorrowDateInMillis(rxcuiToDelete.intake_time)
                     if (calendarEvents[index].drug_rxcui == rxcuiToDelete.drug_rxcui
-                        && eventInterpreter.isDateAfter(
+                        && DateUtils.isDateAfter(
                             calendarEvents[index].intake_time,
                             calendarTomorrow.time
                         )

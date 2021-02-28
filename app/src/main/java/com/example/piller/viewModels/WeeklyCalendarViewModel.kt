@@ -2,6 +2,7 @@ package com.example.piller.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.piller.DateUtils
 import com.example.piller.EventInterpreter
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
@@ -61,15 +62,14 @@ class WeeklyCalendarViewModel : ViewModel() {
     }
 
     fun deleteFutureDrug(calendarEvent: CalendarEvent) {
-        val eventInterpreter = EventInterpreter()
         val calendarTomorrow = Calendar.getInstance()
         calendarTomorrow.timeInMillis =
-            eventInterpreter.getTomorrowDateInMillis(calendarEvent.intake_time)
+            DateUtils.getTomorrowDateInMillis(calendarEvent.intake_time)
         for (calendarEvents in mutableCurrentWeeklyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
                 //  remove drug if the intake date is after the day after the given date of calendarEvent
                 if (calendarEvents[index].event_id == calendarEvent.event_id
-                    && eventInterpreter.isDateAfter(
+                    && DateUtils.isDateAfter(
                         calendarEvents[index].intake_time, calendarTomorrow.time
                     )
                 ) {
@@ -118,8 +118,8 @@ class WeeklyCalendarViewModel : ViewModel() {
         val jObject = JSONObject(calendarInfo.body()!!.string())
         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
 
-        val startDate = eventInterpreter.getFirstDayOfWeek()
-        val endDate = eventInterpreter.getLastDayOfWeek()
+        val startDate = DateUtils.getFirstDayOfWeek()
+        val endDate = DateUtils.getLastDayOfWeek()
         val weekEvents = eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate,
             drugInfoList as JSONArray,
