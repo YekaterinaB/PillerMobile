@@ -1,5 +1,6 @@
 package com.example.piller
 
+import android.security.ConfirmationAlreadyPresentingException
 import com.example.piller.models.CalendarEvent
 import org.json.JSONArray
 import org.json.JSONObject
@@ -22,7 +23,7 @@ class EventInterpreter {
             val drugRxcui = drug.get("rxcui").toString()
             val event_id = drug.get("event_id").toString()
             val drugInfo = drug.get("drug_info") as JSONObject
-            val drugEventList = getDrugEvent(drugName, drugRxcui, drugInfo, start, end,event_id)
+            val drugEventList = getDrugEvent(drugName, drugRxcui, drugInfo, start, end, event_id)
             // put all event in array
             if (drugEventList.isNotEmpty()) {
                 updateMissedDaysCheckboxVisibility(maxMissDaysThreshold, drugEventList)
@@ -69,7 +70,7 @@ class EventInterpreter {
         drugInfo: JSONObject,
         start: Date,
         end: Date,
-        event_id:String
+        event_id: String
     ): MutableList<CalendarEvent> {
         val eventList: MutableList<CalendarEvent> = mutableListOf()
         val repeatStart = (drugInfo.get("repeat_start") as String).toLong()
@@ -182,30 +183,22 @@ class EventInterpreter {
                 isInRepeat = true
             }
             (repeatYear != 0) -> {
-                if (repeatYear == 1) {
-                    isInRepeat = true
-                } else {
-                    isInRepeat =
-                        setRepeatEvent(
-                            currentDate,
-                            repeatYear,
-                            calendarClosestRepeat,
-                            Calendar.YEAR
-                        )
-                }
+                isInRepeat =
+                    setRepeatEvent(
+                        currentDate,
+                        repeatYear,
+                        calendarClosestRepeat,
+                        Calendar.YEAR
+                    )
             }
             (repeatMonth != 0) -> {
-                if (repeatMonth == 1) {
-                    isInRepeat = true
-                } else {
-                    isInRepeat =
-                        setRepeatEvent(
-                            currentDate,
-                            repeatMonth,
-                            calendarClosestRepeat,
-                            Calendar.MONTH
-                        )
-                }
+                isInRepeat =
+                    setRepeatEventMonth(
+                        currentDate,
+                        repeatMonth,
+                        calendarClosestRepeat
+                    )
+
             }
             (repeatDay != 0) -> {
                 if (repeatDay == 1) {
@@ -232,27 +225,6 @@ class EventInterpreter {
                 }
             }
         }
-//        if (repeatYear == 0 && repeatMonth == 0 && repeatWeek == 0 && repeatDay == 0) {
-//            //current is already the firstRepeat
-//            onlyOnceRepeat = true
-//            if (currentDate.time == calendarClosestRepeat.time) {
-//                isInRepeat = true
-//            }
-//        } else if (repeatYear != 1) {
-//            isInRepeat =
-//                setRepeatEvent(currentDate, repeatYear, calendarClosestRepeat, Calendar.YEAR)
-//        } else if (repeatMonth != 1) {
-//            isInRepeat =
-//                setRepeatEvent(currentDate, repeatMonth, calendarClosestRepeat, Calendar.MONTH)
-//        } else if (repeatWeek != 1) {
-//            isInRepeat =
-//                setRepeatWeekEvent(currentDate, repeatMonth, calendarClosestRepeat, repeatDayOfWeek)
-//        } else if (repeatDay != 1) {
-//            isInRepeat =
-//                setRepeatEvent(currentDate, repeatDay, calendarClosestRepeat, Calendar.DATE)
-//        }
-        // if all of the fields above equal to 1, then it means we should repeat every day,
-        // therefore we can just return the current date
         return isInRepeat
     }
 
@@ -281,6 +253,48 @@ class EventInterpreter {
         return isIn
     }
 
+    private fun setRepeatEventMonth(
+        currentDate: Calendar,
+        repeat: Int,
+        calendarClosestRepeat: Calendar
+    ): Boolean {
+        var isIn = false
+        val dayOfMonth= calendarClosestRepeat.get(Calendar.DAY_OF_MONTH)
+        var month=calendarClosestRepeat.get(Calendar.MONTH)
+
+        //run from start
+        val calenderRunFromStartToCurrent = Calendar.getInstance()
+        calenderRunFromStartToCurrent.timeInMillis = calendarClosestRepeat.timeInMillis
+        //temp if there is no day in that month
+        val tempRunFromStart = Calendar.getInstance()
+        tempRunFromStart.timeInMillis = calendarClosestRepeat.timeInMillis
+
+
+        //calenderRunFromStartToCurrent.time < currentDate.time
+        while (isDateBefore(calenderRunFromStartToCurrent, currentDate)) {
+            tempRunFromStart.isLenient=false
+            tempRunFromStart.set(Calendar.MONTH, (month+1)%12)
+            tempRunFromStart.set(Calendar.DAY_OF_MONTH,dayOfMonth)
+            try{
+                tempRunFromStart.time
+                //there is a day in this month
+                calenderRunFromStartToCurrent.time=tempRunFromStart.time
+            }catch (e:Exception){
+                // no such day in month
+                tempRunFromStart.time=calenderRunFromStartToCurrent.time
+            }
+            month++
+        }
+        //        calenderRunFromStartToCurrent.time == currentDate.time
+        if (areDatesEqual(calenderRunFromStartToCurrent, currentDate)) {
+            isIn = true
+        }
+
+        calendarClosestRepeat.timeInMillis = calenderRunFromStartToCurrent.timeInMillis
+
+        return isIn
+
+    }
 
     private fun setRepeatEvent(
         currentDate: Calendar,
