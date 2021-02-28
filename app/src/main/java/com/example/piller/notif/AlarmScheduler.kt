@@ -19,6 +19,29 @@ import java.util.Calendar.*
 
 
 object AlarmScheduler {
+    fun runBackgroundService(context: Context, email: String) {
+        val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = createPendingIntentForAll(context, email)
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, 10, alarmIntent)
+    }
+
+    private fun createPendingIntentForAll(
+        context: Context,
+        email: String
+    ): PendingIntent? {
+        // 1
+        val intent = Intent(context.applicationContext, BackgroundReceiver::class.java).apply {
+            // 2
+            action = context.getString(R.string.action_notify_medication)
+            // 3
+            type = email
+            // 4
+            putExtra(DbConstants.LOGGED_USER_EMAIL, email)
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+        // 5
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
 
     fun scheduleAlarmsForReminder(
         context: Context,
@@ -30,7 +53,6 @@ object AlarmScheduler {
         val alarmIntent = createPendingIntent(context, email, currentProfile, drug)
         scheduleAlarm(drug, alarmIntent, alarmMgr)
     }
-
 
     private fun createPendingIntent(
         context: Context,
@@ -76,7 +98,6 @@ object AlarmScheduler {
         } else { // repeat year,week,day
             setScheduleAlarmForYear_Week_Day(drug, datetimeToAlarm, alarmIntent, alarmMgr)
         }
-        return
     }
 
     private fun setScheduleAlarmForMonth(

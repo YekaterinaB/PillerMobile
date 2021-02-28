@@ -3,6 +3,9 @@
     package="com.example.piller">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
 
     <application
         android:allowBackup="true"
@@ -12,6 +15,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
+        <receiver
+            android:name=".notif.BackgroundReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.REBOOT" />
+            </intent-filter>
+        </receiver>
+
         <receiver android:name=".notif.AlarmReceiver" />
 
         <activity android:name=".activities.DrugInfoActivity" />
@@ -45,7 +62,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ManageAccountActivity" />
         </activity>
-
     </application>
 
 </manifest>
