@@ -112,7 +112,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         addedDrugSuccess.value = true
-                        drug.event_id=response.body()!!.string()
+                        drug.event_id=response.body()!!.string().replace("\"","")
                         //create notification
                         AlarmScheduler.scheduleAlarmsForReminder(context,email,profileName,drug)
                     } else {
@@ -124,9 +124,9 @@ class DrugOccurrenceViewModel : ViewModel() {
         )
     }
 
-    fun updateDrugOccurrence(email: String, name: String, repeatOn: RepeatOn?, repeatValue: String?) {
+    fun updateDrugOccurrence(email: String, currentProfile: String, repeatOn: RepeatOn?, repeatValue: String?,context: Context) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.updateDrugOccurrence(email, name, drug.event_id,drug).enqueue(
+        retrofit.updateDrugOccurrence(email, currentProfile, drug.event_id,drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not add drug."
@@ -138,9 +138,10 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         updatedDrugSuccess.value = true
-                        val old_event_id=drug.event_id
-                        drug.event_id=response.body()!!.string()
-                        //todo remove old notif and replace with new (response has new eventn_id)
+                        AlarmScheduler.removeAlarmsForReminder(context,drug,email,currentProfile)
+                        drug.event_id=response.body()!!.string().replace("\"","")
+                        AlarmScheduler.scheduleAlarmsForReminder(context,email,currentProfile,drug)
+
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String
