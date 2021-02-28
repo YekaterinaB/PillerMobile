@@ -1,16 +1,22 @@
 package com.example.piller.notif
 
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.piller.R
+import com.example.piller.activities.CalendarActivity
+import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 import java.util.*
 import java.util.Calendar.*
+
+
 
 object AlarmScheduler {
 
@@ -23,8 +29,6 @@ object AlarmScheduler {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmIntent = createPendingIntent(context, email, currentProfile, drug)
         scheduleAlarm(drug, alarmIntent, alarmMgr)
-
-
     }
 
 
@@ -38,7 +42,6 @@ object AlarmScheduler {
         bundleDrugObject.putParcelable(DbConstants.DRUG_OBJECT, drug)
         // 1
         val intent = Intent(context.applicationContext, AlarmReceiver::class.java).apply {
-            // 2
             action = context.getString(R.string.action_notify_medication)
             // 3
             type = "${drug.event_id}-${drug.rxcui}"
@@ -49,6 +52,7 @@ object AlarmScheduler {
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
         // 5
+
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
@@ -68,44 +72,45 @@ object AlarmScheduler {
         } else if (drug.repeatMonth.toInt() != 0) {
             //repeatMonth calculated differently
             val nextOccur = getInstance()
-            setScheduleAlarmForMonth(drug,nextOccur,datetimeToAlarm, alarmIntent, alarmMgr)
+            setScheduleAlarmForMonth(drug, nextOccur, datetimeToAlarm, alarmIntent, alarmMgr)
         } else { // repeat year,week,day
             setScheduleAlarmForYear_Week_Day(drug, datetimeToAlarm, alarmIntent, alarmMgr)
         }
         return
     }
 
-    private fun setScheduleAlarmForMonth(drug:DrugOccurrence, nextOccur:Calendar,
+    private fun setScheduleAlarmForMonth(
+        drug: DrugOccurrence, nextOccur: Calendar,
         datetimeToAlarm: Calendar, alarmIntent: PendingIntent?,
         alarmMgr: AlarmManager
     ) {
 
         val dayOfMonth = datetimeToAlarm[DAY_OF_MONTH]
-        if (isDateToNotifyPassedInMonth(datetimeToAlarm,nextOccur)) {
+        if (isDateToNotifyPassedInMonth(datetimeToAlarm, nextOccur)) {
 
             //get nextMonth
             nextOccur.set(DAY_OF_MONTH, drug.repeatMonth.toInt())
             nextOccur.add(Calendar.MONTH, 1)
         }
         //set time
-        nextOccur.set(HOUR_OF_DAY,datetimeToAlarm[HOUR_OF_DAY])
-        nextOccur.set(MINUTE,datetimeToAlarm[MINUTE])
-        nextOccur.set(SECOND,datetimeToAlarm[SECOND])
-        nextOccur.set(MILLISECOND,datetimeToAlarm[MILLISECOND])
+        nextOccur.set(HOUR_OF_DAY, datetimeToAlarm[HOUR_OF_DAY])
+        nextOccur.set(MINUTE, datetimeToAlarm[MINUTE])
+        nextOccur.set(SECOND, datetimeToAlarm[SECOND])
+        nextOccur.set(MILLISECOND, datetimeToAlarm[MILLISECOND])
         nextOccur.set(DAY_OF_MONTH, dayOfMonth)
         nextOccur.isLenient = false
-        try{
+        try {
             nextOccur.time
-        }catch (e: Exception){
+        } catch (e: Exception) {
             //no such date in month
             nextOccur.set(DAY_OF_MONTH, 1)
             nextOccur.add(Calendar.MONTH, drug.repeatMonth.toInt())
-            setScheduleAlarmForMonth(drug,nextOccur,datetimeToAlarm,alarmIntent,alarmMgr)
+            setScheduleAlarmForMonth(drug, nextOccur, datetimeToAlarm, alarmIntent, alarmMgr)
         }
         alarmMgr.set(AlarmManager.RTC_WAKEUP, nextOccur.timeInMillis, alarmIntent)
     }
 
-    private fun isDateToNotifyPassedInMonth(datetimeToAlarm: Calendar,today:Calendar): Boolean {
+    private fun isDateToNotifyPassedInMonth(datetimeToAlarm: Calendar, today: Calendar): Boolean {
         var result = false
         if (today[DAY_OF_MONTH] > datetimeToAlarm[DAY_OF_MONTH]) {
             result = true
@@ -141,7 +146,7 @@ object AlarmScheduler {
                 //alert every week on weekday
                 alarmMgr.setRepeating(
                     AlarmManager.RTC_WAKEUP,
-                    dateOfWeek.time, 1000 * 60 * 60 * 24 * 7*drug.repeatWeek.toLong(), alarmIntent
+                    dateOfWeek.time, 1000 * 60 * 60 * 24 * 7 * drug.repeatWeek.toLong(), alarmIntent
                 )
             }
         } else {
@@ -166,9 +171,9 @@ object AlarmScheduler {
         val interval: Long
         if (drug.repeatYear.toInt() != 0) {
             //repeatYear is set
-            interval = drug.repeatYear.toLong()* 1000 * 60 * 60 * 24 * 365.toLong()
+            interval = drug.repeatYear.toLong() * 1000 * 60 * 60 * 24 * 365.toLong()
         } else if (drug.repeatDay.toInt() != 0) {
-            interval = drug.repeatDay.toLong() *1000 * 60 * 60 * 24.toLong()
+            interval = drug.repeatDay.toLong() * 1000 * 60 * 60 * 24.toLong()
         } else //if (drug.repeatWeek.toInt() != 0)
         {
             interval = drug.repeatWeek.toLong() * 1000 * 60 * 60 * 24 * 7.toLong()
@@ -186,28 +191,19 @@ object AlarmScheduler {
 //        }
     }
 
-//    fun removeAlarmsForReminder(context: Context, reminderData: ReminderData) {
-//        val intent = Intent(context.applicationContext, AlarmReceiver::class.java)
-//        intent.action = context.getString(R.string.action_notify_administer_medication)
-//        intent.putExtra(ReminderDialog.KEY_ID, reminderData.id)
-//
-//        // type must be unique so Intent.filterEquals passes the check to make distinct PendingIntents
-//        // Schedule the alarms based on the days to administer the medicine
-//        if (reminderData.days != null) {
-//            for (i in reminderData.days!!.indices) {
-//                val day = reminderData.days!![i]
-//
-//                if (day != null) {
-//                    val type = String.format(Locale.getDefault(), "%s-%s-%s-%s", day, reminderData.name, reminderData.medicine, reminderData.type.name)
-//
-//                    intent.type = type
-//                    val alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//
-//                    val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//                    alarmMgr.cancel(alarmIntent)
-//                }
-//            }
-//        }
-//    }
+
+    fun removeAlarmsForReminder(
+        context: Context,
+        drug: DrugOccurrence,
+        email: String,
+        currentProfile: String
+    ) {
+        val alarmIntent = createPendingIntent(context, email, currentProfile, drug)
+
+        val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmMgr.cancel(alarmIntent)
+        //alarmIntent?.cancel()
+
+    }
 
 }

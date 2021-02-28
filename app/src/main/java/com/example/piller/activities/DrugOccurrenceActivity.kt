@@ -371,7 +371,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                         loggedEmail,
                         currentProfileName,
                         repeatOnEnum,
-                        drugRepeatsOnEditText.text.toString()
+                        drugRepeatsOnEditText.text.toString(),
+                        this
 
                     )
 
