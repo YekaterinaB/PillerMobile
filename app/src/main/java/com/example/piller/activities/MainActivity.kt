@@ -18,6 +18,7 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
+import com.example.piller.notif.AlarmScheduler
 import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.MainActivityViewModel
@@ -53,6 +54,9 @@ class MainActivity : AppCompatActivity() {
             login_remember.isChecked = true
             edt_email.setText(AppPreferences.email)
             edt_password.setText(AppPreferences.password)
+            //  run the background service (it has to run from the application for one time so it'll
+            //  be able to tun when the device reboots
+            AlarmScheduler.runBackgroundService(this, AppPreferences.email)
             loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
         }
 

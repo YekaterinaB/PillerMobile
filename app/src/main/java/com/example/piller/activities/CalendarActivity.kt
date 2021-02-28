@@ -19,7 +19,6 @@ import com.example.piller.fragments.ProfileFragment
 import com.example.piller.fragments.WeeklyCalendarFragment
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.Profile
-import com.example.piller.notif.AlarmScheduler
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
