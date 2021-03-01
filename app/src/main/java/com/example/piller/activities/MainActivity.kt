@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         initObservers()
         AppPreferences.init(this)
         ServiceBuilder.updateRetrofit(DbConstants.SERVER_URL)
-
         //  update fields if user chose to remember email and password, and auto login
         if (AppPreferences.stayLoggedIn) {
             login_remember.isChecked = true
