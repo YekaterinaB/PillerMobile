@@ -108,6 +108,7 @@ object NotificationHelper {
             cal[DAY_OF_WEEK],
             cal.time,
             drug.event_id,
+            drug.repeatWeekday,
             is_taken = false,
             showTakenCheckBox = true
         )

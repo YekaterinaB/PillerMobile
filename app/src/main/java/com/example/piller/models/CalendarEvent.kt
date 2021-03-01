@@ -12,6 +12,7 @@ data class CalendarEvent(
     @SerializedName("index_day") var index_day: Int,// 0-first day of the asked timeline...
     @SerializedName("intake_time") var intake_time: Date,
     @SerializedName("event_id") var event_id: String,
+    @SerializedName("repeat_weekday") var repeat_weekday: String,
     @SerializedName("is_taken") var is_taken: Boolean,
     @SerializedName("showTakenCheckBox") var showTakenCheckBox: Boolean = false
 ) : Parcelable

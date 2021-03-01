@@ -40,15 +40,14 @@ class AlarmReceiver : BroadcastReceiver() {
                 NotificationHelper.createNotification(context, drug, currentProfile, email)
             }
 
-            if (drug.repeatMonth.toInt() != 0) {
-                //set alarm to next month
-                AlarmScheduler.scheduleAlarmsForReminder(
-                    context,
-                    email,
-                    currentProfile,
-                    drug
-                )
-            }
+
+            AlarmScheduler.scheduleAlarmsForReminder(
+                context,
+                email,
+                currentProfile,
+                drug
+            )
+
         }
     }
 

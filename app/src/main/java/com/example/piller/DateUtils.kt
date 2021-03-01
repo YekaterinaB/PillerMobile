@@ -1,14 +1,29 @@
 package com.example.piller
 
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class DateUtils {
     companion object {
+        fun getDaysBetween(first: Date, second: Date): Int { // between 1 to 31 => 30
+            val firstCal = Calendar.getInstance()
+            firstCal.time = first
+            DateUtils.setCalendarTime(firstCal, 0, 0, 0)
+            val secondCal = Calendar.getInstance()
+            secondCal.time = second
+            DateUtils.setCalendarTime(secondCal, 0, 0, 0)
+
+            val diff: Long = secondCal.timeInMillis - firstCal.timeInMillis
+            return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
+        }
+
         fun areDatesEqual(date1: Calendar, date2: Calendar): Boolean {
-            return date1.get(Calendar.MONTH) == date2.get(Calendar.MONTH)
+            return date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR)
+                    && date1.get(Calendar.MONTH) == date2.get(Calendar.MONTH)
                     && date1.get(Calendar.DAY_OF_MONTH) == date2.get(Calendar.DAY_OF_MONTH)
                     && date1.get(Calendar.HOUR_OF_DAY) == date2.get(Calendar.HOUR_OF_DAY)
                     && date1.get(Calendar.MINUTE) == date2.get(Calendar.MINUTE)
+                    && date1.get(Calendar.SECOND) == date2.get(Calendar.SECOND)
         }
 
 
@@ -91,5 +106,18 @@ class DateUtils {
             calendar2.time = date2
             return !isDateBefore(calendar1, calendar2)
         }
+
+        fun isDateInRange(
+            calendarCurrent: Calendar,
+            calendarEnd: Calendar,
+            calendarRepeatEnd: Calendar
+        ): Boolean {
+            return (DateUtils.isDateBefore(calendarCurrent, calendarEnd) && DateUtils.isDateBefore(
+                calendarCurrent,
+                calendarRepeatEnd
+            )) || DateUtils.areDatesEqual(calendarCurrent, calendarEnd)
+        }
     }
+
+
 }
