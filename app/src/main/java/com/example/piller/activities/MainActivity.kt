@@ -195,12 +195,12 @@ class MainActivity : AppCompatActivity() {
                         return@SingleButtonCallback
                     }
                 }
+                AppPreferences.showNotifications = true
                 viewModel.registerUser(
                     edtEmail.text.toString(),
                     edtName.text.toString(),
                     edtPassword.text.toString()
                 )
-
             })
             .build()
             .show()
