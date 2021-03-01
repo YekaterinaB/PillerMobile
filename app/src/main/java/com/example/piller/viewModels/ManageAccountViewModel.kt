@@ -30,8 +30,7 @@ class ManageAccountViewModel : ViewModel() {
 
     fun updateUserEmail(
         newEmail: String,
-        password: String,
-        context: Context
+        password: String
     ) {
         val updatedUser = User(newEmail, loggedUserName, password)
         sendRetrofitUpdateEmail(updatedUser, newEmail)

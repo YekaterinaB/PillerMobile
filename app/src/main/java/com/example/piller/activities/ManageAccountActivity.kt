@@ -7,6 +7,7 @@ import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -14,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ManageAccountViewModel
 import org.json.JSONObject
@@ -23,9 +25,10 @@ class ManageAccountActivity : AppCompatActivity() {
     private lateinit var viewModel: ManageAccountViewModel
     private lateinit var supervisorsLayout: ConstraintLayout
     private lateinit var emailLayout: ConstraintLayout
-    private lateinit var currentEmailTV: TextView
     private lateinit var passwordLayout: ConstraintLayout
     private lateinit var deleteLayout: ConstraintLayout
+    private lateinit var currentEmailTV: TextView
+    private lateinit var showNotificationSW: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,7 +127,7 @@ class ManageAccountActivity : AppCompatActivity() {
                     && newEmail.isNotEmpty()
                     && password.isNotEmpty()
                 ) {
-                    viewModel.updateUserEmail(newEmail, password, this)
+                    viewModel.updateUserEmail(newEmail, password)
                 }
             })
     }
@@ -156,6 +159,10 @@ class ManageAccountActivity : AppCompatActivity() {
                 viewModel.loggedUserName
             )
             startActivity(intent)
+        }
+
+        showNotificationSW.setOnClickListener {
+            AppPreferences.showNotifications = showNotificationSW.isChecked
         }
     }
 
@@ -316,6 +323,9 @@ class ManageAccountActivity : AppCompatActivity() {
         passwordLayout = findViewById(R.id.ma_password_layout)
         deleteLayout = findViewById(R.id.ma_delete_layout)
         supervisorsLayout = findViewById(R.id.ma_manage_supervisors_layout)
+
+        showNotificationSW = findViewById(R.id.ma_show_notifications)
+        showNotificationSW.isChecked = AppPreferences.showNotifications
     }
 
     override fun onSupportNavigateUp(): Boolean {

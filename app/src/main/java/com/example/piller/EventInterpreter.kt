@@ -1,10 +1,10 @@
 package com.example.piller
 
 import com.example.piller.models.CalendarEvent
+import com.example.piller.utilities.DateUtils
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class EventInterpreter {
     fun getEventsForCalendarByDate(
@@ -13,12 +13,12 @@ class EventInterpreter {
         drugList: JSONArray,
         maxMissDaysThreshold: Int = 0
     ): Array<MutableList<CalendarEvent>> {
-        val daysBetween = getDaysBetween(start, end) + 1
+        val daysBetween = DateUtils.getDaysBetween(start, end) + 1
         val eventList = Array(daysBetween) { mutableListOf<CalendarEvent>() }
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
             val drugName = drug.get("name") as String
-            val drugRxcui = drug.get("rxcui").toString()
+            val drugRxcui = drug.get("rxcui").toString().toInt()
             val event_id = drug.get("event_id").toString()
             val drugInfo = drug.get("drug_info") as JSONObject
             val drugEventList = getDrugEvent(drugName, drugRxcui, drugInfo, start, end, event_id)
@@ -50,27 +50,15 @@ class EventInterpreter {
         }
     }
 
-    private fun getDaysBetween(first: Date, second: Date): Int {
-        val firstCal = Calendar.getInstance()
-        firstCal.time = first
-        DateUtils.setCalendarTime(firstCal, 0, 0, 0)
-        val secondCal = Calendar.getInstance()
-        secondCal.time = second
-        DateUtils.setCalendarTime(secondCal, 0, 0, 0)
-
-        val diff: Long = secondCal.timeInMillis - firstCal.timeInMillis
-        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
-    }
 
     private fun getDrugEvent(
         drugName: String,
-        drugRxcui: String,
+        drugRxcui: Int,
         drugInfo: JSONObject,
         start: Date,
         end: Date,
         event_id: String
     ): MutableList<CalendarEvent> {
-        val eventList: MutableList<CalendarEvent> = mutableListOf()
         val repeatStart = (drugInfo.get("repeat_start") as String).toLong()
         val repeatEnd = (drugInfo.get("repeat_end") as String).toLong()
         val repeatYear = drugInfo.get("repeat_year") as Int
@@ -78,7 +66,6 @@ class EventInterpreter {
         val repeatDay = drugInfo.get("repeat_day") as Int
         val repeatWeek = drugInfo.get("repeat_week") as Int
         val repeatWeekday = (drugInfo.get("repeat_weekday") as String).split(',').map(String::toInt)
-
         var calendarCurrent = Calendar.getInstance()
         calendarCurrent.time = start
 
@@ -108,33 +95,67 @@ class EventInterpreter {
         }
 
         // check days between actual start date and the new start date
-        var indexDay = getDaysBetween(start, calendarCurrent.time)
         val calendarClosestRepeat = Calendar.getInstance()
         calendarClosestRepeat.timeInMillis = calendarStartRepeat.timeInMillis
         val onlyOnce = isOnlyRepeat(repeatYear, repeatMonth, repeatWeek, repeatDay)
-        while (isDateInRange(calendarCurrent, calendarEnd, calendarRepeatEnd)) {
+
+        return createEventListFromRepeats(
+            calendarCurrent,
+            calendarEnd,
+            calendarClosestRepeat,
+            calendarRepeatEnd,
+            onlyOnce,
+            start,
+            repeatYear,
+            repeatMonth,
+            repeatWeek,
+            repeatWeekday,
+            repeatDay,
+            hourOfDay,
+            minuteOfDay,
+            drugName,
+            drugRxcui,
+            event_id
+        )
+    }
+
+    private fun createEventListFromRepeats(
+        calendarCurrent: Calendar,
+        calendarEnd: Calendar,
+        calendarClosestRepeat: Calendar,
+        calendarRepeatEnd: Calendar,
+        onlyOnce: Boolean,
+        start: Date,
+        repeatYear: Int,
+        repeatMonth: Int,
+        repeatWeek: Int,
+        repeatWeekday: List<Int>,
+        repeatDay: Int,
+        hourOfDay: Int,
+        minuteOfDay: Int,
+        drugName: String,
+        drugRxcui: Int,
+        event_id: String
+    ): MutableList<CalendarEvent> {
+        val eventList: MutableList<CalendarEvent> = mutableListOf()
+        var indexDay = DateUtils.getDaysBetween(start, calendarCurrent.time)
+        val repeatWeekdayForCalendarEvent =
+            getRepeatWeekdayForCalendarEvent(repeatWeekday)
+
+        while (DateUtils.isDateInRange(calendarCurrent, calendarEnd, calendarRepeatEnd)) {
             val isInRepeat = isDateInRepeat(
-                repeatYear,
-                repeatMonth,
-                repeatWeek,
-                repeatWeekday,
-                repeatDay,
-                calendarCurrent,
-                calendarClosestRepeat,
-                onlyOnce
+                repeatYear, repeatMonth, repeatWeek, repeatWeekday,
+                repeatDay, calendarCurrent, calendarClosestRepeat, onlyOnce
             )
             if (isInRepeat) {
                 //event is in repeats
                 calendarCurrent.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 calendarCurrent.set(Calendar.MINUTE, minuteOfDay)
+
                 val event =
                     CalendarEvent(
-                        drugName,
-                        drugRxcui,
-                        indexDay,
-                        calendarCurrent.time,
-                        event_id,
-                        false
+                        drugName, drugRxcui, indexDay, calendarCurrent.time, event_id,
+                        repeatWeekdayForCalendarEvent, calendarRepeatEnd.timeInMillis,false
                     )
                 //todo is taken
                 eventList.add(event)
@@ -150,16 +171,21 @@ class EventInterpreter {
         return eventList
     }
 
-    private fun isDateInRange(
-        calendarCurrent: Calendar,
-        calendarEnd: Calendar,
-        calendarRepeatEnd: Calendar
-    ): Boolean {
-        return (DateUtils.isDateBefore(calendarCurrent, calendarEnd) && DateUtils.isDateBefore(
-            calendarCurrent,
-            calendarRepeatEnd
-        )) || DateUtils.areDatesEqual(calendarCurrent, calendarEnd)
+
+    private fun getRepeatWeekdayForCalendarEvent(
+        repeatWeekday: List<Int>
+    ): String {
+        // for knowing the repeat weekdays, to make a good pending intent type
+        val repeats: String
+        if (repeatWeekday[0] > 0) {
+            // repeat week is on
+            repeats = repeatWeekday.joinToString(",")
+        } else {
+            repeats = "0"
+        }
+        return repeats
     }
+
 
     private fun isOnlyRepeat(
         repeatYear: Int = 1,
@@ -242,12 +268,9 @@ class EventInterpreter {
         val calenderRunFromStartToCurrent = Calendar.getInstance()
         calenderRunFromStartToCurrent.timeInMillis = calendarClosestRepeat.timeInMillis
         while (DateUtils.isDateBefore(calenderRunFromStartToCurrent, currentDate)) {
-            calenderRunFromStartToCurrent.add(Calendar.WEEK_OF_MONTH, repeat)
+            calenderRunFromStartToCurrent.add(Calendar.WEEK_OF_YEAR, repeat)
         }
-        if (currentDate.get(Calendar.DAY_OF_WEEK) in daysOfWeek &&
-            calenderRunFromStartToCurrent.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR) &&
-            calenderRunFromStartToCurrent.get(Calendar.WEEK_OF_YEAR) == currentDate.get(Calendar.WEEK_OF_YEAR)
-        ) {
+        if (currentDate.get(Calendar.DAY_OF_WEEK) in daysOfWeek) {
             //  all the days of week in the list are at the same week, so we can add all of them
             isIn = true
         }

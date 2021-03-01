@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.example.piller.R
+import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 
@@ -35,17 +36,30 @@ class AlarmReceiver : BroadcastReceiver() {
         if (currentProfile != null && email != null && bundleCalendarEvent != null) {
             val drug =
                 bundleCalendarEvent.getParcelable<DrugOccurrence>(DbConstants.DRUG_OBJECT)!!
-            NotificationHelper.createNotification(context, drug, currentProfile, email)
-
-            if (drug.repeatMonth.toInt() != 0) {
-                //set alarm to next month
-                AlarmScheduler.scheduleAlarmsForReminder(
-                    context,
-                    email,
-                    currentProfile,
-                    drug
-                )
+            if (shouldShowNotifications(context)) {
+                NotificationHelper.createNotification(context, drug, currentProfile, email)
             }
+
+
+            AlarmScheduler.scheduleAlarmsForReminder(
+                context,
+                email,
+                currentProfile,
+                drug
+            )
+
         }
+    }
+
+    private fun shouldShowNotifications(context: Context): Boolean {
+        var shouldShow: Boolean
+        try {
+            shouldShow = AppPreferences.showNotifications
+        } catch (e: UninitializedPropertyAccessException) {
+            AppPreferences.init(context)
+            shouldShow = AppPreferences.showNotifications
+        }
+
+        return shouldShow
     }
 }

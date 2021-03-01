@@ -15,7 +15,7 @@ import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
-import com.example.piller.DateUtils
+import com.example.piller.utilities.DateUtils
 import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
@@ -207,7 +207,7 @@ class FullViewFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == DbConstants.DRUGDELETEPOPUP || requestCode == DbConstants.REMOVE_DRUG_FUTURE) {
-            viewModel.deleteDrugs(data?.getStringArrayExtra(DbConstants.DRUGSLIST)!!.toList())
+            viewModel.deleteDrugs(data?.getIntArrayExtra(DbConstants.DRUGSLIST)!!.toList())
             data.getParcelableArrayExtra(DbConstants.FUTURE_DRUGSLIST)
                 ?.map { list -> list as CalendarEvent }?.let {
                     viewModel.deleteFutureDrug(it)

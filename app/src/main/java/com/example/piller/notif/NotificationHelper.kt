@@ -104,10 +104,12 @@ object NotificationHelper {
         cal.set(MILLISECOND, intakeCal[MILLISECOND])
         return CalendarEvent(
             drug.drug_name,
-            drug.rxcui.toString(),
+            drug.rxcui,
             cal[DAY_OF_WEEK],
             cal.time,
             drug.event_id,
+            drug.repeatWeekday,
+            drug.repeatEnd,
             is_taken = false,
             showTakenCheckBox = true
         )
