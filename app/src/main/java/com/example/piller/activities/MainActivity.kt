@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         ServiceBuilder.updateRetrofit(DbConstants.SERVER_URL)
 
         //  update fields if user chose to remember email and password, and auto login
-        if (AppPreferences.isLogin) {
+        if (AppPreferences.stayLoggedIn) {
             login_remember.isChecked = true
             edt_email.setText(AppPreferences.email)
             edt_password.setText(AppPreferences.password)
@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun updateAppPreferences(stayLogged: Boolean, email: String, password: String) {
-        AppPreferences.isLogin = stayLogged
+        AppPreferences.stayLoggedIn = stayLogged
         AppPreferences.email = email
         AppPreferences.password = password
     }

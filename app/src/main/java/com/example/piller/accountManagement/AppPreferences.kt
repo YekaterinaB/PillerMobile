@@ -26,7 +26,7 @@ object AppPreferences {
     }
 
     //SharedPreferences variables getters/setters
-    var isLogin: Boolean
+    var stayLoggedIn: Boolean
         get() = preferences.getBoolean(IS_LOGIN.first, IS_LOGIN.second)
         set(value) = preferences.edit {
             it.putBoolean(IS_LOGIN.first, value)
