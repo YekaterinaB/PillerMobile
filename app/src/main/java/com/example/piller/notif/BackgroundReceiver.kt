@@ -44,12 +44,16 @@ object BackgroundNotificationScheduler {
     fun setCalendarEventsNotifications(context: Context) {
         AppPreferences.init(context)
         ServiceBuilder.updateRetrofit(DbConstants.SERVER_URL)
-        loginUser(context)
+        val email = AppPreferences.email
+        val password = AppPreferences.password
+        if (AppPreferences.stayLoggedIn && email.isNotEmpty() && password.isNotEmpty()) {
+            loginUser(context, email, password)
+        }
     }
 
-    private fun loginUser(context: Context) {
+    private fun loginUser(context: Context, email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(email = AppPreferences.email, name = "", password = AppPreferences.password)
+        val user = User(email = email, name = "", password = password)
         retrofit.loginUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

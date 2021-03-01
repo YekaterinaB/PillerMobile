@@ -5,6 +5,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface DrugAPI {
     @Headers("Content-Type: application/json")
@@ -14,8 +15,11 @@ interface DrugAPI {
 
     @GET("drugApiCalls/findInteractions/{email}/{profileName}/{newRxcui}")
     fun findInteractionList(
-        @Path("email") email: String, @Path("profileName") profileName: String
-        , @Path("newRxcui") drugName: String
+        @Path("email") email: String,
+        @Path("profileName") profileName: String,
+        @Path("newRxcui") drugName: String
     ): Call<ResponseBody>
 
+    @GET("drugApiCalls/getDrugImage")
+    fun getDrugImage(@Query("rxcui") rxcui: String): Call<ResponseBody>
 }
