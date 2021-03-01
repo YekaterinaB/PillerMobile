@@ -8,10 +8,10 @@ class DateUtils {
         fun getDaysBetween(first: Date, second: Date): Int { // between 1 to 31 => 30
             val firstCal = Calendar.getInstance()
             firstCal.time = first
-            DateUtils.setCalendarTime(firstCal, 0, 0, 0)
+            setCalendarTime(firstCal, 0, 0, 0)
             val secondCal = Calendar.getInstance()
             secondCal.time = second
-            DateUtils.setCalendarTime(secondCal, 0, 0, 0)
+            setCalendarTime(secondCal, 0, 0, 0)
 
             val diff: Long = secondCal.timeInMillis - firstCal.timeInMillis
             return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
@@ -104,6 +104,10 @@ class DateUtils {
             calendar1.time = date1
             val calendar2 = Calendar.getInstance()
             calendar2.time = date2
+            return isDateAfter(calendar1, calendar2)
+        }
+
+        fun isDateAfter(calendar1: Calendar, calendar2: Calendar): Boolean {
             return !isDateBefore(calendar1, calendar2)
         }
 
@@ -112,10 +116,9 @@ class DateUtils {
             calendarEnd: Calendar,
             calendarRepeatEnd: Calendar
         ): Boolean {
-            return (DateUtils.isDateBefore(calendarCurrent, calendarEnd) && DateUtils.isDateBefore(
-                calendarCurrent,
-                calendarRepeatEnd
-            )) || DateUtils.areDatesEqual(calendarCurrent, calendarEnd)
+            return (isDateBefore(calendarCurrent, calendarEnd)
+                    && isDateBefore(calendarCurrent, calendarRepeatEnd))
+                    || areDatesEqual(calendarCurrent, calendarEnd)
         }
     }
 
