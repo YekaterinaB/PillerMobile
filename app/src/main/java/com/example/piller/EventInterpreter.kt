@@ -155,7 +155,7 @@ class EventInterpreter {
                 val event =
                     CalendarEvent(
                         drugName, drugRxcui, indexDay, calendarCurrent.time, event_id,
-                        repeatWeekdayForCalendarEvent, calendarRepeatEnd.timeInMillis,false
+                        repeatWeekdayForCalendarEvent, calendarRepeatEnd.timeInMillis, false
                     )
                 //todo is taken
                 eventList.add(event)

@@ -1,6 +1,5 @@
 package com.example.piller.viewModels
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.piller.api.ServiceBuilder
@@ -28,10 +27,7 @@ class ManageAccountViewModel : ViewModel() {
         goToMainActivity.value = false
     }
 
-    fun updateUserEmail(
-        newEmail: String,
-        password: String
-    ) {
+    fun updateUserEmail(newEmail: String, password: String) {
         val updatedUser = User(newEmail, loggedUserName, password)
         sendRetrofitUpdateEmail(updatedUser, newEmail)
     }

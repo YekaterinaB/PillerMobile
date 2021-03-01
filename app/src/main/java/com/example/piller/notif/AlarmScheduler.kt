@@ -103,7 +103,6 @@ object AlarmScheduler {
                 repeatWeek,
                 alarmMgr
             )
-
         } else {
             val alarmIntent =
                 createPendingIntent(context, email, currentProfile, drug, drug.repeatWeekday)
@@ -162,7 +161,6 @@ object AlarmScheduler {
             setWeekScheduleAlarm(repeatWeek, alarmByDay, alarmIntent, alarmMgr)
         }
     }
-
 
     private fun setOnceRepeatScheduleAlarm(
         alarmMgr: AlarmManager,
@@ -365,8 +363,6 @@ object AlarmScheduler {
                 createPendingIntent(context, email, currentProfile, drug, drug.repeatWeekday)
             alarmMgr.cancel(alarmIntent)
         }
-
-
     }
 
 }
