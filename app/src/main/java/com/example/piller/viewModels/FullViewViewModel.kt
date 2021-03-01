@@ -40,7 +40,7 @@ class FullViewViewModel : ViewModel() {
         }
     }
 
-    fun deleteDrugs(rxcuisToDelete: List<String>) {
+    fun deleteDrugs(rxcuisToDelete: List<Int>) {
         if (rxcuisToDelete.isEmpty()) {
             return
         }

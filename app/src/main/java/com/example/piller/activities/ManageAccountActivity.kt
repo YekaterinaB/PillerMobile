@@ -127,7 +127,7 @@ class ManageAccountActivity : AppCompatActivity() {
                     && newEmail.isNotEmpty()
                     && password.isNotEmpty()
                 ) {
-                    viewModel.updateUserEmail(newEmail, password, this)
+                    viewModel.updateUserEmail(newEmail, password)
                 }
             })
     }

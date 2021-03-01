@@ -44,9 +44,16 @@ object AlarmScheduler {
         drug: DrugOccurrence
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        scheduleAlarm(context, email, currentProfile, drug, alarmMgr)
+        val cal = getInstance()
+        cal[MILLISECOND] = 0
+        val calRepeatEnd = getInstance()
+        calRepeatEnd.timeInMillis = drug.repeatEnd
+        calRepeatEnd[MILLISECOND] = 0
+        // if today is after the repeat end time, to not notify
+        if (!(drug.repeatEnd > 0 && DateUtils.isDateBefore(calRepeatEnd, cal))) {
+            scheduleAlarm(context, email, currentProfile, drug, alarmMgr)
+        }
     }
-
 
     private fun createPendingIntent(
         context: Context,
@@ -98,7 +105,8 @@ object AlarmScheduler {
             )
 
         } else {
-            val alarmIntent = createPendingIntent(context, email, currentProfile, drug, drug.repeatWeekday)
+            val alarmIntent =
+                createPendingIntent(context, email, currentProfile, drug, drug.repeatWeekday)
             setScheduleNotWeekAlarms(drug, alarmMgr, datetimeToAlarm, alarmIntent)
         }
     }
@@ -147,10 +155,11 @@ object AlarmScheduler {
         for (day in days) {
             val alarmByDay =
                 getTimeClosestByDayWeek(datetimeToAlarm, day.toInt(), repeatWeek)
-            val alarmIntent = createPendingIntent(context, email, currentProfile, drug, day) // add day in eac
+            val alarmIntent =
+                createPendingIntent(context, email, currentProfile, drug, day) // add day in eac
 
             //alert every week on weekday
-            setWeekScheduleAlarm(repeatWeek, alarmByDay, alarmIntent , alarmMgr)
+            setWeekScheduleAlarm(repeatWeek, alarmByDay, alarmIntent, alarmMgr)
         }
     }
 
@@ -352,7 +361,8 @@ object AlarmScheduler {
                 alarmMgr.cancel(alarmIntent)
             }
         } else {
-            val alarmIntent = createPendingIntent(context, email, currentProfile, drug, drug.repeatWeekday)
+            val alarmIntent =
+                createPendingIntent(context, email, currentProfile, drug, drug.repeatWeekday)
             alarmMgr.cancel(alarmIntent)
         }
 

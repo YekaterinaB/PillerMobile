@@ -207,7 +207,7 @@ class FullViewFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == DbConstants.DRUGDELETEPOPUP || requestCode == DbConstants.REMOVE_DRUG_FUTURE) {
-            viewModel.deleteDrugs(data?.getStringArrayExtra(DbConstants.DRUGSLIST)!!.toList())
+            viewModel.deleteDrugs(data?.getIntArrayExtra(DbConstants.DRUGSLIST)!!.toList())
             data.getParcelableArrayExtra(DbConstants.FUTURE_DRUGSLIST)
                 ?.map { list -> list as CalendarEvent }?.let {
                     viewModel.deleteFutureDrug(it)

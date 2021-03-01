@@ -91,7 +91,10 @@ class DrugInfoViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         deleteFutureSuccess.value = true
+                        //remove the notifications becuase drug end is not initialized
                         AlarmScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
+                        // create new set of notifications with updated drug
+                        AlarmScheduler.scheduleAlarmsForReminder(context,email,currentProfile,drug)
                     } else {
                         mutableToastError.value = "Could not delete future occurrences drug."
                     }
@@ -100,9 +103,9 @@ class DrugInfoViewModel : ViewModel() {
         )
     }
 
-    fun initiateDrugImage(rxcui: String) {
-        if (rxcui != "0" && !setImageFromCache(rxcui)) {
-            drugAPIRetrofit.getDrugImage(rxcui).enqueue(
+    fun initiateDrugImage(rxcui: Int) {
+        if (rxcui != 0 && !setImageFromCache(rxcui.toString())) {
+            drugAPIRetrofit.getDrugImage(rxcui.toString()).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         mutableToastError.value = "Could not connect to server."
