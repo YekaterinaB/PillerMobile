@@ -63,7 +63,6 @@ class FullViewViewModel : ViewModel() {
         if (rxcuisToDelete.isEmpty()) {
             return
         }
-        val eventInterpreter = EventInterpreter()
         for (calendarEvents in mutableCurrentMonthlyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
                 val calendarTomorrow = Calendar.getInstance()

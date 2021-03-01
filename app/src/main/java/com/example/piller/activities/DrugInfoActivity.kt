@@ -192,13 +192,15 @@ class DrugInfoActivity : AppCompatActivity() {
             DialogInterface.OnClickListener { dialog, which ->
                 when (which) {
                     //  delete all occurrences
-                    0 -> _viewModel.deleteAllOccurrencesOfDrug(
+                    0 ->
+                        _viewModel.deleteAllOccurrencesOfDrug(
                         email=_loggedEmail,
                         currentProfile=_currentProfile,
                         drug = DrugOccurrence(
                             _calendarEvent.drug_name,
                             _calendarEvent.drug_rxcui.toInt(),
-                            _calendarEvent.event_id
+                            _calendarEvent.event_id,
+                            repeatWeekday = _calendarEvent.repeat_weekday
                         ),
                         context = this
                     )
@@ -213,7 +215,8 @@ class DrugInfoActivity : AppCompatActivity() {
                             drug = DrugOccurrence(
                                 _calendarEvent.drug_name,
                                 _calendarEvent.drug_rxcui.toInt(),
-                                _calendarEvent.event_id
+                                _calendarEvent.event_id,
+                                repeatWeekday = _calendarEvent.repeat_weekday
                             ),
                             repeatEnd =  tomorrow.toString(),
                             context = this
