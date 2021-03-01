@@ -49,6 +49,7 @@ object BackgroundNotificationScheduler {
 
     private fun loginUser(context: Context) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
+        //  todo check if email / password are empty or if the user didn't choose remember me
         val user = User(email = AppPreferences.email, name = "", password = AppPreferences.password)
         retrofit.loginUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {

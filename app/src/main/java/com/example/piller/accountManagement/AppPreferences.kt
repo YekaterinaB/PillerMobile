@@ -12,6 +12,7 @@ object AppPreferences {
     private val IS_LOGIN = Pair("is_login", false)
     private val EMAIL = Pair("email", "")
     private val PASSWORD = Pair("password", "")
+    private val SHOW_NOTIFICATIONS = Pair("showNotifications", false)
 
     fun init(context: Context) {
         preferences = context.getSharedPreferences(NAME, MODE)
@@ -41,5 +42,11 @@ object AppPreferences {
         get() = preferences.getString(PASSWORD.first, PASSWORD.second) ?: ""
         set(value) = preferences.edit {
             it.putString(PASSWORD.first, value)
+        }
+
+    var showNotifications: Boolean
+        get() = preferences.getBoolean(SHOW_NOTIFICATIONS.first, SHOW_NOTIFICATIONS.second)
+        set(value) = preferences.edit {
+            it.putBoolean(SHOW_NOTIFICATIONS.first, value)
         }
 }
