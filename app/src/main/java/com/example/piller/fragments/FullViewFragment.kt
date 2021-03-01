@@ -16,7 +16,6 @@ import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import com.example.piller.utilities.DateUtils
-import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
 import com.example.piller.utilities.DbConstants
@@ -28,7 +27,6 @@ import kotlin.collections.ArrayList
 
 
 class FullViewFragment : Fragment() {
-    private val eventInterpreter = EventInterpreter()
     private val viewModel: FullViewViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
     private lateinit var fragmentView: View
@@ -67,6 +65,20 @@ class FullViewFragment : Fragment() {
         )
     }
 
+    private fun isDateInCurrentMonth(eventDay: EventDay): Boolean {
+        val cal: Calendar = Calendar.getInstance()
+        cal.time = calendarView.currentPageDate.time
+        val firstAndLastDays = DateUtils.getFirstAndLastDaysOfSpecificMonth(cal)
+        val startOfMonth = Calendar.getInstance()
+        startOfMonth.timeInMillis = firstAndLastDays.first.time
+        val endOfMonth = Calendar.getInstance()
+        endOfMonth.timeInMillis = firstAndLastDays.second.time
+        DateUtils.setCalendarTime(startOfMonth, 0, 0, 0)
+        DateUtils.setCalendarTime(endOfMonth, 23, 59, 59)
+        return DateUtils.isDateAfter(eventDay.calendar, startOfMonth)
+                && DateUtils.isDateAfter(endOfMonth, eventDay.calendar)
+    }
+
     private fun setOnClickListeners() {
         val monthClickListener = object : OnCalendarPageChangeListener {
             override fun onChange() {
@@ -80,18 +92,10 @@ class FullViewFragment : Fragment() {
         calendarView.setOnDayClickListener(object :
             OnDayClickListener {
             override fun onDayClick(eventDay: EventDay) {
-//                todo fix click on previous month
-//                val startCal = Calendar.getInstance()
-//                startCal.time = eventDay.calendar.time
-//                startCal.add(Calendar.MINUTE, 1)
-//                val firstDayOfCurrentMonth =
-//                    eventInterpreter.getFirstDayOfSpecificMonth(eventDay.calendar.time)
-//                if ((startCal.time.after(firstDayOfCurrentMonth)
-//                            || startCal.time == firstDayOfCurrentMonth)
-//                    && startCal.time.before(eventInterpreter.getLastDayOfSpecificMonth(eventDay.calendar.time))
-//                ) {
-                dayClicked(eventDay)
-//                }
+                //  make sure that the selected day is in the current month
+                if (isDateInCurrentMonth(eventDay)) {
+                    dayClicked(eventDay)
+                }
             }
         })
     }

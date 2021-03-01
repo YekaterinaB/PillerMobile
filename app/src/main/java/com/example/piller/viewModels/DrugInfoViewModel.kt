@@ -10,7 +10,7 @@ import com.example.piller.api.DrugAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugOccurrence
 import com.example.piller.notif.AlarmScheduler
-import com.example.piller.utilities.ImageCache
+import com.example.piller.utilities.ImageUtils
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -103,9 +103,10 @@ class DrugInfoViewModel : ViewModel() {
         )
     }
 
-    fun initiateDrugImage(rxcui: Int) {
-        if (rxcui != 0 && !setImageFromCache(rxcui.toString())) {
-            drugAPIRetrofit.getDrugImage(rxcui.toString()).enqueue(
+
+    fun initiateDrugImage(context: Context, rxcui: String) {
+        if (rxcui != "0" && !setImageFromCache(context, rxcui)) {
+            drugAPIRetrofit.getDrugImage(rxcui).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         mutableToastError.value = "Could not connect to server."
@@ -117,7 +118,7 @@ class DrugInfoViewModel : ViewModel() {
                     ) {
                         if (response.raw().code() == 200) {
                             val jObject = JSONObject(response.body()!!.string())
-                            setImageFromUrl(jObject["imageSrc"].toString())
+                            setImageFromUrl(context, jObject["imageSrc"].toString(), rxcui)
                         } else {
                             mutableToastError.value = "Could not get drug image."
                         }
@@ -127,7 +128,7 @@ class DrugInfoViewModel : ViewModel() {
         }
     }
 
-    private fun setImageFromUrl(src: String) {
+    private fun setImageFromUrl(context: Context, src: String, rxcui: String) {
         //  must run on a thread!!
         Thread {
             try {
@@ -137,14 +138,16 @@ class DrugInfoViewModel : ViewModel() {
                 connection.connect()
                 //  inside a thread we can't use mutableLiveData.value = ..., we have to use the
                 //  function mutableLiveData.postValue(...)
-                drugImageBitmap.postValue(BitmapFactory.decodeStream(connection.inputStream))
+                val image = BitmapFactory.decodeStream(connection.inputStream)
+                drugImageBitmap.postValue(image)
+                ImageUtils.saveFile(context, image, rxcui)
             } catch (e: IOException) {
             }
         }.start()
     }
 
-    private fun setImageFromCache(rxcui: String): Boolean {
-        val image = ImageCache.instance.retrieveBitmapFromCache(rxcui)
+    private fun setImageFromCache(context: Context, rxcui: String): Boolean {
+        val image = ImageUtils.loadBitmap(context, rxcui)
         if (image != null) {
             drugImageBitmap.value = image
             return true
