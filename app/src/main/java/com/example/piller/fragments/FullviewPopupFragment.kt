@@ -24,7 +24,7 @@ class FullviewPopupFragment : DialogFragment() {
     private lateinit var eventsList: RecyclerView
     private lateinit var loggedEmail: String
     private lateinit var loggedName: String
-    private val drugsToDelete = mutableListOf<String>()
+    private val drugsToDelete = mutableListOf<Int>()
     private val futureDrugsToDelete = mutableListOf<CalendarEvent>()
     private lateinit var drugToDelete: CalendarEvent
     private val DRUG_INFO_DELETE_CODE = 1

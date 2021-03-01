@@ -2,7 +2,7 @@ package com.example.piller.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.piller.DateUtils
+import com.example.piller.utilities.DateUtils
 import com.example.piller.EventInterpreter
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
@@ -40,7 +40,7 @@ class FullViewViewModel : ViewModel() {
         }
     }
 
-    fun deleteDrugs(rxcuisToDelete: List<String>) {
+    fun deleteDrugs(rxcuisToDelete: List<Int>) {
         if (rxcuisToDelete.isEmpty()) {
             return
         }

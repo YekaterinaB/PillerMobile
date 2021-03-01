@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.piller.DateUtils
+import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
@@ -79,7 +79,7 @@ class DrugInfoActivity : AppCompatActivity() {
             Observer { success ->
                 if (success) {
                     //  remove drug image from cache
-                    ImageUtils.deleteFile(_calendarEvent.drug_rxcui, this)
+                    ImageUtils.deleteFile(_calendarEvent.drug_rxcui.toString(), this)
                     _viewModel.deleteSuccess.value = false
                     val returnIntent = Intent()
                     setResult(Activity.RESULT_OK, returnIntent)
@@ -142,7 +142,7 @@ class DrugInfoActivity : AppCompatActivity() {
 
     private fun initViewModels() {
         _viewModel = ViewModelProvider(this).get(DrugInfoViewModel::class.java)
-        _viewModel.initiateDrugImage(this, _calendarEvent.drug_rxcui)
+        _viewModel.initiateDrugImage(this, _calendarEvent.drug_rxcui.toString())
         _profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
     }
 
@@ -181,7 +181,8 @@ class DrugInfoActivity : AppCompatActivity() {
             DrugOccurrence(
                 _calendarEvent.drug_name,
                 _calendarEvent.drug_rxcui.toInt(),
-                _calendarEvent.event_id
+                _calendarEvent.event_id,
+                repeatEnd = _calendarEvent.repeat_end
             )
         )
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
@@ -209,9 +210,10 @@ class DrugInfoActivity : AppCompatActivity() {
                         currentProfile = _currentProfile,
                         drug = DrugOccurrence(
                             _calendarEvent.drug_name,
-                            _calendarEvent.drug_rxcui.toInt(),
+                            _calendarEvent.drug_rxcui,
                             _calendarEvent.event_id,
-                            repeatWeekday = _calendarEvent.repeat_weekday
+                            repeatWeekday = _calendarEvent.repeat_weekday,
+                            repeatEnd = _calendarEvent.repeat_end
                         ),
                         context = this
                     )
@@ -220,14 +222,16 @@ class DrugInfoActivity : AppCompatActivity() {
                     1 -> {
                         val tomorrow =
                             DateUtils.getTomorrowDateInMillis(_calendarEvent.intake_time)
+                        _calendarEvent.repeat_end = tomorrow
                         _viewModel.deleteFutureOccurrencesOfDrug(
                             email = _loggedEmail,
                             currentProfile = _currentProfile,
                             drug = DrugOccurrence(
                                 _calendarEvent.drug_name,
-                                _calendarEvent.drug_rxcui.toInt(),
+                                _calendarEvent.drug_rxcui,
                                 _calendarEvent.event_id,
-                                repeatWeekday = _calendarEvent.repeat_weekday
+                                repeatWeekday = _calendarEvent.repeat_weekday,
+                                repeatEnd = _calendarEvent.repeat_end
                             ),
                             repeatEnd = tomorrow.toString(),
                             context = this
