@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.example.piller.DateUtils
+import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants

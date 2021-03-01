@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.piller.DateUtils
+import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
