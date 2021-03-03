@@ -15,8 +15,8 @@ class Profile(
         return isInitialized
     }
 
-    fun profileInitialized() {
-        isInitialized = true
+    fun setIsInitialized(isInit: Boolean = true) {
+        isInitialized = isInit
     }
 
     fun getProfileName(): String {

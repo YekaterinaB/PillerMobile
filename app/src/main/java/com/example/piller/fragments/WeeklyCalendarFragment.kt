@@ -299,11 +299,22 @@ class WeeklyCalendarFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        if (data!!.hasExtra(DbConstants.TAKEN_NEW_VALUE)) {
+            //  update taken status
+            currentCalendarEvent.is_taken = data.getBooleanExtra(
+                DbConstants.TAKEN_NEW_VALUE,
+                currentCalendarEvent.is_taken
+            )
+        }
+
         if (requestCode == DRUG_INFO_INTENT_ID) {
-            if (resultCode == Activity.RESULT_OK) {
-                weeklyCalendarViewModel.deleteDrug(currentCalendarEvent)
-            } else if (resultCode == DbConstants.REMOVE_DRUG_FUTURE) {
-                weeklyCalendarViewModel.deleteFutureDrug(currentCalendarEvent)
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    weeklyCalendarViewModel.deleteDrug(currentCalendarEvent)
+                }
+                DbConstants.REMOVE_DRUG_FUTURE -> {
+                    weeklyCalendarViewModel.deleteFutureDrug(currentCalendarEvent)
+                }
             }
         }
     }

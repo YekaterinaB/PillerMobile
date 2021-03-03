@@ -18,6 +18,7 @@ import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
+import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.FullViewViewModel
 import com.example.piller.viewModels.ProfileViewModel
@@ -119,7 +120,7 @@ class FullViewFragment : Fragment() {
         arguments.putString(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
         arguments.putString(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
         fvpDayFragment.arguments = arguments
-        fvpDayFragment.setTargetFragment(this, DbConstants.DRUGDELETEPOPUP)
+        fvpDayFragment.setTargetFragment(this, DbConstants.DRUG_DELETE_POPUP)
         activity?.supportFragmentManager?.let { fvpDayFragment.show(it, "FullViewPopupFragment") }
     }
 
@@ -210,13 +211,24 @@ class FullViewFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == DbConstants.DRUGDELETEPOPUP || requestCode == DbConstants.REMOVE_DRUG_FUTURE) {
-            viewModel.deleteDrugs(data?.getIntArrayExtra(DbConstants.DRUGSLIST)!!.toList())
-            data.getParcelableArrayExtra(DbConstants.FUTURE_DRUGSLIST)
-                ?.map { list -> list as CalendarEvent }?.let {
+        if (data!!.getBooleanExtra(DbConstants.SHOULD_UPDATE_DATA, false)) {
+            profileViewModel.currentProfileUpdated()
+        }
+        val bundle = data.extras!!.getBundle(DbConstants.DRUG_DELETES)
+        // 3
+        if (bundle != null) {
+            val deleteAll = bundle.getIntArray(DbConstants.DRUGSLIST)!!
+            val deleteFuture = bundle.getParcelableArray(DbConstants.FUTURE_DRUGSLIST)
+            if(deleteAll.isNotEmpty()){
+                profileViewModel.currentProfileUpdated()
+                viewModel.deleteDrugs(deleteAll.toList())
+            }
+            deleteFuture?.map { list -> list as CalendarEvent }?.let {
+                if(it.isNotEmpty()){
+                    profileViewModel.currentProfileUpdated()
                     viewModel.deleteFutureDrug(it)
                 }
+            }
         }
-
     }
 }

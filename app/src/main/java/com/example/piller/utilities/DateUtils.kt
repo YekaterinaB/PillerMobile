@@ -26,6 +26,11 @@ class DateUtils {
                     && date1.get(Calendar.SECOND) == date2.get(Calendar.SECOND)
         }
 
+        fun isDateBeforeToday(date1: Calendar): Boolean {
+            val today = Calendar.getInstance()
+            setCalendarTime(today, 23, 59, 59)
+            return isDateBefore(date1, today)
+        }
 
         fun isDateBefore(date1: Calendar, date2: Calendar): Boolean {
             if (date1.time < date2.time) {

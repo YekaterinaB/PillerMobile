@@ -9,7 +9,9 @@ object DbConstants {
     const val EVENTDAY_DRAWABLE_CIRCLE_RADIUS = 20F
     const val DRUGSLIST = "drug_list"
     const val FUTURE_DRUGSLIST = "future_drug_list"
-    const val DRUGDELETEPOPUP = 1
+    const val DRUG_DELETE_POPUP = 1
+    const val DRUG_SHOULD_REFRESH_DATA = 2
+    const val DRUG_DELETES = "drug_deletes"
 
     //  drugs - general
     const val DRUG_INFO_LIST = "drug_info_list"
@@ -44,6 +46,9 @@ object DbConstants {
 
     //  drug information
     const val REMOVE_DRUG_FUTURE = 999
+    const val TAKEN_STATUS_UPDATE = 888
+    const val TAKEN_NEW_VALUE = "taken_status_update"
+    const val SHOULD_UPDATE_DATA = "should_update_data"
 
     // server
     const val SERVER_URL = "http://10.0.2.2:3000"
