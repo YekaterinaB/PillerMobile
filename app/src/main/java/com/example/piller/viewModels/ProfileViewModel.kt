@@ -1,9 +1,7 @@
 package com.example.piller.viewModels
 
-import androidx.annotation.MainThread
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider.NewInstanceFactory
 import com.example.piller.api.ProfileAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.CalendarEvent
@@ -54,6 +52,18 @@ class ProfileViewModel : ViewModel() {
         loggedEmail = email
     }
 
+    fun currentProfileUpdated()
+    {
+        // if profile was updatetd, is initilize in profile will turn to false
+        val list = getListOfProfiles()
+        val curProfile = getCurrentProfileName()
+        //find profile from list
+        for (i in 0 until list.size) {
+            if (list[i].getProfileName() == curProfile) {
+                list[i].setIsInitialized(false)
+            }
+        }
+    }
 
     fun getCurrentProfile(): Profile {
         val list = getListOfProfiles()
@@ -78,15 +88,13 @@ class ProfileViewModel : ViewModel() {
             if (list[i].getProfileName() == curProfile) {
                 list[i].setWeeklyCalendar(weeklyCalendar)
                 // profile has been initialize flag
-                list[i].profileInitialized()
+                list[i].setIsInitialized()
                 break
             }
         }
     }
 
-    private fun initSecondaryProfileList(
-        response: Response<ResponseBody>
-    ) {
+    private fun initSecondaryProfileList(response: Response<ResponseBody>) {
         val jObject = JSONObject(response.body()!!.string())
         val profileListBody = jObject.get("profile_list") as JSONArray
         for (i in 0 until profileListBody.length()) {

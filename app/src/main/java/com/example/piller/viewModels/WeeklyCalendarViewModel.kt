@@ -33,14 +33,10 @@ class WeeklyCalendarViewModel : ViewModel() {
 
     var maxMissDaysThreshold: Int = 1
 
-    fun getWeekEvents(
-        loggedUserEmail: String,
-        profile: Profile
-    ) {
+    fun getWeekEvents(loggedUserEmail: String, profile: Profile) {
         if (!profile.getIsInitialized()) {
             // ask db for user calendar if not initialized
             getCalendarByUser(loggedUserEmail, profile)
-
         } else {
             // update mutable calendar
             changeMutableWeeklyCalendar(profile.getWeeklyCalendar())
@@ -83,10 +79,7 @@ class WeeklyCalendarViewModel : ViewModel() {
         mutableDeleteSuccess.value = true
     }
 
-    private fun getCalendarByUser(
-        email: String,
-        profile: Profile
-    ) {
+    private fun getCalendarByUser(email: String, profile: Profile) {
         val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
         retrofit.getCalendarByUser(email, profile.getProfileName()).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -112,9 +105,7 @@ class WeeklyCalendarViewModel : ViewModel() {
         mutableCurrentWeeklyCalendar.value = weekEvents
     }
 
-    private fun initCalenderView(
-        calendarInfo: Response<ResponseBody>
-    ) {
+    private fun initCalenderView(calendarInfo: Response<ResponseBody>) {
         val jObject = JSONObject(calendarInfo.body()!!.string())
         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
 

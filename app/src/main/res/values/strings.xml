@@ -68,7 +68,7 @@
     <string name="ndo_weekday_w">W</string>
     <string name="ndo_weekday_f">F</string>
     <string name="di_drug_image_desc">Drug Image</string>
-    <string name="di_i_took_the_medicine">I took the medicine!</string>
+    <string name="di_medicine_taken">Medicine taken!</string>
     <string name="di_00_00">00:00</string>
     <string name="di_drug_name">Drug Name</string>
     <string name="di_menu_delete">Delete</string>

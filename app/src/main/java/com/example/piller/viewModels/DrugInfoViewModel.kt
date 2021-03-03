@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.DrugAPI
+import com.example.piller.api.DrugIntakeAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugOccurrence
 import com.example.piller.notif.AlarmScheduler
@@ -23,6 +24,7 @@ import java.net.URL
 class DrugInfoViewModel : ViewModel() {
     private val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
     private val drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
+    private val drugIntakeAPIRetrofit = ServiceBuilder.buildService(DrugIntakeAPI::class.java)
 
     val mutableToastError: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
@@ -38,6 +40,10 @@ class DrugInfoViewModel : ViewModel() {
 
     val drugImageBitmap: MutableLiveData<Bitmap> by lazy {
         MutableLiveData<Bitmap>(null)
+    }
+
+    val intakeUpdateSuccess: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
     }
 
     fun deleteAllOccurrencesOfDrug(
@@ -159,4 +165,53 @@ class DrugInfoViewModel : ViewModel() {
         return false
     }
 
+    fun updateDrugIntake(taken: Boolean, intakeId: String, date: Long) {
+        if (taken) {
+            addDrugIntake(intakeId, date)
+        } else {
+            removeDrugIntake(intakeId, date)
+        }
+    }
+
+    private fun addDrugIntake(intakeId: String, date: Long) {
+        drugIntakeAPIRetrofit.addDrugIntake(intakeId, date).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    mutableToastError.value = "Could not set intake."
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    intakeUpdateSuccess.value = true
+                    if (response.raw().code() != 200) {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        mutableToastError.value = jObjError["message"] as String
+                    }
+                }
+            }
+        )
+    }
+
+    private fun removeDrugIntake(intakeId: String, date: Long) {
+        drugIntakeAPIRetrofit.removeDrugIntake(intakeId, date).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    mutableToastError.value = "Could not set intake."
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    intakeUpdateSuccess.value = true
+                    if (response.raw().code() != 200) {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        mutableToastError.value = jObjError["message"] as String
+                    }
+                }
+            }
+        )
+    }
 }
