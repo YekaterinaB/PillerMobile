@@ -19,6 +19,7 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.customWidgets.CheckboxWithTextInside
 import com.example.piller.models.DrugOccurrence
+import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugOccurrenceViewModel
 import java.text.SimpleDateFormat
@@ -46,7 +47,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private var drugIntakeTime: Date = Date()
     private var repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
     private var isInEditMode = false
-    private var firstClickOnLabel= true
+    private var firstClickOnLabel = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -286,8 +287,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         } else {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = drugIntakeTime.time
-            calendar.set(Calendar.HOUR_OF_DAY, hour)
-            calendar.set(Calendar.MINUTE, minutes)
+            DateUtils.setCalendarTime(calendar, hour, minutes)
             calTime = calendar.time
         }
 
@@ -373,9 +373,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                         repeatOnEnum,
                         drugRepeatsOnEditText.text.toString(),
                         this
-
                     )
-
                 } else {
                     viewModel.addNewDrugToUser(
                         loggedEmail,

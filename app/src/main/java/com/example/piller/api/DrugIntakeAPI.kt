@@ -9,8 +9,6 @@ interface DrugIntakeAPI {
 
     @POST("drugIntakes/setIntakeTaken/{taken_id}/{date}")
     fun setIntakeTaken(
-
-
         @Path("taken_id") taken_id: String,
         @Path("date") date: Long
     ): Call<ResponseBody>

@@ -23,7 +23,7 @@ class EventInterpreter {
                     parsedDrugMap["drugName"] as String, parsedDrugMap["drugRxcui"] as Int,
                     parsedDrugMap["drugInfo"] as JSONObject, start, end,
                     parsedDrugMap["event_id"] as String, parsedDrugMap["taken_id"] as String,
-                    parsedDrugMap["takenArray"] as JSONArray
+                    parsedDrugMap["intakes"] as JSONArray
                 )
             // put all event in array
             if (drugEventList.isNotEmpty()) {
@@ -43,7 +43,7 @@ class EventInterpreter {
         parsedDrug["drugRxcui"] = drug.get("rxcui").toString().toInt()
         parsedDrug["event_id"] = drug.get("event_id").toString()
         parsedDrug["taken_id"] = drug.get("taken_id").toString()
-        parsedDrug["takenArray"] = drug.get("taken_array") as JSONArray
+        parsedDrug["intakes"] = drug.get("intakes") as JSONArray
         parsedDrug["drugInfo"] = drug.get("drug_info") as JSONObject
         return parsedDrug
     }
@@ -126,7 +126,7 @@ class EventInterpreter {
         end: Date,
         event_id: String,
         taken_id: String,
-        takenArray: JSONArray
+        intakes: JSONArray
     ): MutableList<CalendarEvent> {
         val parsedRepeat = getParsedRepeatsObject(drugInfo)
         val calendarValuesMap = getCalendarClosestCurrent(
@@ -149,7 +149,7 @@ class EventInterpreter {
 
         return createEventListFromRepeats(
             parsedRepeat, calendarValuesMap, calendarClosestRepeat, onlyOnce,
-            start, drugName, drugRxcui, event_id, taken_id, takenArray
+            start, drugName, drugRxcui, event_id, taken_id, intakes
         )
     }
 
@@ -157,7 +157,7 @@ class EventInterpreter {
         parsedRepeat: Map<String, Any>, calendarValuesMap: Map<String, Any>,
         calendarClosestRepeat: Calendar, onlyOnce: Boolean, start: Date,
         drugName: String, drugRxcui: Int, event_id: String, taken_id: String,
-        takenArray: JSONArray
+        intakes: JSONArray
     ): MutableList<CalendarEvent> {
         val eventList: MutableList<CalendarEvent> = mutableListOf()
         val calendarCurrent = calendarValuesMap["calendarCurrent"] as Calendar
@@ -186,7 +186,7 @@ class EventInterpreter {
                 val showTakenCheckbox = DateUtils.isDateBeforeToday(calendarCurrent)
                 var isTaken = false
                 if (showTakenCheckbox) {
-                    isTaken = isDateInIntakeList(calendarCurrent, takenArray)
+                    isTaken = isDateInIntakeList(calendarCurrent, intakes)
                 }
                 val event =
                     CalendarEvent(
@@ -208,12 +208,12 @@ class EventInterpreter {
         return eventList
     }
 
-    private fun isDateInIntakeList(calendar: Calendar, datesArray: JSONArray): Boolean {
+    private fun isDateInIntakeList(calendar: Calendar, intakesArray: JSONArray): Boolean {
         var result = false
-        for (i in 0 until datesArray.length()) {
-            val date = datesArray.get(i) as Long
+        for (i in 0 until intakesArray.length()) {
+            val intakeObject = intakesArray.get(i) as JSONObject
             val dateCal = Calendar.getInstance()
-            dateCal.timeInMillis = date
+            dateCal.timeInMillis = intakeObject.get("date") as Long
             if (DateUtils.areDatesEqual(calendar, dateCal)) {
                 result = true
                 break
@@ -338,7 +338,6 @@ class EventInterpreter {
         repeat: Int,
         calendarClosestRepeat: Calendar
     ): Boolean {
-
         var isIn = false
         var skipMonth = repeat
         val dayOfMonth = calendarClosestRepeat.get(Calendar.DAY_OF_MONTH)
@@ -391,7 +390,6 @@ class EventInterpreter {
         calendarClosestRepeat.timeInMillis = calenderRunFromStartToCurrent.timeInMillis
 
         return isIn
-
     }
 
     private fun setRepeatEvent(
@@ -417,6 +415,5 @@ class EventInterpreter {
 
         return isIn
     }
-
 
 }

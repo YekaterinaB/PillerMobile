@@ -196,7 +196,7 @@ object AlarmScheduler {
                 val yearToAlarm = (nextOccur[YEAR] + (addToRepeatGetToCurrYear * repeat))
                 nextOccur.set(YEAR, yearToAlarm)
                 if (DateUtils.isDateBefore(nextOccur, current)) {
-                    //select next repeat( same year, but stiil the date is before
+                    //select next repeat( same year, but still the date is before
                     nextOccur.set(YEAR, nextOccur[YEAR] + repeat)
                 }
             }
@@ -230,7 +230,7 @@ object AlarmScheduler {
                 nextOccur.add(DAY_OF_YEAR, (addToRepeatGetToCurrDate * repeat))
             }
             if (DateUtils.isDateBefore(nextOccur, current)) {
-                //select next repeat( same year, but stiil the date is before
+                //select next repeat( same year, but still the date is before
                 nextOccur.add(DAY_OF_YEAR, repeat)
             }
         }
@@ -248,7 +248,7 @@ object AlarmScheduler {
         val dayOfWeek = closestTime[DAY_OF_WEEK]
         closestTime.add(DAY_OF_YEAR, wantedDay - dayOfWeek) // in the same week
         if (wantedDay < dayOfWeek) {
-            // if we have tusday, and want sunday (need the next repeat)
+            // if we have tuesday, and want sunday (need the next repeat)
             closestTime.add(WEEK_OF_YEAR, repeatWeek)
         }
         return closestTime
@@ -278,7 +278,7 @@ object AlarmScheduler {
                 nextOccur.add(WEEK_OF_YEAR, addToRepeatGetToCurrDate * repeat)
             }
             if (DateUtils.isDateBefore(nextOccur, current)) {
-                //select next repeat( same year, but stiil the date is before
+                //select next repeat( same year, but still the date is before
                 nextOccur.add(WEEK_OF_YEAR, repeat)
             }
         }
