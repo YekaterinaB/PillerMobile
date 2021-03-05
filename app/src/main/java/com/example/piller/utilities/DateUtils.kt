@@ -39,7 +39,7 @@ class DateUtils {
             return false
         }
 
-        fun setCalendarTime(calendar: Calendar, hour: Int, minutes: Int, seconds: Int) {
+        fun setCalendarTime(calendar: Calendar, hour: Int, minutes: Int, seconds: Int = 0) {
             calendar.set(Calendar.HOUR_OF_DAY, hour)
             calendar.set(Calendar.MINUTE, minutes)
             calendar.set(Calendar.SECOND, seconds)

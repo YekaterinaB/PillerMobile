@@ -97,7 +97,7 @@ class DrugInfoViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         deleteFutureSuccess.value = true
-                        //remove the notifications becuase drug end is not initialized
+                        //  remove the notifications because drug end is not initialized
                         AlarmScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
                         // create new set of notifications with updated drug
                         AlarmScheduler.scheduleAlarmsForReminder(

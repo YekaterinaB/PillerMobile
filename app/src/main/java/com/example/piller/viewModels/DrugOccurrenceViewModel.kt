@@ -118,7 +118,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         addedDrugSuccess.value = true
-                        drug.event_id = response.body()!!.string().replace("\"", "")
+                        updateDrugInfo(response)
                         //create notification
                         AlarmScheduler.scheduleAlarmsForReminder(context, email, profileName, drug)
                     } else {
@@ -130,6 +130,12 @@ class DrugOccurrenceViewModel : ViewModel() {
         )
     }
 
+    private fun updateDrugInfo(response: Response<ResponseBody>) {
+        val responseObject = JSONObject(response.body()!!.string())
+        drug.event_id = responseObject.get("event_id").toString()
+        drug.taken_id = responseObject.get("taken_id").toString()
+    }
+
     fun updateDrugOccurrence(
         email: String,
         currentProfile: String,
@@ -137,6 +143,7 @@ class DrugOccurrenceViewModel : ViewModel() {
         repeatValue: String?,
         context: Context
     ) {
+        drug.repeatStart
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
         retrofit.updateDrugOccurrence(email, currentProfile, drug.event_id, drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -151,7 +158,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                     if (response.raw().code() == 200) {
                         updatedDrugSuccess.value = true
                         AlarmScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
-                        drug.event_id = response.body()!!.string().replace("\"", "")
+                        updateDrugInfo(response)
                         AlarmScheduler.scheduleAlarmsForReminder(
                             context,
                             email,
