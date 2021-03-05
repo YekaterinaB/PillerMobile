@@ -7,14 +7,16 @@ import retrofit2.http.*
 interface DrugIntakeAPI {
     @Headers("Content-Type: application/json")
 
-    @POST("drugIntakes/addIntake/{taken_id}/{date}")
-    fun addDrugIntake(
+    @POST("drugIntakes/setIntakeTaken/{taken_id}/{date}")
+    fun setIntakeTaken(
+
+
         @Path("taken_id") taken_id: String,
         @Path("date") date: Long
     ): Call<ResponseBody>
 
-    @DELETE("drugIntakes/removeIntake/{taken_id}/{date}")
-    fun removeDrugIntake(
+    @POST("drugIntakes/setIntakeNotTaken/{taken_id}/{date}")
+    fun setIntakeNotTaken(
         @Path("taken_id") taken_id: String,
         @Path("date") date: Long
     ): Call<ResponseBody>

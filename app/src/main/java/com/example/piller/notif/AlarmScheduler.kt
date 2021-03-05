@@ -55,7 +55,6 @@ object AlarmScheduler {
         }
     }
 
-
     private fun createPendingIntent(
         context: Context,
         email: String,
