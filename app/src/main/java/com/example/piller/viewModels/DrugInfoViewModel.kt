@@ -167,14 +167,14 @@ class DrugInfoViewModel : ViewModel() {
 
     fun updateDrugIntake(taken: Boolean, intakeId: String, date: Long) {
         if (taken) {
-            addDrugIntake(intakeId, date)
+            setIntakeTaken(intakeId, date)
         } else {
-            removeDrugIntake(intakeId, date)
+            setIntakeNotTaken(intakeId, date)
         }
     }
 
-    private fun addDrugIntake(intakeId: String, date: Long) {
-        drugIntakeAPIRetrofit.addDrugIntake(intakeId, date).enqueue(
+    private fun setIntakeTaken(intakeId: String, date: Long) {
+        drugIntakeAPIRetrofit.setIntakeTaken(intakeId, date).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not set intake."
@@ -194,8 +194,8 @@ class DrugInfoViewModel : ViewModel() {
         )
     }
 
-    private fun removeDrugIntake(intakeId: String, date: Long) {
-        drugIntakeAPIRetrofit.removeDrugIntake(intakeId, date).enqueue(
+    private fun setIntakeNotTaken(intakeId: String, date: Long) {
+        drugIntakeAPIRetrofit.setIntakeNotTaken(intakeId, date).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not set intake."
