@@ -161,8 +161,9 @@ object BackgroundNotificationScheduler {
             val drugName = drug.get("name") as String
             val rxcui = drug.get("rxcui").toString().toInt()
             val eventId = drug.get("event_id").toString()
+            val takenId=drug.get("taken_id").toString()
             val drugInfo = drug.get("drug_info") as JSONObject
-            val drugOccurrence = getDrugOccurrence(drugName, rxcui, eventId, drugInfo)
+            val drugOccurrence = getDrugOccurrence(drugName, rxcui, eventId,takenId, drugInfo)
             AlarmScheduler.scheduleAlarmsForReminder(
                 context,
                 AppPreferences.email,
@@ -176,6 +177,7 @@ object BackgroundNotificationScheduler {
         drugName: String,
         rxcui: Int,
         eventId: String,
+        takenId:String,
         drugInfo: JSONObject
     ): DrugOccurrence {
         val repeatStart = (drugInfo.get("repeat_start") as String).toLong()
@@ -189,6 +191,7 @@ object BackgroundNotificationScheduler {
             drugName,
             rxcui,
             eventId,
+            takenId,
             repeatYear,
             repeatMonth,
             repeatDay,

@@ -98,7 +98,13 @@ class DrugOccurrenceViewModel : ViewModel() {
         }
     }
 
-    fun addNewDrugToUser(email: String, profileName: String, repeatOn: RepeatOn?, repeatValue: String?,context: Context) {
+    fun addNewDrugToUser(
+        email: String,
+        profileName: String,
+        repeatOn: RepeatOn?,
+        repeatValue: String?,
+        context: Context
+    ) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
         retrofit.addDrugCalendarByUser(email, profileName, drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -112,9 +118,9 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         addedDrugSuccess.value = true
-                        drug.event_id=response.body()!!.string().replace("\"","")
+                        drug.event_id = response.body()!!.string().replace("\"", "")
                         //create notification
-                        AlarmScheduler.scheduleAlarmsForReminder(context,email,profileName,drug)
+                        AlarmScheduler.scheduleAlarmsForReminder(context, email, profileName, drug)
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String
@@ -124,9 +130,15 @@ class DrugOccurrenceViewModel : ViewModel() {
         )
     }
 
-    fun updateDrugOccurrence(email: String, currentProfile: String, repeatOn: RepeatOn?, repeatValue: String?,context: Context) {
+    fun updateDrugOccurrence(
+        email: String,
+        currentProfile: String,
+        repeatOn: RepeatOn?,
+        repeatValue: String?,
+        context: Context
+    ) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.updateDrugOccurrence(email, currentProfile, drug.event_id,drug).enqueue(
+        retrofit.updateDrugOccurrence(email, currentProfile, drug.event_id, drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not add drug."
@@ -138,9 +150,14 @@ class DrugOccurrenceViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         updatedDrugSuccess.value = true
-                        AlarmScheduler.removeAlarmsForReminder(context,drug,email,currentProfile)
-                        drug.event_id=response.body()!!.string().replace("\"","")
-                        AlarmScheduler.scheduleAlarmsForReminder(context,email,currentProfile,drug)
+                        AlarmScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
+                        drug.event_id = response.body()!!.string().replace("\"", "")
+                        AlarmScheduler.scheduleAlarmsForReminder(
+                            context,
+                            email,
+                            currentProfile,
+                            drug
+                        )
 
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())

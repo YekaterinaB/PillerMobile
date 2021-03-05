@@ -41,9 +41,6 @@ class FullViewViewModel : ViewModel() {
     }
 
     fun deleteDrugs(rxcuisToDelete: List<Int>) {
-        if (rxcuisToDelete.isEmpty()) {
-            return
-        }
         for (calendarEvents in mutableCurrentMonthlyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
                 for (rxcuiToDelete in rxcuisToDelete) {
@@ -60,9 +57,6 @@ class FullViewViewModel : ViewModel() {
     }
 
     fun deleteFutureDrug(rxcuisToDelete: List<CalendarEvent>) {
-        if (rxcuisToDelete.isEmpty()) {
-            return
-        }
         for (calendarEvents in mutableCurrentMonthlyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
                 val calendarTomorrow = Calendar.getInstance()

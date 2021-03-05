@@ -51,7 +51,11 @@ class DrugInfoActivity : AppCompatActivity() {
 
     private fun initListeners() {
         _drugTakenCB.setOnClickListener {
-
+            //  todo change the ms and seconds of _calendarEvent.intake_time.time to 0
+            _viewModel.updateDrugIntake(
+                _drugTakenCB.isChecked, _calendarEvent.taken_id,
+                _calendarEvent.intake_time.time
+            )
         }
     }
 
@@ -68,6 +72,17 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
+        _viewModel.intakeUpdateSuccess.observe(
+            this,
+            Observer { success ->
+                if (success) {
+                    //  todo - show/hide loading screen
+
+                    _viewModel.intakeUpdateSuccess.value = false
+                }
+            }
+        )
+
         _viewModel.mutableToastError.observe(
             this,
             Observer { toastMessage ->
@@ -93,6 +108,7 @@ class DrugInfoActivity : AppCompatActivity() {
                 if (success) {
                     _viewModel.deleteFutureSuccess.value = false
                     val returnIntent = Intent()
+                    returnIntent.putExtra(DbConstants.TAKEN_NEW_VALUE, _drugTakenCB.isChecked)
                     setResult(DbConstants.REMOVE_DRUG_FUTURE, returnIntent)
                     finish()
                 }
@@ -151,6 +167,17 @@ class DrugInfoActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onBackPressed() {
+        setTakenStatusResult()
+        super.onBackPressed()
+    }
+
+    private fun setTakenStatusResult() {
+        val returnIntent = Intent()
+        returnIntent.putExtra(DbConstants.TAKEN_NEW_VALUE, _drugTakenCB.isChecked)
+        setResult(DbConstants.TAKEN_STATUS_UPDATE, returnIntent)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.di_menu, menu)
@@ -180,8 +207,9 @@ class DrugInfoActivity : AppCompatActivity() {
             DbConstants.DRUG_OBJECT,
             DrugOccurrence(
                 _calendarEvent.drug_name,
-                _calendarEvent.drug_rxcui.toInt(),
+                _calendarEvent.drug_rxcui,
                 _calendarEvent.event_id,
+                _calendarEvent.taken_id,
                 repeatEnd = _calendarEvent.repeat_end
             )
         )
@@ -212,6 +240,7 @@ class DrugInfoActivity : AppCompatActivity() {
                             _calendarEvent.drug_name,
                             _calendarEvent.drug_rxcui,
                             _calendarEvent.event_id,
+                            _calendarEvent.taken_id,
                             repeatWeekday = _calendarEvent.repeat_weekday,
                             repeatEnd = _calendarEvent.repeat_end
                         ),
@@ -230,6 +259,7 @@ class DrugInfoActivity : AppCompatActivity() {
                                 _calendarEvent.drug_name,
                                 _calendarEvent.drug_rxcui,
                                 _calendarEvent.event_id,
+                                _calendarEvent.taken_id,
                                 repeatWeekday = _calendarEvent.repeat_weekday,
                                 repeatEnd = _calendarEvent.repeat_end
                             ),
