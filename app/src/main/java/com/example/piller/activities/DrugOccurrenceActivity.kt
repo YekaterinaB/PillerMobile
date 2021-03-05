@@ -71,13 +71,13 @@ class DrugOccurrenceActivity : AppCompatActivity() {
             drugIntakeTime.time = intakeFromIntent
         } else {
             val calendar = Calendar.getInstance()
+            calendar[Calendar.SECOND] = 0
             drugIntakeTime.time = calendar.timeInMillis
         }
     }
 
     private fun setDrug(drug: DrugOccurrence) {
-        val calendar = Calendar.getInstance()
-        drug.repeatStart = calendar.timeInMillis
+        drug.repeatStart = drugIntakeTime.time
         viewModel.setDrug(drug)
     }
 
