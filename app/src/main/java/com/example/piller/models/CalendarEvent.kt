@@ -15,6 +15,5 @@ data class CalendarEvent(
     @SerializedName("taken_id") var taken_id: String,
     @SerializedName("repeat_weekday") var repeat_weekday: String,
     @SerializedName("repeat_end") var repeat_end: Long,
-    @SerializedName("is_taken") var is_taken: Boolean,
-    @SerializedName("showTakenCheckBox") var showTakenCheckBox: Boolean = false
+    @SerializedName("is_taken") var is_taken: Boolean
 ) : Parcelable

@@ -111,8 +111,7 @@ object NotificationHelper {
             drug.taken_id,
             drug.repeatWeekday,
             drug.repeatEnd,
-            is_taken = false,
-            showTakenCheckBox = true
+            is_taken = false
         )
     }
 }

@@ -129,10 +129,6 @@ class DrugInfoActivity : AppCompatActivity() {
         _drugTakenCB = findViewById(R.id.di_drug_taken)
         _drugImageIV = findViewById(R.id.di_drug_image)
 
-        if (!_calendarEvent.showTakenCheckBox) {
-            _drugTakenCB.visibility = View.GONE
-        }
-
         initViewsData()
     }
 

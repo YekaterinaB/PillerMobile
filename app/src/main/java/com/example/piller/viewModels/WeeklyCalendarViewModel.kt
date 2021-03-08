@@ -113,8 +113,7 @@ class WeeklyCalendarViewModel : ViewModel() {
         val endDate = DateUtils.getLastDayOfWeek()
         val weekEvents = eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate,
-            drugInfoList as JSONArray,
-            maxMissDaysThreshold
+            drugInfoList as JSONArray
         )
         changeMutableWeeklyCalendar(weekEvents)
     }
