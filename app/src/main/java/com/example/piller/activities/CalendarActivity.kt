@@ -23,7 +23,6 @@ import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.util.*
 
 
 class CalendarActivity : AppCompatActivity() {
@@ -31,7 +30,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var weeklyCalendarViewModel: WeeklyCalendarViewModel
 
     private lateinit var loggedUserEmail: String
-    private lateinit var mainProfile: String
+    private lateinit var currentProfile: String
     private lateinit var currentProfileTV: TextView
     private lateinit var toolbarBottom: ActionBar
 
@@ -40,8 +39,7 @@ class CalendarActivity : AppCompatActivity() {
         //  todo: disable going back to login
         super.onCreate(savedInstanceState)
         loggedUserEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        mainProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
-
+        currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         setContentView(R.layout.activity_calendar)
 
         currentProfileTV = findViewById(R.id.calendar_current_profile)
@@ -52,24 +50,17 @@ class CalendarActivity : AppCompatActivity() {
         initializeFragment(savedInstanceState)
     }
 
-    private fun initMissedDaysThreshold() {
-        val maxMissDaysThreshold = resources.getStringArray(R.array.threshold_alarm)
-        weeklyCalendarViewModel.maxMissDaysThreshold = maxMissDaysThreshold.last().toInt()
-    }
 
     private fun initializeViewModels() {
         weeklyCalendarViewModel = ViewModelProvider(this).get(WeeklyCalendarViewModel::class.java)
-        initMissedDaysThreshold()
         weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value =
             Array(7) { mutableListOf<CalendarEvent>() }
 
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
-        profileViewModel.setMainProfileAndEmail(mainProfile, loggedUserEmail)
+        profileViewModel.setCurrentProfileAndEmail(currentProfile,loggedUserEmail)
         profileViewModel.mutableListOfProfiles.value = mutableListOf<Profile>()
 
-        // add main profile to profile list and get profile list from db
-        profileViewModel.addProfileToProfileList(mainProfile)
-        profileViewModel.initProfileListFromDB(mainProfile)
+        profileViewModel.initProfileListFromDB(currentProfile)
         profileViewModel.mutableCurrentProfileName.observe(this, Observer { profile ->
             //update current profile
             profile?.let {
@@ -145,7 +136,7 @@ class CalendarActivity : AppCompatActivity() {
             ManageAccountActivity::class.java
         )
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedUserEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, mainProfile)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
         startActivity(intent)
     }
 
@@ -172,17 +163,7 @@ class CalendarActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-//
-//    override fun onNewIntent(intent: Intent?) {
-//        super.onNewIntent(intent)
-//
-//        setIntent(intent)
-//        if (intent!!.hasExtra(DbConstants.NEW_DRUG_ADDED)) {
-//            if (intent.getBooleanExtra(DbConstants.NEW_DRUG_ADDED, false)) {
-//                profileViewModel.getCurrentProfile().
-//            }
-//        }
-//    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater

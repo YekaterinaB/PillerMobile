@@ -25,8 +25,6 @@ class ProfileViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
-    private lateinit var mainProfile: String
-
     private lateinit var loggedEmail: String
 
     fun getCurrentProfileName(): String {
@@ -46,10 +44,10 @@ class ProfileViewModel : ViewModel() {
         mutableCurrentProfileName.value = profile
     }
 
-    fun setMainProfileAndEmail(profileName: String, email: String) {
+    fun setCurrentProfileAndEmail(profileName: String, email: String) {
         setCurrentProfileName(profileName)
-        mainProfile = profileName
         loggedEmail = email
+
     }
 
     fun currentProfileUpdated()
@@ -129,7 +127,7 @@ class ProfileViewModel : ViewModel() {
 
     fun deleteOneProfile(profileName: String) {
         if (getCurrentProfileName() == profileName) {
-            setCurrentProfileName(mainProfile)
+            setCurrentProfileName(mutableListOfProfiles.value!![0].getProfileName())
         }
         deleteProfileFromProfileList(profileName)
         deleteProfileFromDB(profileName)
