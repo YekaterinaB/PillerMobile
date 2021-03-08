@@ -10,8 +10,7 @@ class EventInterpreter {
     fun getEventsForCalendarByDate(
         start: Date,
         end: Date,
-        drugList: JSONArray,
-        maxMissDaysThreshold: Int = 0
+        drugList: JSONArray
     ): Array<MutableList<CalendarEvent>> {
         val daysBetween = DateUtils.getDaysBetween(start, end) + 1
         val eventList = Array(daysBetween) { mutableListOf<CalendarEvent>() }
@@ -27,7 +26,6 @@ class EventInterpreter {
                 )
             // put all event in array
             if (drugEventList.isNotEmpty()) {
-                updateMissedDaysCheckboxVisibility(maxMissDaysThreshold, drugEventList)
                 for (j in 0 until drugEventList.size) {
                     val indexDay = drugEventList[j].index_day
                     eventList[indexDay].add(drugEventList[j])
@@ -46,22 +44,6 @@ class EventInterpreter {
         parsedDrug["intakes"] = drug.get("intakes") as JSONArray
         parsedDrug["drugInfo"] = drug.get("drug_info") as JSONObject
         return parsedDrug
-    }
-
-    private fun updateMissedDaysCheckboxVisibility(
-        maxMissDaysThreshold: Int,
-        drugEventList: MutableList<CalendarEvent>
-    ) {
-        //  set limit to min between: maxMissDaysThreshold and drugEventList.size
-        var limit = maxMissDaysThreshold
-        if (limit > drugEventList.size) {
-            limit = drugEventList.size
-        }
-
-        //  show the checkbox only for the events that are in the last maxMissDaysThreshold occurrences
-        for (j in drugEventList.size - 1 downTo drugEventList.size - limit) {
-            drugEventList[j].showTakenCheckBox = true
-        }
     }
 
     private fun getParsedRepeatsObject(drugInfo: JSONObject): Map<String, Any> {
@@ -191,8 +173,7 @@ class EventInterpreter {
                 val event =
                     CalendarEvent(
                         drugName, drugRxcui, indexDay, calendarCurrent.time, event_id, taken_id,
-                        repeatWeekdayForCalendarEvent, calendarRepeatEnd.timeInMillis,
-                        isTaken, showTakenCheckbox
+                        repeatWeekdayForCalendarEvent, calendarRepeatEnd.timeInMillis, isTaken
                     )
 
                 eventList.add(event)
