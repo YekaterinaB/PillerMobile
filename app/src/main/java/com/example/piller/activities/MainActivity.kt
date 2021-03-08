@@ -94,14 +94,16 @@ class MainActivity : AppCompatActivity() {
                         this@MainActivity,
                         CalendarActivity::class.java
                     )
+                    val userName=jObject.get("name").toString()
                     intent.putExtra(
                         DbConstants.LOGGED_USER_EMAIL,
                         jObject.get("email").toString()
                     )
                     intent.putExtra(
                         DbConstants.LOGGED_USER_NAME,
-                        jObject.get("name").toString()
+                        userName
                     )
+
                     startActivity(intent)
 
                 }
