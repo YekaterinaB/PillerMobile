@@ -76,5 +76,7 @@
 
     <string name="action_notify_medication">It\'s time to take your medicine!</string>
     <string name="ma_show_notifications">Show Notifications</string>
+    <string name="help_question">help question</string>
+    <string name="help_answer">help answer</string>
 
 </resources>
