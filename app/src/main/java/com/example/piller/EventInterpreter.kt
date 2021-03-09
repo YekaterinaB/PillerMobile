@@ -32,7 +32,14 @@ class EventInterpreter {
                 }
             }
         }
+        sortEvents(eventList)
         return eventList
+    }
+
+    private fun sortEvents(eventList: Array<MutableList<CalendarEvent>>) {
+        for (calendarEvents in eventList) {
+            calendarEvents.sortBy { it.intake_time.time }
+        }
     }
 
     private fun parsedDrugObject(drug: JSONObject): Map<String, Any> {
