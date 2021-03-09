@@ -143,7 +143,6 @@ class DrugOccurrenceViewModel : ViewModel() {
         repeatValue: String?,
         context: Context
     ) {
-        drug.repeatStart
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
         retrofit.updateDrugOccurrence(email, currentProfile, drug.event_id, drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {

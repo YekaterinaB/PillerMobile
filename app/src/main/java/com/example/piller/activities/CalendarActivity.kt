@@ -57,7 +57,7 @@ class CalendarActivity : AppCompatActivity() {
             Array(7) { mutableListOf<CalendarEvent>() }
 
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
-        profileViewModel.setCurrentProfileAndEmail(currentProfile,loggedUserEmail)
+        profileViewModel.setCurrentProfileAndEmail(currentProfile, loggedUserEmail)
         profileViewModel.mutableListOfProfiles.value = mutableListOf<Profile>()
 
         profileViewModel.initProfileListFromDB(currentProfile)
@@ -131,10 +131,7 @@ class CalendarActivity : AppCompatActivity() {
 
 
     private fun goToAccountManagement() {
-        val intent = Intent(
-            this@CalendarActivity,
-            ManageAccountActivity::class.java
-        )
+        val intent = Intent(this@CalendarActivity, ManageAccountActivity::class.java)
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedUserEmail)
         intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
         startActivity(intent)
@@ -147,10 +144,8 @@ class CalendarActivity : AppCompatActivity() {
                 true
             }
             R.id.menu_help -> {
-                SnackBar.showToastBar(
-                    this@CalendarActivity,
-                    "Help"
-                )
+                val intent = Intent(this@CalendarActivity, HelpActivity::class.java)
+                startActivity(intent)
                 true
             }
             R.id.menu_logout -> {
