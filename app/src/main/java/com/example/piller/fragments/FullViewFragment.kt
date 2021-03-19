@@ -191,6 +191,7 @@ class FullViewFragment : Fragment() {
 
     private fun setEvents(calendarEvents: Array<MutableList<CalendarEvent>>) {
         val eventsUI: MutableList<EventDay> = ArrayList()
+        val tomorrow = DateUtils.getTomorrowCalendar().time
         // for each day that has at least one event - add an EventDay object in the calendar view
         for ((i, day) in calendarEvents.withIndex()) {
             if (day.isNotEmpty()) {
@@ -200,12 +201,28 @@ class FullViewFragment : Fragment() {
                 val tempCalendar: Calendar = firstDateOfMonth
                 tempCalendar.add(Calendar.DATE, i)
                 val circleBitmap =
-                    getDrawableText(null, color = Color.BLACK)
+                    getDrawableText(null, color = getDayColor(day, tempCalendar.time, tomorrow))
                 eventsUI.add(EventDay(tempCalendar, circleBitmap as Drawable))
             }
         }
 
         calendarView.setEvents(eventsUI)
+    }
+
+    private fun getDayColor(day: MutableList<CalendarEvent>, dayDate: Date, tomorrow: Date): Int {
+        var dayColor = Color.BLACK
+        //  check whether the day is after tomorrow
+        if (DateUtils.isDateAfter(Date(), dayDate)) {
+            // check if there is any medicine that wasn't taken
+            if (day.any { event -> !event.is_taken }) {
+                dayColor = Color.RED
+            } else {
+                //  all the medicines were taken, set the color to be green
+                dayColor = Color.GREEN
+            }
+        }
+
+        return dayColor
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -219,12 +236,12 @@ class FullViewFragment : Fragment() {
         if (bundle != null) {
             val deleteAll = bundle.getIntArray(DbConstants.DRUGSLIST)!!
             val deleteFuture = bundle.getParcelableArray(DbConstants.FUTURE_DRUGSLIST)
-            if(deleteAll.isNotEmpty()){
+            if (deleteAll.isNotEmpty()) {
                 profileViewModel.currentProfileUpdated()
                 viewModel.deleteDrugs(deleteAll.toList())
             }
             deleteFuture?.map { list -> list as CalendarEvent }?.let {
-                if(it.isNotEmpty()){
+                if (it.isNotEmpty()) {
                     profileViewModel.currentProfileUpdated()
                     viewModel.deleteFutureDrug(it)
                 }

@@ -17,6 +17,12 @@ class DateUtils {
             return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
         }
 
+        fun getTomorrowCalendar(): Calendar {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DATE, 1)
+            return calendar
+        }
+
         fun areDatesEqual(date1: Calendar, date2: Calendar): Boolean {
             return date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR)
                     && date1.get(Calendar.MONTH) == date2.get(Calendar.MONTH)
