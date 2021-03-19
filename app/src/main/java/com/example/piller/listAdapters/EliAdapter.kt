@@ -1,12 +1,15 @@
 package com.example.piller.listAdapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
+import com.example.piller.utilities.DateUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,6 +26,7 @@ class EliAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val drugName: TextView = view.findViewById(R.id.eli_drug_name)
         val intakeTime: TextView = view.findViewById(R.id.eli_time_intake)
+        val layout: ConstraintLayout = view.findViewById(R.id.eli_layout)
     }
 
     fun setData(data: MutableList<CalendarEvent>) {
@@ -46,10 +50,23 @@ class EliAdapter(
         viewHolder.drugName.text = currentItem.drug_name
         val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(currentItem.intake_time)
         viewHolder.intakeTime.text = time
-        viewHolder.drugName.setOnClickListener { itemClickCallback(currentItem) }
+        viewHolder.layout.setOnClickListener { itemClickCallback(currentItem) }
+        setViewHolderBackgroundColor(viewHolder, currentItem)
+    }
+
+    private fun setViewHolderBackgroundColor(viewHolder: ViewHolder, calendarEvent: CalendarEvent) {
+        //  set the background color only if the intake time passed
+        if (DateUtils.isDateAfter(Date(), calendarEvent.intake_time)) {
+            if (calendarEvent.is_taken) {
+                //  the medicine was taken - set green background (alpha is for opacity)
+                viewHolder.layout.setBackgroundColor(Color.argb(37, 31, 249, 49))
+            } else {
+                //  the medicine wasn't taken - set red background (alpha is for opacity)
+                viewHolder.layout.setBackgroundColor(Color.argb(37, 249, 31, 31))
+            }
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
-
 }

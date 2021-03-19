@@ -296,10 +296,14 @@ class WeeklyCalendarFragment : Fragment() {
 
         if (data!!.hasExtra(DbConstants.TAKEN_NEW_VALUE)) {
             //  update taken status
-            currentCalendarEvent.is_taken = data.getBooleanExtra(
+            val newTakenValue = data.getBooleanExtra(
                 DbConstants.TAKEN_NEW_VALUE,
                 currentCalendarEvent.is_taken
             )
+            if (newTakenValue != currentCalendarEvent.is_taken) {
+                currentCalendarEvent.is_taken = newTakenValue
+                updateRecyclersAndAdapters()
+            }
         }
 
         if (requestCode == DRUG_INFO_INTENT_ID) {

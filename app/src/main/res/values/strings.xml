@@ -78,5 +78,7 @@
     <string name="ma_show_notifications">Show Notifications</string>
     <string name="help_question">help question</string>
     <string name="help_answer">help answer</string>
+    <string name="eli_drug_name">Drug name</string>
+    <string name="eli_intake_time">intake time</string>
 
 </resources>

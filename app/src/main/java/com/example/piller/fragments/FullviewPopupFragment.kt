@@ -99,6 +99,7 @@ class FullviewPopupFragment : DialogFragment() {
             if (newIsTaken != selectedDrug.is_taken) {
                 shouldUpdateData = true
                 selectedDrug.is_taken = newIsTaken
+                setEventsData()
             }
         }
 
