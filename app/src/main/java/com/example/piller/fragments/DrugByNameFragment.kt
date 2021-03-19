@@ -53,11 +53,9 @@ class DrugByNameFragment : Fragment() {
     private fun initObservers() {
         searchViewModel.drugsSearchResult.observe(requireActivity(), Observer {
             setButtonsEnabled(true)
-            if (it.isEmpty()) {
-                searchViewModel.drugSearchNoResult.value = drugNameTIL.editText!!.text.toString()
-            } else {
-                searchViewModel.drugSearchNoResult.value = ""
-            }
+            //  set the drug name regardless of results (in case the user wants to select the drug
+            //  not from the result list
+            searchViewModel.drugSearchNoResult.value = drugNameTIL.editText!!.text.toString()
         })
     }
 
@@ -69,6 +67,7 @@ class DrugByNameFragment : Fragment() {
                     thisActivity,
                     "Please enter drug name!"
                 )
+                setButtonsEnabled(true)
                 return
             }
         }
@@ -96,7 +95,6 @@ class DrugByNameFragment : Fragment() {
     private fun initViews() {
         drugNameTIL = fragmentView.findViewById(R.id.nd_drug_search_til)
         searchBtn = fragmentView.findViewById(R.id.nd_search_btn)
-
     }
 
     companion object {

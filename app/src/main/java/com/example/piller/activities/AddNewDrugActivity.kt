@@ -49,7 +49,8 @@ class AddNewDrugActivity : AppCompatActivity() {
     private fun initListeners() {
         selectDrugAnywayBtn.setOnClickListener {
             //  no need to show interaction
-            searchViewModel.newDrug.value = DrugOccurrence(drugSearchNoResult, 0)
+            searchViewModel.newDrug.value =
+                DrugOccurrence(searchViewModel.drugSearchNoResult.value!!, 0)
             goToAddOccurrenceActivity()
         }
     }
