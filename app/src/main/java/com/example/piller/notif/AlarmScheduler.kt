@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.example.piller.utilities.DateUtils
 import com.example.piller.R
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DbConstants
 import java.util.*
 import java.util.Calendar.*
@@ -41,16 +41,16 @@ object AlarmScheduler {
         context: Context,
         email: String,
         currentProfile: String,
-        drug: DrugOccurrence
+        drug: DrugObject
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val cal = getInstance()
         cal[MILLISECOND] = 0
         val calRepeatEnd = getInstance()
-        calRepeatEnd.timeInMillis = drug.repeatEnd
+        calRepeatEnd.timeInMillis = drug.occurrence.repeatEnd
         calRepeatEnd[MILLISECOND] = 0
         // if today is after the repeat end time, to not notify
-        if (!(drug.repeatEnd > 0 && DateUtils.isDateBefore(calRepeatEnd, cal))) {
+        if (!(drug.occurrence.repeatEnd > 0 && DateUtils.isDateBefore(calRepeatEnd, cal))) {
             scheduleAlarm(context, email, currentProfile, drug, alarmMgr)
         }
     }
@@ -59,16 +59,17 @@ object AlarmScheduler {
         context: Context,
         email: String,
         currentProfile: String,
-        drug: DrugOccurrence,
-        dayOfWeek: String
+        drug: DrugObject,
+        dayOfWeek:String
     ): PendingIntent? {
         val bundleDrugObject = Bundle()
         bundleDrugObject.putParcelable(DbConstants.DRUG_OBJECT, drug)
+
         // 1
         val intent = Intent(context.applicationContext, AlarmReceiver::class.java).apply {
             action = context.getString(R.string.action_notify_medication)
             // 3
-            type = "${drug.event_id}-${drug.rxcui}-" + dayOfWeek
+            type = "${drug.occurrence.event_id}-${drug.rxcui}-" + dayOfWeek
             // 4
             putExtra(DbConstants.DRUG_OBJECT, bundleDrugObject)
             putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
@@ -85,13 +86,13 @@ object AlarmScheduler {
         context: Context,
         email: String,
         currentProfile: String,
-        drug: DrugOccurrence,
+        drug: DrugObject,
         alarmMgr: AlarmManager
     ) {
         val datetimeToAlarm = getInstance(Locale.getDefault())
-        datetimeToAlarm.timeInMillis = drug.repeatStart
+        datetimeToAlarm.timeInMillis = drug.occurrence.repeatStart
         datetimeToAlarm.set(MILLISECOND, 0)
-        val repeatWeek = drug.repeatWeek.toInt()
+        val repeatWeek = drug.occurrence.repeatWeek.toInt()
 
         if (repeatWeek != 0) {
             schedualeAllWeekAlarms(
@@ -105,38 +106,40 @@ object AlarmScheduler {
             )
         } else {
             val alarmIntent =
-                createPendingIntent(context, email, currentProfile, drug, drug.repeatWeekday)
+                createPendingIntent(context, email, currentProfile, drug,"0")
             setScheduleNotWeekAlarms(drug, alarmMgr, datetimeToAlarm, alarmIntent)
         }
     }
 
     private fun setScheduleNotWeekAlarms(
-        drug: DrugOccurrence,
+        drug: DrugObject,
         alarmMgr: AlarmManager,
         datetimeToAlarm: Calendar,
         alarmIntent: PendingIntent?
     ) {
-        if (drug.repeatYear.toInt() == 0 && drug.repeatMonth.toInt() == 0 && drug.repeatDay.toInt() == 0 && drug.repeatWeek.toInt() == 0) {
+        val occurrence=drug.occurrence
+        if (occurrence.repeatYear == 0 && occurrence.repeatMonth == 0 &&
+            occurrence.repeatDay == 0 && occurrence.repeatWeek == 0) {
             //repeat once
             setOnceRepeatScheduleAlarm(alarmMgr, datetimeToAlarm, alarmIntent)
-        } else if (drug.repeatMonth.toInt() != 0) {
+        } else if (occurrence.repeatMonth != 0) {
             //repeatMonth calculated differently
             setScheduleAlarmForMonth(
-                drug.repeatMonth.toInt(),
+                occurrence.repeatMonth,
                 datetimeToAlarm,
                 alarmIntent,
                 alarmMgr
             )
-        } else if (drug.repeatYear.toInt() != 0) {
+        } else if (occurrence.repeatYear != 0) {
             setYearScheduleAlarm(
-                drug.repeatYear.toInt(),
+                occurrence.repeatYear,
                 alarmMgr,
                 datetimeToAlarm,
                 alarmIntent
             )
         } else //if (drug.repeatDay.toInt() != 0) {
         {
-            setDayScheduleAlarm(drug.repeatDay.toInt(), alarmMgr, datetimeToAlarm, alarmIntent)
+            setDayScheduleAlarm(occurrence.repeatDay, alarmMgr, datetimeToAlarm, alarmIntent)
         }
     }
 
@@ -145,17 +148,17 @@ object AlarmScheduler {
         context: Context,
         email: String,
         currentProfile: String,
-        drug: DrugOccurrence,
+        drug: DrugObject,
         datetimeToAlarm: Calendar,
         repeatWeek: Int,
         alarmMgr: AlarmManager
     ) {
-        val days = drug.repeatWeekday.split(",")
+        val days = drug.occurrence.repeatWeekday
         for (day in days) {
             val alarmByDay =
                 getTimeClosestByDayWeek(datetimeToAlarm, day.toInt(), repeatWeek)
             val alarmIntent =
-                createPendingIntent(context, email, currentProfile, drug, day) // add day in eac
+                createPendingIntent(context, email, currentProfile, drug, day.toString()) // add day in eac
 
             //alert every week on weekday
             setWeekScheduleAlarm(repeatWeek, alarmByDay, alarmIntent, alarmMgr)
@@ -346,21 +349,21 @@ object AlarmScheduler {
 
     fun removeAlarmsForReminder(
         context: Context,
-        drug: DrugOccurrence,
+        drug: DrugObject,
         email: String,
         currentProfile: String
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val days = drug.repeatWeekday.split(",")
+        val days = drug.occurrence.repeatWeekday
         if (days[0].toInt() > 0) {
             //repeat week on
             for (day in days) {
-                val alarmIntent = createPendingIntent(context, email, currentProfile, drug, day)
+                val alarmIntent = createPendingIntent(context, email, currentProfile, drug, day.toString())
                 alarmMgr.cancel(alarmIntent)
             }
         } else {
             val alarmIntent =
-                createPendingIntent(context, email, currentProfile, drug, drug.repeatWeekday)
+                createPendingIntent(context, email, currentProfile, drug, "0")
             alarmMgr.cancel(alarmIntent)
         }
     }

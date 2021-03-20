@@ -1,7 +1,10 @@
 package com.example.piller
 
 import com.example.piller.models.CalendarEvent
+import com.example.piller.models.DrugObject
+import com.example.piller.models.Occurrence
 import com.example.piller.utilities.DateUtils
+import com.example.piller.utilities.parserUtils.Companion.parsedDrugObject
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -10,24 +13,20 @@ class EventInterpreter {
     fun getEventsForCalendarByDate(
         start: Date,
         end: Date,
-        drugList: JSONArray
+        drugList: JSONArray, calendarId: String
     ): Array<MutableList<CalendarEvent>> {
         val daysBetween = DateUtils.getDaysBetween(start, end) + 1
         val eventList = Array(daysBetween) { mutableListOf<CalendarEvent>() }
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
-            val parsedDrugMap = parsedDrugObject(drug)
-            val drugEventList =
-                getDrugEvent(
-                    parsedDrugMap["drugName"] as String, parsedDrugMap["drugRxcui"] as Int,
-                    parsedDrugMap["drugInfo"] as JSONObject, start, end,
-                    parsedDrugMap["event_id"] as String, parsedDrugMap["taken_id"] as String,
-                    parsedDrugMap["intakes"] as JSONArray
-                )
+            val intakeDates = drug.get("intake_dates") as JSONObject
+            val intakes = intakeDates.get("intakes") as JSONArray
+            val drugObject = parsedDrugObject(drug, intakeDates,calendarId)
+            val drugEventList = getDrugEvent(drugObject, intakes, start, end, calendarId)
             // put all event in array
             if (drugEventList.isNotEmpty()) {
                 for (j in 0 until drugEventList.size) {
-                    val indexDay = drugEventList[j].index_day
+                    val indexDay = drugEventList[j].indexDay
                     eventList[indexDay].add(drugEventList[j])
                 }
             }
@@ -38,39 +37,15 @@ class EventInterpreter {
 
     private fun sortEvents(eventList: Array<MutableList<CalendarEvent>>) {
         for (calendarEvents in eventList) {
-            calendarEvents.sortBy { it.intake_time.time }
+            calendarEvents.sortBy { it.intakeTime.time }
         }
     }
 
-    private fun parsedDrugObject(drug: JSONObject): Map<String, Any> {
-        val parsedDrug = hashMapOf<String, Any>()
-        parsedDrug["drugName"] = drug.get("name") as String
-        parsedDrug["drugRxcui"] = drug.get("rxcui").toString().toInt()
-        parsedDrug["event_id"] = drug.get("event_id").toString()
-        parsedDrug["taken_id"] = drug.get("taken_id").toString()
-        parsedDrug["intakes"] = drug.get("intakes") as JSONArray
-        parsedDrug["drugInfo"] = drug.get("drug_info") as JSONObject
-        return parsedDrug
-    }
-
-    private fun getParsedRepeatsObject(drugInfo: JSONObject): Map<String, Any> {
-        val parsedRepeat = hashMapOf<String, Any>()
-        parsedRepeat["repeatStart"] = (drugInfo.get("repeat_start") as String).toLong()
-        parsedRepeat["repeatEnd"] = (drugInfo.get("repeat_end") as String).toLong()
-        parsedRepeat["repeatYear"] = drugInfo.get("repeat_year") as Int
-        parsedRepeat["repeatMonth"] = drugInfo.get("repeat_month") as Int
-        parsedRepeat["repeatDay"] = drugInfo.get("repeat_day") as Int
-        parsedRepeat["repeatWeek"] = drugInfo.get("repeat_week") as Int
-        parsedRepeat["repeatWeekday"] =
-            (drugInfo.get("repeat_weekday") as String).split(',').map(String::toInt)
-        return parsedRepeat
-    }
 
     private fun getCalendarClosestCurrent(
         start: Date,
         end: Date,
-        repeatEnd: Long,
-        repeatStart: Long
+        occurrence: Occurrence
     ): Map<String, Any> {
         val calendarMap = hashMapOf<String, Any>()
         var calendarCurrent = Calendar.getInstance()
@@ -82,14 +57,14 @@ class EventInterpreter {
         val calendarRepeatEnd = Calendar.getInstance()
         //  the next lines are: if repeatEnd != 0 then set calendarCurrent to repeatEnd
         //  otherwise set it to calendarEnd time
-        calendarRepeatEnd.timeInMillis = when (repeatEnd != 0.toLong()) {
-            true -> repeatEnd
+        calendarRepeatEnd.timeInMillis = when (occurrence.repeatEnd != 0.toLong()) {
+            true -> occurrence.repeatEnd
             false -> calendarEnd.timeInMillis
         }
 
         // start repeat count
         val calendarStartRepeat = Calendar.getInstance()
-        calendarStartRepeat.timeInMillis = repeatStart
+        calendarStartRepeat.timeInMillis = occurrence.repeatStart
         //save intake time
         calendarMap["hourOfDay"] = calendarStartRepeat.get(Calendar.HOUR_OF_DAY)
         calendarMap["minuteOfDay"] = calendarStartRepeat.get(Calendar.MINUTE)
@@ -108,64 +83,46 @@ class EventInterpreter {
     }
 
     private fun getDrugEvent(
-        drugName: String,
-        drugRxcui: Int,
-        drugInfo: JSONObject,
+        drugObject: DrugObject,
+        intakes: JSONArray,
         start: Date,
-        end: Date,
-        event_id: String,
-        taken_id: String,
-        intakes: JSONArray
+        end: Date, calendarId: String
     ): MutableList<CalendarEvent> {
-        val parsedRepeat = getParsedRepeatsObject(drugInfo)
         val calendarValuesMap = getCalendarClosestCurrent(
-            start,
-            end,
-            repeatEnd = parsedRepeat["repeatEnd"] as Long,
-            repeatStart = parsedRepeat["repeatStart"] as Long
+            start, end,
+            drugObject.occurrence
         )
 
         // check days between actual start date and the new start date
         val calendarClosestRepeat = Calendar.getInstance()
         calendarClosestRepeat.timeInMillis =
             (calendarValuesMap["calendarStartRepeat"] as Calendar).timeInMillis
-        val onlyOnce = isOnlyRepeat(
-            parsedRepeat["repeatYear"] as Int,
-            parsedRepeat["repeatMonth"] as Int,
-            parsedRepeat["repeatWeek"] as Int,
-            parsedRepeat["repeatDay"] as Int
-        )
+        val onlyOnce = isOnlyRepeat(drugObject.occurrence)
 
         return createEventListFromRepeats(
-            parsedRepeat, calendarValuesMap, calendarClosestRepeat, onlyOnce,
-            start, drugName, drugRxcui, event_id, taken_id, intakes
+            drugObject, calendarValuesMap,
+            calendarClosestRepeat, onlyOnce, start, intakes, calendarId
         )
     }
 
     private fun createEventListFromRepeats(
-        parsedRepeat: Map<String, Any>, calendarValuesMap: Map<String, Any>,
-        calendarClosestRepeat: Calendar, onlyOnce: Boolean, start: Date,
-        drugName: String, drugRxcui: Int, event_id: String, taken_id: String,
-        intakes: JSONArray
+        drugObject: DrugObject, calendarValuesMap: Map<String, Any>,
+        calendarClosestRepeat: Calendar, onlyOnce: Boolean,
+        start: Date, intakes: JSONArray, calendarId: String
     ): MutableList<CalendarEvent> {
         val eventList: MutableList<CalendarEvent> = mutableListOf()
         val calendarCurrent = calendarValuesMap["calendarCurrent"] as Calendar
         val calendarRepeatEnd = calendarValuesMap["calendarRepeatEnd"] as Calendar
         var indexDay = DateUtils.getDaysBetween(start, calendarCurrent.time)
-        val repeatWeekdayForCalendarEvent =
-            getRepeatWeekdayForCalendarEvent(parsedRepeat["repeatWeekday"] as List<Int>)
 
         while (DateUtils.isDateInRange(
-                calendarCurrent,
-                calendarValuesMap["calendarEnd"] as Calendar,
-                calendarRepeatEnd
+                calendarCurrent, calendarValuesMap["calendarEnd"] as Calendar, calendarRepeatEnd
             )
         ) {
             val isInRepeat = isDateInRepeat(
-                parsedRepeat,
+                drugObject.occurrence,
                 calendarValuesMap["calendarCurrent"] as Calendar,
-                calendarClosestRepeat,
-                onlyOnce
+                calendarClosestRepeat, onlyOnce
             )
             if (isInRepeat) {
                 //event is in repeats
@@ -177,10 +134,12 @@ class EventInterpreter {
                 if (showTakenCheckbox) {
                     isTaken = isDateInIntakeList(calendarCurrent, intakes)
                 }
+                //add to cache the drug
+                DrugMap.instance.setDrugObject(calendarId,drugObject)
                 val event =
                     CalendarEvent(
-                        drugName, drugRxcui, indexDay, calendarCurrent.time, event_id, taken_id,
-                        repeatWeekdayForCalendarEvent, calendarRepeatEnd.timeInMillis, isTaken
+                        calendarId,drugObject.drugName+drugObject.rxcui.toString(),
+                        indexDay, calendarCurrent.time, calendarRepeatEnd.time, isTaken
                     )
 
                 eventList.add(event)
@@ -227,16 +186,13 @@ class EventInterpreter {
     }
 
 
-    private fun isOnlyRepeat(
-        repeatYear: Int = 1,
-        repeatMonth: Int = 1,
-        repeatWeek: Int = 1,
-        repeatDay: Int = 1
-    ): Boolean = (repeatYear == 0 && repeatMonth == 0 && repeatWeek == 0 && repeatDay == 0)
+    private fun isOnlyRepeat(occurrence: Occurrence): Boolean =
+        (occurrence.repeatYear == 0 && occurrence.repeatMonth == 0 &&
+                occurrence.repeatWeek == 0 && occurrence.repeatDay == 0)
 
 
     private fun isDateInRepeat(
-        parsedRepeat: Map<String, Any>,
+        occurrence: Occurrence,
         currentDate: Calendar,
         calendarClosestRepeat: Calendar,
         isOnlyRepeat: Boolean
@@ -248,40 +204,40 @@ class EventInterpreter {
                 //  check whether it's a one time event (all the fields are equal to 0)
                 isInRepeat = true
             }
-            (parsedRepeat["repeatYear"] as Int != 0) -> {
+            (occurrence.repeatYear != 0) -> {
                 isInRepeat =
                     setRepeatEvent(
                         currentDate,
-                        parsedRepeat["repeatYear"] as Int,
+                        occurrence.repeatYear,
                         calendarClosestRepeat,
                         Calendar.YEAR
                     )
             }
-            (parsedRepeat["repeatMonth"] as Int != 0) -> {
+            (occurrence.repeatMonth != 0) -> {
                 isInRepeat =
                     setRepeatEventMonth(
                         currentDate,
-                        parsedRepeat["repeatMonth"] as Int,
+                        occurrence.repeatMonth,
                         calendarClosestRepeat
                     )
 
             }
-            (parsedRepeat["repeatDay"] as Int != 0) -> {
-                if (parsedRepeat["repeatDay"] as Int == 1) {
+            (occurrence.repeatDay != 0) -> {
+                if (occurrence.repeatDay == 1) {
                     isInRepeat = true
                 } else {
                     isInRepeat =
                         setRepeatEvent(
                             currentDate,
-                            parsedRepeat["repeatDay"] as Int,
+                            occurrence.repeatDay,
                             calendarClosestRepeat,
                             Calendar.DATE
                         )
                 }
             }
-            (parsedRepeat["repeatWeek"] as Int != 0) -> {
-                if (parsedRepeat["repeatWeek"] as Int == 1) {
-                    if (currentDate.get(Calendar.DAY_OF_WEEK) in parsedRepeat["repeatWeekday"] as List<*>) {
+            (occurrence.repeatWeek != 0) -> {
+                if (occurrence.repeatWeek == 1) {
+                    if (currentDate.get(Calendar.DAY_OF_WEEK) in occurrence.repeatWeekday) {
                         //  all the days of week in the list are at the same week, so we can add all of them
                         isInRepeat = true
                     }
@@ -289,9 +245,9 @@ class EventInterpreter {
                     isInRepeat =
                         setRepeatWeekEvent(
                             currentDate,
-                            parsedRepeat["repeatWeek"] as Int,
+                            occurrence.repeatWeek,
                             calendarClosestRepeat,
-                            parsedRepeat["repeatWeekday"] as List<Int>
+                            occurrence.repeatWeekday
                         )
                 }
             }

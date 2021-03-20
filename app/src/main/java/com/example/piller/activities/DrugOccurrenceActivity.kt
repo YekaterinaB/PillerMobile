@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.customWidgets.CheckboxWithTextInside
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugOccurrenceViewModel
@@ -76,8 +76,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
     }
 
-    private fun setDrug(drug: DrugOccurrence) {
-        drug.repeatStart = drugIntakeTime.time
+    private fun setDrug(drug: DrugObject) {
+        drug.occurrence.repeatStart = drugIntakeTime.time
         viewModel.setDrug(drug)
     }
 
@@ -204,7 +204,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         newDrugName.setOnLongClickListener {
             SnackBar.showToastBar(
                 this,
-                viewModel.getDrug().drug_name
+                viewModel.getDrug().drugName
             )
             return@setOnLongClickListener true
         }
@@ -259,7 +259,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
     private fun initViews() {
         newDrugName = findViewById(R.id.ndo_new_drug_name)
-        newDrugName.text = viewModel.getDrug().drug_name
+        newDrugName.text = viewModel.getDrug().drugName
         drugOccurrencesDate = findViewById(R.id.ndo_first_occurrence_date)
         drugOccurrencesTime = findViewById(R.id.ndo_first_occurrence_time)
         drugShouldRepeatSpinner = findViewById(R.id.ndo_should_repeat_spinner)

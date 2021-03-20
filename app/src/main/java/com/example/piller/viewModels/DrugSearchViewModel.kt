@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.piller.api.DrugAPI
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
@@ -23,24 +23,24 @@ class DrugSearchViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
-    val drugsSearchResult: MutableLiveData<MutableList<DrugOccurrence>> by lazy {
-        MutableLiveData<MutableList<DrugOccurrence>>()
+    val drugsSearchResult: MutableLiveData<MutableList<DrugObject>> by lazy {
+        MutableLiveData<MutableList<DrugObject>>()
     }
 
     val snackBarMessage: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
 
-    val newDrug: MutableLiveData<DrugOccurrence> by lazy {
-        MutableLiveData<DrugOccurrence>()
+    val newDrug: MutableLiveData<DrugObject> by lazy {
+        MutableLiveData<DrugObject>()
     }
 
     val addedDrugSuccess: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
+    lateinit var calendarId:String
 
-
-    fun getDrugByRxcui(rxcui: Int): DrugOccurrence? {
+    fun getDrugByRxcui(rxcui: Int): DrugObject? {
         val filteredArray = drugsSearchResult.value?.filter { drug -> drug.rxcui == rxcui }
         if (filteredArray != null && filteredArray.isNotEmpty()) {
             return filteredArray[0]
@@ -120,15 +120,15 @@ class DrugSearchViewModel : ViewModel() {
         }
     }
 
-    private fun parseDrugList(drugListBody: JSONArray): MutableList<DrugOccurrence> {
-        val drugs = mutableListOf<DrugOccurrence>()
+    private fun parseDrugList(drugListBody: JSONArray): MutableList<DrugObject> {
+        val drugs = mutableListOf<DrugObject>()
         for (i in 0 until drugListBody.length()) {
             val item = drugListBody[i] as JSONArray
             for (j in 0 until item.length()) {
                 val drugItem = item.get(j) as JSONObject
                 drugs.add(
-                    DrugOccurrence(
-                        drug_name = removeParenthesis(drugItem.getString("name")),
+                    DrugObject(calendarId,
+                        drugName = removeParenthesis(drugItem.getString("name")),
                         rxcui = removeParenthesis(drugItem.get("rxcui").toString()).toInt()
                     )
                 )

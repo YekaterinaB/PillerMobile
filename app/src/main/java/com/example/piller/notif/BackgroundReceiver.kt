@@ -11,11 +11,9 @@ import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ProfileAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
-import com.example.piller.models.CalendarEvent
-import com.example.piller.models.DrugOccurrence
-import com.example.piller.models.Profile
-import com.example.piller.models.User
+import com.example.piller.models.*
 import com.example.piller.utilities.DbConstants
+import com.example.piller.utilities.parserUtils
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
@@ -144,7 +142,8 @@ object BackgroundNotificationScheduler {
                     if (response.raw().code() == 200) {
                         val jObject = JSONObject(response.body()!!.string())
                         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
-                        scheduleAlarmsForAllDrugs(profileName, drugInfoList as JSONArray, context)
+                        val calendarId = jObject.get("calendar_id").toString()
+                        scheduleAlarmsForAllDrugs(profileName, drugInfoList as JSONArray, context, calendarId)
                     }
                 }
             }
@@ -154,51 +153,20 @@ object BackgroundNotificationScheduler {
     private fun scheduleAlarmsForAllDrugs(
         profileName: String,
         drugList: JSONArray,
-        context: Context
+        context: Context,
+        calendarId:String
     ) {
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
-            val drugName = drug.get("name") as String
-            val rxcui = drug.get("rxcui").toString().toInt()
-            val eventId = drug.get("event_id").toString()
-            val takenId=drug.get("taken_id").toString()
-            val drugInfo = drug.get("drug_info") as JSONObject
-            val drugOccurrence = getDrugOccurrence(drugName, rxcui, eventId,takenId, drugInfo)
+            val intakeDates = drug.get("intake_dates") as JSONObject
+            val drugObject = parserUtils.parsedDrugObject(drug, intakeDates,calendarId)
             AlarmScheduler.scheduleAlarmsForReminder(
                 context,
                 AppPreferences.email,
                 profileName,
-                drugOccurrence
+                drugObject
             )
         }
     }
 
-    private fun getDrugOccurrence(
-        drugName: String,
-        rxcui: Int,
-        eventId: String,
-        takenId:String,
-        drugInfo: JSONObject
-    ): DrugOccurrence {
-        val repeatStart = (drugInfo.get("repeat_start") as String).toLong()
-        val repeatEnd = (drugInfo.get("repeat_end") as String).toLong()
-        val repeatYear = drugInfo.get("repeat_year").toString()
-        val repeatMonth = drugInfo.get("repeat_month").toString()
-        val repeatDay = drugInfo.get("repeat_day").toString()
-        val repeatWeek = drugInfo.get("repeat_week").toString()
-        val repeatWeekday = drugInfo.get("repeat_weekday").toString()
-        return DrugOccurrence(
-            drugName,
-            rxcui,
-            eventId,
-            takenId,
-            repeatYear,
-            repeatMonth,
-            repeatDay,
-            repeatWeek,
-            repeatWeekday,
-            repeatStart,
-            repeatEnd
-        )
-    }
 }

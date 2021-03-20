@@ -7,13 +7,12 @@ import java.util.*
 
 @Parcelize
 data class CalendarEvent(
-    @SerializedName("drug_name") var drug_name: String,
-    @SerializedName("drug_rxcui") var drug_rxcui: Int,
-    @SerializedName("index_day") var index_day: Int,// 0-first day of the asked timeline...
-    @SerializedName("intake_time") var intake_time: Date,
-    @SerializedName("event_id") var event_id: String,
-    @SerializedName("taken_id") var taken_id: String,
-    @SerializedName("repeat_weekday") var repeat_weekday: String,
-    @SerializedName("repeat_end") var repeat_end: Long,
-    @SerializedName("is_taken") var is_taken: Boolean
+    @SerializedName("calendar_id") var calendarId:String,
+    @SerializedName("drug_id") var drugId:String,
+    //@SerializedName("drug_object") var drugObject:DrugObject,
+    @SerializedName("index_day") var indexDay: Int,// 0-first day of the asked timeline...
+    @SerializedName("intake_time") var intakeTime: Date,
+    @SerializedName("intake_end_time") var intakeEndTime: Date,
+    @SerializedName("is_taken") var isTaken: Boolean
+
 ) : Parcelable
