@@ -18,7 +18,6 @@ import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.FullViewViewModel
 import com.example.piller.viewModels.ProfileViewModel
@@ -191,7 +190,7 @@ class FullViewFragment : Fragment() {
 
     private fun setEvents(calendarEvents: Array<MutableList<CalendarEvent>>) {
         val eventsUI: MutableList<EventDay> = ArrayList()
-        val tomorrow = DateUtils.getTomorrowCalendar().time
+        //val tomorrow = DateUtils.getTomorrowCalendar().time
         // for each day that has at least one event - add an EventDay object in the calendar view
         for ((i, day) in calendarEvents.withIndex()) {
             if (day.isNotEmpty()) {
@@ -201,7 +200,7 @@ class FullViewFragment : Fragment() {
                 val tempCalendar: Calendar = firstDateOfMonth
                 tempCalendar.add(Calendar.DATE, i)
                 val circleBitmap =
-                    getDrawableText(null, color = getDayColor(day, tempCalendar.time, tomorrow))
+                    getDrawableText(null, color = getDayColor(day, tempCalendar.time))
                 eventsUI.add(EventDay(tempCalendar, circleBitmap as Drawable))
             }
         }
@@ -209,12 +208,12 @@ class FullViewFragment : Fragment() {
         calendarView.setEvents(eventsUI)
     }
 
-    private fun getDayColor(day: MutableList<CalendarEvent>, dayDate: Date, tomorrow: Date): Int {
+    private fun getDayColor(day: MutableList<CalendarEvent>, dayDate: Date): Int {
         var dayColor = Color.BLACK
         //  check whether the day is after tomorrow
         if (DateUtils.isDateAfter(Date(), dayDate)) {
             // check if there is any medicine that wasn't taken
-            if (day.any { event -> !event.is_taken }) {
+            if (day.any { event -> !event.isTaken }) {
                 dayColor = Color.RED
             } else {
                 //  all the medicines were taken, set the color to be green

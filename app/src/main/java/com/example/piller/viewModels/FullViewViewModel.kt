@@ -2,6 +2,7 @@ package com.example.piller.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.piller.DrugMap
 import com.example.piller.utilities.DateUtils
 import com.example.piller.EventInterpreter
 import com.example.piller.api.CalendarAPI
@@ -44,7 +45,10 @@ class FullViewViewModel : ViewModel() {
         for (calendarEvents in mutableCurrentMonthlyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
                 for (rxcuiToDelete in rxcuisToDelete) {
-                    if (calendarEvents[index].drug_rxcui == rxcuiToDelete) {
+                    val drugObj = DrugMap.instance.getDrugObject(
+                        calendarEvents[index].calendarId, calendarEvents[index].drugId
+                    )
+                    if (drugObj.rxcui == rxcuiToDelete) {
                         calendarEvents.removeAt(index)
                     }
                 }
@@ -59,14 +63,18 @@ class FullViewViewModel : ViewModel() {
     fun deleteFutureDrug(rxcuisToDelete: List<CalendarEvent>) {
         for (calendarEvents in mutableCurrentMonthlyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
+                val drugObjByIndex = DrugMap.instance.getDrugObject(
+                    calendarEvents[index].calendarId, calendarEvents[index].drugId
+                )
                 val calendarTomorrow = Calendar.getInstance()
                 for (rxcuiToDelete in rxcuisToDelete) {
                     calendarTomorrow.timeInMillis =
-                        DateUtils.getTomorrowDateInMillis(rxcuiToDelete.intake_time)
-                    if (calendarEvents[index].drug_rxcui == rxcuiToDelete.drug_rxcui
-                        && DateUtils.isDateAfter(
-                            calendarEvents[index].intake_time,
-                            calendarTomorrow.time
+                        DateUtils.getTomorrowDateInMillis(rxcuiToDelete.intakeTime)
+                    val drugObjToDelete = DrugMap.instance.getDrugObject(
+                        rxcuiToDelete.calendarId, rxcuiToDelete.drugId
+                    )
+                    if (drugObjByIndex.rxcui == drugObjToDelete.rxcui && DateUtils.isDateAfter(
+                            calendarEvents[index].intakeTime, calendarTomorrow.time
                         )
                     ) {
                         calendarEvents.removeAt(index)
@@ -111,10 +119,9 @@ class FullViewViewModel : ViewModel() {
     ) {
         val jObject = JSONObject(calendarInfo.body()!!.string())
         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
-
+        val calendarId = jObject.get("calendar_id").toString()
         val monthEvents = eventInterpreter.getEventsForCalendarByDate(
-            startDate, endDate,
-            drugInfoList as JSONArray
+            startDate, endDate, drugInfoList as JSONArray, calendarId
         )
         setMutableMonthlyCalendar(monthEvents)
     }

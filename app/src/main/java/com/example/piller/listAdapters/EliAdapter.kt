@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.example.piller.DrugMap
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
 import com.example.piller.utilities.DateUtils
@@ -47,8 +48,9 @@ class EliAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val currentItem = dataSet[position]
-        viewHolder.drugName.text = currentItem.drug_name
-        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(currentItem.intake_time)
+        val drugObject= DrugMap.instance.getDrugObject(currentItem.calendarId,currentItem.drugId)
+        viewHolder.drugName.text = drugObject.drugName
+        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(currentItem.intakeTime)
         viewHolder.intakeTime.text = time
         viewHolder.layout.setOnClickListener { itemClickCallback(currentItem) }
         setViewHolderBackgroundColor(viewHolder, currentItem)
@@ -56,8 +58,8 @@ class EliAdapter(
 
     private fun setViewHolderBackgroundColor(viewHolder: ViewHolder, calendarEvent: CalendarEvent) {
         //  set the background color only if the intake time passed
-        if (DateUtils.isDateAfter(Date(), calendarEvent.intake_time)) {
-            if (calendarEvent.is_taken) {
+        if (DateUtils.isDateAfter(Date(), calendarEvent.intakeTime)) {
+            if (calendarEvent.isTaken) {
                 //  the medicine was taken - set green background (alpha is for opacity)
                 viewHolder.layout.setBackgroundColor(Color.argb(37, 31, 249, 49))
             } else {

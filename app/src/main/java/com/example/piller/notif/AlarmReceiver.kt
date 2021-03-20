@@ -7,7 +7,7 @@ import com.example.piller.R
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.DrugIntakeAPI
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
@@ -42,7 +42,7 @@ class AlarmReceiver : BroadcastReceiver() {
         // 3
         if (currentProfile != null && email != null && bundleCalendarEvent != null) {
             val drug =
-                bundleCalendarEvent.getParcelable<DrugOccurrence>(DbConstants.DRUG_OBJECT)!!
+                bundleCalendarEvent.getParcelable<DrugObject>(DbConstants.DRUG_OBJECT)!!
             addIntakeDateFalse(drug.taken_id)
             if (shouldShowNotifications(context)) {
                 NotificationHelper.createNotification(context, drug, currentProfile, email)

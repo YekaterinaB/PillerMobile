@@ -3,9 +3,10 @@ package com.example.piller.viewModels
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.piller.DrugMap
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 import com.example.piller.notif.AlarmScheduler
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -19,7 +20,7 @@ class DrugOccurrenceViewModel : ViewModel() {
     }
 
     private val weekdayRepeat = mutableSetOf<Int>()
-    private lateinit var drug: DrugOccurrence
+    private lateinit var drug: DrugObject
     private val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
 
     val snackBarMessage: MutableLiveData<String> by lazy {
@@ -35,11 +36,11 @@ class DrugOccurrenceViewModel : ViewModel() {
     }
 
 
-    fun setDrug(newDrug: DrugOccurrence) {
+    fun setDrug(newDrug: DrugObject) {
         drug = newDrug
     }
 
-    fun getDrug(): DrugOccurrence {
+    fun getDrug(): DrugObject {
         return drug
     }
 
@@ -55,43 +56,43 @@ class DrugOccurrenceViewModel : ViewModel() {
         val calendar = Calendar.getInstance()
         //  in order to save the previous selected time - set the time in millis to the current
         //  drug time in millis, and update only the date
-        calendar.timeInMillis = drug.repeatStart
+        calendar.timeInMillis = drug.occurrence.repeatStart
         calendar.set(Calendar.YEAR, yearSelected)
         calendar.set(Calendar.MONTH, monthOfYear)
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        drug.repeatStart = calendar.timeInMillis
+        drug.occurrence.repeatStart = calendar.timeInMillis
     }
 
     fun setDrugRepeatStartTime(hours: Int, minutes: Int) {
         val calendar = Calendar.getInstance()
         //  in order to save the previous selected date - set the time in millis to the current
         //  drug time in millis, and update only the hours and minutes
-        calendar.timeInMillis = drug.repeatStart
+        calendar.timeInMillis = drug.occurrence.repeatStart
         calendar.set(Calendar.HOUR_OF_DAY, hours)
         calendar.set(Calendar.MINUTE, minutes)
-        drug.repeatStart = calendar.timeInMillis
+        drug.occurrence.repeatStart = calendar.timeInMillis
     }
 
     private fun updateDrugWeekday() {
         if (weekdayRepeat.size > 0) {
-            drug.repeatWeekday = weekdayRepeat.joinToString(separator = ",")
+            drug.occurrence.repeatWeekday = weekdayRepeat.toList()
         }
     }
 
     private fun setRepeatOn(repeatOn: RepeatOn, repeatValue: String) {
         when (repeatOn) {
             RepeatOn.DAY -> {
-                drug.repeatDay = repeatValue
+                drug.occurrence.repeatDay = repeatValue.toInt()
             }
             RepeatOn.WEEK -> {
-                drug.repeatWeek = repeatValue
+                drug.occurrence.repeatWeek = repeatValue.toInt()
                 updateDrugWeekday()
             }
             RepeatOn.MONTH -> {
-                drug.repeatMonth = repeatValue
+                drug.occurrence.repeatMonth = repeatValue.toInt()
             }
             RepeatOn.YEAR -> {
-                drug.repeatYear = repeatValue
+                drug.occurrence.repeatYear = repeatValue.toInt()
             }
             else -> {
             }
@@ -132,8 +133,9 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     private fun updateDrugInfo(response: Response<ResponseBody>) {
         val responseObject = JSONObject(response.body()!!.string())
-        drug.event_id = responseObject.get("event_id").toString()
+        drug.occurrence.event_id = responseObject.get("event_id").toString()
         drug.taken_id = responseObject.get("taken_id").toString()
+        DrugMap.instance.setDrugObject(drug.calendarId,drug)
     }
 
     fun updateDrugOccurrence(
@@ -144,7 +146,7 @@ class DrugOccurrenceViewModel : ViewModel() {
         context: Context
     ) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.updateDrugOccurrence(email, currentProfile, drug.event_id, drug).enqueue(
+        retrofit.updateDrugOccurrence(email, currentProfile, drug.occurrence.event_id, drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not add drug."

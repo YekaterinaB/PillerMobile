@@ -5,11 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.piller.DrugMap
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.DrugAPI
 import com.example.piller.api.DrugIntakeAPI
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 import com.example.piller.notif.AlarmScheduler
 import com.example.piller.utilities.ImageUtils
 import okhttp3.ResponseBody
@@ -49,10 +50,10 @@ class DrugInfoViewModel : ViewModel() {
     fun deleteAllOccurrencesOfDrug(
         email: String,
         currentProfile: String,
-        drug: DrugOccurrence,
+        drug: DrugObject,
         context: Context
     ) {
-        retrofit.deleteDrugByUser(email, currentProfile, drug.event_id).enqueue(
+        retrofit.deleteDrugByUser(email, currentProfile, drug.occurrence.event_id).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -76,14 +77,14 @@ class DrugInfoViewModel : ViewModel() {
     fun deleteFutureOccurrencesOfDrug(
         email: String,
         currentProfile: String,
-        drug: DrugOccurrence,
+        drug: DrugObject,
         repeatEnd: String,
         context: Context
     ) {
         retrofit.deleteFutureOccurrencesOfDrugByUser(
             email,
             currentProfile,
-            drug.event_id,
+            drug.occurrence.event_id,
             repeatEnd
         ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -106,6 +107,7 @@ class DrugInfoViewModel : ViewModel() {
                             currentProfile,
                             drug
                         )
+                        DrugMap.instance.setDrugObject(drug.calendarId,drug) //update drug in map
                     } else {
                         mutableToastError.value = "Could not delete future occurrences drug."
                     }

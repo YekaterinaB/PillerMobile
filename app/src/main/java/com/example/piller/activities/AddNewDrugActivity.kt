@@ -16,7 +16,7 @@ import com.example.piller.SnackBar
 import com.example.piller.fragments.DrugByNameFragment
 import com.example.piller.fragments.InteractionPopupFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugSearchViewModel
 
@@ -36,7 +36,8 @@ class AddNewDrugActivity : AppCompatActivity() {
         addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
         currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        initViewModels()
+        val calendarId=intent.getStringExtra(DbConstants.CALENDAR_ID)!!
+        initViewModels(calendarId)
         setContentView(R.layout.activity_add_new_drug)
         initViews()
         initListeners()
@@ -50,13 +51,14 @@ class AddNewDrugActivity : AppCompatActivity() {
         selectDrugAnywayBtn.setOnClickListener {
             //  no need to show interaction
             searchViewModel.newDrug.value =
-                DrugOccurrence(searchViewModel.drugSearchNoResult.value!!, 0)
+                DrugObject(searchViewModel.calendarId,searchViewModel.drugSearchNoResult.value!!, 0)
             goToAddOccurrenceActivity()
         }
     }
 
-    private fun initViewModels() {
+    private fun initViewModels(calendarId:String) {
         searchViewModel = ViewModelProvider(this).get(DrugSearchViewModel::class.java)
+        searchViewModel.calendarId=calendarId
     }
 
     private fun selectFragment(savedInstanceState: Bundle?, fragmentID: String) {
