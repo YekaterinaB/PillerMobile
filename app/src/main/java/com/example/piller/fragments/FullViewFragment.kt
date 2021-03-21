@@ -110,9 +110,7 @@ class FullViewFragment : Fragment() {
         arguments.putParcelableArray(
             FullviewPopupFragment.ARG_EVENTS_LIST,
             viewModel.mutableCurrentMonthlyCalendar.value?.get(
-                eventDay.calendar.get(
-                    Calendar.DAY_OF_MONTH
-                ) - 1
+                eventDay.calendar.get(Calendar.DAY_OF_MONTH) - 1
             )?.toTypedArray()
         )
 
@@ -155,7 +153,7 @@ class FullViewFragment : Fragment() {
         return BitmapDrawable(this.resources, bitmap)
     }
 
-    private fun initEvents() {
+    private fun refreshData() {
         val startDate = DateUtils.getFirstDayOfMonth()
         val endDate = DateUtils.getLastDayOfMonth()
         //  get all the events for the selected month
@@ -165,6 +163,10 @@ class FullViewFragment : Fragment() {
             startDate,
             endDate
         )
+    }
+
+    private fun initEvents() {
+        refreshData()
 
         //  when the data arrives, set a dot for each day that has at least one event
         viewModel.mutableCurrentMonthlyCalendar.observe(
@@ -227,8 +229,8 @@ class FullViewFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (data!!.getBooleanExtra(DbConstants.SHOULD_UPDATE_DATA, false)) {
-            profileViewModel.currentProfileUpdated()
+        if (data!!.getBooleanExtra(DbConstants.SHOULD_REFRESH_DATA, false)) {
+            refreshData()
         }
         val bundle = data.extras!!.getBundle(DbConstants.DRUG_DELETES)
         // 3

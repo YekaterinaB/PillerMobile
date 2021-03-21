@@ -21,7 +21,7 @@ class EventInterpreter {
             val drug = drugList.getJSONObject(i)
             val intakeDates = drug.get("intake_dates") as JSONObject
             val intakes = intakeDates.get("intakes") as JSONArray
-            val drugObject = parsedDrugObject(drug, intakeDates,calendarId)
+            val drugObject = parsedDrugObject(drug, intakeDates, calendarId)
             val drugEventList = getDrugEvent(drugObject, intakes, start, end, calendarId)
             // put all event in array
             if (drugEventList.isNotEmpty()) {
@@ -132,10 +132,10 @@ class EventInterpreter {
                 val isTaken = intakeStatusOfCalendarEvent(calendarCurrent, intakes)
 
                 //add to cache the drug
-                DrugMap.instance.setDrugObject(calendarId,drugObject)
+                DrugMap.instance.setDrugObject(calendarId, drugObject)
                 val event =
                     CalendarEvent(
-                        calendarId,drugObject.drugName+drugObject.rxcui.toString(),
+                        calendarId, drugObject.drugName + drugObject.rxcui.toString(),
                         indexDay, calendarCurrent.time, calendarRepeatEnd.time, isTaken
                     )
 

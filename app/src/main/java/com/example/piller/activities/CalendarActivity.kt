@@ -50,7 +50,6 @@ class CalendarActivity : AppCompatActivity() {
         initializeFragment(savedInstanceState)
     }
 
-
     private fun initializeViewModels() {
         weeklyCalendarViewModel = ViewModelProvider(this).get(WeeklyCalendarViewModel::class.java)
         weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value =

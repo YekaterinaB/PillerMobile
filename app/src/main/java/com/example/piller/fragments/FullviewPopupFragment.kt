@@ -137,7 +137,7 @@ class FullviewPopupFragment : DialogFragment() {
         bundle.putIntArray(DbConstants.DRUGSLIST, drugsToDelete.toIntArray())
         bundle.putParcelableArray(DbConstants.FUTURE_DRUGSLIST, futureDrugsToDelete.toTypedArray())
         intent.putExtra(DbConstants.DRUG_DELETES, bundle)
-        intent.putExtra(DbConstants.SHOULD_UPDATE_DATA, shouldUpdateData)
+        intent.putExtra(DbConstants.SHOULD_REFRESH_DATA, shouldUpdateData)
         targetFragment!!.onActivityResult(
             targetRequestCode,
             DbConstants.DRUG_DELETE_POPUP,
