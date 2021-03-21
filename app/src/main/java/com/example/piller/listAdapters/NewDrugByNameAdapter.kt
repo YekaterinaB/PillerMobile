@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 
 class NewDrugByNameAdapter(
-    private var dataSet: MutableList<DrugOccurrence>,
+    private var dataSet: MutableList<DrugObject>,
     private val clickOnItemListener: (Int) -> Unit
 ) : RecyclerView.Adapter<NewDrugByNameAdapter.ViewHolder>() {
 
@@ -25,7 +25,7 @@ class NewDrugByNameAdapter(
         return ViewHolder(view)
     }
 
-    fun setData(data: MutableList<DrugOccurrence>) {
+    fun setData(data: MutableList<DrugObject>) {
         dataSet = data
     }
 
@@ -35,7 +35,7 @@ class NewDrugByNameAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val currentItem = dataSet[position]
-        holder.drugName.text = currentItem.drug_name
+        holder.drugName.text = currentItem.drugName
         holder.itemView.setOnClickListener { clickOnItemListener(currentItem.rxcui) }
     }
 }

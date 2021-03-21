@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.piller.DrugMap
 import com.example.piller.R
 import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.listAdapters.EliAdapter
@@ -94,18 +95,19 @@ class FullviewPopupFragment : DialogFragment() {
         if (data!!.hasExtra(DbConstants.TAKEN_NEW_VALUE)) {
             val newIsTaken = data.getBooleanExtra(
                 DbConstants.TAKEN_NEW_VALUE,
-                selectedDrug.is_taken
+                selectedDrug.isTaken
             )
-            if (newIsTaken != selectedDrug.is_taken) {
+            if (newIsTaken != selectedDrug.isTaken) {
                 shouldUpdateData = true
-                selectedDrug.is_taken = newIsTaken
+                selectedDrug.isTaken = newIsTaken
                 setEventsData()
             }
         }
 
         when (resultCode) {
             Activity.RESULT_OK -> {
-                drugsToDelete.add(selectedDrug.drug_rxcui)
+                val drugObj=DrugMap.instance.getDrugObject(selectedDrug.calendarId,selectedDrug.drugId)
+                drugsToDelete.add(drugObj.rxcui)
                 removeDrugFromList()
                 setEventsData()
             }
@@ -117,8 +119,10 @@ class FullviewPopupFragment : DialogFragment() {
     }
 
     private fun removeDrugFromList() {
+        val drugObj=DrugMap.instance.getDrugObject(selectedDrug.calendarId,selectedDrug.drugId)
         for (index in eventsData.indices) {
-            if (eventsData[index].drug_rxcui == selectedDrug.drug_rxcui) {
+            val drugObjByIndex=DrugMap.instance.getDrugObject(eventsData[index].calendarId,eventsData[index].drugId)
+            if (drugObjByIndex.rxcui == drugObj.rxcui) {
                 eventsData.removeAt(index)
                 break
             }

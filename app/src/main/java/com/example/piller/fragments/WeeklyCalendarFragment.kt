@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.util.DBUtil
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.AddNewDrugActivity
@@ -204,6 +205,7 @@ class WeeklyCalendarFragment : Fragment() {
         intent.putExtra(DbConstants.ADD_DRUG_TYPE, addType)
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
         intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
+        intent.putExtra(DbConstants.CALENDAR_ID,weeklyCalendarViewModel.calendarId)
         startActivity(intent)
     }
 
@@ -299,10 +301,10 @@ class WeeklyCalendarFragment : Fragment() {
             //  update taken status
             val newTakenValue = data.getBooleanExtra(
                 DbConstants.TAKEN_NEW_VALUE,
-                currentCalendarEvent.is_taken
+                currentCalendarEvent.isTaken
             )
-            if (newTakenValue != currentCalendarEvent.is_taken) {
-                currentCalendarEvent.is_taken = newTakenValue
+            if (newTakenValue != currentCalendarEvent.isTaken) {
+                currentCalendarEvent.isTaken = newTakenValue
                 updateRecyclersAndAdapters()
             }
         }

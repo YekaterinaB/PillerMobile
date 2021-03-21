@@ -12,11 +12,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.piller.DrugMap
 import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.DrugOccurrence
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ImageUtils
 import com.example.piller.viewModels.DrugInfoViewModel
@@ -52,9 +52,9 @@ class DrugInfoActivity : AppCompatActivity() {
     private fun initListeners() {
         _drugTakenCB.setOnClickListener {
             //  todo change the ms and seconds of _calendarEvent.intake_time.time to 0
+            val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
             _viewModel.updateDrugIntake(
-                _drugTakenCB.isChecked, _calendarEvent.taken_id,
-                _calendarEvent.intake_time.time
+                _drugTakenCB.isChecked, drugObject.taken_id, _calendarEvent.intakeTime.time
             )
         }
     }
@@ -93,8 +93,9 @@ class DrugInfoActivity : AppCompatActivity() {
             this,
             Observer { success ->
                 if (success) {
+                    val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
                     //  remove drug image from cache
-                    ImageUtils.deleteFile(_calendarEvent.drug_rxcui.toString(), this)
+                    ImageUtils.deleteFile(drugObject.rxcui.toString(), this)
                     _viewModel.deleteSuccess.value = false
                     val returnIntent = Intent()
                     setResult(Activity.RESULT_OK, returnIntent)
@@ -133,9 +134,10 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun initViewsData() {
-        _drugNameTV.text = _calendarEvent.drug_name
+        val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
+        _drugNameTV.text = drugObject.drugName
         setIntakeTimeTextView()
-        _drugTakenCB.isChecked = _calendarEvent.is_taken
+        _drugTakenCB.isChecked = _calendarEvent.isTaken
     }
 
     private fun setIntakeTimeTextView() {
@@ -143,18 +145,20 @@ class DrugInfoActivity : AppCompatActivity() {
         val calTime: Date
 
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = _calendarEvent.intake_time.time
+        calendar.timeInMillis = _calendarEvent.intakeTime.time
         calTime = calendar.time
 
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val intakeTime = "${sdf.format(_calendarEvent.intake_time)}, ${formatter.format(calTime)}"
+        val intakeTime = "${sdf.format(_calendarEvent.intakeTime)}, ${formatter.format(calTime)}"
         _drugIntakeTimeTV.text = intakeTime
 
     }
 
     private fun initViewModels() {
+        val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
+
         _viewModel = ViewModelProvider(this).get(DrugInfoViewModel::class.java)
-        _viewModel.initiateDrugImage(this, _calendarEvent.drug_rxcui.toString())
+        _viewModel.initiateDrugImage(this,drugObject.rxcui.toString())
         _profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
     }
 
@@ -195,29 +199,25 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun goToEditActivity() {
+        val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
         val intent = Intent(
             this,
             DrugOccurrenceActivity::class.java
         )
         intent.putExtra(
             DbConstants.DRUG_OBJECT,
-            DrugOccurrence(
-                _calendarEvent.drug_name,
-                _calendarEvent.drug_rxcui,
-                _calendarEvent.event_id,
-                _calendarEvent.taken_id,
-                repeatEnd = _calendarEvent.repeat_end
-            )
+            drugObject
         )
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
         intent.putExtra(DbConstants.LOGGED_USER_NAME, _currentProfile)
-        intent.putExtra(DbConstants.INTAKE_DATE, _calendarEvent.intake_time.time)
+        intent.putExtra(DbConstants.INTAKE_DATE, _calendarEvent.intakeTime.time)
 
         startActivity(intent)
 
     }
 
     private fun showDeletePopup() {
+        val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle("Are you sure you want to delete this drug?")
         builder.setItems(arrayOf<CharSequence>(
@@ -232,33 +232,19 @@ class DrugInfoActivity : AppCompatActivity() {
                     0 -> _viewModel.deleteAllOccurrencesOfDrug(
                         email = _loggedEmail,
                         currentProfile = _currentProfile,
-                        drug = DrugOccurrence(
-                            _calendarEvent.drug_name,
-                            _calendarEvent.drug_rxcui,
-                            _calendarEvent.event_id,
-                            _calendarEvent.taken_id,
-                            repeatWeekday = _calendarEvent.repeat_weekday,
-                            repeatEnd = _calendarEvent.repeat_end
-                        ),
+                        drug = drugObject,
                         context = this
                     )
 
                     //  delete future occurrences
                     1 -> {
                         val tomorrow =
-                            DateUtils.getTomorrowDateInMillis(_calendarEvent.intake_time)
-                        _calendarEvent.repeat_end = tomorrow
+                            DateUtils.getTomorrowDateInMillis(_calendarEvent.intakeTime)
+                        _calendarEvent.intakeEndTime = Date(tomorrow)
                         _viewModel.deleteFutureOccurrencesOfDrug(
                             email = _loggedEmail,
                             currentProfile = _currentProfile,
-                            drug = DrugOccurrence(
-                                _calendarEvent.drug_name,
-                                _calendarEvent.drug_rxcui,
-                                _calendarEvent.event_id,
-                                _calendarEvent.taken_id,
-                                repeatWeekday = _calendarEvent.repeat_weekday,
-                                repeatEnd = _calendarEvent.repeat_end
-                            ),
+                            drug = drugObject,
                             repeatEnd = tomorrow.toString(),
                             context = this
                         )

@@ -3,8 +3,8 @@ package com.example.piller.utilities
 object DbConstants {
     const val LOGGED_USER_EMAIL = "LOGGED_USER_EMAIL"
     const val LOGGED_USER_NAME = "LOGGED_USER_NAME"
-    const val LOGGED_CURRENT_PROFILE = "LOGGED_CURRENT_PROFILE"
 
+    const val CALENDAR_ID = "calendar_id"
     const val EVENT_ID = "event_id"
 
     //  fullview fragment

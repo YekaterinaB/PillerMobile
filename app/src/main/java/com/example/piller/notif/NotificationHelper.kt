@@ -13,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.example.piller.R
 import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.DrugOccurrence
+import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DbConstants
 import java.util.Calendar.*
 
@@ -41,11 +41,11 @@ object NotificationHelper {
     }
 
     fun createNotification(
-        context: Context, drug: DrugOccurrence,
+        context: Context, drug: DrugObject,
         currentProfile: String,
         email: String
     ) {
-        val id = drug.event_id.hashCode()
+        val id = drug.occurrence.event_id.hashCode()
         val notificationBuilder = buildNotification(context, drug, currentProfile, email)
 
         val notificationManager = NotificationManagerCompat.from(context)
@@ -57,7 +57,7 @@ object NotificationHelper {
     }
 
     private fun buildNotification(
-        context: Context, drug: DrugOccurrence, currentProfile: String,
+        context: Context, drug: DrugObject, currentProfile: String,
         email: String
     ): NotificationCompat.Builder {
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
@@ -69,7 +69,7 @@ object NotificationHelper {
             val drawable = R.drawable.pill
             // 3
             setLargeIcon(BitmapFactory.decodeResource(context.resources, drawable))
-            setContentText("It's time to take ${drug.drug_name}.")
+            setContentText("It's time to take ${drug.drugName}.")
             // 4
 //            setGroup(reminderData.type.name)
 //            if (reminderData.note != null) {
@@ -94,24 +94,21 @@ object NotificationHelper {
         }
     }
 
-    private fun createCalenderEventWithDrug(drug: DrugOccurrence): CalendarEvent {
+    private fun createCalenderEventWithDrug(drug: DrugObject): CalendarEvent {
         val cal = getInstance()
         val intakeCal = getInstance()
-        intakeCal.timeInMillis = drug.repeatStart
+        intakeCal.timeInMillis = drug.occurrence.repeatStart
         cal.set(HOUR_OF_DAY, intakeCal[HOUR_OF_DAY])
         cal.set(MINUTE, intakeCal[MINUTE])
         cal.set(SECOND, intakeCal[SECOND])
         cal.set(MILLISECOND, intakeCal[MILLISECOND])
         return CalendarEvent(
-            drug.drug_name,
-            drug.rxcui,
+            drug.calendarId,
+            drug.drugName+drug.rxcui.toString(),
             cal[DAY_OF_WEEK],
             cal.time,
-            drug.event_id,
-            drug.taken_id,
-            drug.repeatWeekday,
-            drug.repeatEnd,
-            is_taken = false
+            cal.time,// end_repeat for calender event
+            isTaken = false
         )
     }
 }
