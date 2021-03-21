@@ -129,11 +129,8 @@ class EventInterpreter {
                 calendarCurrent.set(Calendar.HOUR_OF_DAY, calendarValuesMap["hourOfDay"] as Int)
                 calendarCurrent.set(Calendar.MINUTE, calendarValuesMap["minuteOfDay"] as Int)
 
-                val showTakenCheckbox = DateUtils.isDateBeforeToday(calendarCurrent)
-                var isTaken = false
-                if (showTakenCheckbox) {
-                    isTaken = isDateInIntakeList(calendarCurrent, intakes)
-                }
+                val isTaken = intakeStatusOfCalendarEvent(calendarCurrent, intakes)
+
                 //add to cache the drug
                 DrugMap.instance.setDrugObject(calendarId,drugObject)
                 val event =
@@ -155,14 +152,14 @@ class EventInterpreter {
         return eventList
     }
 
-    private fun isDateInIntakeList(calendar: Calendar, intakesArray: JSONArray): Boolean {
+    private fun intakeStatusOfCalendarEvent(calendar: Calendar, intakesArray: JSONArray): Boolean {
         var result = false
         for (i in 0 until intakesArray.length()) {
             val intakeObject = intakesArray.get(i) as JSONObject
             val dateCal = Calendar.getInstance()
             dateCal.timeInMillis = intakeObject.get("date") as Long
             if (DateUtils.areDatesEqual(calendar, dateCal)) {
-                result = true
+                result = intakeObject.get("isTaken") as Boolean
                 break
             }
         }
