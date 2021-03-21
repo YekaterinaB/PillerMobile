@@ -50,7 +50,7 @@ object DbConstants {
     const val REMOVE_DRUG_FUTURE = 999
     const val TAKEN_STATUS_UPDATE = 888
     const val TAKEN_NEW_VALUE = "taken_status_update"
-    const val SHOULD_UPDATE_DATA = "should_update_data"
+    const val SHOULD_REFRESH_DATA = "should_update_data"
 
     // server
     const val SERVER_URL = "http://10.0.2.2:3000"

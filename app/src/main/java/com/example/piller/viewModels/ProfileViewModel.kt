@@ -50,9 +50,8 @@ class ProfileViewModel : ViewModel() {
 
     }
 
-    fun currentProfileUpdated()
-    {
-        // if profile was updatetd, is initilize in profile will turn to false
+    fun currentProfileUpdated() {
+        // if profile was updated, is initialize in profile will turn to false
         val list = getListOfProfiles()
         val curProfile = getCurrentProfileName()
         //find profile from list

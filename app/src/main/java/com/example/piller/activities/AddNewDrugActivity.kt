@@ -37,7 +37,7 @@ class AddNewDrugActivity : AppCompatActivity() {
         addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
         currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        val calendarId=intent.getStringExtra(DbConstants.CALENDAR_ID)!!
+        val calendarId = intent.getStringExtra(DbConstants.CALENDAR_ID)!!
         initViewModels(calendarId)
         setContentView(R.layout.activity_add_new_drug)
         initViews()
@@ -52,14 +52,18 @@ class AddNewDrugActivity : AppCompatActivity() {
         selectDrugAnywayBtn.setOnClickListener {
             //  no need to show interaction
             searchViewModel.newDrug.value =
-                DrugObject(searchViewModel.calendarId,searchViewModel.drugSearchNoResult.value!!, 0)
+                DrugObject(
+                    searchViewModel.calendarId,
+                    searchViewModel.drugSearchNoResult.value!!,
+                    0
+                )
             goToAddOccurrenceActivity()
         }
     }
 
-    private fun initViewModels(calendarId:String) {
+    private fun initViewModels(calendarId: String) {
         searchViewModel = ViewModelProvider(this).get(DrugSearchViewModel::class.java)
-        searchViewModel.calendarId=calendarId
+        searchViewModel.calendarId = calendarId
     }
 
     private fun selectFragment(savedInstanceState: Bundle?, fragmentID: String) {

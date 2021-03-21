@@ -42,7 +42,7 @@ class DrugSearchViewModel : ViewModel() {
     val addedDrugSuccess: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
-    lateinit var calendarId:String
+    lateinit var calendarId: String
 
     fun getDrugByRxcui(rxcui: Int): DrugObject? {
         val filteredArray = drugsSearchResult.value?.filter { drug -> drug.rxcui == rxcui }
@@ -168,7 +168,8 @@ class DrugSearchViewModel : ViewModel() {
             for (j in 0 until item.length()) {
                 val drugItem = item.get(j) as JSONObject
                 drugs.add(
-                    DrugObject(calendarId,
+                    DrugObject(
+                        calendarId,
                         drugName = removeParenthesis(drugItem.getString("name")),
                         rxcui = removeParenthesis(drugItem.get("rxcui").toString()).toInt()
                     )
