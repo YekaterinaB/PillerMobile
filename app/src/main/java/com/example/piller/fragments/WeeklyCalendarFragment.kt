@@ -177,10 +177,7 @@ class WeeklyCalendarFragment : Fragment() {
         }
 
         newDrugCameraFAB.setOnClickListener {
-            SnackBar.showToastBar(
-                this.context,
-                "Add by camera!"
-            )
+            showAddNewDrugActivity(DbConstants.DRUG_BY_CAMERA)
         }
 
         newDrugBoxFAB.setOnClickListener {
@@ -191,19 +188,23 @@ class WeeklyCalendarFragment : Fragment() {
         }
 
         newDrugNameFAB.setOnClickListener {
-            val intent = Intent(
-                activity,
-                AddNewDrugActivity::class.java
-            )
-            intent.putExtra(DbConstants.ADD_DRUG_TYPE, DbConstants.DRUG_BY_NAME)
-            intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
-            intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
-            startActivity(intent)
+            showAddNewDrugActivity(DbConstants.DRUG_BY_NAME)
         }
 
         newDrugLayout.setOnClickListener {
             FABLayoutClicked()
         }
+    }
+
+    /**
+     * @fragmentID: says which fragment AddNewDrugActivity should show
+     */
+    private fun showAddNewDrugActivity(addType: String) {
+        val intent = Intent(activity, AddNewDrugActivity::class.java)
+        intent.putExtra(DbConstants.ADD_DRUG_TYPE, addType)
+        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
+        startActivity(intent)
     }
 
     private fun FABLayoutClicked() {

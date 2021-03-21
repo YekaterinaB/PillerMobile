@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.fragments.DrugByImageFragment
 import com.example.piller.fragments.DrugByNameFragment
 import com.example.piller.fragments.InteractionPopupFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
@@ -62,10 +63,11 @@ class AddNewDrugActivity : AppCompatActivity() {
     private fun selectFragment(savedInstanceState: Bundle?, fragmentID: String) {
         when (fragmentID) {
             DbConstants.DRUG_BY_CAMERA -> {
-                SnackBar.showToastBar(this@AddNewDrugActivity, "Add by Camera!")
+                val drugByImageFragment = DrugByImageFragment.newInstance()
+                initializeFragment(savedInstanceState, drugByImageFragment)
             }
             DbConstants.DRUG_BY_BOX -> {
-                SnackBar.showToastBar(this@AddNewDrugActivity, "Add by Camera!")
+                SnackBar.showToastBar(this@AddNewDrugActivity, "Add by Box!")
             }
             DbConstants.DRUG_BY_NAME -> {
                 val drugByNameFragment = DrugByNameFragment.newInstance()
