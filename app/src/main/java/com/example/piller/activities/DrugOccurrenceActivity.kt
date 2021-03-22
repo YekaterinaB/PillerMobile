@@ -15,9 +15,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.customWidgets.CheckboxWithTextInside
+import com.example.piller.listAdapters.DosageAdapter
 import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
@@ -31,6 +34,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var drugOccurrencesDate: TextView
     private lateinit var drugOccurrencesTime: TextView
     private lateinit var drugRepeatsOnEditText: EditText
+    private lateinit var drugDosageET: EditText
+    private lateinit var drugDosageList: RecyclerView
     private lateinit var drugShouldRepeatSpinner: Spinner
     private lateinit var drugRepeatOnSpinner: Spinner
     private lateinit var drugRepeatContainer: ConstraintLayout
@@ -153,6 +158,15 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+
+        val dosages = resources.getStringArray(R.array.drug_dosage)
+        drugDosageList.adapter = DosageAdapter(dosages) { dosage -> dosageSelected(dosage) }
+        drugDosageList.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+    }
+
+    private fun dosageSelected(measurementType: String) {
+        viewModel.setDrugDosage(measurementType, drugDosageET.text.toString().toInt())
     }
 
     private fun initViewModelObservers() {
@@ -247,6 +261,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
+
         drugRepeatsOnEditText.addTextChangedListener(textWatcher)
 
         weekdaySundayCB.setOnClickListener {
@@ -312,6 +327,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         drugRepeatOnSpinner = findViewById(R.id.ndo_repeat_options_spinner)
         setRepeatEnd = findViewById(R.id.ndo_has_repeat_end)
         repeatEndDateTV = findViewById(R.id.ndo_repeat_end_date)
+        drugDosageET = findViewById(R.id.ndo_dosage_number)
+        drugDosageList = findViewById(R.id.ndo_dosage_list)
     }
 
     private fun setTimeLabel(hour: Int, minutes: Int) {

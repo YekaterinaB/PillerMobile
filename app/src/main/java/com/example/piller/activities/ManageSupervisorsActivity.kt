@@ -157,27 +157,25 @@ class ManageSupervisorsActivity : AppCompatActivity() {
 
         // access the spinner
         thresholdSpinner = findViewById<Spinner>(R.id.supervisors_alarm_threshold_spinner)
-        if (thresholdSpinner != null) {
-            val adapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item, daysThreshold
-            )
-            thresholdSpinner.adapter = adapter
-            //false to not invoke listener on create
-            thresholdSpinner.setSelection(viewModel.mutableSupervisorThreshold.value!!, false)
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item, daysThreshold
+        )
+        thresholdSpinner.adapter = adapter
+        //false to not invoke listener on create
+        thresholdSpinner.setSelection(viewModel.mutableSupervisorThreshold.value!!, false)
 
-            thresholdSpinner.onItemSelectedListener = object :
-                AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View, position: Int, id: Long
-                ) {
-                    viewModel.updateThresholdInDB(daysThreshold[position]!!)
-                }
+        thresholdSpinner.onItemSelectedListener = object :
+            AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View, position: Int, id: Long
+            ) {
+                viewModel.updateThresholdInDB(daysThreshold[position]!!)
+            }
 
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                    // write code to perform some action
-                }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // write code to perform some action
             }
         }
     }

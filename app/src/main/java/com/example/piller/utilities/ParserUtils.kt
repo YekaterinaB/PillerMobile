@@ -18,16 +18,15 @@ class parserUtils {
             val doseObject = drug.get("dose") as JSONObject
             val drugOccur = parseOccurrenceObject(occurrenceObject)
             val drugDose = parseDoseObject(doseObject)
-            val drugObj = DrugObject(
+            return DrugObject(
                 calendarId,
                 drug.get("name") as String,
                 drug.get("rxcui").toString().toInt(),
                 takenId, drugOccur, drugDose
             )
-            return drugObj
         }
 
-        fun parseDoseObject(doseObject: JSONObject): Dose {
+        private fun parseDoseObject(doseObject: JSONObject): Dose {
             val dose = Dose()
             dose.doseId = doseObject.get("dose_id") as String
             val doseInfo = doseObject.get("dose_info") as JSONObject
@@ -36,7 +35,7 @@ class parserUtils {
             return dose
         }
 
-        fun parseOccurrenceObject(occurrenceObject: JSONObject): Occurrence {
+        private fun parseOccurrenceObject(occurrenceObject: JSONObject): Occurrence {
             val occurrence = Occurrence()
             occurrence.eventId = occurrenceObject.get("event_id") as String
             val drugInfo = occurrenceObject.get("drug_info") as JSONObject
@@ -59,6 +58,5 @@ class parserUtils {
             }
             return intList
         }
-
     }
 }

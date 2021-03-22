@@ -77,8 +77,9 @@
         android:layout_marginEnd="8dp"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
+        app:layout_constraintTop_toBottomOf="@+id/view3" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ndo_repeat_container"
@@ -114,7 +115,7 @@
             android:inputType="numberSigned"
             android:maxLength="2"
             android:maxLines="1"
-            android:text="1"
+            android:text="@string/ndo_1"
             android:textAlignment="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -243,5 +244,55 @@
         android:text="@string/ndo_set_last_occurrence_date"
         app:layout_constraintStart_toEndOf="@+id/ndo_has_repeat_end"
         app:layout_constraintTop_toTopOf="@+id/ndo_has_repeat_end" />
+
+    <View
+        android:id="@+id/view3"
+        style="@style/Divider.Horizontal"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ndo_dosage_list" />
+
+    <EditText
+        android:id="@+id/ndo_dosage_number"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:autofillHints="Dosage"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:maxLength="3"
+        android:maxLines="1"
+        android:minLines="1"
+        android:text="@string/ndo_1"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ndo_select_dosage" />
+
+    <TextView
+        android:id="@+id/ndo_select_dosage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/ndo_select_dosage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ndo_dosage_list"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:scrollbars="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ndo_dosage_number" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
