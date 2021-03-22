@@ -45,11 +45,28 @@ class DateUtils {
             return false
         }
 
+        fun isDateBefore(date1: Date, date2: Date): Boolean {
+            val calDate1 = Calendar.getInstance()
+            calDate1.time = date1
+            val calDate2 = Calendar.getInstance()
+            calDate2.time = date2
+            if (date1.time < date2.time) {
+                return !areDatesEqual(calDate1, calDate2)
+            }
+            return false
+        }
+
         fun setCalendarTime(calendar: Calendar, hour: Int, minutes: Int, seconds: Int = 0) {
             calendar.set(Calendar.HOUR_OF_DAY, hour)
             calendar.set(Calendar.MINUTE, minutes)
             calendar.set(Calendar.SECOND, seconds)
             calendar.set(Calendar.MILLISECOND, 0)
+        }
+
+        fun getDayAfterInMillis(year: Int, month: Int, day: Int): Long {
+            val cal: Calendar = Calendar.getInstance()
+            cal.set(year, month, day)
+            return getTomorrowDateInMillis(cal.time)
         }
 
         fun getTomorrowDateInMillis(startDate: Date): Long {

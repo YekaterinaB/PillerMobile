@@ -85,5 +85,7 @@
     <string name="dbi_drug_image">Drug Image</string>
     <string name="dbi_capture_image">Capture Image</string>
     <string name="dbi_search_by_image">Search By Image</string>
+    <string name="ndo_last_occurrence_date">Last Occurrence Date</string>
+    <string name="ndo_set_last_occurrence_date">Set Last Occurrence Date</string>
 
 </resources>
