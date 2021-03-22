@@ -141,7 +141,7 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     private fun updateDrugInfo(response: Response<ResponseBody>) {
         val responseObject = JSONObject(response.body()!!.string())
-        drug.occurrence.event_id = responseObject.get("event_id").toString()
+        drug.occurrence.eventId = responseObject.get("event_id").toString()
         drug.taken_id = responseObject.get("taken_id").toString()
         DrugMap.instance.setDrugObject(drug.calendarId, drug)
     }
@@ -160,7 +160,6 @@ class DrugOccurrenceViewModel : ViewModel() {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         snackBarMessage.value = "Could not add drug."
                     }
-
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>

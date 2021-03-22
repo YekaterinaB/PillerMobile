@@ -69,7 +69,7 @@ object AlarmScheduler {
         val intent = Intent(context.applicationContext, AlarmReceiver::class.java).apply {
             action = context.getString(R.string.action_notify_medication)
             // 3
-            type = "${drug.occurrence.event_id}-${drug.rxcui}-" + dayOfWeek
+            type = "${drug.occurrence.eventId}-${drug.rxcui}-" + dayOfWeek
             // 4
             putExtra(DbConstants.DRUG_OBJECT, bundleDrugObject)
             putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)

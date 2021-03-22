@@ -50,7 +50,7 @@ class WeeklyCalendarViewModel : ViewModel() {
             for (index in calendarEvents.size - 1 downTo 0) {
                 val drugObjectInIndex=DrugMap.instance.getDrugObject(
                     calendarEvents[index].calendarId,calendarEvents[index].drugId)
-                if (drugObjectInIndex.occurrence.event_id == drugObj.occurrence.event_id) {
+                if (drugObjectInIndex.occurrence.eventId == drugObj.occurrence.eventId) {
                     calendarEvents.removeAt(index)
                 }
             }
@@ -73,7 +73,7 @@ class WeeklyCalendarViewModel : ViewModel() {
                 val drugObjectInIndex=DrugMap.instance.getDrugObject(
                     calendarEvents[index].calendarId,calendarEvents[index].drugId)
                 //  remove drug if the intake date is after the day after the given date of calendarEvent
-                if (drugObjectInIndex.occurrence.event_id == drugObj.occurrence.event_id
+                if (drugObjectInIndex.occurrence.eventId == drugObj.occurrence.eventId
                     && DateUtils.isDateAfter(
                         calendarEvents[index].intakeTime, calendarTomorrow.time
                     )

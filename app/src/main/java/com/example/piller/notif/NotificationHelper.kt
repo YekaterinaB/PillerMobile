@@ -45,7 +45,7 @@ object NotificationHelper {
         currentProfile: String,
         email: String
     ) {
-        val id = drug.occurrence.event_id.hashCode()
+        val id = drug.occurrence.eventId.hashCode()
         val notificationBuilder = buildNotification(context, drug, currentProfile, email)
 
         val notificationManager = NotificationManagerCompat.from(context)

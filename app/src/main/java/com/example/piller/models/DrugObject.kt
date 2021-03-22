@@ -10,5 +10,7 @@ data class DrugObject(
     @SerializedName("name") var drugName: String,
     @SerializedName("rxcui") var rxcui: Int,
     @SerializedName("taken_id") var taken_id: String = "",
-    @SerializedName("occurrence") var occurrence: Occurrence = Occurrence()
-) : Parcelable
+    @SerializedName("occurrence") var occurrence: Occurrence = Occurrence(),
+    @SerializedName("dose") var dose: Dose=Dose()
+
+    ) : Parcelable
