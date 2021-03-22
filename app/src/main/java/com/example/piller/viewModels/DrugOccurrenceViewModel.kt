@@ -133,7 +133,7 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     private fun updateDrugInfo(response: Response<ResponseBody>) {
         val responseObject = JSONObject(response.body()!!.string())
-        drug.occurrence.event_id = responseObject.get("event_id").toString()
+        drug.occurrence.eventId = responseObject.get("event_id").toString()
         drug.taken_id = responseObject.get("taken_id").toString()
         DrugMap.instance.setDrugObject(drug.calendarId,drug)
     }
@@ -146,7 +146,7 @@ class DrugOccurrenceViewModel : ViewModel() {
         context: Context
     ) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.updateDrugOccurrence(email, currentProfile, drug.occurrence.event_id, drug).enqueue(
+        retrofit.updateDrugOccurrence(email, currentProfile, drug.occurrence.eventId, drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not add drug."
