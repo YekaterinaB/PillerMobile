@@ -22,6 +22,7 @@ import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugOccurrenceViewModel
+import kotlinx.android.synthetic.main.activity_drug_occurrence.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,10 +42,13 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var weekdayThursdayCB: CheckboxWithTextInside
     private lateinit var weekdayFridayCB: CheckboxWithTextInside
     private lateinit var weekdaySaturdayCB: CheckboxWithTextInside
+    private lateinit var setRepeatEnd: Switch
+    private lateinit var repeatEndDateTV: TextView
     private lateinit var currentProfileName: String
     private lateinit var loggedEmail: String
     private lateinit var viewModel: DrugOccurrenceViewModel
     private var drugIntakeTime: Date = Date()
+    private var drugRepeatEnd: Date = Date()
     private var repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
     private var isInEditMode = false
     private var firstClickOnLabel = true
@@ -182,7 +186,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         //  initiate start date
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = drugIntakeTime.time
-        setDateLabel(
+        setRepeatStartDateLabel(
             calendar.get(Calendar.DAY_OF_MONTH),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.YEAR)
@@ -190,15 +194,35 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
         //  initiate start time
         setTimeLabel(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE))
+
+        drugRepeatEnd = Date(viewModel.getDrug().occurrence.repeatEnd)
+        if (drugRepeatEnd.time > 0) {
+            calendar.timeInMillis = drugRepeatEnd.time
+            setRepeatEnd.isChecked = true
+            repeatEndDateTV.visibility = View.VISIBLE
+        } else {
+            drugRepeatEnd = Date(DateUtils.getTomorrowDateInMillis(Date()))
+        }
+        calendar.timeInMillis = DateUtils.getTomorrowDateInMillis(Date())
+        setRepeatEndDateLabel(
+            calendar.get(Calendar.DAY_OF_MONTH),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.YEAR)
+        )
+
     }
 
     private fun initListeners() {
         drugOccurrencesDate.setOnClickListener {
-            showDatePickerDialog()
+            showStartDatePickerDialog()
         }
 
         drugOccurrencesTime.setOnClickListener {
             showTimePickerDialog()
+        }
+
+        repeatEndDateTV.setOnClickListener {
+            showEndDatePickerDialog()
         }
 
         newDrugName.setOnLongClickListener {
@@ -246,6 +270,18 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         weekdaySaturdayCB.setOnClickListener {
             setWeekdayChecked(7, weekdaySaturdayCB.isChecked)
         }
+
+        setRepeatEnd.setOnClickListener {
+            setRepeatEndDateVisibility(setRepeatEnd.isChecked)
+        }
+    }
+
+    private fun setRepeatEndDateVisibility(shouldShow: Boolean) {
+        if (shouldShow) {
+            repeatEndDateTV.visibility = View.VISIBLE
+        } else {
+            repeatEndDateTV.visibility = View.GONE
+        }
     }
 
     /**
@@ -274,6 +310,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         weekdaySaturdayCB = findViewById(R.id.ndo_weekday_sat)
         drugRepeatsOnEditText = findViewById(R.id.ndo_repeat_every_number)
         drugRepeatOnSpinner = findViewById(R.id.ndo_repeat_options_spinner)
+        setRepeatEnd = findViewById(R.id.ndo_has_repeat_end)
+        repeatEndDateTV = findViewById(R.id.ndo_repeat_end_date)
     }
 
     private fun setTimeLabel(hour: Int, minutes: Int) {
@@ -295,7 +333,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         drugIntakeTime.time = calTime.time
     }
 
-    private fun setDateLabel(day: Int, month: Int, year: Int) {
+    private fun setRepeatStartDateLabel(day: Int, month: Int, year: Int) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val calDate: Date
         if (isInEditMode && firstClickOnLabel) {
@@ -333,7 +371,48 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         tpd.show()
     }
 
-    private fun showDatePickerDialog() {
+    private fun showEndDatePickerDialog() {
+        val startCalendar = Calendar.getInstance()
+        startCalendar.timeInMillis = drugIntakeTime.time
+        val endCalendar = Calendar.getInstance()
+        endCalendar.timeInMillis = startCalendar.timeInMillis
+        DateUtils.setCalendarTime(endCalendar, 0, 0, 0)
+        //  minimum end date is day after start date
+        endCalendar.add(Calendar.DATE, 1)
+        val year = startCalendar.get(Calendar.YEAR)
+        val month = startCalendar.get(Calendar.MONTH)
+        val day = startCalendar.get(Calendar.DAY_OF_MONTH)
+
+        val dpd =
+            DatePickerDialog(
+                this,
+                { _, yearSelected, monthOfYear, dayOfMonth ->
+                    setRepeatEndDateLabel(dayOfMonth, monthOfYear, yearSelected)
+                    val cal = Calendar.getInstance()
+                    cal.set(yearSelected, monthOfYear, dayOfMonth)
+                    drugRepeatEnd = cal.time
+                },
+                year,
+                month,
+                day
+            )
+        dpd.datePicker.minDate = endCalendar.timeInMillis
+        dpd.show()
+    }
+
+    private fun setRepeatEndDateLabel(day: Int, month: Int, year: Int) {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val calDate: Date
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = drugIntakeTime.time
+        calendar.set(year, month, day)
+        calDate = calendar.time
+
+        // Display Selected date in textbox
+        repeatEndDateTV.text = sdf.format(calDate)
+    }
+
+    private fun showStartDatePickerDialog() {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = drugIntakeTime.time
         val year = calendar.get(Calendar.YEAR)
@@ -345,7 +424,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                 this,
                 { _, yearSelected, monthOfYear, dayOfMonth ->
                     viewModel.setDrugRepeatStartDate(yearSelected, monthOfYear, dayOfMonth)
-                    setDateLabel(dayOfMonth, monthOfYear, yearSelected)
+                    setRepeatStartDateLabel(dayOfMonth, monthOfYear, yearSelected)
+                    updateRepeatEndDate(yearSelected, monthOfYear, dayOfMonth)
                 },
                 year,
                 month,
@@ -353,6 +433,21 @@ class DrugOccurrenceActivity : AppCompatActivity() {
             )
 
         dpd.show()
+    }
+
+    private fun updateRepeatEndDate(yearSelected: Int, monthOfYear: Int, dayOfMonth: Int) {
+        val selectedDate = Calendar.getInstance()
+        selectedDate.set(yearSelected, monthOfYear, dayOfMonth)
+        if (DateUtils.isDateBefore(drugRepeatEnd, selectedDate.time)) {
+            val endCalendar = Calendar.getInstance()
+            endCalendar.timeInMillis =
+                DateUtils.getDayAfterInMillis(yearSelected, monthOfYear, dayOfMonth)
+            setRepeatEndDateLabel(
+                endCalendar.get(Calendar.DAY_OF_MONTH),
+                endCalendar.get(Calendar.MONTH),
+                endCalendar.get(Calendar.YEAR)
+            )
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -365,6 +460,12 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         //  todo set drug occurrences before sending to server!!
         return when (item.itemId) {
             R.id.ndo_menu_add_drug -> {
+                //  if the user didn't choose repeat end - then set it to 0
+                if (setRepeatEnd.isChecked) {
+                    viewModel.setDrugRepeatEndDate(drugRepeatEnd)
+                } else {
+                    viewModel.removeDrugRepeatEndDate()
+                }
                 if (isInEditMode) {
                     //edit
                     viewModel.updateDrugOccurrence(

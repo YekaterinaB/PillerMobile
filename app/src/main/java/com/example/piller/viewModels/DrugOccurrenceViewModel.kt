@@ -63,6 +63,14 @@ class DrugOccurrenceViewModel : ViewModel() {
         drug.occurrence.repeatStart = calendar.timeInMillis
     }
 
+    fun setDrugRepeatEndDate(repeatEndDate: Date) {
+        drug.occurrence.repeatEnd = repeatEndDate.time
+    }
+
+    fun removeDrugRepeatEndDate() {
+        drug.occurrence.repeatEnd = 0
+    }
+
     fun setDrugRepeatStartTime(hours: Int, minutes: Int) {
         val calendar = Calendar.getInstance()
         //  in order to save the previous selected date - set the time in millis to the current
@@ -135,7 +143,7 @@ class DrugOccurrenceViewModel : ViewModel() {
         val responseObject = JSONObject(response.body()!!.string())
         drug.occurrence.eventId = responseObject.get("event_id").toString()
         drug.taken_id = responseObject.get("taken_id").toString()
-        DrugMap.instance.setDrugObject(drug.calendarId,drug)
+        DrugMap.instance.setDrugObject(drug.calendarId, drug)
     }
 
     fun updateDrugOccurrence(
@@ -146,33 +154,38 @@ class DrugOccurrenceViewModel : ViewModel() {
         context: Context
     ) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.updateDrugOccurrence(email, currentProfile, drug.occurrence.eventId, drug).enqueue(
-            object : retrofit2.Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    snackBarMessage.value = "Could not add drug."
-                }
+        retrofit.updateDrugOccurrence(email, currentProfile, drug.occurrence.event_id, drug)
+            .enqueue(
+                object : retrofit2.Callback<ResponseBody> {
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        snackBarMessage.value = "Could not add drug."
+                    }
+                    override fun onResponse(
+                        call: Call<ResponseBody>,
+                        response: Response<ResponseBody>
+                    ) {
+                        if (response.raw().code() == 200) {
+                            updatedDrugSuccess.value = true
+                            AlarmScheduler.removeAlarmsForReminder(
+                                context,
+                                drug,
+                                email,
+                                currentProfile
+                            )
+                            updateDrugInfo(response)
+                            AlarmScheduler.scheduleAlarmsForReminder(
+                                context,
+                                email,
+                                currentProfile,
+                                drug
+                            )
 
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if (response.raw().code() == 200) {
-                        updatedDrugSuccess.value = true
-                        AlarmScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
-                        updateDrugInfo(response)
-                        AlarmScheduler.scheduleAlarmsForReminder(
-                            context,
-                            email,
-                            currentProfile,
-                            drug
-                        )
-
-                    } else {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        snackBarMessage.value = jObjError["message"] as String
+                        } else {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            snackBarMessage.value = jObjError["message"] as String
+                        }
                     }
                 }
-            }
-        )
+            )
     }
 }
