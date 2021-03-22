@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.piller.DrugMap
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
+import com.example.piller.models.Dose
 import com.example.piller.models.DrugObject
 import com.example.piller.notif.AlarmScheduler
 import okhttp3.ResponseBody
@@ -143,6 +144,7 @@ class DrugOccurrenceViewModel : ViewModel() {
         val responseObject = JSONObject(response.body()!!.string())
         drug.occurrence.eventId = responseObject.get("event_id").toString()
         drug.taken_id = responseObject.get("taken_id").toString()
+        drug.dose.doseId = responseObject.get("dose_id").toString()
         DrugMap.instance.setDrugObject(drug.calendarId, drug)
     }
 
@@ -160,6 +162,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         snackBarMessage.value = "Could not add drug."
                     }
+
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
@@ -187,5 +190,9 @@ class DrugOccurrenceViewModel : ViewModel() {
                     }
                 }
             )
+    }
+
+    fun setDrugDosage(measurementType: String, totalDose: Int) {
+        drug.dose = Dose(measurementType = measurementType, totalDose = totalDose)
     }
 }

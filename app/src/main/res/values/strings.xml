@@ -46,6 +46,14 @@
         <item>Repeat on…</item>
     </string-array>
 
+    <string-array name="drug_dosage">
+        <item>mg</item>
+        <item>g</item>
+        <item>IU</item>
+        <item>mcg</item>
+        <item>mEq</item>
+    </string-array>
+
     <string name="fab_pill_image_label">Pill Image</string>
     <string name="fab_box_image">Box Image</string>
     <string name="fab_drug_name">Drug Name</string>
@@ -87,5 +95,7 @@
     <string name="dbi_search_by_image">Search By Image</string>
     <string name="ndo_last_occurrence_date">Last Occurrence Date</string>
     <string name="ndo_set_last_occurrence_date">Set Last Occurrence Date</string>
+    <string name="ndo_select_dosage">Select Dosage:</string>
+    <string name="ndo_1">1</string>
 
 </resources>
