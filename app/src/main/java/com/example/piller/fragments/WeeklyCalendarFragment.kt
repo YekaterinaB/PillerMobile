@@ -24,6 +24,7 @@ import com.example.piller.activities.AddNewDrugActivity
 import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.listAdapters.EliAdapter
 import com.example.piller.models.CalendarEvent
+import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.example.piller.viewModels.WeeklyCalendarViewModel
@@ -205,7 +206,7 @@ class WeeklyCalendarFragment : Fragment() {
         intent.putExtra(DbConstants.ADD_DRUG_TYPE, addType)
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
         intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
-        intent.putExtra(DbConstants.CALENDAR_ID,weeklyCalendarViewModel.calendarId)
+        intent.putExtra(DbConstants.CALENDAR_ID, weeklyCalendarViewModel.calendarId)
         startActivity(intent)
     }
 
@@ -292,6 +293,20 @@ class WeeklyCalendarFragment : Fragment() {
         newDrugCameraLabel = fragment.findViewById(R.id.calendar_drug_camera_label)
         newDrugBoxLabel = fragment.findViewById(R.id.calendar_drug_box_label)
         newDrugNameLabel = fragment.findViewById(R.id.calendar_drug_name_label)
+
+        initWeekDatesString(fragment)
+    }
+
+    private fun initWeekDatesString(fragment: View) {
+        val weekStringDates = DateUtils.getDatesOfCurrentWeek()
+        fragment.findViewById<TextView>(R.id.calendar_sunday_date_label).text = weekStringDates[0]
+        fragment.findViewById<TextView>(R.id.calendar_monday_date_label).text = weekStringDates[1]
+        fragment.findViewById<TextView>(R.id.calendar_tuesday_date_label).text = weekStringDates[2]
+        fragment.findViewById<TextView>(R.id.calendar_wednesday_date_label).text =
+            weekStringDates[3]
+        fragment.findViewById<TextView>(R.id.calendar_thursday_date_label).text = weekStringDates[4]
+        fragment.findViewById<TextView>(R.id.calendar_friday_date_label).text = weekStringDates[5]
+        fragment.findViewById<TextView>(R.id.calendar_saturday_date_label).text = weekStringDates[6]
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

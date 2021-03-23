@@ -35,6 +35,14 @@
                 android:text="@string/sunday_label"
                 android:textStyle="bold|italic" />
 
+            <TextView
+                android:id="@+id/calendar_sunday_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/sunday_label"
+                android:textSize="12sp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/calendar_sunday_list"
                 android:layout_width="match_parent"
@@ -59,6 +67,14 @@
                 android:gravity="center"
                 android:text="@string/monday_label"
                 android:textStyle="bold|italic" />
+
+            <TextView
+                android:id="@+id/calendar_monday_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/monday_label"
+                android:textSize="12sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/calendar_monday_list"
@@ -85,6 +101,14 @@
                 android:text="@string/tuesday_label"
                 android:textStyle="bold|italic" />
 
+            <TextView
+                android:id="@+id/calendar_tuesday_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/tuesday_label"
+                android:textSize="12sp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/calendar_tuesday_list"
                 android:layout_width="match_parent"
@@ -109,6 +133,14 @@
                 android:gravity="center"
                 android:text="@string/wednesday_label"
                 android:textStyle="bold|italic" />
+
+            <TextView
+                android:id="@+id/calendar_wednesday_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/wednesday_label"
+                android:textSize="12sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/calendar_wednesday_list"
@@ -149,6 +181,14 @@
                 android:text="@string/thursday_label"
                 android:textStyle="bold|italic" />
 
+            <TextView
+                android:id="@+id/calendar_thursday_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/thursday_label"
+                android:textSize="12sp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/calendar_thursday_list"
                 android:layout_width="match_parent"
@@ -174,6 +214,14 @@
                 android:text="@string/friday_label"
                 android:textStyle="bold|italic" />
 
+            <TextView
+                android:id="@+id/calendar_friday_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/friday_label"
+                android:textSize="12sp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/calendar_friday_list"
                 android:layout_width="match_parent"
@@ -198,6 +246,14 @@
                 android:gravity="center"
                 android:text="@string/saturday_label"
                 android:textStyle="bold|italic" />
+
+            <TextView
+                android:id="@+id/calendar_saturday_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/saturday_label"
+                android:textSize="12sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/calendar_saturday_list"
