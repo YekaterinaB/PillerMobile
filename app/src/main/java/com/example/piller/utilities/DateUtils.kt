@@ -1,5 +1,6 @@
 package com.example.piller.utilities
 
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -21,6 +22,19 @@ class DateUtils {
             val calendar = Calendar.getInstance()
             calendar.add(Calendar.DATE, 1)
             return calendar
+        }
+
+        fun getDatesOfCurrentWeek(): List<String> {
+            val cal = Calendar.getInstance()
+            val stringDates = mutableListOf<String>()
+            cal.time = getFirstDayOfWeek()
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+            for (i in 0 until 7) {
+                stringDates.add(sdf.format(cal.time))
+                cal.add(Calendar.DATE, 1)
+            }
+
+            return stringDates
         }
 
         fun areDatesEqual(date1: Calendar, date2: Calendar): Boolean {
