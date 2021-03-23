@@ -15,6 +15,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/di_drug_name"
         android:textAlignment="center"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,11 +24,11 @@
         android:id="@+id/di_drug_intake_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:text="@string/di_00_00"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/di_drug_name" />
+        app:layout_constraintTop_toBottomOf="@+id/di_drug_dosage" />
 
     <CheckBox
         android:id="@+id/di_drug_taken"
@@ -49,4 +50,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/di_drug_taken"
         app:srcCompat="@drawable/pill" />
+
+    <TextView
+        android:id="@+id/di_drug_dosage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/di_dosage"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/di_drug_name" />
 </androidx.constraintlayout.widget.ConstraintLayout>

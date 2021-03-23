@@ -97,5 +97,6 @@
     <string name="ndo_set_last_occurrence_date">Set Last Occurrence Date</string>
     <string name="ndo_select_dosage">Select Dosage:</string>
     <string name="ndo_1">1</string>
+    <string name="di_dosage">dosage</string>
 
 </resources>
