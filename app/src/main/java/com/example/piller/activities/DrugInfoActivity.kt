@@ -30,6 +30,7 @@ class DrugInfoActivity : AppCompatActivity() {
     private lateinit var _profileViewModel: ProfileViewModel
 
     private lateinit var _drugNameTV: TextView
+    private lateinit var _drugDosageTV: TextView
     private lateinit var _drugIntakeTimeTV: TextView
     private lateinit var _drugTakenCB: CheckBox
     private lateinit var _drugImageIV: ImageView
@@ -52,7 +53,8 @@ class DrugInfoActivity : AppCompatActivity() {
     private fun initListeners() {
         _drugTakenCB.setOnClickListener {
             //  todo change the ms and seconds of _calendarEvent.intake_time.time to 0
-            val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
+            val drugObject =
+                DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
             _viewModel.updateDrugIntake(
                 _drugTakenCB.isChecked, drugObject.taken_id, _calendarEvent.intakeTime.time
             )
@@ -93,7 +95,10 @@ class DrugInfoActivity : AppCompatActivity() {
             this,
             Observer { success ->
                 if (success) {
-                    val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
+                    val drugObject = DrugMap.instance.getDrugObject(
+                        _calendarEvent.calendarId,
+                        _calendarEvent.drugId
+                    )
                     //  remove drug image from cache
                     ImageUtils.deleteFile(drugObject.rxcui.toString(), this)
                     _viewModel.deleteSuccess.value = false
@@ -126,6 +131,7 @@ class DrugInfoActivity : AppCompatActivity() {
 
     private fun initViews() {
         _drugNameTV = findViewById(R.id.di_drug_name)
+        _drugDosageTV = findViewById(R.id.di_drug_dosage)
         _drugIntakeTimeTV = findViewById(R.id.di_drug_intake_time)
         _drugTakenCB = findViewById(R.id.di_drug_taken)
         _drugImageIV = findViewById(R.id.di_drug_image)
@@ -134,10 +140,14 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun initViewsData() {
-        val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
+        val drugObject =
+            DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
         _drugNameTV.text = drugObject.drugName
         setIntakeTimeTextView()
         _drugTakenCB.isChecked = _calendarEvent.isTaken
+
+        val dosage = "Total Dosage: ${drugObject.dose.totalDose} ${drugObject.dose.measurementType}"
+        _drugDosageTV.text = dosage
     }
 
     private fun setIntakeTimeTextView() {
@@ -155,10 +165,11 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun initViewModels() {
-        val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
+        val drugObject =
+            DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
 
         _viewModel = ViewModelProvider(this).get(DrugInfoViewModel::class.java)
-        _viewModel.initiateDrugImage(this,drugObject.rxcui.toString())
+        _viewModel.initiateDrugImage(this, drugObject.rxcui.toString())
         _profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
     }
 
@@ -199,7 +210,8 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun goToEditActivity() {
-        val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
+        val drugObject =
+            DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
         val intent = Intent(
             this,
             DrugOccurrenceActivity::class.java
@@ -217,7 +229,8 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun showDeletePopup() {
-        val drugObject=DrugMap.instance.getDrugObject(_calendarEvent.calendarId,_calendarEvent.drugId)
+        val drugObject =
+            DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle("Are you sure you want to delete this drug?")
         builder.setItems(arrayOf<CharSequence>(
