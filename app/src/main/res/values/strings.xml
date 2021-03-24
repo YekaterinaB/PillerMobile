@@ -98,5 +98,6 @@
     <string name="ndo_select_dosage">Select Dosage:</string>
     <string name="ndo_1">1</string>
     <string name="di_dosage">dosage</string>
+    <string name="ndo_start_taking_medicine_on">Start Taking Medicine On:</string>
 
 </resources>

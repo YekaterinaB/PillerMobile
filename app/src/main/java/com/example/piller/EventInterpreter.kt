@@ -41,7 +41,6 @@ class EventInterpreter {
         }
     }
 
-
     private fun getCalendarClosestCurrent(
         start: Date,
         end: Date,
@@ -97,7 +96,7 @@ class EventInterpreter {
         val calendarClosestRepeat = Calendar.getInstance()
         calendarClosestRepeat.timeInMillis =
             (calendarValuesMap["calendarStartRepeat"] as Calendar).timeInMillis
-        val onlyOnce = isOnlyRepeat(drugObject.occurrence)
+        val onlyOnce = isOnlyRepeatOnce(drugObject.occurrence)
 
         return createEventListFromRepeats(
             drugObject, calendarValuesMap,
@@ -183,7 +182,7 @@ class EventInterpreter {
     }
 
 
-    private fun isOnlyRepeat(occurrence: Occurrence): Boolean =
+    fun isOnlyRepeatOnce(occurrence: Occurrence): Boolean =
         (occurrence.repeatYear == 0 && occurrence.repeatMonth == 0 &&
                 occurrence.repeatWeek == 0 && occurrence.repeatDay == 0)
 
