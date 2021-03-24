@@ -3,6 +3,7 @@ package com.example.piller.utilities
 import com.example.piller.models.Dose
 import com.example.piller.models.DrugObject
 import com.example.piller.models.Occurrence
+import com.example.piller.models.Refill
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -14,16 +15,27 @@ class parserUtils {
             calendarId: String
         ): DrugObject {
             val takenId = intakeDates.get("taken_id").toString()
-            val occurrenceObject = drug.get("occurrence") as JSONObject
-            val doseObject = drug.get("dose") as JSONObject
-            val drugOccur = parseOccurrenceObject(occurrenceObject)
-            val drugDose = parseDoseObject(doseObject)
+            val drugOccur = parseOccurrenceObject(drug.get("occurrence") as JSONObject)
+            val drugDose = parseDoseObject(drug.get("dose") as JSONObject)
+            val drugRefill = parseRefillObject(drug.get("refill") as JSONObject)
+
             return DrugObject(
                 calendarId,
                 drug.get("name") as String,
                 drug.get("rxcui").toString().toInt(),
-                takenId, drugOccur, drugDose
+                takenId, drugOccur, drugDose,drugRefill
             )
+        }
+
+        private fun parseRefillObject(refillObject: JSONObject): Refill {
+            val refill = Refill()
+            refill.refillId = refillObject.get("refill_id") as String
+            val refillInfo = refillObject.get("refill_info") as JSONObject
+            refill.reminderTime = refillInfo.get("reminder_time") as String
+            refill.isToNotify = refillInfo.get("is_to_notify") as Boolean
+            refill.pillsLeft = refillInfo.get("pills_left") as Int
+            refill.pillsBeforeReminder = refillInfo.get("pills_before_reminder") as Int
+            return refill
         }
 
         private fun parseDoseObject(doseObject: JSONObject): Dose {

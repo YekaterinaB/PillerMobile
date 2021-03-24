@@ -7,15 +7,17 @@ import retrofit2.http.*
 interface DrugIntakeAPI {
     @Headers("Content-Type: application/json")
 
-    @POST("drugIntakes/setIntakeTaken/{taken_id}/{date}")
+    @POST("drugIntakes/setIntakeTaken/{taken_id}/{refill_id}/{date}")
     fun setIntakeTaken(
         @Path("taken_id") taken_id: String,
+        @Path("refill_id") refill_id: String,
         @Path("date") date: Long
     ): Call<ResponseBody>
 
-    @POST("drugIntakes/setIntakeNotTaken/{taken_id}/{date}")
+    @POST("drugIntakes/setIntakeNotTaken/{taken_id}/{refill_id}/{date}")
     fun setIntakeNotTaken(
         @Path("taken_id") taken_id: String,
+        @Path("refill_id") refill_id: String,
         @Path("date") date: Long
     ): Call<ResponseBody>
 
