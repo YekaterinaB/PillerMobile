@@ -107,7 +107,7 @@ class DrugInfoViewModel : ViewModel() {
                             currentProfile,
                             drug
                         )
-                        DrugMap.instance.setDrugObject(drug.calendarId,drug) //update drug in map
+                        DrugMap.instance.setDrugObject(drug.calendarId, drug) //update drug in map
                     } else {
                         mutableToastError.value = "Could not delete future occurrences drug."
                     }
@@ -167,16 +167,16 @@ class DrugInfoViewModel : ViewModel() {
         return false
     }
 
-    fun updateDrugIntake(taken: Boolean, intakeId: String, date: Long) {
+    fun updateDrugIntake(taken: Boolean, intakeId: String, refillId: String, date: Long) {
         if (taken) {
-            setIntakeTaken(intakeId, date)
+            setIntakeTaken(intakeId, refillId,date)
         } else {
-            setIntakeNotTaken(intakeId, date)
+            setIntakeNotTaken(intakeId,refillId, date)
         }
     }
 
-    private fun setIntakeTaken(intakeId: String, date: Long) {
-        drugIntakeAPIRetrofit.setIntakeTaken(intakeId, date).enqueue(
+    private fun setIntakeTaken(intakeId: String, refillId: String, date: Long) {
+        drugIntakeAPIRetrofit.setIntakeTaken(intakeId, refillId, date).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not set intake."
@@ -196,8 +196,8 @@ class DrugInfoViewModel : ViewModel() {
         )
     }
 
-    private fun setIntakeNotTaken(intakeId: String, date: Long) {
-        drugIntakeAPIRetrofit.setIntakeNotTaken(intakeId, date).enqueue(
+    private fun setIntakeNotTaken(intakeId: String, refillId: String, date: Long) {
+        drugIntakeAPIRetrofit.setIntakeNotTaken(intakeId, refillId, date).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not set intake."

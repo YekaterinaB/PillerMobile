@@ -145,6 +145,7 @@ class DrugOccurrenceViewModel : ViewModel() {
         drug.occurrence.eventId = responseObject.get("event_id").toString()
         drug.taken_id = responseObject.get("taken_id").toString()
         drug.dose.doseId = responseObject.get("dose_id").toString()
+        drug.refill.refillId = responseObject.get("refill_id").toString()
         DrugMap.instance.setDrugObject(drug.calendarId, drug)
     }
 

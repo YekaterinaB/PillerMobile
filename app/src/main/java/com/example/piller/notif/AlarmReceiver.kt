@@ -43,7 +43,7 @@ class AlarmReceiver : BroadcastReceiver() {
         if (currentProfile != null && email != null && bundleCalendarEvent != null) {
             val drug =
                 bundleCalendarEvent.getParcelable<DrugObject>(DbConstants.DRUG_OBJECT)!!
-            addIntakeDateFalse(drug.taken_id)
+            addIntakeDateFalse(drug.taken_id,drug.refill.refillId)
             if (shouldShowNotifications(context)) {
                 NotificationHelper.createNotification(context, drug, currentProfile, email)
             }
@@ -56,7 +56,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun addIntakeDateFalse(takenId: String) {
+    private fun addIntakeDateFalse(takenId: String,refillId:String) {
         val calCurr = Calendar.getInstance()
         DateUtils.setCalendarTime(
             calCurr,
@@ -64,7 +64,7 @@ class AlarmReceiver : BroadcastReceiver() {
             calCurr.get(Calendar.MINUTE)
         )
         val retrofit = ServiceBuilder.buildService(DrugIntakeAPI::class.java)
-        retrofit.setIntakeNotTaken(takenId, calCurr.timeInMillis).enqueue(
+        retrofit.setIntakeNotTaken(takenId,refillId, calCurr.timeInMillis).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
 

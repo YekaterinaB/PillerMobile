@@ -56,7 +56,8 @@ class DrugInfoActivity : AppCompatActivity() {
             val drugObject =
                 DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
             _viewModel.updateDrugIntake(
-                _drugTakenCB.isChecked, drugObject.taken_id, _calendarEvent.intakeTime.time
+                _drugTakenCB.isChecked, drugObject.taken_id, drugObject.refill.refillId,
+                _calendarEvent.intakeTime.time
             )
         }
     }
