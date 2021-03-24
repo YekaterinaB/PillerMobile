@@ -19,7 +19,7 @@ import java.util.*
 
 class WeeklyCalendarViewModel : ViewModel() {
     private val eventInterpreter = EventInterpreter()
-    lateinit var calendarId:String
+    lateinit var calendarId: String
     val mutableCurrentWeeklyCalendar: MutableLiveData<Array<MutableList<CalendarEvent>>> by lazy {
         MutableLiveData<Array<MutableList<CalendarEvent>>>()
     }
@@ -45,11 +45,12 @@ class WeeklyCalendarViewModel : ViewModel() {
     }
 
     fun deleteDrug(calendarEvent: CalendarEvent) {
-        val drugObj=DrugMap.instance.getDrugObject(calendarEvent.calendarId,calendarEvent.drugId)
+        val drugObj = DrugMap.instance.getDrugObject(calendarEvent.calendarId, calendarEvent.drugId)
         for (calendarEvents in mutableCurrentWeeklyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
-                val drugObjectInIndex=DrugMap.instance.getDrugObject(
-                    calendarEvents[index].calendarId,calendarEvents[index].drugId)
+                val drugObjectInIndex = DrugMap.instance.getDrugObject(
+                    calendarEvents[index].calendarId, calendarEvents[index].drugId
+                )
                 if (drugObjectInIndex.occurrence.eventId == drugObj.occurrence.eventId) {
                     calendarEvents.removeAt(index)
                 }
@@ -58,24 +59,22 @@ class WeeklyCalendarViewModel : ViewModel() {
 
         //  do the next line in order to notify the observers (because the for loop above doesn't
         //  update mutableCurrentWeeklyCalendar.value directly, but its list content
-        DrugMap.instance.removeDrugFromMap(drugObj.calendarId,drugObj)
+        DrugMap.instance.removeDrugFromMap(drugObj.calendarId, drugObj)
         mutableDeleteSuccess.value = true
     }
 
     fun deleteFutureDrug(calendarEvent: CalendarEvent) {
-        val calendarTomorrow = Calendar.getInstance()
-        calendarTomorrow.timeInMillis =
-            DateUtils.getTomorrowDateInMillis(calendarEvent.intakeTime)
-        val drugObj=DrugMap.instance.getDrugObject(calendarEvent.calendarId,calendarEvent.drugId)
+        val drugObj = DrugMap.instance.getDrugObject(calendarEvent.calendarId, calendarEvent.drugId)
 
         for (calendarEvents in mutableCurrentWeeklyCalendar.value!!) {
             for (index in calendarEvents.size - 1 downTo 0) {
-                val drugObjectInIndex=DrugMap.instance.getDrugObject(
-                    calendarEvents[index].calendarId,calendarEvents[index].drugId)
+                val drugObjectInIndex = DrugMap.instance.getDrugObject(
+                    calendarEvents[index].calendarId, calendarEvents[index].drugId
+                )
                 //  remove drug if the intake date is after the day after the given date of calendarEvent
                 if (drugObjectInIndex.occurrence.eventId == drugObj.occurrence.eventId
                     && DateUtils.isDateAfter(
-                        calendarEvents[index].intakeTime, calendarTomorrow.time
+                        calendarEvents[index].intakeTime, calendarEvent.intakeTime
                     )
                 ) {
                     calendarEvents.removeAt(index)
@@ -122,7 +121,7 @@ class WeeklyCalendarViewModel : ViewModel() {
         val endDate = DateUtils.getLastDayOfWeek()
         val weekEvents = eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate,
-            drugInfoList as JSONArray,calendarId
+            drugInfoList as JSONArray, calendarId
         )
         changeMutableWeeklyCalendar(weekEvents)
     }

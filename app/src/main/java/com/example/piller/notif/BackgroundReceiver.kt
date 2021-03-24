@@ -13,7 +13,7 @@ import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
 import com.example.piller.models.*
 import com.example.piller.utilities.DbConstants
-import com.example.piller.utilities.parserUtils
+import com.example.piller.utilities.ParserUtils
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
@@ -159,7 +159,7 @@ object BackgroundNotificationScheduler {
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
             val intakeDates = drug.get("intake_dates") as JSONObject
-            val drugObject = parserUtils.parsedDrugObject(drug, intakeDates,calendarId)
+            val drugObject = ParserUtils.parsedDrugObject(drug, intakeDates,calendarId)
             AlarmScheduler.scheduleAlarmsForReminder(
                 context,
                 AppPreferences.email,

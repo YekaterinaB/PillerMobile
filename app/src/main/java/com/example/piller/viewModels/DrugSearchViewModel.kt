@@ -169,6 +169,7 @@ class DrugSearchViewModel : ViewModel() {
                 val drugItem = item.get(j) as JSONObject
                 drugs.add(
                     DrugObject(
+                        "", //  drugid is empty because it's search result and we didn't save it in db
                         calendarId,
                         drugName = removeParenthesis(drugItem.getString("name")),
                         rxcui = removeParenthesis(drugItem.get("rxcui").toString()).toInt()

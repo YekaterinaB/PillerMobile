@@ -53,6 +53,7 @@ class AddNewDrugActivity : AppCompatActivity() {
             //  no need to show interaction
             searchViewModel.newDrug.value =
                 DrugObject(
+                    "", //  drugid is empty because it's a new drug and we didn't save it in db
                     searchViewModel.calendarId,
                     searchViewModel.drugSearchNoResult.value!!,
                     0

@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class Occurrence(
-    @SerializedName("event_id") var eventId: String="",
+    @SerializedName("event_id") var eventId: String = "",
     @SerializedName("repeat_year") var repeatYear: Int = 0,
     @SerializedName("repeat_month") var repeatMonth: Int = 0,
     @SerializedName("repeat_day") var repeatDay: Int = 0,

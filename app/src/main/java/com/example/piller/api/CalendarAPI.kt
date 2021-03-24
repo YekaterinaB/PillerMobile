@@ -35,11 +35,11 @@ interface CalendarAPI {
         @Body drug_info: DrugObject
     ): Call<ResponseBody>
 
-    @POST("calendar/updateDrug/{email}/{name}/{event_id}")
+    @POST("calendar/updateDrug/{email}/{name}/{drug_id}")
     fun updateDrugOccurrence(
         @Path("email") email: String,
         @Path("name") name: String,
-        @Path("event_id") event_id: String,
+        @Path("drug_id") drug_id: String,
         @Body drug_info: DrugObject
     ): Call<ResponseBody>
 
@@ -48,14 +48,14 @@ interface CalendarAPI {
     fun deleteDrugByUser(
         @Path("email") email: String,
         @Path("name") name: String,
-        @Query("event_id") event_id: String
+        @Query("drug_id") drug_id: String
     ): Call<ResponseBody>
 
     @PUT("calendar/deleteFutureOccurrencesOfDrugByUser/{email}/{name}")
     fun deleteFutureOccurrencesOfDrugByUser(
         @Path("email") email: String,
         @Path("name") name: String,
-        @Query("event_id") event_id: String,
+        @Query("drug_id") drug_id: String,
         @Query("repeat_end") repeatEnd: String
     ): Call<ResponseBody>
 }

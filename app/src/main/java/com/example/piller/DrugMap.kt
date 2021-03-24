@@ -10,17 +10,14 @@ class DrugMap {
     }
 
     fun setDrugObject(calendarID: String, drugObject: DrugObject) {
-        val drugID = drugObject.drugName + drugObject.rxcui.toString()
         if (drugCache[calendarID] == null) {
             drugCache[calendarID] = mutableMapOf()
         }
-        drugCache[calendarID]!!.put(drugID, drugObject)
+        drugCache[calendarID]!![drugObject.drugId] = drugObject
     }
 
     fun removeDrugFromMap(calendarID: String, drugObject: DrugObject) {
-        val drugID = drugObject.drugName + drugObject.rxcui.toString()
-
-        drugCache[calendarID]?.remove(drugID)
+        drugCache[calendarID]?.remove(drugObject.drugId)
     }
 
 

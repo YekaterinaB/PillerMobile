@@ -6,6 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class DrugObject(
+    @SerializedName("drug_id") var drugId: String,
     @SerializedName("calendar_id") var calendarId: String,
     @SerializedName("name") var drugName: String,
     @SerializedName("rxcui") var rxcui: Int,

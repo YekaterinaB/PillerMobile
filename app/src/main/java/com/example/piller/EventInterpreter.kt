@@ -4,7 +4,7 @@ import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugObject
 import com.example.piller.models.Occurrence
 import com.example.piller.utilities.DateUtils
-import com.example.piller.utilities.parserUtils.Companion.parsedDrugObject
+import com.example.piller.utilities.ParserUtils.Companion.parsedDrugObject
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -135,7 +135,7 @@ class EventInterpreter {
                 DrugMap.instance.setDrugObject(calendarId, drugObject)
                 val event =
                     CalendarEvent(
-                        calendarId, drugObject.drugName + drugObject.rxcui.toString(),
+                        calendarId, drugObject.drugId,
                         indexDay, calendarCurrent.time, calendarRepeatEnd.time, isTaken
                     )
 

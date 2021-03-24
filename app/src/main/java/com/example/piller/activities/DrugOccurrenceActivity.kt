@@ -62,16 +62,20 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drug_occurrence)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        currentProfileName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
-        loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        initDrugIntakeTime(intent.getLongExtra(DbConstants.INTAKE_DATE, -1))
         viewModel = ViewModelProvider(this).get(DrugOccurrenceViewModel::class.java)
-        setDrug(intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!)
+        initAllIntentExtras()
         initViews()
         initViewsInitialData()
         initListeners()
         initViewModelObservers()
         initSpinners()
+    }
+
+    private fun initAllIntentExtras() {
+        currentProfileName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+        loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        initDrugIntakeTime(intent.getLongExtra(DbConstants.INTAKE_DATE, -1))
+        setDrug(intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!)
     }
 
     private fun initDrugIntakeTime(intakeFromIntent: Long) {
@@ -100,7 +104,6 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         drugShouldRepeatSpinner.adapter = drugShouldRepeatAdapter
 
         val drugRepeatOptions = resources.getStringArray(R.array.drug_repeat_options)
-
         val drugRepeatAdapter = ArrayAdapter(
             this,
             R.layout.drug_repeat_option, drugRepeatOptions
@@ -160,13 +163,13 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
 
         val dosages = resources.getStringArray(R.array.drug_dosage)
-        drugDosageList.adapter = DosageAdapter(dosages) { dosage -> dosageSelected(dosage) }
+        drugDosageList.adapter = DosageAdapter(dosages) { dosage -> updateDosage(dosage) }
         drugDosageList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 
-    private fun dosageSelected(measurementType: String) {
-        viewModel.setDrugDosage(measurementType, drugDosageET.text.toString().toInt())
+    private fun updateDosage(measurementType: String) {
+        viewModel.setDrugDosage(measurementType, drugDosageET.text.toString().toFloat())
     }
 
     private fun initViewModelObservers() {
@@ -467,6 +470,32 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
     }
 
+    private fun addOrEditDrug() {
+        viewModel.updateDrugDosage(drugDosageET.text.toString().toFloat())
+        //  if it's in edit mode and the user chose to edit all occurrences - go to update
+        if (isInEditMode
+            && intent.getBooleanExtra(DbConstants.EDIT_ONLY_FUTURE_OCCURRENCES, false)
+        ) {
+            //edit drug
+            viewModel.updateDrugOccurrence(
+                loggedEmail,
+                currentProfileName,
+                repeatOnEnum,
+                drugRepeatsOnEditText.text.toString(),
+                this
+            )
+        } else {
+            //  otherwise, add a new drug
+            viewModel.addNewDrugToUser(
+                loggedEmail,
+                currentProfileName,
+                repeatOnEnum,
+                drugRepeatsOnEditText.text.toString(),
+                this
+            )
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.new_drug_occurrence_menu, menu)
@@ -483,24 +512,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                 } else {
                     viewModel.removeDrugRepeatEndDate()
                 }
-                if (isInEditMode) {
-                    //edit
-                    viewModel.updateDrugOccurrence(
-                        loggedEmail,
-                        currentProfileName,
-                        repeatOnEnum,
-                        drugRepeatsOnEditText.text.toString(),
-                        this
-                    )
-                } else {
-                    viewModel.addNewDrugToUser(
-                        loggedEmail,
-                        currentProfileName,
-                        repeatOnEnum,
-                        drugRepeatsOnEditText.text.toString(),
-                        this
-                    )
-                }
+
+                addOrEditDrug()
                 true
             }
             else -> super.onOptionsItemSelected(item)
