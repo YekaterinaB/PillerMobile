@@ -11,6 +11,7 @@ import com.example.piller.R
 
 class DosageAdapter(
     private var dataSet: Array<String>,
+    private var measurementType: String,
     private val itemClickCallback: (String) -> Unit
 ) :
     RecyclerView.Adapter<DosageAdapter.ViewHolder>() {
@@ -32,11 +33,16 @@ class DosageAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentItem = dataSet[position]
         //  set first item as selected in first run
-        if (position == 0 && isInInit) {
-            itemClickCallback(currentItem)
-            isInInit = false
+        if (!isInInit) {
+            holder.itemView.setBackgroundColor(if (selectedPos == position) Color.GREEN else Color.TRANSPARENT)
+        } else {
+            if (currentItem == measurementType) {
+                itemClickCallback(currentItem)
+                isInInit = false
+                holder.itemView.setBackgroundColor(Color.GREEN)
+                selectedPos = position
+            }
         }
-        holder.itemView.setBackgroundColor(if (selectedPos == position) Color.GREEN else Color.TRANSPARENT)
 
         holder.name.text = currentItem
         holder.layout.setOnClickListener {

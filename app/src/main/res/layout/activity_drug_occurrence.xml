@@ -18,6 +18,8 @@
         android:paddingEnd="8dp"
         android:scrollHorizontally="true"
         android:text="@string/ndo_new_drug_name_label"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +27,7 @@
     <View
         android:id="@+id/view"
         style="@style/Divider.Horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ndo_new_drug_name" />
@@ -35,20 +37,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/ndo_first_occurrence_date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view" />
-
-    <TextView
-        android:id="@+id/ndo_repeat_end_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/ndo_last_occurrence_date"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/ndo_set_last_occurrence_tv"
-        app:layout_constraintTop_toTopOf="@+id/ndo_set_last_occurrence_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
         android:id="@+id/ndo_first_occurrence_time"
@@ -62,18 +54,18 @@
     <View
         android:id="@+id/view2"
         style="@style/Divider.Horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ndo_set_last_occurrence_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/ndo_first_occurrence_date" />
 
     <Spinner
         android:id="@+id/ndo_should_repeat_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,7 +77,7 @@
         android:id="@+id/ndo_repeat_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +101,7 @@
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:autofillHints="1"
             android:ems="10"
             android:inputType="numberSigned"
@@ -130,7 +122,7 @@
             android:textAllCaps="true"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/ndo_has_repeat_end" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ndo_weekday_container"
@@ -222,33 +214,43 @@
                 app:layout_constraintStart_toEndOf="@+id/ndo_weekday_fri"
                 app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Switch
+            android:id="@+id/ndo_has_repeat_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:checked="false"
+            android:switchPadding="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/ndo_set_last_occurrence_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/ndo_set_last_occurrence_date"
+            app:layout_constraintStart_toEndOf="@+id/ndo_has_repeat_end"
+            app:layout_constraintTop_toTopOf="@+id/ndo_has_repeat_end" />
+
+        <TextView
+            android:id="@+id/ndo_repeat_end_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/ndo_last_occurrence_date"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/ndo_set_last_occurrence_tv"
+            app:layout_constraintTop_toTopOf="@+id/ndo_set_last_occurrence_tv" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Switch
-        android:id="@+id/ndo_has_repeat_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:checked="false"
-        android:switchPadding="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ndo_first_occurrence_date" />
-
-    <TextView
-        android:id="@+id/ndo_set_last_occurrence_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/ndo_set_last_occurrence_date"
-        app:layout_constraintStart_toEndOf="@+id/ndo_has_repeat_end"
-        app:layout_constraintTop_toTopOf="@+id/ndo_has_repeat_end" />
 
     <View
         android:id="@+id/view3"
         style="@style/Divider.Horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -275,7 +277,7 @@
         android:id="@+id/ndo_select_dosage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/ndo_select_dosage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -294,5 +296,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ndo_dosage_number" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/ndo_start_taking_medicine_on"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

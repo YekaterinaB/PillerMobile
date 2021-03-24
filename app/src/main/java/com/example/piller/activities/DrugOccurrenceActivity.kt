@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.piller.EventInterpreter
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.customWidgets.CheckboxWithTextInside
@@ -40,18 +41,12 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var drugRepeatOnSpinner: Spinner
     private lateinit var drugRepeatContainer: ConstraintLayout
     private lateinit var drugWeekdayContainer: ConstraintLayout
-    private lateinit var weekdaySundayCB: CheckboxWithTextInside
-    private lateinit var weekdayMondayCB: CheckboxWithTextInside
-    private lateinit var weekdayTuesdayCB: CheckboxWithTextInside
-    private lateinit var weekdayWednesdayCB: CheckboxWithTextInside
-    private lateinit var weekdayThursdayCB: CheckboxWithTextInside
-    private lateinit var weekdayFridayCB: CheckboxWithTextInside
-    private lateinit var weekdaySaturdayCB: CheckboxWithTextInside
     private lateinit var setRepeatEnd: Switch
     private lateinit var repeatEndDateTV: TextView
     private lateinit var currentProfileName: String
     private lateinit var loggedEmail: String
     private lateinit var viewModel: DrugOccurrenceViewModel
+    private var weekDaysCBs = mutableListOf<CheckboxWithTextInside>()
     private var drugIntakeTime: Date = Date()
     private var drugRepeatEnd: Date = Date()
     private var repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
@@ -161,11 +156,78 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+        if (isInEditMode) {
+            initRepeatOnEdit(drugRepeatOptions, drugShouldRepeat)
+            initRepeatEnd()
+        }
 
         val dosages = resources.getStringArray(R.array.drug_dosage)
-        drugDosageList.adapter = DosageAdapter(dosages) { dosage -> updateDosage(dosage) }
+        var initialDosageMeasurementType = dosages[0]
+        if (isInEditMode) {
+            initialDosageMeasurementType = viewModel.getDrug().dose.measurementType
+        }
+        drugDosageList.adapter =
+            DosageAdapter(dosages, initialDosageMeasurementType) { dosage -> updateDosage(dosage) }
         drugDosageList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+    }
+
+    private fun initRepeatEnd() {
+        val currentDrug = viewModel.getDrug()
+        if (currentDrug.occurrence.repeatEnd > 0) {
+            setRepeatEnd.isChecked = true
+            setRepeatEndDateVisibility(true)
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = drugRepeatEnd.time
+            repeatEndDateTV.visibility = View.VISIBLE
+            setRepeatEndDateLabel(
+                calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.YEAR)
+            )
+        }
+    }
+
+    private fun initRepeatOnEdit(
+        drugRepeatOptions: Array<String>,
+        drugShouldRepeat: Array<String>
+    ) {
+        val currentDrug = viewModel.getDrug()
+        val eventInterpreter = EventInterpreter()
+        if (!eventInterpreter.isOnlyRepeatOnce(currentDrug.occurrence)) {
+            //  select correct repeat option and set the repeat value
+            when {
+                currentDrug.occurrence.repeatDay != 0 -> {
+                    drugRepeatOnSpinner.setSelection(drugRepeatOptions.indexOf("Day"))
+                    drugRepeatsOnEditText.setText(currentDrug.occurrence.repeatDay.toString())
+                }
+
+                currentDrug.occurrence.repeatWeek != 0 -> {
+                    drugRepeatOnSpinner.setSelection(drugRepeatOptions.indexOf("Week"))
+                    drugRepeatsOnEditText.setText(currentDrug.occurrence.repeatWeek.toString())
+                    selectWeekDayRepeats(currentDrug.occurrence.repeatWeekday)
+                }
+                currentDrug.occurrence.repeatMonth != 0 -> {
+                    drugRepeatOnSpinner.setSelection(drugRepeatOptions.indexOf("Month"))
+                    drugRepeatsOnEditText.setText(currentDrug.occurrence.repeatMonth.toString())
+                }
+
+                currentDrug.occurrence.repeatYear != 0 -> {
+                    drugRepeatOnSpinner.setSelection(drugRepeatOptions.indexOf("Year"))
+                    drugRepeatsOnEditText.setText(currentDrug.occurrence.repeatYear.toString())
+                }
+            }
+
+            //  show the repeat (repeat/ does not repeat)
+            drugShouldRepeatSpinner.setSelection(drugShouldRepeat.indexOf("Repeat on…"))
+        }
+    }
+
+    private fun selectWeekDayRepeats(repeatWeekday: List<Int>) {
+        for (day in repeatWeekday) {
+            weekDaysCBs[day - 1].isChecked = true
+            setWeekdayChecked(day, true)
+        }
     }
 
     private fun updateDosage(measurementType: String) {
@@ -213,20 +275,19 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         setTimeLabel(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE))
 
         drugRepeatEnd = Date(viewModel.getDrug().occurrence.repeatEnd)
-        if (drugRepeatEnd.time > 0) {
-            calendar.timeInMillis = drugRepeatEnd.time
-            setRepeatEnd.isChecked = true
-            repeatEndDateTV.visibility = View.VISIBLE
-        } else {
-            drugRepeatEnd = Date(DateUtils.getTomorrowDateInMillis(Date()))
-        }
-        calendar.timeInMillis = DateUtils.getTomorrowDateInMillis(Date())
-        setRepeatEndDateLabel(
-            calendar.get(Calendar.DAY_OF_MONTH),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.YEAR)
-        )
+        if (viewModel.getDrug().occurrence.repeatEnd == 0L) {
+            calendar.timeInMillis = DateUtils.getTomorrowDateInMillis(Date())
 
+            setRepeatEndDateLabel(
+                calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.YEAR)
+            )
+        }
+
+        if (isInEditMode) {
+            drugDosageET.setText(viewModel.getDrug().dose.totalDose.toString())
+        }
     }
 
     private fun initListeners() {
@@ -267,26 +328,26 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
         drugRepeatsOnEditText.addTextChangedListener(textWatcher)
 
-        weekdaySundayCB.setOnClickListener {
-            setWeekdayChecked(1, weekdaySundayCB.isChecked)
+        weekDaysCBs[0].setOnClickListener {
+            setWeekdayChecked(1, weekDaysCBs[0].isChecked)
         }
-        weekdayMondayCB.setOnClickListener {
-            setWeekdayChecked(2, weekdayMondayCB.isChecked)
+        weekDaysCBs[1].setOnClickListener {
+            setWeekdayChecked(2, weekDaysCBs[1].isChecked)
         }
-        weekdayTuesdayCB.setOnClickListener {
-            setWeekdayChecked(3, weekdayTuesdayCB.isChecked)
+        weekDaysCBs[2].setOnClickListener {
+            setWeekdayChecked(3, weekDaysCBs[2].isChecked)
         }
-        weekdayWednesdayCB.setOnClickListener {
-            setWeekdayChecked(4, weekdayWednesdayCB.isChecked)
+        weekDaysCBs[3].setOnClickListener {
+            setWeekdayChecked(4, weekDaysCBs[3].isChecked)
         }
-        weekdayThursdayCB.setOnClickListener {
-            setWeekdayChecked(5, weekdayThursdayCB.isChecked)
+        weekDaysCBs[4].setOnClickListener {
+            setWeekdayChecked(5, weekDaysCBs[4].isChecked)
         }
-        weekdayFridayCB.setOnClickListener {
-            setWeekdayChecked(6, weekdayFridayCB.isChecked)
+        weekDaysCBs[5].setOnClickListener {
+            setWeekdayChecked(6, weekDaysCBs[5].isChecked)
         }
-        weekdaySaturdayCB.setOnClickListener {
-            setWeekdayChecked(7, weekdaySaturdayCB.isChecked)
+        weekDaysCBs[6].setOnClickListener {
+            setWeekdayChecked(7, weekDaysCBs[6].isChecked)
         }
 
         setRepeatEnd.setOnClickListener {
@@ -319,13 +380,15 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         drugShouldRepeatSpinner = findViewById(R.id.ndo_should_repeat_spinner)
         drugRepeatContainer = findViewById(R.id.ndo_repeat_container)
         drugWeekdayContainer = findViewById(R.id.ndo_weekday_container)
-        weekdaySundayCB = findViewById(R.id.ndo_weekday_sun)
-        weekdayMondayCB = findViewById(R.id.ndo_weekday_mon)
-        weekdayTuesdayCB = findViewById(R.id.ndo_weekday_tue)
-        weekdayWednesdayCB = findViewById(R.id.ndo_weekday_wed)
-        weekdayThursdayCB = findViewById(R.id.ndo_weekday_thu)
-        weekdayFridayCB = findViewById(R.id.ndo_weekday_fri)
-        weekdaySaturdayCB = findViewById(R.id.ndo_weekday_sat)
+
+        weekDaysCBs.add(findViewById(R.id.ndo_weekday_sun))
+        weekDaysCBs.add(findViewById(R.id.ndo_weekday_mon))
+        weekDaysCBs.add(findViewById(R.id.ndo_weekday_tue))
+        weekDaysCBs.add(findViewById(R.id.ndo_weekday_wed))
+        weekDaysCBs.add(findViewById(R.id.ndo_weekday_thu))
+        weekDaysCBs.add(findViewById(R.id.ndo_weekday_fri))
+        weekDaysCBs.add(findViewById(R.id.ndo_weekday_sat))
+
         drugRepeatsOnEditText = findViewById(R.id.ndo_repeat_every_number)
         drugRepeatOnSpinner = findViewById(R.id.ndo_repeat_options_spinner)
         setRepeatEnd = findViewById(R.id.ndo_has_repeat_end)
