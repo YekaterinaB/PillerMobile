@@ -66,15 +66,12 @@ class FullViewViewModel : ViewModel() {
                 val drugObjByIndex = DrugMap.instance.getDrugObject(
                     calendarEvents[index].calendarId, calendarEvents[index].drugId
                 )
-                val calendarTomorrow = Calendar.getInstance()
                 for (rxcuiToDelete in rxcuisToDelete) {
-                    calendarTomorrow.timeInMillis =
-                        DateUtils.getTomorrowDateInMillis(rxcuiToDelete.intakeTime)
                     val drugObjToDelete = DrugMap.instance.getDrugObject(
                         rxcuiToDelete.calendarId, rxcuiToDelete.drugId
                     )
                     if (drugObjByIndex.rxcui == drugObjToDelete.rxcui && DateUtils.isDateAfter(
-                            calendarEvents[index].intakeTime, calendarTomorrow.time
+                            calendarEvents[index].intakeTime, rxcuiToDelete.intakeTime
                         )
                     ) {
                         calendarEvents.removeAt(index)

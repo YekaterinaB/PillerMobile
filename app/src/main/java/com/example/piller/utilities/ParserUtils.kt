@@ -7,19 +7,21 @@ import com.example.piller.models.Refill
 import org.json.JSONArray
 import org.json.JSONObject
 
-class parserUtils {
+class ParserUtils {
     companion object {
         fun parsedDrugObject(
             drug: JSONObject,
             intakeDates: JSONObject,
             calendarId: String
         ): DrugObject {
+            val drugId = drug.get("drug_id").toString()
             val takenId = intakeDates.get("taken_id").toString()
             val drugOccur = parseOccurrenceObject(drug.get("occurrence") as JSONObject)
             val drugDose = parseDoseObject(drug.get("dose") as JSONObject)
             val drugRefill = parseRefillObject(drug.get("refill") as JSONObject)
 
             return DrugObject(
+                drugId,
                 calendarId,
                 drug.get("name") as String,
                 drug.get("rxcui").toString().toInt(),
@@ -43,7 +45,7 @@ class parserUtils {
             dose.doseId = doseObject.get("dose_id") as String
             val doseInfo = doseObject.get("dose_info") as JSONObject
             dose.measurementType = doseInfo.get("measurement_type") as String
-            dose.totalDose = doseInfo.get("total_dose") as Int
+            dose.totalDose = doseInfo.get("total_dose").toString().toFloat()
             return dose
         }
 

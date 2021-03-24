@@ -53,7 +53,7 @@ class DrugInfoViewModel : ViewModel() {
         drug: DrugObject,
         context: Context
     ) {
-        retrofit.deleteDrugByUser(email, currentProfile, drug.occurrence.eventId).enqueue(
+        retrofit.deleteDrugByUser(email, currentProfile, drug.drugId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -84,7 +84,7 @@ class DrugInfoViewModel : ViewModel() {
         retrofit.deleteFutureOccurrencesOfDrugByUser(
             email,
             currentProfile,
-            drug.occurrence.eventId,
+            drug.drugId,
             repeatEnd
         ).enqueue(
             object : retrofit2.Callback<ResponseBody> {

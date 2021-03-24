@@ -17,6 +17,7 @@ import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
+import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ImageUtils
 import com.example.piller.viewModels.DrugInfoViewModel
@@ -203,14 +204,14 @@ class DrugInfoActivity : AppCompatActivity() {
                 true
             }
             R.id.di_menu_edit -> {
-                goToEditActivity()
+                showEditPopup()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun goToEditActivity() {
+    private fun goToEditActivity(editOnlyFutureOccurrences: Boolean) {
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
         val intent = Intent(
@@ -224,9 +225,9 @@ class DrugInfoActivity : AppCompatActivity() {
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
         intent.putExtra(DbConstants.LOGGED_USER_NAME, _currentProfile)
         intent.putExtra(DbConstants.INTAKE_DATE, _calendarEvent.intakeTime.time)
+        intent.putExtra(DbConstants.EDIT_ONLY_FUTURE_OCCURRENCES, editOnlyFutureOccurrences)
 
         startActivity(intent)
-
     }
 
     private fun showDeletePopup() {
@@ -236,13 +237,12 @@ class DrugInfoActivity : AppCompatActivity() {
         builder.setTitle("Are you sure you want to delete this drug?")
         builder.setItems(arrayOf<CharSequence>(
             "Delete all occurrences",
-            "Delete future occurrences",
+            "Delete this and future occurrences",
             "cancel"
         ),
-            DialogInterface.OnClickListener { dialog, which ->
+            DialogInterface.OnClickListener { _, which ->
                 when (which) {
                     //  delete all occurrences
-
                     0 -> _viewModel.deleteAllOccurrencesOfDrug(
                         email = _loggedEmail,
                         currentProfile = _currentProfile,
@@ -252,16 +252,53 @@ class DrugInfoActivity : AppCompatActivity() {
 
                     //  delete future occurrences
                     1 -> {
-                        val tomorrow =
-                            DateUtils.getTomorrowDateInMillis(_calendarEvent.intakeTime)
-                        _calendarEvent.intakeEndTime = Date(tomorrow)
-                        _viewModel.deleteFutureOccurrencesOfDrug(
-                            email = _loggedEmail,
-                            currentProfile = _currentProfile,
-                            drug = drugObject,
-                            repeatEnd = tomorrow.toString(),
-                            context = this
-                        )
+                        deleteFutureOccurrences(drugObject)
+                    }
+
+                    else -> {
+                        return@OnClickListener
+                    }
+                }
+            })
+        builder.create().show()
+    }
+
+    private fun deleteFutureOccurrences(drugObject: DrugObject) {
+        val today = Calendar.getInstance()
+        today.timeInMillis = _calendarEvent.intakeTime.time
+        DateUtils.setCalendarTime(today, 0, 0, 0)
+        _calendarEvent.intakeEndTime = today.time
+        _viewModel.deleteFutureOccurrencesOfDrug(
+            email = _loggedEmail,
+            currentProfile = _currentProfile,
+            drug = drugObject,
+            repeatEnd = today.timeInMillis.toString(),
+            context = this
+        )
+    }
+
+    private fun showEditPopup() {
+        val drugObject =
+            DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle("Edit")
+        builder.setItems(arrayOf<CharSequence>(
+            "Edit all occurrences",
+            "Edit this and future occurrences",
+            "cancel"
+        ),
+            DialogInterface.OnClickListener { _, which ->
+                when (which) {
+                    //  edit all occurrences
+                    0 -> {
+                        goToEditActivity(true)
+                    }
+
+                    //  edit future occurrences
+                    1 -> {
+                        deleteFutureOccurrences(drugObject)
+                        //  todo wait for it to end?
+                        goToEditActivity(false)
                     }
 
                     else -> {

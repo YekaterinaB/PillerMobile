@@ -256,13 +256,13 @@
 
     <EditText
         android:id="@+id/ndo_dosage_number"
-        android:layout_width="50dp"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:autofillHints="Dosage"
         android:ems="10"
         android:inputType="numberDecimal"
-        android:maxLength="3"
+        android:maxLength="5"
         android:maxLines="1"
         android:minLines="1"
         android:text="@string/ndo_1"

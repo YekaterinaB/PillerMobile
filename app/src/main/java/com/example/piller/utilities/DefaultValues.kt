@@ -51,6 +51,7 @@ object DbConstants {
     const val TAKEN_STATUS_UPDATE = 888
     const val TAKEN_NEW_VALUE = "taken_status_update"
     const val SHOULD_REFRESH_DATA = "should_update_data"
+    const val EDIT_ONLY_FUTURE_OCCURRENCES = "edit_only_future_occurrences"
 
     // server
     const val SERVER_URL = "http://10.0.2.2:3000"

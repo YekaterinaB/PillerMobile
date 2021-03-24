@@ -106,7 +106,8 @@ class FullviewPopupFragment : DialogFragment() {
 
         when (resultCode) {
             Activity.RESULT_OK -> {
-                val drugObj=DrugMap.instance.getDrugObject(selectedDrug.calendarId,selectedDrug.drugId)
+                val drugObj =
+                    DrugMap.instance.getDrugObject(selectedDrug.calendarId, selectedDrug.drugId)
                 drugsToDelete.add(drugObj.rxcui)
                 removeDrugFromList()
                 setEventsData()
@@ -114,14 +115,19 @@ class FullviewPopupFragment : DialogFragment() {
 
             DbConstants.REMOVE_DRUG_FUTURE -> {
                 futureDrugsToDelete.add(selectedDrug)
+                removeDrugFromList()
+                setEventsData()
             }
         }
     }
 
     private fun removeDrugFromList() {
-        val drugObj=DrugMap.instance.getDrugObject(selectedDrug.calendarId,selectedDrug.drugId)
+        val drugObj = DrugMap.instance.getDrugObject(selectedDrug.calendarId, selectedDrug.drugId)
         for (index in eventsData.indices) {
-            val drugObjByIndex=DrugMap.instance.getDrugObject(eventsData[index].calendarId,eventsData[index].drugId)
+            val drugObjByIndex = DrugMap.instance.getDrugObject(
+                eventsData[index].calendarId,
+                eventsData[index].drugId
+            )
             if (drugObjByIndex.rxcui == drugObj.rxcui) {
                 eventsData.removeAt(index)
                 break
