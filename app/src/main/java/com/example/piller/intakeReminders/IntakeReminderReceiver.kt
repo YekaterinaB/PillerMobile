@@ -1,4 +1,4 @@
-package com.example.piller.notif
+package com.example.piller.intakeReminders
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,6 +8,8 @@ import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.DrugIntakeAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugObject
+import com.example.piller.notif.AlarmScheduler
+import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
@@ -16,7 +18,7 @@ import retrofit2.Response
 import java.util.*
 
 
-class AlarmReceiver : BroadcastReceiver() {
+class IntakeReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context != null && intent != null && intent.action != null) {
@@ -43,11 +45,11 @@ class AlarmReceiver : BroadcastReceiver() {
         if (currentProfile != null && email != null && bundleCalendarEvent != null) {
             val drug =
                 bundleCalendarEvent.getParcelable<DrugObject>(DbConstants.DRUG_OBJECT)!!
-            addIntakeDateFalse(drug.taken_id,drug.refill.refillId)
+            addIntakeDateFalse(drug.taken_id, drug.refill.refillId)
             if (shouldShowNotifications(context)) {
-                NotificationHelper.createNotification(context, drug, currentProfile, email)
+                IntakeReminderHelper.createNotification(context, drug, currentProfile, email)
             }
-            AlarmScheduler.scheduleAlarmsForReminder(
+            IntakeReminderScheduler.scheduleAlarmsForReminder(
                 context,
                 email,
                 currentProfile,
@@ -56,7 +58,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun addIntakeDateFalse(takenId: String,refillId:String) {
+    private fun addIntakeDateFalse(takenId: String, refillId: String) {
         val calCurr = Calendar.getInstance()
         DateUtils.setCalendarTime(
             calCurr,
@@ -64,7 +66,7 @@ class AlarmReceiver : BroadcastReceiver() {
             calCurr.get(Calendar.MINUTE)
         )
         val retrofit = ServiceBuilder.buildService(DrugIntakeAPI::class.java)
-        retrofit.setIntakeNotTaken(takenId,refillId, calCurr.timeInMillis).enqueue(
+        retrofit.setIntakeNotTaken(takenId, refillId, calCurr.timeInMillis).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
 
@@ -91,4 +93,5 @@ class AlarmReceiver : BroadcastReceiver() {
 
         return shouldShow
     }
+
 }

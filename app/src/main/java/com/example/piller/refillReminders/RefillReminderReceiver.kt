@@ -1,21 +1,12 @@
 package com.example.piller.refillReminders
 
-import com.example.piller.notif.AlarmScheduler
-import com.example.piller.notif.NotificationHelper
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.example.piller.R
 import com.example.piller.accountManagement.AppPreferences
-import com.example.piller.api.DrugIntakeAPI
-import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugObject
-import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Response
-import java.util.*
 
 
 class RefillReminderReceiver : BroadcastReceiver() {
@@ -60,7 +51,7 @@ class RefillReminderReceiver : BroadcastReceiver() {
 
     private fun shouldShowNotifications(context: Context,drug:DrugObject): Boolean {
         var shouldShow =false
-        if(drug.refill.isToNotify){
+        if(drug.refill.isToNotify && drug.refill.pillsLeft <= drug.refill.pillsBeforeReminder){
             try {
                 shouldShow = AppPreferences.showNotifications
             } catch (e: UninitializedPropertyAccessException) {

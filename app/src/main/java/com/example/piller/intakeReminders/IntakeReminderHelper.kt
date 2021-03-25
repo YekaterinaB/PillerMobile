@@ -1,12 +1,9 @@
-package com.example.piller.refillReminders
+package com.example.piller.intakeReminders
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -18,14 +15,15 @@ import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
 import java.util.*
 
-object RefillReminderHelper {
+object IntakeReminderHelper {
+
 
     fun createNotification(
         context: Context, drug: DrugObject,
         currentProfile: String,
         email: String
     ) {
-        val id = drug.refill.refillId.hashCode()
+        val id = drug.occurrence.eventId.hashCode()
         val notificationBuilder = buildNotification(context, drug, currentProfile, email)
 
         val notificationManager = NotificationManagerCompat.from(context)
@@ -43,13 +41,13 @@ object RefillReminderHelper {
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
         return NotificationCompat.Builder(context, channelId).apply {
             setSmallIcon(R.drawable.pill)
-            setContentTitle("$currentProfile, It's time to refill your medication!")
+            setContentTitle("$currentProfile, It's time to take your medicine!")
             setAutoCancel(true)
             // 2
-            val drawable = R.drawable.pillbox
+            val drawable = R.drawable.pill
             // 3
             setLargeIcon(BitmapFactory.decodeResource(context.resources, drawable))
-            setContentText("It's time to refill ${drug.drugName}.")
+            setContentText("It's time to take ${drug.drugName}.")
             // 4
 //            setGroup(reminderData.type.name)
 //            if (reminderData.note != null) {
@@ -73,5 +71,6 @@ object RefillReminderHelper {
             setContentIntent(pendingIntent)
         }
     }
+
 
 }

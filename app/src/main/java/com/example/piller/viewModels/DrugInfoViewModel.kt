@@ -65,7 +65,7 @@ class DrugInfoViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         deleteSuccess.value = true
-                        AlarmScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
+                        AlarmScheduler.removeAllNotifications(email, currentProfile, context, drug)
                     } else {
                         mutableToastError.value = "Could not delete drug."
                     }
@@ -99,13 +99,10 @@ class DrugInfoViewModel : ViewModel() {
                     if (response.raw().code() == 200) {
                         deleteFutureSuccess.value = true
                         //  remove the notifications because drug end is not initialized
-                        AlarmScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
+                        AlarmScheduler.removeAllNotifications(email, currentProfile, context, drug)
                         // create new set of notifications with updated drug
-                        AlarmScheduler.scheduleAlarmsForReminder(
-                            context,
-                            email,
-                            currentProfile,
-                            drug
+                        AlarmScheduler.scheduleAllNotifications(
+                            email, currentProfile, context, drug
                         )
                         DrugMap.instance.setDrugObject(drug.calendarId, drug) //update drug in map
                     } else {
@@ -169,9 +166,9 @@ class DrugInfoViewModel : ViewModel() {
 
     fun updateDrugIntake(taken: Boolean, intakeId: String, refillId: String, date: Long) {
         if (taken) {
-            setIntakeTaken(intakeId, refillId,date)
+            setIntakeTaken(intakeId, refillId, date)
         } else {
-            setIntakeNotTaken(intakeId,refillId, date)
+            setIntakeNotTaken(intakeId, refillId, date)
         }
     }
 

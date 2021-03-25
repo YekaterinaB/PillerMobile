@@ -9,6 +9,7 @@ import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.Dose
 import com.example.piller.models.DrugObject
 import com.example.piller.notif.AlarmScheduler
+import com.example.piller.refillReminders.RefillReminderScheduler
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -110,13 +111,13 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     fun addNewDrugToUser(
         email: String,
-        profileName: String,
+        currentProfile: String,
         repeatOn: RepeatOn?,
         repeatValue: String?,
         context: Context
     ) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.addDrugCalendarByUser(email, profileName, drug).enqueue(
+        retrofit.addDrugCalendarByUser(email, currentProfile, drug).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not add drug."
@@ -130,7 +131,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                         addedDrugSuccess.value = true
                         updateDrugInfo(response)
                         //create notification
-                        AlarmScheduler.scheduleAlarmsForReminder(context, email, profileName, drug)
+                        AlarmScheduler.scheduleAllNotifications(email,currentProfile,context,drug)
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String
@@ -146,6 +147,7 @@ class DrugOccurrenceViewModel : ViewModel() {
         drug.taken_id = responseObject.get("taken_id").toString()
         drug.dose.doseId = responseObject.get("dose_id").toString()
         drug.refill.refillId = responseObject.get("refill_id").toString()
+        drug.drugId = responseObject.get("drug_id").toString()
         DrugMap.instance.setDrugObject(drug.calendarId, drug)
     }
 
@@ -170,19 +172,9 @@ class DrugOccurrenceViewModel : ViewModel() {
                     ) {
                         if (response.raw().code() == 200) {
                             updatedDrugSuccess.value = true
-                            AlarmScheduler.removeAlarmsForReminder(
-                                context,
-                                drug,
-                                email,
-                                currentProfile
-                            )
+                            AlarmScheduler.removeAllNotifications(email,currentProfile,context,drug)
                             updateDrugInfo(response)
-                            AlarmScheduler.scheduleAlarmsForReminder(
-                                context,
-                                email,
-                                currentProfile,
-                                drug
-                            )
+                            AlarmScheduler.scheduleAllNotifications(email,currentProfile,context,drug)
 
                         } else {
                             val jObjError = JSONObject(response.errorBody()!!.string())
@@ -192,6 +184,8 @@ class DrugOccurrenceViewModel : ViewModel() {
                 }
             )
     }
+
+
 
     fun setDrugDosage(measurementType: String, totalDose: Float) {
         drug.dose = Dose(measurementType = measurementType, totalDose = totalDose)

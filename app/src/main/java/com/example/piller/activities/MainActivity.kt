@@ -69,15 +69,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun createChannelForNotification() {
         NotificationHelper.createNotificationChannel(
-            this,
-            NotificationManagerCompat.IMPORTANCE_HIGH, true,
-            getString(R.string.app_name), "App intake notification channel."
-        )
-
-        RefillReminderHelper.createNotificationChannel(
-            this,
-            NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
-            getString(R.string.app_name), "App refill notification channel."
+            this, true, getString(R.string.app_name), NotificationManagerCompat.IMPORTANCE_HIGH
         )
     }
 
@@ -101,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                         this@MainActivity,
                         CalendarActivity::class.java
                     )
-                    val userName=jObject.get("name").toString()
+                    val userName = jObject.get("name").toString()
                     intent.putExtra(
                         DbConstants.LOGGED_USER_EMAIL,
                         jObject.get("email").toString()

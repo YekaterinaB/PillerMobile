@@ -47,7 +47,8 @@
                 <action android:name="android.intent.action.REBOOT" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".notif.AlarmReceiver" />
+        <receiver android:name=".refillReminders.RefillReminderReceiver" />
+        <receiver android:name=".intakeReminders.IntakeReminderReceiver" />
 
         <activity android:name=".activities.DrugInfoActivity" />
         <activity

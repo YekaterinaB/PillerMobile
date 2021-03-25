@@ -15,27 +15,27 @@ import java.util.Calendar.getInstance
 
 
 object RefillReminderScheduler {
-    fun runBackgroundService(context: Context, email: String) {
-        val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent = createPendingIntentForAll(context, email)
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, 10, alarmIntent)
-    }
-
-    private fun createPendingIntentForAll(
-        context: Context,
-        email: String
-    ): PendingIntent? {
-        val intent = Intent(context.applicationContext, BackgroundReceiver::class.java).apply {
-            // 2
-            action = context.getString(R.string.action_refill_reminder)
-            // 3
-            type = email
-            // 4
-            putExtra(DbConstants.LOGGED_USER_EMAIL, email)
-            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        }
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
+//    fun runBackgroundService(context: Context, email: String) {
+//        val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        val alarmIntent = createPendingIntentForAll(context, email)
+//        alarmMgr.set(AlarmManager.RTC_WAKEUP, 10, alarmIntent)
+//    }
+//
+//    private fun createPendingIntentForAll(
+//        context: Context,
+//        email: String
+//    ): PendingIntent? {
+//        val intent = Intent(context.applicationContext, BackgroundReceiver::class.java).apply {
+//            // 2
+//            action = context.getString(R.string.action_refill_reminder)
+//            // 3
+//            type = email
+//            // 4
+//            putExtra(DbConstants.LOGGED_USER_EMAIL, email)
+//            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+//        }
+//        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//    }
 
     fun scheduleAlarmsForReminder(
         context: Context,

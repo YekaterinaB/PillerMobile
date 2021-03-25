@@ -53,9 +53,11 @@ class DateUtils {
         }
 
 
-        fun getFutureHourDate(hour: Int,minutes: Int): Calendar {
+        fun getFutureHourDate(hour: Int, minutes: Int): Calendar {
             val futureDate = Calendar.getInstance()
-            if (! (futureDate.get(Calendar.HOUR_OF_DAY) < hour && futureDate.get(Calendar.MINUTE) < minutes)) {
+            if ((futureDate.get(Calendar.HOUR_OF_DAY) > hour) ||
+                !(futureDate.get(Calendar.HOUR_OF_DAY) == hour && futureDate.get(Calendar.MINUTE) < minutes)
+            ) {
                 //now is after the time
                 futureDate.add(Calendar.DATE, 1)
             }
