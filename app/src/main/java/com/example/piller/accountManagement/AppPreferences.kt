@@ -12,7 +12,7 @@ object AppPreferences {
     private val IS_LOGIN = Pair("is_login", false)
     private val EMAIL = Pair("email", "")
     private val PASSWORD = Pair("password", "")
-    private val SHOW_NOTIFICATIONS = Pair("showNotifications", false)
+    private val SHOW_NOTIFICATIONS = Pair("showNotifications", true)
 
     fun init(context: Context) {
         preferences = context.getSharedPreferences(NAME, MODE)
