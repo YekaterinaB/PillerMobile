@@ -12,6 +12,8 @@ import com.example.piller.api.ProfileAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
 import com.example.piller.models.*
+import com.example.piller.refillReminders.RefillReminderHelper
+import com.example.piller.refillReminders.RefillReminderScheduler
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ParserUtils
 import okhttp3.ResponseBody
@@ -35,6 +37,12 @@ object BackgroundNotificationScheduler {
         NotificationHelper.createNotificationChannel(
             context,
             NotificationManagerCompat.IMPORTANCE_HIGH, true,
+            context.getString(R.string.app_name), "App notification channel."
+        )
+
+        RefillReminderHelper.createNotificationChannel(
+            context,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
             context.getString(R.string.app_name), "App notification channel."
         )
     }
@@ -161,6 +169,13 @@ object BackgroundNotificationScheduler {
             val intakeDates = drug.get("intake_dates") as JSONObject
             val drugObject = ParserUtils.parsedDrugObject(drug, intakeDates,calendarId)
             AlarmScheduler.scheduleAlarmsForReminder(
+                context,
+                AppPreferences.email,
+                profileName,
+                drugObject
+            )
+
+            RefillReminderScheduler.scheduleAlarmsForReminder(
                 context,
                 AppPreferences.email,
                 profileName,

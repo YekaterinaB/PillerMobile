@@ -20,6 +20,7 @@ import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.notif.AlarmScheduler
 import com.example.piller.notif.NotificationHelper
+import com.example.piller.refillReminders.RefillReminderHelper
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.MainActivityViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
@@ -70,7 +71,13 @@ class MainActivity : AppCompatActivity() {
         NotificationHelper.createNotificationChannel(
             this,
             NotificationManagerCompat.IMPORTANCE_HIGH, true,
-            getString(R.string.app_name), "App notification channel."
+            getString(R.string.app_name), "App intake notification channel."
+        )
+
+        RefillReminderHelper.createNotificationChannel(
+            this,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
+            getString(R.string.app_name), "App refill notification channel."
         )
     }
 
