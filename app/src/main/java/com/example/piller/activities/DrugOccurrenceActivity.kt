@@ -1,5 +1,6 @@
 package com.example.piller.activities
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -30,10 +31,16 @@ import kotlinx.android.synthetic.main.activity_drug_occurrence.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var newDrugName: TextView
     private lateinit var drugOccurrencesDate: TextView
     private lateinit var drugOccurrencesTime: TextView
+    private lateinit var drugRefillSwitch: Switch
+    private lateinit var drugRefillCurrentAmount: EditText
+    private lateinit var drugRefillWhenIHaveLeft: TextView
+    private lateinit var drugRefillReminderTime: TextView
+    private lateinit var drugRefillWhatTime: TextView
     private lateinit var drugRepeatsOnEditText: EditText
     private lateinit var drugDosageET: EditText
     private lateinit var drugDosageList: RecyclerView
@@ -52,6 +59,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private var repeatOnEnum = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
     private var isInEditMode = false
     private var firstClickOnLabel = true
+    private var refillReminder = 20
+    private var refillReminderTime = "11:00"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -286,6 +295,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
 
         if (isInEditMode) {
+            //  todo set refill time
             drugDosageET.setText(viewModel.getDrug().dose.totalDose.toString())
         }
     }
@@ -296,7 +306,10 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
 
         drugOccurrencesTime.setOnClickListener {
-            showTimePickerDialog()
+            showTimePickerDialog { hourOfDay, minute ->
+                viewModel.setDrugRepeatStartTime(hourOfDay, minute)
+                setTimeLabel(hourOfDay, minute)
+            }
         }
 
         repeatEndDateTV.setOnClickListener {
@@ -310,6 +323,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
             )
             return@setOnLongClickListener true
         }
+
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() == "0") {
@@ -328,31 +342,71 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
         drugRepeatsOnEditText.addTextChangedListener(textWatcher)
 
-        weekDaysCBs[0].setOnClickListener {
-            setWeekdayChecked(1, weekDaysCBs[0].isChecked)
+        val refillTextWatcher = object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.toString() == "0" || s.toString().isEmpty()) {
+                    drugRefillSwitch.isEnabled = false
+                    drugRefillSwitch.isChecked = false
+                    setRefillVisibility(false)
+                } else {
+                    drugRefillSwitch.isEnabled = true
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
-        weekDaysCBs[1].setOnClickListener {
-            setWeekdayChecked(2, weekDaysCBs[1].isChecked)
-        }
-        weekDaysCBs[2].setOnClickListener {
-            setWeekdayChecked(3, weekDaysCBs[2].isChecked)
-        }
-        weekDaysCBs[3].setOnClickListener {
-            setWeekdayChecked(4, weekDaysCBs[3].isChecked)
-        }
-        weekDaysCBs[4].setOnClickListener {
-            setWeekdayChecked(5, weekDaysCBs[4].isChecked)
-        }
-        weekDaysCBs[5].setOnClickListener {
-            setWeekdayChecked(6, weekDaysCBs[5].isChecked)
-        }
-        weekDaysCBs[6].setOnClickListener {
-            setWeekdayChecked(7, weekDaysCBs[6].isChecked)
+
+        ndoCurrentMedsET.addTextChangedListener(refillTextWatcher)
+
+        for ((index, checkbox) in weekDaysCBs.withIndex()) {
+            checkbox.setOnClickListener {
+                setWeekdayChecked(index + 1, checkbox.isChecked)
+            }
         }
 
         setRepeatEnd.setOnClickListener {
             setRepeatEndDateVisibility(setRepeatEnd.isChecked)
         }
+
+        drugRefillSwitch.setOnClickListener {
+            setRefillVisibility(drugRefillSwitch.isChecked)
+        }
+
+        drugRefillWhenIHaveLeft.setOnClickListener {
+            showRefillRemainingPicker()
+        }
+
+        drugRefillReminderTime.setOnClickListener {
+            showTimePickerDialog { hourOfDay, minute ->
+                val stringHour = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
+                refillReminderTime = "$stringHour:$minute"
+                drugRefillReminderTime.text = refillReminderTime
+            }
+        }
+    }
+
+    private fun showRefillRemainingPicker() {
+        val numberPicker = NumberPicker(this)
+        numberPicker.maxValue = 100 //  Maximum value to select
+        numberPicker.minValue = 0 //    Minimum value to select
+        numberPicker.value = refillReminder
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setView(numberPicker)
+        builder.setTitle("Refill reminder")
+        builder.setMessage("How many meds do you want remaining before you get a refill reminder?")
+        builder.setPositiveButton("OK") { _, _ ->
+            refillReminder = numberPicker.value
+            val currentRemaining = "When I have $refillReminder meds remaining"
+            drugRefillWhenIHaveLeft.text = currentRemaining
+        }
+        builder.setNegativeButton(
+            "CANCEL"
+        ) { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun setRepeatEndDateVisibility(shouldShow: Boolean) {
@@ -395,6 +449,24 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         repeatEndDateTV = findViewById(R.id.ndo_repeat_end_date)
         drugDosageET = findViewById(R.id.ndo_dosage_number)
         drugDosageList = findViewById(R.id.ndo_dosage_list)
+
+        drugRefillSwitch = findViewById(R.id.ndo_refill_switch)
+        drugRefillCurrentAmount = findViewById(R.id.ndoCurrentMedsET)
+        drugRefillWhenIHaveLeft = findViewById(R.id.ndoRemainingMeds)
+        drugRefillReminderTime = findViewById(R.id.ndoRefillReminderTime)
+        drugRefillWhatTime = findViewById(R.id.ndoWhatTimeTv)
+    }
+
+    private fun setRefillVisibility(show: Boolean) {
+        if (show) {
+            drugRefillWhenIHaveLeft.visibility = View.VISIBLE
+            drugRefillReminderTime.visibility = View.VISIBLE
+            drugRefillWhatTime.visibility = View.VISIBLE
+        } else {
+            drugRefillWhenIHaveLeft.visibility = View.GONE
+            drugRefillReminderTime.visibility = View.GONE
+            drugRefillWhatTime.visibility = View.GONE
+        }
     }
 
     private fun setTimeLabel(hour: Int, minutes: Int) {
@@ -436,15 +508,14 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         drugIntakeTime.time = calDate.time
     }
 
-    private fun showTimePickerDialog() {
+    private fun showTimePickerDialog(callback: (Int, Int) -> Unit) {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = drugIntakeTime.time
         val tpd =
             TimePickerDialog(
                 this,
                 { _, hourOfDay, minute ->
-                    viewModel.setDrugRepeatStartTime(hourOfDay, minute)
-                    setTimeLabel(hourOfDay, minute)
+                    callback(hourOfDay, minute)
                 },
                 calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
@@ -534,6 +605,13 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     }
 
     private fun addOrEditDrug() {
+        if (drugRefillSwitch.isChecked) {
+            viewModel.setDrugRefill(
+                drugRefillCurrentAmount.text.toString().toInt(),
+                refillReminder,
+                refillReminderTime
+            )
+        }
         viewModel.updateDrugDosage(drugDosageET.text.toString().toFloat())
         //  if it's in edit mode and the user chose to edit all occurrences - go to update
         if (isInEditMode
