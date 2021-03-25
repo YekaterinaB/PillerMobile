@@ -35,15 +35,7 @@ class BackgroundReceiver : BroadcastReceiver() {
 object BackgroundNotificationScheduler {
     fun createNotificationChannel(context: Context) {
         NotificationHelper.createNotificationChannel(
-            context,
-            NotificationManagerCompat.IMPORTANCE_HIGH, true,
-            context.getString(R.string.app_name), "App notification channel."
-        )
-
-        RefillReminderHelper.createNotificationChannel(
-            context,
-            NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
-            context.getString(R.string.app_name), "App notification channel."
+            context, true, context.getString(R.string.app_name), NotificationManagerCompat.IMPORTANCE_HIGH
         )
     }
 
@@ -151,7 +143,12 @@ object BackgroundNotificationScheduler {
                         val jObject = JSONObject(response.body()!!.string())
                         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
                         val calendarId = jObject.get("calendar_id").toString()
-                        scheduleAlarmsForAllDrugs(profileName, drugInfoList as JSONArray, context, calendarId)
+                        scheduleAlarmsForAllDrugs(
+                            profileName,
+                            drugInfoList as JSONArray,
+                            context,
+                            calendarId
+                        )
                     }
                 }
             }
@@ -162,25 +159,16 @@ object BackgroundNotificationScheduler {
         profileName: String,
         drugList: JSONArray,
         context: Context,
-        calendarId:String
+        calendarId: String
     ) {
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
             val intakeDates = drug.get("intake_dates") as JSONObject
-            val drugObject = ParserUtils.parsedDrugObject(drug, intakeDates,calendarId)
-            AlarmScheduler.scheduleAlarmsForReminder(
-                context,
-                AppPreferences.email,
-                profileName,
-                drugObject
+            val drugObject = ParserUtils.parsedDrugObject(drug, intakeDates, calendarId)
+            AlarmScheduler.scheduleAllNotifications(
+                AppPreferences.email, profileName, context, drugObject
             )
 
-            RefillReminderScheduler.scheduleAlarmsForReminder(
-                context,
-                AppPreferences.email,
-                profileName,
-                drugObject
-            )
         }
     }
 
