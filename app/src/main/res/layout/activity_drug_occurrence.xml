@@ -1,388 +1,388 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical"
     tools:context="com.example.piller.activities.DrugOccurrenceActivity">
 
-    <TextView
-        android:id="@+id/ndo_new_drug_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:scrollHorizontally="true"
-        android:text="@string/ndo_new_drug_name_label"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/view"
-        style="@style/Divider.Horizontal"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ndo_new_drug_name" />
-
-    <TextView
-        android:id="@+id/ndo_first_occurrence_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/ndo_first_occurrence_date"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <TextView
-        android:id="@+id/ndo_first_occurrence_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:text="@string/ndo_first_occurrence_time"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ndo_first_occurrence_date" />
-
-    <View
-        android:id="@+id/view2"
-        style="@style/Divider.Horizontal"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ndo_first_occurrence_date" />
-
-    <Spinner
-        android:id="@+id/ndo_should_repeat_spinner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view3" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/ndo_repeat_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ndo_should_repeat_spinner">
-
-        <Spinner
-            android:id="@+id/ndo_repeat_options_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:spinnerMode="dropdown"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ndo_repeat_every_number"
-            app:layout_constraintTop_toTopOf="@+id/ndo_repeat_every_number" />
-
-        <EditText
-            android:id="@+id/ndo_repeat_every_number"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:autofillHints="1"
-            android:ems="10"
-            android:inputType="numberSigned"
-            android:maxLength="2"
-            android:maxLines="1"
-            android:text="@string/ndo_1"
-            android:textAlignment="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/ndo_new_drug_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@string/ndo_repeats_on_label"
-            android:textAllCaps="true"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ndo_has_repeat_end" />
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:scrollHorizontally="true"
+            android:text="@string/ndo_new_drug_name_label"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/ndo_weekday_container"
-            android:layout_width="0dp"
+        <View
+            android:id="@+id/view"
+            style="@style/Divider.Horizontal"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ndo_repeat_options_spinner">
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/ndo_start_taking_medicine_on" />
 
-            <com.example.piller.customWidgets.CheckboxWithTextInside
-                android:id="@+id/ndo_weekday_sun"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ndo_first_occurrence_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
+                android:layout_gravity="start"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:button="@null"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:text="@string/ndo_first_occurrence_date" />
+
+            <TextView
+                android:id="@+id/ndo_first_occurrence_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_weight="0.5"
+                android:gravity="end"
+                android:text="@string/ndo_first_occurrence_time" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view3"
+            style="@style/Divider.Horizontal"
+            android:layout_marginTop="4dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="4dp">
+
+            <TextView
+                android:id="@+id/ndo_select_dosage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:paddingTop="16dp"
+                android:text="@string/ndo_select_dosage" />
+
+            <EditText
+                android:id="@+id/ndo_dosage_number"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:autofillHints="Dosage"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:labelFor="@+id/ndo_select_dosage"
+                android:maxLength="5"
+                android:maxLines="1"
+                android:minLines="1"
+                android:text="@string/ndo_1"
+                android:textAlignment="center"
+                tools:ignore="RtlCompat" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ndo_dosage_list"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal|left|center_vertical"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="4dp"
+                android:scrollbars="horizontal" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view2"
+            style="@style/Divider.Horizontal"
+            android:layout_marginTop="4dp" />
+
+        <Spinner
+            android:id="@+id/ndo_should_repeat_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:spinnerMode="dropdown" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ndo_repeat_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ndo_should_repeat_spinner">
+
+            <Spinner
+                android:id="@+id/ndo_repeat_options_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:spinnerMode="dropdown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ndo_repeat_every_number"
+                app:layout_constraintTop_toTopOf="@+id/ndo_repeat_every_number" />
+
+            <EditText
+                android:id="@+id/ndo_repeat_every_number"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:autofillHints="1"
+                android:ems="10"
+                android:inputType="numberSigned"
+                android:maxLength="2"
+                android:maxLines="1"
+                android:text="@string/ndo_1"
+                android:textAlignment="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/ndo_repeats_on_label"
+                android:textAllCaps="true"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ndo_has_repeat_end" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ndo_weekday_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ndo_repeat_options_spinner">
+
+                <com.example.piller.customWidgets.CheckboxWithTextInside
+                    android:id="@+id/ndo_weekday_sun"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:text="@string/ndo_weekday_s"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.example.piller.customWidgets.CheckboxWithTextInside
+                    android:id="@+id/ndo_weekday_mon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:text="@string/ndo_weekday_m"
+                    app:layout_constraintStart_toEndOf="@+id/ndo_weekday_sun"
+                    app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+                <com.example.piller.customWidgets.CheckboxWithTextInside
+                    android:id="@+id/ndo_weekday_tue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:text="@string/ndo_weekday_t"
+                    app:layout_constraintStart_toEndOf="@+id/ndo_weekday_mon"
+                    app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+                <com.example.piller.customWidgets.CheckboxWithTextInside
+                    android:id="@+id/ndo_weekday_wed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:text="@string/ndo_weekday_w"
+                    app:layout_constraintStart_toEndOf="@+id/ndo_weekday_tue"
+                    app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+                <com.example.piller.customWidgets.CheckboxWithTextInside
+                    android:id="@+id/ndo_weekday_thu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:text="@string/ndo_weekday_t"
+                    app:layout_constraintStart_toEndOf="@+id/ndo_weekday_wed"
+                    app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+                <com.example.piller.customWidgets.CheckboxWithTextInside
+                    android:id="@+id/ndo_weekday_fri"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:text="@string/ndo_weekday_f"
+                    app:layout_constraintStart_toEndOf="@+id/ndo_weekday_thu"
+                    app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+
+                <com.example.piller.customWidgets.CheckboxWithTextInside
+                    android:id="@+id/ndo_weekday_sat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:button="@null"
+                    android:checked="false"
+                    android:text="@string/ndo_weekday_s"
+                    app:layout_constraintStart_toEndOf="@+id/ndo_weekday_fri"
+                    app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Switch
+                android:id="@+id/ndo_has_repeat_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:checked="false"
-                android:text="@string/ndo_weekday_s"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:switchPadding="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.example.piller.customWidgets.CheckboxWithTextInside
-                android:id="@+id/ndo_weekday_mon"
+            <TextView
+                android:id="@+id/ndo_set_last_occurrence_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:button="@null"
-                android:checked="false"
-                android:text="@string/ndo_weekday_m"
-                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_sun"
-                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/ndo_set_last_occurrence_date"
+                app:layout_constraintStart_toEndOf="@+id/ndo_has_repeat_end"
+                app:layout_constraintTop_toTopOf="@+id/ndo_has_repeat_end" />
 
-            <com.example.piller.customWidgets.CheckboxWithTextInside
-                android:id="@+id/ndo_weekday_tue"
+            <TextView
+                android:id="@+id/ndo_repeat_end_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:button="@null"
-                android:checked="false"
-                android:text="@string/ndo_weekday_t"
-                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_mon"
-                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+                android:layout_marginStart="8dp"
+                android:text="@string/ndo_last_occurrence_date"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/ndo_set_last_occurrence_tv"
+                app:layout_constraintTop_toTopOf="@+id/ndo_set_last_occurrence_tv" />
 
-            <com.example.piller.customWidgets.CheckboxWithTextInside
-                android:id="@+id/ndo_weekday_wed"
+            <Switch
+                android:id="@+id/ndo_refill_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:button="@null"
-                android:checked="false"
-                android:text="@string/ndo_weekday_w"
-                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_tue"
-                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+                android:layout_marginTop="4dp"
+                android:enabled="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ndoCurrentMedsET" />
 
-            <com.example.piller.customWidgets.CheckboxWithTextInside
-                android:id="@+id/ndo_weekday_thu"
+            <TextView
+                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:button="@null"
-                android:checked="false"
-                android:text="@string/ndo_weekday_t"
-                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_wed"
-                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/ndo_refill_reminder"
+                app:layout_constraintStart_toEndOf="@+id/ndo_refill_switch"
+                app:layout_constraintTop_toTopOf="@+id/ndo_refill_switch" />
 
-            <com.example.piller.customWidgets.CheckboxWithTextInside
-                android:id="@+id/ndo_weekday_fri"
+            <TextView
+                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:button="@null"
-                android:checked="false"
-                android:text="@string/ndo_weekday_f"
-                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_thu"
-                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+                android:layout_marginTop="8dp"
+                android:text="@string/ndo_enter_the_amount_of_meds_you_currently_have_to_get_a_refill_reminder"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ndo_weekday_container" />
 
-            <com.example.piller.customWidgets.CheckboxWithTextInside
-                android:id="@+id/ndo_weekday_sat"
+            <EditText
+                android:id="@+id/ndoCurrentMedsET"
+                android:layout_width="wrap_content"
+                android:imeOptions="actionDone"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:autofillHints="1"
+                android:digits="0123456789"
+                android:ems="10"
+                android:inputType="numberSigned"
+                android:maxLength="3"
+                android:maxLines="1"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <TextView
+                android:id="@+id/ndoRemainingMeds"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:button="@null"
-                android:checked="false"
-                android:text="@string/ndo_weekday_s"
-                app:layout_constraintStart_toEndOf="@+id/ndo_weekday_fri"
-                app:layout_constraintTop_toTopOf="@+id/ndo_weekday_sun" />
+                android:layout_marginTop="4dp"
+                android:text="@string/ndo_when_i_have_20_meds_remaining"
+                android:textColor="@android:color/holo_blue_dark"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/ndo_refill_switch"
+                app:layout_constraintTop_toBottomOf="@+id/ndo_refill_switch" />
+
+            <TextView
+                android:id="@+id/ndoWhatTimeTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/ndo_what_time"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/ndoRemainingMeds"
+                app:layout_constraintTop_toBottomOf="@+id/ndoRemainingMeds" />
+
+            <TextView
+                android:id="@+id/ndoRefillReminderTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/ndo_11_00"
+                android:textColor="@android:color/holo_blue_dark"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/ndoWhatTimeTv"
+                app:layout_constraintTop_toBottomOf="@+id/ndoWhatTimeTv" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Switch
-            android:id="@+id/ndo_has_repeat_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:checked="false"
-            android:switchPadding="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/ndo_set_last_occurrence_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/ndo_set_last_occurrence_date"
-            app:layout_constraintStart_toEndOf="@+id/ndo_has_repeat_end"
-            app:layout_constraintTop_toTopOf="@+id/ndo_has_repeat_end" />
-
-        <TextView
-            android:id="@+id/ndo_repeat_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/ndo_last_occurrence_date"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/ndo_set_last_occurrence_tv"
-            app:layout_constraintTop_toTopOf="@+id/ndo_set_last_occurrence_tv" />
-
-        <Switch
-            android:id="@+id/ndo_refill_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:enabled="false"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ndoCurrentMedsET" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/ndo_refill_reminder"
-            app:layout_constraintStart_toEndOf="@+id/ndo_refill_switch"
-            app:layout_constraintTop_toTopOf="@+id/ndo_refill_switch" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/ndo_enter_the_amount_of_meds_you_currently_have_to_get_a_refill_reminder"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ndo_repeat_every_number" />
-
-        <EditText
-            android:id="@+id/ndoCurrentMedsET"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:autofillHints="1"
-            android:digits="0123456789"
-            android:ems="10"
-            android:inputType="numberSigned"
-            android:maxLength="3"
-            android:maxLines="1"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-        <TextView
-            android:id="@+id/ndoRemainingMeds"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/ndo_when_i_have_20_meds_remaining"
-            android:textColor="@android:color/holo_blue_dark"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/ndo_refill_switch"
-            app:layout_constraintTop_toBottomOf="@+id/ndo_refill_switch" />
-
-        <TextView
-            android:id="@+id/ndoWhatTimeTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/ndo_what_time"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/ndoRemainingMeds"
-            app:layout_constraintTop_toBottomOf="@+id/ndoRemainingMeds" />
-
-        <TextView
-            android:id="@+id/ndoRefillReminderTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/ndo_11_00"
-            android:textColor="@android:color/holo_blue_dark"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/ndoWhatTimeTv"
-            app:layout_constraintTop_toBottomOf="@+id/ndoWhatTimeTv" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/view3"
-        style="@style/Divider.Horizontal"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ndo_dosage_list" />
-
-    <EditText
-        android:id="@+id/ndo_dosage_number"
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:autofillHints="Dosage"
-        android:ems="10"
-        android:inputType="numberDecimal"
-        android:maxLength="5"
-        android:maxLines="1"
-        android:minLines="1"
-        android:text="@string/ndo_1"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ndo_select_dosage" />
-
-    <TextView
-        android:id="@+id/ndo_select_dosage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/ndo_select_dosage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ndo_dosage_list"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:scrollbars="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ndo_dosage_number" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/ndo_start_taking_medicine_on"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>

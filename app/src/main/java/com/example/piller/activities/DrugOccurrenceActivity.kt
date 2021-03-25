@@ -65,6 +65,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private var refillReminderTime = "11:00"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //  todo if user chooses repeat on week - make sure he chooses at least one day to repeat on
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drug_occurrence)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -323,7 +324,12 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
 
         drugOccurrencesTime.setOnClickListener {
-            showTimePickerDialog { hourOfDay, minute ->
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = drugIntakeTime.time
+            showTimePickerDialog(
+                calendar[Calendar.HOUR_OF_DAY],
+                calendar[Calendar.MINUTE]
+            ) { hourOfDay, minute ->
                 viewModel.setDrugRepeatStartTime(hourOfDay, minute)
                 setTimeLabel(hourOfDay, minute)
             }
@@ -396,7 +402,9 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
 
         drugRefillReminderTime.setOnClickListener {
-            showTimePickerDialog { hourOfDay, minute ->
+            val selectedHour = refillReminderTime.substring(0, 2).toInt()
+            val selectedMinute = refillReminderTime.substring(3).toInt()
+            showTimePickerDialog(selectedHour, selectedMinute) { hourOfDay, minute ->
                 val stringHour = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
                 refillReminderTime = "$stringHour:$minute"
                 drugRefillReminderTime.text = refillReminderTime
@@ -525,17 +533,19 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         drugIntakeTime.time = calDate.time
     }
 
-    private fun showTimePickerDialog(callback: (Int, Int) -> Unit) {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = drugIntakeTime.time
+    private fun showTimePickerDialog(
+        InitialHour: Int,
+        initialMinute: Int,
+        callback: (Int, Int) -> Unit
+    ) {
         val tpd =
             TimePickerDialog(
                 this,
                 { _, hourOfDay, minute ->
                     callback(hourOfDay, minute)
                 },
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
+                InitialHour,
+                initialMinute,
                 true
             )
 
