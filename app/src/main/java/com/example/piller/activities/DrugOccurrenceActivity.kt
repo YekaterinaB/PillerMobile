@@ -53,6 +53,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var currentProfileName: String
     private lateinit var loggedEmail: String
     private lateinit var viewModel: DrugOccurrenceViewModel
+    private lateinit var drugRepeatOptions: Array<String>
+    private lateinit var drugShouldRepeat: Array<String>
     private var weekDaysCBs = mutableListOf<CheckboxWithTextInside>()
     private var drugIntakeTime: Date = Date()
     private var drugRepeatEnd: Date = Date()
@@ -73,6 +75,16 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         initListeners()
         initViewModelObservers()
         initSpinners()
+        initEditModeData()
+    }
+
+    private fun initEditModeData() {
+        if (isInEditMode) {
+            drugDosageET.setText(viewModel.getDrug().dose.totalDose.toString())
+            initRefillForEditMode()
+            initRepeatOnEdit(drugRepeatOptions, drugShouldRepeat)
+            initRepeatEnd()
+        }
     }
 
     private fun initAllIntentExtras() {
@@ -99,7 +111,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     }
 
     private fun initSpinners() {
-        val drugShouldRepeat = resources.getStringArray(R.array.drug_should_repeat)
+        drugShouldRepeat = resources.getStringArray(R.array.drug_should_repeat)
 
         val drugShouldRepeatAdapter = ArrayAdapter(
             this,
@@ -107,7 +119,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         )
         drugShouldRepeatSpinner.adapter = drugShouldRepeatAdapter
 
-        val drugRepeatOptions = resources.getStringArray(R.array.drug_repeat_options)
+        drugRepeatOptions = resources.getStringArray(R.array.drug_repeat_options)
         val drugRepeatAdapter = ArrayAdapter(
             this,
             R.layout.drug_repeat_option, drugRepeatOptions
@@ -165,10 +177,6 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
-        if (isInEditMode) {
-            initRepeatOnEdit(drugRepeatOptions, drugShouldRepeat)
-            initRepeatEnd()
-        }
 
         val dosages = resources.getStringArray(R.array.drug_dosage)
         var initialDosageMeasurementType = dosages[0]
@@ -179,6 +187,20 @@ class DrugOccurrenceActivity : AppCompatActivity() {
             DosageAdapter(dosages, initialDosageMeasurementType) { dosage -> updateDosage(dosage) }
         drugDosageList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+    }
+
+    private fun initRefillForEditMode() {
+        val refill = viewModel.getDrug().refill
+        if (refill.isToNotify) {
+            drugRefillSwitch.isChecked = true
+            setRefillVisibility(true)
+            drugRefillReminderTime.text = refill.reminderTime
+            val currentRemaining = "When I have ${refill.pillsBeforeReminder} meds remaining"
+            drugRefillWhenIHaveLeft.text = currentRemaining
+            drugRefillCurrentAmount.setText(refill.pillsLeft.toString())
+            refillReminder = refill.pillsBeforeReminder
+            refillReminderTime = refill.reminderTime
+        }
     }
 
     private fun initRepeatEnd() {
@@ -292,11 +314,6 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.YEAR)
             )
-        }
-
-        if (isInEditMode) {
-            //  todo set refill time
-            drugDosageET.setText(viewModel.getDrug().dose.totalDose.toString())
         }
     }
 
