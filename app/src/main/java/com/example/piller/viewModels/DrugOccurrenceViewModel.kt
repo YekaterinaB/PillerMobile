@@ -200,4 +200,11 @@ class DrugOccurrenceViewModel : ViewModel() {
     fun updateDrugDosage(totalDosage: Float) {
         drug.dose.totalDose = totalDosage
     }
+
+    fun setDrugRefill(currentlyHave: Int, refillReminder: Int, refillReminderTime: String) {
+        drug.refill.isToNotify = true
+        drug.refill.pillsBeforeReminder = refillReminder
+        drug.refill.pillsLeft = currentlyHave
+        drug.refill.reminderTime = refillReminderTime
+    }
 }

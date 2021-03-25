@@ -101,5 +101,10 @@
     <string name="ndo_1">1</string>
     <string name="di_dosage">dosage</string>
     <string name="ndo_start_taking_medicine_on">Start Taking Medicine On:</string>
+    <string name="ndo_enter_the_amount_of_meds_you_currently_have_to_get_a_refill_reminder">Enter the amount of meds you currently have to get a refill reminder</string>
+    <string name="ndo_refill_reminder">Refill reminder</string>
+    <string name="ndo_when_i_have_20_meds_remaining">When I have 20 meds remaining</string>
+    <string name="ndo_what_time">What time?</string>
+    <string name="ndo_11_00">11:00</string>
 
 </resources>
