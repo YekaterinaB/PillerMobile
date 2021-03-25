@@ -52,6 +52,18 @@ class DateUtils {
             return isDateBefore(date1, today)
         }
 
+
+        fun getFutureHourDate(hour: Int,minutes: Int): Calendar {
+            val futureDate = Calendar.getInstance()
+            if (! (futureDate.get(Calendar.HOUR_OF_DAY) < hour && futureDate.get(Calendar.MINUTE) < minutes)) {
+                //now is after the time
+                futureDate.add(Calendar.DATE, 1)
+            }
+            setCalendarTime(futureDate, hour, minutes, 0)
+
+            return futureDate
+        }
+
         fun isDateBefore(date1: Calendar, date2: Calendar): Boolean {
             if (date1.time < date2.time) {
                 return !areDatesEqual(date1, date2)
@@ -69,6 +81,7 @@ class DateUtils {
             }
             return false
         }
+
 
         fun setCalendarTime(calendar: Calendar, hour: Int, minutes: Int, seconds: Int = 0) {
             calendar.set(Calendar.HOUR_OF_DAY, hour)

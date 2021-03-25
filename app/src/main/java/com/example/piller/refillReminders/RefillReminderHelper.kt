@@ -1,4 +1,4 @@
-package com.example.piller.notif
+package com.example.piller.refillReminders
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,10 +14,11 @@ import com.example.piller.R
 import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugObject
+import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
-import java.util.Calendar.*
+import java.util.*
 
-object NotificationHelper {
+object RefillReminderHelper {
 
     fun createNotificationChannel(
         context: Context,
@@ -45,7 +46,7 @@ object NotificationHelper {
         currentProfile: String,
         email: String
     ) {
-        val id = drug.occurrence.eventId.hashCode()
+        val id = drug.refill.refillId.hashCode()
         val notificationBuilder = buildNotification(context, drug, currentProfile, email)
 
         val notificationManager = NotificationManagerCompat.from(context)
@@ -63,20 +64,20 @@ object NotificationHelper {
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
         return NotificationCompat.Builder(context, channelId).apply {
             setSmallIcon(R.drawable.pill)
-            setContentTitle("$currentProfile, It's time to take your medicine!")
+            setContentTitle("$currentProfile, It's time to refill your medication!")
             setAutoCancel(true)
             // 2
-            val drawable = R.drawable.pill
+            val drawable = R.drawable.pillbox
             // 3
             setLargeIcon(BitmapFactory.decodeResource(context.resources, drawable))
-            setContentText("It's time to take ${drug.drugName}.")
+            setContentText("It's refill to take ${drug.drugName}.")
             // 4
 //            setGroup(reminderData.type.name)
 //            if (reminderData.note != null) {
 //                setStyle(NotificationCompat.BigTextStyle().bigText(reminderData.note))
 //            }
 
-            val calEvent = createCalenderEventWithDrug(drug)
+            val calEvent = NotificationHelper.createCalenderEventWithDrug(drug)
             val bundleDrugObject = Bundle()
             bundleDrugObject.putParcelable(DbConstants.CALENDAR_EVENT, calEvent)
 
@@ -94,21 +95,4 @@ object NotificationHelper {
         }
     }
 
-    fun createCalenderEventWithDrug(drug: DrugObject): CalendarEvent {
-        val cal = getInstance()
-        val intakeCal = getInstance()
-        intakeCal.timeInMillis = drug.occurrence.repeatStart
-        cal.set(HOUR_OF_DAY, intakeCal[HOUR_OF_DAY])
-        cal.set(MINUTE, intakeCal[MINUTE])
-        cal.set(SECOND, intakeCal[SECOND])
-        cal.set(MILLISECOND, intakeCal[MILLISECOND])
-        return CalendarEvent(
-            drug.calendarId,
-            drug.drugId,
-            cal[DAY_OF_WEEK],
-            cal.time,
-            cal.time,// end_repeat for calender event
-            isTaken = false
-        )
-    }
 }
