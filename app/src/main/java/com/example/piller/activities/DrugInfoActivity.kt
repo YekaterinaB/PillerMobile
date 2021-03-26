@@ -32,6 +32,7 @@ class DrugInfoActivity : AppCompatActivity() {
 
     private lateinit var _drugNameTV: TextView
     private lateinit var _drugDosageTV: TextView
+    private lateinit var _drugRefillsTV: TextView
     private lateinit var _drugIntakeTimeTV: TextView
     private lateinit var _drugTakenCB: CheckBox
     private lateinit var _drugImageIV: ImageView
@@ -69,7 +70,7 @@ class DrugInfoActivity : AppCompatActivity() {
 
         try {
             _calendarEvent = intent.extras!!.getBundle(DbConstants.CALENDAR_EVENT_BUNDLE)
-                ?.getParcelable<CalendarEvent>(DbConstants.CALENDAR_EVENT)!!
+                ?.getParcelable(DbConstants.CALENDAR_EVENT)!!
         } catch (e: Exception) {
             _calendarEvent = intent.getParcelableExtra(DbConstants.CALENDAR_EVENT)!!
         }
@@ -81,7 +82,6 @@ class DrugInfoActivity : AppCompatActivity() {
             Observer { success ->
                 if (success) {
                     //  todo - show/hide loading screen
-
                     _viewModel.intakeUpdateSuccess.value = false
                 }
             }
@@ -129,11 +129,24 @@ class DrugInfoActivity : AppCompatActivity() {
                     _drugImageIV.setImageBitmap(image)
                 }
             })
+
+        _viewModel.pillsLeftMutable.observe(
+            this,
+            Observer { pillsLeft ->
+                updateMedsLeft(pillsLeft)
+                //  update in the map how many pills left the user has
+                val drugObject =
+                    DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
+                drugObject.refill.pillsLeft = pillsLeft
+                DrugMap.instance.setDrugObject(_calendarEvent.calendarId, drugObject)
+            }
+        )
     }
 
     private fun initViews() {
         _drugNameTV = findViewById(R.id.di_drug_name)
         _drugDosageTV = findViewById(R.id.di_drug_dosage)
+        _drugRefillsTV = findViewById(R.id.di_refills_left)
         _drugIntakeTimeTV = findViewById(R.id.di_drug_intake_time)
         _drugTakenCB = findViewById(R.id.di_drug_taken)
         _drugImageIV = findViewById(R.id.di_drug_image)
@@ -150,6 +163,13 @@ class DrugInfoActivity : AppCompatActivity() {
 
         val dosage = "Total Dosage: ${drugObject.dose.totalDose} ${drugObject.dose.measurementType}"
         _drugDosageTV.text = dosage
+
+        updateMedsLeft(drugObject.refill.pillsLeft)
+    }
+
+    private fun updateMedsLeft(currentMeds: Int) {
+        val refills = "You have $currentMeds meds left"
+        _drugRefillsTV.text = refills
     }
 
     private fun setIntakeTimeTextView() {
@@ -163,7 +183,6 @@ class DrugInfoActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val intakeTime = "${sdf.format(_calendarEvent.intakeTime)}, ${formatter.format(calTime)}"
         _drugIntakeTimeTV.text = intakeTime
-
     }
 
     private fun initViewModels() {

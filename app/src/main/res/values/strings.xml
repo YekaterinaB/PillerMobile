@@ -106,5 +106,6 @@
     <string name="ndo_when_i_have_20_meds_remaining">When I have 20 meds remaining</string>
     <string name="ndo_what_time">What time?</string>
     <string name="ndo_11_00">11:00</string>
+    <string name="di_you_have_20_meds_left">You have 20 meds left</string>
 
 </resources>

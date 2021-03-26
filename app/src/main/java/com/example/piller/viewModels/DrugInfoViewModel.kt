@@ -47,6 +47,10 @@ class DrugInfoViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
+    val pillsLeftMutable: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
     fun deleteAllOccurrencesOfDrug(
         email: String,
         currentProfile: String,
@@ -172,6 +176,11 @@ class DrugInfoViewModel : ViewModel() {
         }
     }
 
+    private fun updateIntakeByResult(pillsLeft: Int) {
+        intakeUpdateSuccess.value = true
+        pillsLeftMutable.value = pillsLeft
+    }
+
     private fun setIntakeTaken(intakeId: String, refillId: String, date: Long) {
         drugIntakeAPIRetrofit.setIntakeTaken(intakeId, refillId, date).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -183,10 +192,11 @@ class DrugInfoViewModel : ViewModel() {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    intakeUpdateSuccess.value = true
                     if (response.raw().code() != 200) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         mutableToastError.value = jObjError["message"] as String
+                    } else {
+                        updateIntakeByResult(response.body()!!.string().replace('\"', ' ').toInt())
                     }
                 }
             }
@@ -204,10 +214,11 @@ class DrugInfoViewModel : ViewModel() {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    intakeUpdateSuccess.value = true
                     if (response.raw().code() != 200) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         mutableToastError.value = jObjError["message"] as String
+                    } else {
+                        updateIntakeByResult(response.body()!!.string().replace('\"', ' ').toInt())
                     }
                 }
             }
