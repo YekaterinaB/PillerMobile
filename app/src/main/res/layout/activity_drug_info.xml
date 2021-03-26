@@ -21,6 +21,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/di_drug_dosage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/di_dosage"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/di_drug_name" />
+
+    <TextView
         android:id="@+id/di_drug_intake_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,17 +59,16 @@
         android:contentDescription="@string/di_drug_image_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/di_drug_taken"
+        app:layout_constraintTop_toBottomOf="@+id/di_refills_left"
         app:srcCompat="@drawable/pill" />
 
     <TextView
-        android:id="@+id/di_drug_dosage"
+        android:id="@+id/di_refills_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="@string/di_dosage"
-        android:textSize="12sp"
+        android:text="@string/di_you_have_20_meds_left"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/di_drug_name" />
+        app:layout_constraintTop_toBottomOf="@+id/di_drug_taken" />
 </androidx.constraintlayout.widget.ConstraintLayout>
