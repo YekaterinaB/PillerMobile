@@ -17,7 +17,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.util.DBUtil
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.AddNewDrugActivity
@@ -183,10 +182,7 @@ class WeeklyCalendarFragment : Fragment() {
         }
 
         newDrugBoxFAB.setOnClickListener {
-            SnackBar.showToastBar(
-                this.context,
-                "Add by box!"
-            )
+            showAddNewDrugActivity(DbConstants.DRUG_BY_BOX)
         }
 
         newDrugNameFAB.setOnClickListener {

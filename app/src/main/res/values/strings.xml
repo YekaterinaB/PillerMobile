@@ -107,5 +107,8 @@
     <string name="ndo_what_time">What time?</string>
     <string name="ndo_11_00">11:00</string>
     <string name="di_you_have_20_meds_left">You have 20 meds left</string>
+    <string name="ocr_drug_box">Drug Box</string>
+    <string name="ocr_press_on_the_camera_to_take_picture_of_your_medicine_box">Press on the camera to take picture of your medicine box.</string>
+    <string name="nd_search_result"><u>Search Result:</u></string>
 
 </resources>
