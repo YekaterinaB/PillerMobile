@@ -188,5 +188,30 @@ class DrugSearchViewModel : ViewModel() {
             .trim()
     }
 
+    fun searchDrugByBox(filePath: String) {
+        val imageFile = File(filePath)
+        if (imageFile.exists() && imageFile.isFile) {
+            val multipartBody = getFileAsMultiPart(imageFile)
+            drugsSearchResult.value?.clear()
+            drugAPIRetrofit.findDrugByBox(multipartBody).enqueue(
+                object : retrofit2.Callback<ResponseBody> {
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        snackBarMessage.value = "Could connect to server."
+                    }
 
+                    override fun onResponse(
+                        call: Call<ResponseBody>,
+                        response: Response<ResponseBody>
+                    ) {
+                        if (response.raw().code() == 200) {
+                            updateDrugsList(response)
+                        } else {
+                            val jObjError = JSONObject(response.errorBody()!!.string())
+                            snackBarMessage.value = jObjError["message"] as String
+                        }
+                    }
+                }
+            )
+        }
+    }
 }

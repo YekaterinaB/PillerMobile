@@ -15,7 +15,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
-import java.util.*
 
 class WeeklyCalendarViewModel : ViewModel() {
     private val eventInterpreter = EventInterpreter()

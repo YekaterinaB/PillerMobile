@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -16,6 +17,7 @@ import com.example.piller.SnackBar
 import com.example.piller.fragments.DrugByImageFragment
 import com.example.piller.fragments.DrugByNameFragment
 import com.example.piller.fragments.InteractionPopupFragment
+import com.example.piller.fragments.DrugByBoxFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DbConstants
@@ -24,6 +26,7 @@ import com.example.piller.viewModels.DrugSearchViewModel
 class AddNewDrugActivity : AppCompatActivity() {
     private lateinit var searchViewModel: DrugSearchViewModel
     private lateinit var drugOptionsList: RecyclerView
+    private lateinit var drugResultLabel: TextView
     private lateinit var selectDrugAnywayBtn: Button
     private lateinit var drugAdapter: NewDrugByNameAdapter
     private lateinit var currentProfile: String
@@ -50,15 +53,19 @@ class AddNewDrugActivity : AppCompatActivity() {
 
     private fun initListeners() {
         selectDrugAnywayBtn.setOnClickListener {
-            //  no need to show interaction
-            searchViewModel.newDrug.value =
-                DrugObject(
-                    "", //  drugid is empty because it's a new drug and we didn't save it in db
-                    searchViewModel.calendarId,
-                    searchViewModel.drugSearchNoResult.value!!,
-                    0
-                )
-            goToAddOccurrenceActivity()
+            if (searchViewModel.drugSearchNoResult.value != null) {
+                //  no need to show interaction
+                searchViewModel.newDrug.value =
+                    DrugObject(
+                        "", //  drugid is empty because it's a new drug and we didn't save it in db
+                        searchViewModel.calendarId,
+                        searchViewModel.drugSearchNoResult.value!!,
+                        0
+                    )
+                goToAddOccurrenceActivity()
+            } else {
+                SnackBar.showToastBar(this, "Please choose a valid drug!")
+            }
         }
     }
 
@@ -74,7 +81,8 @@ class AddNewDrugActivity : AppCompatActivity() {
                 initializeFragment(savedInstanceState, drugByImageFragment)
             }
             DbConstants.DRUG_BY_BOX -> {
-                SnackBar.showToastBar(this@AddNewDrugActivity, "Add by Box!")
+                val drugByBoxFragment = DrugByBoxFragment.newInstance()
+                initializeFragment(savedInstanceState, drugByBoxFragment)
             }
             DbConstants.DRUG_BY_NAME -> {
                 val drugByNameFragment = DrugByNameFragment.newInstance()
@@ -114,6 +122,7 @@ class AddNewDrugActivity : AppCompatActivity() {
 
         searchViewModel.drugsSearchResult.observe(this, Observer {
 //            updateSelectAnywayButtonVisibility(it.isEmpty())
+            drugResultLabel.visibility = View.VISIBLE
             selectDrugAnywayBtn.visibility = View.VISIBLE
             updateRecyclersAndAdapters()
             setButtonsEnabled(true)
@@ -153,6 +162,7 @@ class AddNewDrugActivity : AppCompatActivity() {
     }
 
     private fun initRecyclersAndAdapters() {
+        drugResultLabel = findViewById(R.id.nd_drug_result_label)
         drugOptionsList = findViewById(R.id.nd_drug_options_list)
         drugOptionsList.layoutManager = LinearLayoutManager(this)
         drugAdapter = NewDrugByNameAdapter(

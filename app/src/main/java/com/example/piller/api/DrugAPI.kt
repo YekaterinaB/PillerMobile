@@ -24,4 +24,8 @@ interface DrugAPI {
     @Multipart
     @POST("drugApiCalls/findDrugByImage")
     fun findDrugByImage(@Part file: MultipartBody.Part): Call<ResponseBody>
+
+    @Multipart
+    @POST("drugApiCalls/findDrugByBoxImage")
+    fun findDrugByBox(@Part file: MultipartBody.Part): Call<ResponseBody>
 }
