@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Observer
@@ -20,7 +18,6 @@ import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.notif.AlarmScheduler
 import com.example.piller.notif.NotificationHelper
-import com.example.piller.refillReminders.RefillReminderHelper
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.MainActivityViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
@@ -33,6 +30,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var forgotPassword: TextView
+    private lateinit var loadingScreen: RelativeLayout
     private lateinit var viewModel: MainActivityViewModel
 
 
@@ -45,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportActionBar?.hide()
+        initViews()
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         initObservers()
         AppPreferences.init(this)
@@ -60,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
         }
 
-        initiateViews()
         setOnClickListeners()
 
         createChannelForNotification()
@@ -78,6 +76,8 @@ class MainActivity : AppCompatActivity() {
             this,
             Observer { toastMessage ->
                 toastMessage?.let {
+                    //  hide loading screen
+                    loadingScreen.visibility = View.GONE
                     SnackBar.showToastBar(this, toastMessage)
                 }
             })
@@ -102,15 +102,16 @@ class MainActivity : AppCompatActivity() {
                         DbConstants.LOGGED_USER_NAME,
                         userName
                     )
-
+                    //  hide loading screen
+                    loadingScreen.visibility = View.GONE
                     startActivity(intent)
-
                 }
             })
     }
 
-    private fun initiateViews() {
+    private fun initViews() {
         forgotPassword = findViewById(R.id.login_reset_password)
+        loadingScreen = findViewById(R.id.loading_screen)
     }
 
     private fun setOnClickListeners() {
@@ -224,6 +225,8 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             else -> {
+                //  show loading screen
+                loadingScreen.visibility = View.VISIBLE
                 //  remember email and password if the user wants to
                 if (login_remember.isChecked) {
                     updateAppPreferences(true, email, password)
@@ -231,7 +234,6 @@ class MainActivity : AppCompatActivity() {
                     updateAppPreferences(false, "", "")
                 }
                 viewModel.loginUser(email, password)
-
             }
         }
     }

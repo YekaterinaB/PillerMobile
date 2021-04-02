@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -14,10 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.fragments.DrugByBoxFragment
 import com.example.piller.fragments.DrugByImageFragment
 import com.example.piller.fragments.DrugByNameFragment
 import com.example.piller.fragments.InteractionPopupFragment
-import com.example.piller.fragments.DrugByBoxFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DbConstants
@@ -26,6 +27,7 @@ import com.example.piller.viewModels.DrugSearchViewModel
 class AddNewDrugActivity : AppCompatActivity() {
     private lateinit var searchViewModel: DrugSearchViewModel
     private lateinit var drugOptionsList: RecyclerView
+    private lateinit var loadingScreen: RelativeLayout
     private lateinit var drugResultLabel: TextView
     private lateinit var selectDrugAnywayBtn: Button
     private lateinit var drugAdapter: NewDrugByNameAdapter
@@ -100,16 +102,6 @@ class AddNewDrugActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateSelectAnywayButtonVisibility(visible: Boolean) {
-        if (visible) {
-            selectDrugAnywayBtn.visibility = View.VISIBLE
-            selectDrugAnywayBtn.isEnabled = true
-        } else {
-            selectDrugAnywayBtn.visibility = View.INVISIBLE
-            selectDrugAnywayBtn.isEnabled = false
-        }
-    }
-
     private fun initObservers() {
         searchViewModel.addedDrugSuccess.observe(
             this,
@@ -120,10 +112,20 @@ class AddNewDrugActivity : AppCompatActivity() {
                 }
             })
 
+        searchViewModel.showLoadingScreen.observe(
+            this,
+            Observer {
+                if (it) {
+                    loadingScreen.animate().alpha(1.0F).duration = 500
+                    loadingScreen.visibility = View.VISIBLE
+                } else {
+                    loadingScreen.visibility = View.GONE
+                }
+            })
+
         searchViewModel.drugsSearchResult.observe(this, Observer {
-//            updateSelectAnywayButtonVisibility(it.isEmpty())
-            drugResultLabel.visibility = View.VISIBLE
             selectDrugAnywayBtn.visibility = View.VISIBLE
+            drugResultLabel.visibility = View.VISIBLE
             updateRecyclersAndAdapters()
             setButtonsEnabled(true)
         })
@@ -154,6 +156,7 @@ class AddNewDrugActivity : AppCompatActivity() {
 
     private fun initViews() {
         selectDrugAnywayBtn = findViewById(R.id.nd_select_anyway_btn)
+        loadingScreen = findViewById(R.id.loading_screen)
     }
 
     private fun updateRecyclersAndAdapters() {

@@ -3,12 +3,14 @@ package com.example.piller.fragments
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -38,28 +40,16 @@ class WeeklyCalendarFragment : Fragment() {
 
     // add drug animation
     private val rotateOpen: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this.context,
-            R.anim.rotate_open_anim
-        )
+        AnimationUtils.loadAnimation(this.context, R.anim.rotate_open_anim)
     }
     private val rotateClose: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this.context,
-            R.anim.rotate_close_anim
-        )
+        AnimationUtils.loadAnimation(this.context, R.anim.rotate_close_anim)
     }
     private val fromBottom: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this.context,
-            R.anim.from_bottom_anim
-        )
+        AnimationUtils.loadAnimation(this.context, R.anim.from_bottom_anim)
     }
     private val toBottom: Animation by lazy {
-        AnimationUtils.loadAnimation(
-            this.context,
-            R.anim.to_botton_anim
-        )
+        AnimationUtils.loadAnimation(this.context, R.anim.to_botton_anim)
     }
 
     private var FABClicked = false
@@ -157,6 +147,7 @@ class WeeklyCalendarFragment : Fragment() {
             eliRecycles[i].adapter = eliAdapters[i]
         }
 
+        setBorderOnToday()
     }
 
     private fun showDrugInfo(calendarEvent: CalendarEvent) {
@@ -303,6 +294,44 @@ class WeeklyCalendarFragment : Fragment() {
         fragment.findViewById<TextView>(R.id.calendar_thursday_date_label).text = weekStringDates[4]
         fragment.findViewById<TextView>(R.id.calendar_friday_date_label).text = weekStringDates[5]
         fragment.findViewById<TextView>(R.id.calendar_saturday_date_label).text = weekStringDates[6]
+    }
+
+    private fun setBorderOnToday() {
+        //use a GradientDrawable with only one color set, to make it a solid color
+        val border = GradientDrawable()
+        border.setColor(-0x1) //white background
+        border.setStroke(2, -0x1000000) //black border with full opacity
+
+        when (DateUtils.getCurrentWeekDayNumber() - 1) {
+            0 -> {
+                fragmentView.findViewById<LinearLayout>(R.id.calendar_sunday_layout).background =
+                    border
+            }
+            1 -> {
+                fragmentView.findViewById<LinearLayout>(R.id.calendar_monday_layout).background =
+                    border
+            }
+            2 -> {
+                fragmentView.findViewById<LinearLayout>(R.id.calendar_tuesday_layout).background =
+                    border
+            }
+            3 -> {
+                fragmentView.findViewById<LinearLayout>(R.id.calendar_wednesday_layout).background =
+                    border
+            }
+            4 -> {
+                fragmentView.findViewById<LinearLayout>(R.id.calendar_thursday_layout).background =
+                    border
+            }
+            5 -> {
+                fragmentView.findViewById<LinearLayout>(R.id.calendar_friday_layout).background =
+                    border
+            }
+            6 -> {
+                fragmentView.findViewById<LinearLayout>(R.id.calendar_saturday_layout).background =
+                    border
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

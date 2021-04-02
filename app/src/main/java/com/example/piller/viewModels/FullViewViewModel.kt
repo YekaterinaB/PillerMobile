@@ -19,11 +19,16 @@ import java.util.*
 
 class FullViewViewModel : ViewModel() {
     private val eventInterpreter = EventInterpreter()
+
     val mutableCurrentMonthlyCalendar: MutableLiveData<Array<MutableList<CalendarEvent>>> by lazy {
         MutableLiveData<Array<MutableList<CalendarEvent>>>()
     }
 
     val mutableDeleteSuccess: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+
+    val showLoadingScreen: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
 
@@ -86,6 +91,7 @@ class FullViewViewModel : ViewModel() {
     }
 
     fun updateCalendarByUser(email: String, profile: Profile, startDate: Date, endDate: Date) {
+        showLoadingScreen.value = true
         val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
         retrofit.getCalendarByUser(email, profile.getProfileName()).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -100,6 +106,7 @@ class FullViewViewModel : ViewModel() {
                     } else {
                         //  todo handle error
                     }
+                    showLoadingScreen.value = false
                 }
             }
         )
