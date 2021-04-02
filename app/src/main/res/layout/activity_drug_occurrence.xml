@@ -133,7 +133,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ndo_repeat_container"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:visibility="gone"
@@ -144,13 +144,12 @@
 
             <Spinner
                 android:id="@+id/ndo_repeat_options_spinner"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:spinnerMode="dropdown"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ndo_repeat_every_number"
                 app:layout_constraintTop_toTopOf="@+id/ndo_repeat_every_number" />
 
@@ -184,7 +183,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ndo_weekday_container"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:visibility="gone"
@@ -309,10 +308,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:enabled="false"
+                android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ndoCurrentMedsET" />
+                app:layout_constraintTop_toBottomOf="@+id/ndo_weekday_container" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -325,42 +323,45 @@
                 app:layout_constraintTop_toTopOf="@+id/ndo_refill_switch" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/ndo_enter_meds_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/ndo_enter_the_amount_of_meds_you_currently_have_to_get_a_refill_reminder"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ndo_weekday_container" />
+                app:layout_constraintTop_toBottomOf="@+id/ndo_refill_switch" />
 
             <EditText
                 android:id="@+id/ndoCurrentMedsET"
                 android:layout_width="wrap_content"
-                android:imeOptions="actionDone"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:autofillHints="1"
                 android:digits="0123456789"
                 android:ems="10"
+                android:imeOptions="actionDone"
                 android:inputType="numberSigned"
                 android:maxLength="3"
                 android:maxLines="1"
                 android:textAlignment="center"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                app:layout_constraintTop_toBottomOf="@+id/ndo_enter_meds_label" />
 
             <TextView
                 android:id="@+id/ndoRemainingMeds"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/ndo_when_i_have_20_meds_remaining"
                 android:textColor="@android:color/holo_blue_dark"
                 android:visibility="gone"
-                app:layout_constraintStart_toStartOf="@+id/ndo_refill_switch"
-                app:layout_constraintTop_toBottomOf="@+id/ndo_refill_switch" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ndoCurrentMedsET" />
 
             <TextView
                 android:id="@+id/ndoWhatTimeTv"
