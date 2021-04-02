@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.piller.DrugMap
 import com.example.piller.utilities.DateUtils
 import com.example.piller.R
@@ -22,6 +23,9 @@ import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ImageUtils
 import com.example.piller.viewModels.DrugInfoViewModel
 import com.example.piller.viewModels.ProfileViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -126,7 +130,11 @@ class DrugInfoActivity : AppCompatActivity() {
             this,
             Observer { image ->
                 if (image != null) {
-                    _drugImageIV.setImageBitmap(image)
+                    GlobalScope.launch(Dispatchers.Main) {
+                        Glide.with(this@DrugInfoActivity)
+                            .load(image)
+                            .into(_drugImageIV)
+                    }
                 }
             })
 
