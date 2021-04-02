@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -31,6 +32,7 @@ class FullViewFragment : Fragment() {
     private val profileViewModel: ProfileViewModel by activityViewModels()
     private lateinit var fragmentView: View
     private lateinit var calendarView: CalendarView
+    private lateinit var loadingScreen: RelativeLayout
     private val eventDayCircleRadius = DbConstants.EVENTDAY_DRAWABLE_CIRCLE_RADIUS
     private val eventDayBitMapWidth = 256
     private val eventDayBitMapHeight = 128
@@ -48,6 +50,7 @@ class FullViewFragment : Fragment() {
         initViews()
         //  create the dots that appear on the calendar
         initEvents()
+        initObservers()
         setOnClickListeners()
         return fragmentView
     }
@@ -123,6 +126,7 @@ class FullViewFragment : Fragment() {
 
     private fun initViews() {
         calendarView = fragmentView.findViewById(R.id.fv_calendar)
+        loadingScreen = fragmentView.findViewById(R.id.loading_screen)
     }
 
     private fun getDrawableText(typeface: Int?, color: Int): Any {
@@ -153,7 +157,7 @@ class FullViewFragment : Fragment() {
         return BitmapDrawable(this.resources, bitmap)
     }
 
-    private fun refreshData() {
+    private fun initEvents() {
         val startDate = DateUtils.getFirstDayOfMonth()
         val endDate = DateUtils.getLastDayOfMonth()
         //  get all the events for the selected month
@@ -165,9 +169,7 @@ class FullViewFragment : Fragment() {
         )
     }
 
-    private fun initEvents() {
-        refreshData()
-
+    private fun initObservers() {
         //  when the data arrives, set a dot for each day that has at least one event
         viewModel.mutableCurrentMonthlyCalendar.observe(
             viewLifecycleOwner,
@@ -175,6 +177,20 @@ class FullViewFragment : Fragment() {
                 eventsArray?.let {
                     if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         setEvents(it)
+                    }
+                }
+            })
+
+        viewModel.showLoadingScreen.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { eventsArray ->
+                eventsArray?.let {
+                    if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        if (it) {
+                            loadingScreen.visibility = View.VISIBLE
+                        } else {
+                            loadingScreen.visibility = View.GONE
+                        }
                     }
                 }
             })
@@ -230,7 +246,7 @@ class FullViewFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (data!!.getBooleanExtra(DbConstants.SHOULD_REFRESH_DATA, false)) {
-            refreshData()
+            initEvents()
         }
         val bundle = data.extras!!.getBundle(DbConstants.DRUG_DELETES)
         // 3

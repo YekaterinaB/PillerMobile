@@ -42,6 +42,12 @@ class DrugSearchViewModel : ViewModel() {
     val addedDrugSuccess: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
+
+    val showLoadingScreen: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+
+
     lateinit var calendarId: String
 
     fun getDrugByRxcui(rxcui: Int): DrugObject? {
@@ -64,6 +70,7 @@ class DrugSearchViewModel : ViewModel() {
         val imageFile = File(imageFilePath)
 
         if (imageFile.exists() && imageFile.isFile) {
+            showLoadingScreen.value = true
             val multipartBody = getFileAsMultiPart(imageFile)
             drugsSearchResult.value?.clear()
             drugAPIRetrofit.findDrugByImage(multipartBody).enqueue(
@@ -82,6 +89,7 @@ class DrugSearchViewModel : ViewModel() {
                             val jObjError = JSONObject(response.errorBody()!!.string())
                             snackBarMessage.value = jObjError["message"] as String
                         }
+                        showLoadingScreen.value = false
                     }
                 }
             )
@@ -92,6 +100,7 @@ class DrugSearchViewModel : ViewModel() {
 
     fun searchDrugByName(drugName: String) {
         if (drugName.isNotEmpty()) {
+            showLoadingScreen.value = true
             drugsSearchResult.value?.clear()
             drugAPIRetrofit.findDrugByName(drugName).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
@@ -109,6 +118,7 @@ class DrugSearchViewModel : ViewModel() {
                             val jObjError = JSONObject(response.errorBody()!!.string())
                             snackBarMessage.value = jObjError["message"] as String
                         }
+                        showLoadingScreen.value = false
                     }
                 }
             )
@@ -118,6 +128,7 @@ class DrugSearchViewModel : ViewModel() {
     }
 
     fun getInteractionList(email: String, profileName: String, rxcui: Int) {
+        showLoadingScreen.value = true
         drugAPIRetrofit.findInteractionList(email, profileName, rxcui.toString()).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -134,6 +145,7 @@ class DrugSearchViewModel : ViewModel() {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String
                     }
+                    showLoadingScreen.value = false
                 }
             }
         )
@@ -191,6 +203,7 @@ class DrugSearchViewModel : ViewModel() {
     fun searchDrugByBox(filePath: String) {
         val imageFile = File(filePath)
         if (imageFile.exists() && imageFile.isFile) {
+            showLoadingScreen.value = true
             val multipartBody = getFileAsMultiPart(imageFile)
             drugsSearchResult.value?.clear()
             drugAPIRetrofit.findDrugByBox(multipartBody).enqueue(
@@ -209,6 +222,7 @@ class DrugSearchViewModel : ViewModel() {
                             val jObjError = JSONObject(response.errorBody()!!.string())
                             snackBarMessage.value = jObjError["message"] as String
                         }
+                        showLoadingScreen.value = false
                     }
                 }
             )

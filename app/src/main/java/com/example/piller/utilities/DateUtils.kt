@@ -37,6 +37,11 @@ class DateUtils {
             return stringDates
         }
 
+        fun getCurrentWeekDayNumber(): Int {
+            val cal = Calendar.getInstance()
+            return cal[Calendar.DAY_OF_WEEK]
+        }
+
         fun areDatesEqual(date1: Calendar, date2: Calendar): Boolean {
             return date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR)
                     && date1.get(Calendar.MONTH) == date2.get(Calendar.MONTH)
