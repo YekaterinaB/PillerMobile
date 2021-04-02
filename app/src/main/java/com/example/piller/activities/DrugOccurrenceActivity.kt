@@ -658,10 +658,17 @@ class DrugOccurrenceActivity : AppCompatActivity() {
             valid = false
             drugRefillCurrentAmount.error = "Please enter the amount of meds you currently have"
             drugRefillCurrentAmount.requestFocus()
+        } else if (repeatOnEnum == DrugOccurrenceViewModel.RepeatOn.WEEK && !isAtLeastOneDayChosen()) {
+            valid = false
+            SnackBar.showToastBar(this, "Please choose at least one week day")
         }
 
         return valid
     }
+
+    private fun isAtLeastOneDayChosen(): Boolean =
+        weekDaysCBs.any { checkBox -> checkBox.isChecked }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
