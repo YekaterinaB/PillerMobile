@@ -159,6 +159,12 @@ class DrugInfoActivity : AppCompatActivity() {
         _drugTakenCB = findViewById(R.id.di_drug_taken)
         _drugImageIV = findViewById(R.id.di_drug_image)
 
+        val drugObject =
+            DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
+        if (!drugObject.refill.isToNotify) {
+            _drugRefillsTV.visibility = View.GONE
+        }
+
         initViewsData()
     }
 

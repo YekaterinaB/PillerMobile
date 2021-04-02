@@ -34,6 +34,7 @@ import java.util.*
 
 class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var newDrugName: TextView
+    private lateinit var medsLeftLabel: TextView
     private lateinit var drugOccurrencesDate: TextView
     private lateinit var drugOccurrencesTime: TextView
     private lateinit var drugRefillSwitch: Switch
@@ -365,24 +366,6 @@ class DrugOccurrenceActivity : AppCompatActivity() {
 
         drugRepeatsOnEditText.addTextChangedListener(textWatcher)
 
-        val refillTextWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s.toString() == "0" || s.toString().isEmpty()) {
-                    drugRefillSwitch.isEnabled = false
-                    drugRefillSwitch.isChecked = false
-                    setRefillVisibility(false)
-                } else {
-                    drugRefillSwitch.isEnabled = true
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        }
-
-        ndoCurrentMedsET.addTextChangedListener(refillTextWatcher)
-
         for ((index, checkbox) in weekDaysCBs.withIndex()) {
             checkbox.setOnClickListener {
                 setWeekdayChecked(index + 1, checkbox.isChecked)
@@ -480,6 +463,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         drugRefillWhenIHaveLeft = findViewById(R.id.ndoRemainingMeds)
         drugRefillReminderTime = findViewById(R.id.ndoRefillReminderTime)
         drugRefillWhatTime = findViewById(R.id.ndoWhatTimeTv)
+        medsLeftLabel = findViewById(R.id.ndo_enter_meds_label)
     }
 
     private fun setRefillVisibility(show: Boolean) {
@@ -487,10 +471,14 @@ class DrugOccurrenceActivity : AppCompatActivity() {
             drugRefillWhenIHaveLeft.visibility = View.VISIBLE
             drugRefillReminderTime.visibility = View.VISIBLE
             drugRefillWhatTime.visibility = View.VISIBLE
+            drugRefillCurrentAmount.visibility = View.VISIBLE
+            medsLeftLabel.visibility = View.VISIBLE
         } else {
             drugRefillWhenIHaveLeft.visibility = View.GONE
             drugRefillReminderTime.visibility = View.GONE
             drugRefillWhatTime.visibility = View.GONE
+            drugRefillCurrentAmount.visibility = View.GONE
+            medsLeftLabel.visibility = View.GONE
         }
     }
 
@@ -664,6 +652,17 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         }
     }
 
+    private fun isDataValid(): Boolean {
+        var valid = true
+        if (drugRefillSwitch.isChecked && drugRefillCurrentAmount.text.isNullOrEmpty()) {
+            valid = false
+            drugRefillCurrentAmount.error = "Please enter the amount of meds you currently have"
+            drugRefillCurrentAmount.requestFocus()
+        }
+
+        return valid
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.new_drug_occurrence_menu, menu)
@@ -681,7 +680,9 @@ class DrugOccurrenceActivity : AppCompatActivity() {
                     viewModel.removeDrugRepeatEndDate()
                 }
 
-                addOrEditDrug()
+                if (isDataValid()) {
+                    addOrEditDrug()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
