@@ -14,18 +14,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.piller.DrugMap
-import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugObject
+import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ImageUtils
 import com.example.piller.viewModels.DrugInfoViewModel
 import com.example.piller.viewModels.ProfileViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,6 +41,7 @@ class DrugInfoActivity : AppCompatActivity() {
     private lateinit var _loggedEmail: String
     private lateinit var _currentProfile: String
     private lateinit var _calendarEvent: CalendarEvent
+    private var _isFromNotification = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +69,7 @@ class DrugInfoActivity : AppCompatActivity() {
     private fun initIntent() {
         _loggedEmail = intent.extras!!.getString(DbConstants.LOGGED_USER_EMAIL)!!
         _currentProfile = intent.extras!!.getString(DbConstants.LOGGED_USER_NAME)!!
+        _isFromNotification = intent.extras!!.getBoolean(DbConstants.FROM_NOTIFICATION, false)
 
         try {
             _calendarEvent = intent.extras!!.getBundle(DbConstants.CALENDAR_EVENT_BUNDLE)
@@ -130,11 +129,9 @@ class DrugInfoActivity : AppCompatActivity() {
             this,
             Observer { image ->
                 if (image != null) {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        Glide.with(this@DrugInfoActivity)
-                            .load(image)
-                            .into(_drugImageIV)
-                    }
+                    Glide.with(this@DrugInfoActivity)
+                        .load(image)
+                        .into(_drugImageIV)
                 }
             })
 
@@ -209,13 +206,21 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        if (!_isFromNotification) {
+            onBackPressed()
+        } else {
+            finish()
+        }
         return true
     }
 
     override fun onBackPressed() {
-        setTakenStatusResult()
-        super.onBackPressed()
+        if (!_isFromNotification) {
+            setTakenStatusResult()
+            super.onBackPressed()
+        } else {
+            finish()
+        }
     }
 
     private fun setTakenStatusResult() {

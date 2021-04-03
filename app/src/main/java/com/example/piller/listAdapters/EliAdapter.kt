@@ -1,9 +1,9 @@
 package com.example.piller.listAdapters
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +27,7 @@ class EliAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val drugName: TextView = view.findViewById(R.id.eli_drug_name)
         val intakeTime: TextView = view.findViewById(R.id.eli_time_intake)
+        val takenStatus: ImageView = view.findViewById(R.id.eli_drug_taken)
         val layout: ConstraintLayout = view.findViewById(R.id.eli_layout)
     }
 
@@ -48,7 +49,7 @@ class EliAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val currentItem = dataSet[position]
-        val drugObject= DrugMap.instance.getDrugObject(currentItem.calendarId,currentItem.drugId)
+        val drugObject = DrugMap.instance.getDrugObject(currentItem.calendarId, currentItem.drugId)
         viewHolder.drugName.text = drugObject.drugName
         val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(currentItem.intakeTime)
         viewHolder.intakeTime.text = time
@@ -61,10 +62,10 @@ class EliAdapter(
         if (DateUtils.isDateAfter(Date(), calendarEvent.intakeTime)) {
             if (calendarEvent.isTaken) {
                 //  the medicine was taken - set green background (alpha is for opacity)
-                viewHolder.layout.setBackgroundColor(Color.argb(37, 31, 249, 49))
+                viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_check_green)
             } else {
                 //  the medicine wasn't taken - set red background (alpha is for opacity)
-                viewHolder.layout.setBackgroundColor(Color.argb(37, 249, 31, 31))
+                viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_x_red)
             }
         }
     }
