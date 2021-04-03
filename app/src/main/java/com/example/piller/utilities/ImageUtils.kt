@@ -3,22 +3,19 @@ package com.example.piller.utilities
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.*
-import java.lang.Exception
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 object ImageUtils {
     fun saveFile(context: Context, b: Bitmap, fileName: String) {
-        var fos: FileOutputStream
+        val fos: FileOutputStream
         try {
-            GlobalScope.launch(Dispatchers.IO) {
-                fos = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-                b.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                fos.close()
-            }
+            fos = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+            b.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.close()
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         } catch (e: IOException) {

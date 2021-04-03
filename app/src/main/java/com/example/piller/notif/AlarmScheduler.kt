@@ -18,7 +18,12 @@ import kotlin.math.ceil
 
 object AlarmScheduler {
 
-    fun scheduleAllNotifications(email: String, currentProfile: String, context: Context,drug:DrugObject){
+    fun scheduleAllNotifications(
+        email: String,
+        currentProfile: String,
+        context: Context,
+        drug: DrugObject
+    ) {
         IntakeReminderScheduler.scheduleAlarmsForReminder(
             context, email, currentProfile, drug
         )
@@ -28,7 +33,12 @@ object AlarmScheduler {
         )
     }
 
-    fun removeAllNotifications(email: String, currentProfile: String, context: Context, drug:DrugObject){
+    fun removeAllNotifications(
+        email: String,
+        currentProfile: String,
+        context: Context,
+        drug: DrugObject
+    ) {
         IntakeReminderScheduler.removeAlarmsForReminder(
             context, drug, email, currentProfile
         )
@@ -54,6 +64,7 @@ object AlarmScheduler {
             type = email
             // 4
             putExtra(DbConstants.LOGGED_USER_EMAIL, email)
+            putExtra(DbConstants.FROM_NOTIFICATION, true)
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
