@@ -17,10 +17,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.bumptech.glide.Glide
 import com.example.piller.BuildConfig
 import com.example.piller.R
 import com.example.piller.viewModels.DrugSearchViewModel
+import com.squareup.picasso.Picasso
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -155,9 +155,7 @@ class DrugByBoxFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAPTURE_IMAGE) {
             searchViewModel.searchDrugByBox(imageFilePath)
             //don't compare the data to null, it will always come as  null because we are providing a file URI, so load with the imageFilePath we obtained before opening the cameraIntent
-            Glide.with(this)
-                .load(imageFilePath)
-                .into(boxImage)
+            Picasso.get().load(imageFilePath).into(boxImage)
             noteTV.text = "Press again to change the picture."
         }
     }

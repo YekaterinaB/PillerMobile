@@ -123,7 +123,7 @@ class WeeklyCalendarFragment : Fragment() {
 
     private fun updateRecyclersAndAdapters() {
         for (i in 0 until 7) {
-            val newList = weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value!!.get(i)
+            val newList = weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value!![i]
             eliAdapters[i].setData(newList)
             eliAdapters[i].notifyDataSetChanged()
         }

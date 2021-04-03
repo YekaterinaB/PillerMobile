@@ -1,7 +1,6 @@
 package com.example.piller.viewModels
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,6 +16,7 @@ import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
+import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -39,8 +39,8 @@ class DrugInfoViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
-    val drugImageBitmap: MutableLiveData<Bitmap> by lazy {
-        MutableLiveData<Bitmap>(null)
+    val drugImageSource: MutableLiveData<File> by lazy {
+        MutableLiveData<File>(null)
     }
 
     val intakeUpdateSuccess: MutableLiveData<Boolean> by lazy {
@@ -152,17 +152,17 @@ class DrugInfoViewModel : ViewModel() {
                 //  inside a thread we can't use mutableLiveData.value = ..., we have to use the
                 //  function mutableLiveData.postValue(...)
                 val image = BitmapFactory.decodeStream(connection.inputStream)
-                drugImageBitmap.postValue(image)
-                ImageUtils.saveFile(context, image, rxcui)
+                val imageFile = ImageUtils.saveFile(context, image, rxcui)
+                drugImageSource.postValue(imageFile)
             } catch (e: IOException) {
             }
         }.start()
     }
 
     private fun setImageFromCache(context: Context, rxcui: String): Boolean {
-        val image = ImageUtils.loadBitmap(context, rxcui)
-        if (image != null) {
-            drugImageBitmap.value = image
+        val image = ImageUtils.loadImageFile(context, rxcui)
+        if (image != null && image.exists()) {
+            drugImageSource.value = image
             return true
         }
         return false

@@ -2,34 +2,39 @@ package com.example.piller.utilities
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import java.io.FileInputStream
+import android.os.Environment
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 
 
 object ImageUtils {
-    fun saveFile(context: Context, b: Bitmap, fileName: String) {
-        val fos: FileOutputStream
-        try {
-            fos = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-            b.compress(Bitmap.CompressFormat.PNG, 100, fos)
-            fos.close()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
+    fun saveFile(context: Context, b: Bitmap, fileName: String): File {
+        val filePath: String =
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath.toString() +
+                    "/Piller"
+        val dir = File(filePath)
+        if (!dir.exists()) {
+            dir.mkdirs()
         }
+        val file = File(dir, "$fileName.png")
+        val fOut = FileOutputStream(file)
+
+        b.compress(Bitmap.CompressFormat.PNG, 100, fOut)
+        fOut.flush()
+        fOut.close()
+        return file
     }
 
-    fun loadBitmap(context: Context, fileName: String): Bitmap? {
-        var b: Bitmap? = null
-        val fis: FileInputStream
+    fun loadImageFile(context: Context, fileName: String): File? {
+        var b: File? = null
+        val filePath: String =
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath.toString() +
+                    "/Piller"
         try {
-            fis = context.openFileInput(fileName)
-            b = BitmapFactory.decodeStream(fis)
-            fis.close()
+            val dir = File(filePath)
+            b = File(dir, "$fileName.png")
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         } catch (e: IOException) {
@@ -39,9 +44,16 @@ object ImageUtils {
     }
 
     fun deleteFile(fileName: String, context: Context) {
+        val filePath: String =
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath.toString() +
+                    "/Piller"
         try {
-            context.deleteFile(fileName)
-        } catch (e: Exception) {
+            val dir = File(filePath)
+            val file = File(dir, "$fileName.png")
+            file.delete()
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
             e.printStackTrace()
         }
     }
