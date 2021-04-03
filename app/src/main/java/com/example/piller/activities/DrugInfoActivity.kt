@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.example.piller.DrugMap
 import com.example.piller.R
 import com.example.piller.SnackBar
@@ -23,6 +22,7 @@ import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ImageUtils
 import com.example.piller.viewModels.DrugInfoViewModel
 import com.example.piller.viewModels.ProfileViewModel
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -125,13 +125,11 @@ class DrugInfoActivity : AppCompatActivity() {
                 }
             })
 
-        _viewModel.drugImageBitmap.observe(
+        _viewModel.drugImageSource.observe(
             this,
             Observer { image ->
                 if (image != null) {
-                    Glide.with(this@DrugInfoActivity)
-                        .load(image)
-                        .into(_drugImageIV)
+                    Picasso.get().load(image).into(_drugImageIV)
                 }
             })
 

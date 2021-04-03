@@ -11,9 +11,9 @@ import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ProfileAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
-import com.example.piller.models.*
-import com.example.piller.refillReminders.RefillReminderHelper
-import com.example.piller.refillReminders.RefillReminderScheduler
+import com.example.piller.models.CalendarEvent
+import com.example.piller.models.Profile
+import com.example.piller.models.User
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ParserUtils
 import okhttp3.ResponseBody
@@ -35,7 +35,10 @@ class BackgroundReceiver : BroadcastReceiver() {
 object BackgroundNotificationScheduler {
     fun createNotificationChannel(context: Context) {
         NotificationHelper.createNotificationChannel(
-            context, true, context.getString(R.string.app_name), NotificationManagerCompat.IMPORTANCE_HIGH
+            context,
+            true,
+            context.getString(R.string.app_name),
+            NotificationManagerCompat.IMPORTANCE_HIGH
         )
     }
 
@@ -59,8 +62,7 @@ object BackgroundNotificationScheduler {
                         context,
                         "Piller - Could not connect to server.",
                         Toast.LENGTH_LONG
-                    )
-                        .show()
+                    ).show()
                 }
 
                 override fun onResponse(
@@ -168,7 +170,6 @@ object BackgroundNotificationScheduler {
             AlarmScheduler.scheduleAllNotifications(
                 AppPreferences.email, profileName, context, drugObject
             )
-
         }
     }
 
