@@ -3,16 +3,15 @@ package com.example.piller.fragments
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -296,40 +295,54 @@ class WeeklyCalendarFragment : Fragment() {
         fragment.findViewById<TextView>(R.id.calendar_saturday_date_label).text = weekStringDates[6]
     }
 
-    private fun setBorderOnToday() {
-        //use a GradientDrawable with only one color set, to make it a solid color
-        val border = GradientDrawable()
-        border.setColor(-0x1) //white background
-        border.setStroke(2, -0x1000000) //black border with full opacity
+    private fun setTodayLabelsColor(dayName: TextView, dateName: TextView) {
+        dayName.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+        dateName.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+    }
 
+    private fun setBorderOnToday() {
         when (DateUtils.getCurrentWeekDayNumber() - 1) {
             0 -> {
-                fragmentView.findViewById<LinearLayout>(R.id.calendar_sunday_layout).background =
-                    border
+                setTodayLabelsColor(
+                    fragmentView.findViewById(R.id.calendar_sunday_label),
+                    fragmentView.findViewById(R.id.calendar_sunday_date_label)
+                )
             }
             1 -> {
-                fragmentView.findViewById<LinearLayout>(R.id.calendar_monday_layout).background =
-                    border
+                setTodayLabelsColor(
+                    fragmentView.findViewById(R.id.calendar_monday_label),
+                    fragmentView.findViewById(R.id.calendar_monday_date_label)
+                )
             }
             2 -> {
-                fragmentView.findViewById<LinearLayout>(R.id.calendar_tuesday_layout).background =
-                    border
+                setTodayLabelsColor(
+                    fragmentView.findViewById(R.id.calendar_tuesday_label),
+                    fragmentView.findViewById(R.id.calendar_tuesday_date_label)
+                )
             }
             3 -> {
-                fragmentView.findViewById<LinearLayout>(R.id.calendar_wednesday_layout).background =
-                    border
+                setTodayLabelsColor(
+                    fragmentView.findViewById(R.id.calendar_wednesday_label),
+                    fragmentView.findViewById(R.id.calendar_wednesday_date_label)
+                )
             }
             4 -> {
-                fragmentView.findViewById<LinearLayout>(R.id.calendar_thursday_layout).background =
-                    border
+                setTodayLabelsColor(
+                    fragmentView.findViewById(R.id.calendar_thursday_label),
+                    fragmentView.findViewById(R.id.calendar_thursday_date_label)
+                )
             }
             5 -> {
-                fragmentView.findViewById<LinearLayout>(R.id.calendar_friday_layout).background =
-                    border
+                setTodayLabelsColor(
+                    fragmentView.findViewById(R.id.calendar_friday_label),
+                    fragmentView.findViewById(R.id.calendar_friday_date_label)
+                )
             }
             6 -> {
-                fragmentView.findViewById<LinearLayout>(R.id.calendar_saturday_layout).background =
-                    border
+                setTodayLabelsColor(
+                    fragmentView.findViewById(R.id.calendar_saturday_label),
+                    fragmentView.findViewById(R.id.calendar_saturday_date_label)
+                )
             }
         }
     }
