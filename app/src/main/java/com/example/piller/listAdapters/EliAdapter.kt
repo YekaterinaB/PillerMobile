@@ -67,6 +67,10 @@ class EliAdapter(
                 //  the medicine wasn't taken - set red background (alpha is for opacity)
                 viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_x_red)
             }
+        } else {
+            //  the next line is in order to remove the icon, because if we delete the icon stays
+            //  even though it's not supposed to be there
+            viewHolder.takenStatus.setBackgroundResource(0)
         }
     }
 
