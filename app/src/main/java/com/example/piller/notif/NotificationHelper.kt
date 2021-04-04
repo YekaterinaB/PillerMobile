@@ -2,23 +2,12 @@ package com.example.piller.notif
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Build
-import android.os.Bundle
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import com.example.piller.R
-import com.example.piller.activities.DrugInfoActivity
-import com.example.piller.intakeReminders.IntakeReminderScheduler
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugObject
-import com.example.piller.refillReminders.RefillReminderHelper
-import com.example.piller.utilities.DbConstants
+import com.example.piller.utilities.DateUtils
 import java.util.*
-import java.util.Calendar.*
 
 object NotificationHelper {
 
@@ -27,7 +16,7 @@ object NotificationHelper {
         context: Context,
         showBadge: Boolean,
         name: String,
-        importance:Int
+        importance: Int
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // 2
@@ -48,10 +37,11 @@ object NotificationHelper {
         val cal = Calendar.getInstance()
         val intakeCal = Calendar.getInstance()
         intakeCal.timeInMillis = drug.occurrence.repeatStart
-        cal.set(Calendar.HOUR_OF_DAY, intakeCal[Calendar.HOUR_OF_DAY])
-        cal.set(Calendar.MINUTE, intakeCal[Calendar.MINUTE])
-        cal.set(Calendar.SECOND, intakeCal[Calendar.SECOND])
-        cal.set(Calendar.MILLISECOND, intakeCal[Calendar.MILLISECOND])
+        DateUtils.setCalendarTime(
+            cal,
+            intakeCal.get(Calendar.HOUR_OF_DAY),
+            intakeCal.get(Calendar.MINUTE)
+        )
         return CalendarEvent(
             drug.calendarId,
             drug.drugId,

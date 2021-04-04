@@ -16,9 +16,6 @@ import java.util.*
 import kotlin.math.ceil
 
 object IntakeReminderScheduler {
-
-
-
     fun scheduleAlarmsForReminder(
         context: Context,
         email: String,
@@ -42,7 +39,7 @@ object IntakeReminderScheduler {
         email: String,
         currentProfile: String,
         drug: DrugObject,
-        dayOfWeek:String
+        dayOfWeek: String
     ): PendingIntent? {
         val bundleDrugObject = Bundle()
         bundleDrugObject.putParcelable(DbConstants.DRUG_OBJECT, drug)
@@ -88,7 +85,7 @@ object IntakeReminderScheduler {
             )
         } else {
             val alarmIntent =
-                createPendingIntent(context, email, currentProfile, drug,"0")
+                createPendingIntent(context, email, currentProfile, drug, "0")
             setScheduleNotWeekAlarms(drug, alarmMgr, datetimeToAlarm, alarmIntent)
         }
     }
@@ -99,9 +96,10 @@ object IntakeReminderScheduler {
         datetimeToAlarm: Calendar,
         alarmIntent: PendingIntent?
     ) {
-        val occurrence=drug.occurrence
+        val occurrence = drug.occurrence
         if (occurrence.repeatYear == 0 && occurrence.repeatMonth == 0 &&
-            occurrence.repeatDay == 0 && occurrence.repeatWeek == 0) {
+            occurrence.repeatDay == 0 && occurrence.repeatWeek == 0
+        ) {
             //repeat once
             setOnceRepeatScheduleAlarm(alarmMgr, datetimeToAlarm, alarmIntent)
         } else if (occurrence.repeatMonth != 0) {
@@ -140,7 +138,13 @@ object IntakeReminderScheduler {
             val alarmByDay =
                 getTimeClosestByDayWeek(datetimeToAlarm, day.toInt(), repeatWeek)
             val alarmIntent =
-                createPendingIntent(context, email, currentProfile, drug, day.toString()) // add day in eac
+                createPendingIntent(
+                    context,
+                    email,
+                    currentProfile,
+                    drug,
+                    day.toString()
+                ) // add day in eac
 
             //alert every week on weekday
             setWeekScheduleAlarm(repeatWeek, alarmByDay, alarmIntent, alarmMgr)
@@ -340,7 +344,8 @@ object IntakeReminderScheduler {
         if (days[0].toInt() > 0) {
             //repeat week on
             for (day in days) {
-                val alarmIntent = createPendingIntent(context, email, currentProfile, drug, day.toString())
+                val alarmIntent =
+                    createPendingIntent(context, email, currentProfile, drug, day.toString())
                 alarmMgr.cancel(alarmIntent)
             }
         } else {

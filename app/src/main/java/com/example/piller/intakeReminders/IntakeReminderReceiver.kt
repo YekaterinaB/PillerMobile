@@ -69,7 +69,6 @@ class IntakeReminderReceiver : BroadcastReceiver() {
         retrofit.setIntakeNotTaken(takenId, refillId, calCurr.timeInMillis).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-
                 }
 
                 override fun onResponse(
@@ -79,7 +78,6 @@ class IntakeReminderReceiver : BroadcastReceiver() {
                 }
             }
         )
-
     }
 
     private fun shouldShowNotifications(context: Context): Boolean {
