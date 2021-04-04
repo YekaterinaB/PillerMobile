@@ -154,9 +154,17 @@ class DrugByBoxFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAPTURE_IMAGE) {
             searchViewModel.searchDrugByBox(imageFilePath)
-            //don't compare the data to null, it will always come as  null because we are providing a file URI, so load with the imageFilePath we obtained before opening the cameraIntent
-            Picasso.get().load(imageFilePath).into(boxImage)
+            //  don't compare the data to null, it will always come as  null because we are providing
+            // a file URI, so load with the imageFilePath we obtained before opening the cameraIntent
+            updateImage()
             noteTV.text = "Press again to change the picture."
+        }
+    }
+
+    private fun updateImage() {
+        val imageFile = File(imageFilePath)
+        if (imageFile.exists()) {
+            Picasso.get().load(imageFile).into(boxImage)
         }
     }
 

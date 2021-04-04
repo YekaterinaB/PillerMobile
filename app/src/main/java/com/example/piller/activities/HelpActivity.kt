@@ -27,7 +27,7 @@ class HelpActivity : AppCompatActivity() {
         qAndA.add(
             Pair(
                 "How Can I Add a New Medicine?",
-                "In home view, tap on the plus button on bottom right and then there are 2 options: \n1) By name \n2) By image"
+                "In home view, tap on the plus button on bottom right and then there are 2 options: \n1) By name \n2) By box image\n3) By pill image"
             )
         )
         qAndA.add(

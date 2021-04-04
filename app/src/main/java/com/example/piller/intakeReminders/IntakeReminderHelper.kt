@@ -17,7 +17,6 @@ import java.util.*
 
 object IntakeReminderHelper {
 
-
     fun createNotification(
         context: Context, drug: DrugObject,
         currentProfile: String,
@@ -31,7 +30,6 @@ object IntakeReminderHelper {
             id,
             notificationBuilder.build()
         ) //id for each notification
-
     }
 
     private fun buildNotification(
@@ -71,6 +69,4 @@ object IntakeReminderHelper {
             setContentIntent(pendingIntent)
         }
     }
-
-
 }
