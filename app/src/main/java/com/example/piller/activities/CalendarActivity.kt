@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.fragments.FullViewFragment
 import com.example.piller.fragments.ProfileFragment
 import com.example.piller.fragments.WeeklyCalendarFragment
@@ -148,10 +149,7 @@ class CalendarActivity : AppCompatActivity() {
                 true
             }
             R.id.menu_logout -> {
-                SnackBar.showToastBar(
-                    this@CalendarActivity,
-                    "Logout"
-                )
+                finish()
                 true
             }
             else -> super.onOptionsItemSelected(item)
