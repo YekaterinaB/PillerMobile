@@ -1,12 +1,9 @@
 package com.example.piller.intakeReminders
 
 import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import com.example.piller.R
 import com.example.piller.models.DrugObject
@@ -24,10 +21,16 @@ object IntakeReminderScheduler {
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val cal = Calendar.getInstance()
-        cal[Calendar.MILLISECOND] = 0
+        //  set seconds and ms to 0
+        DateUtils.setCalendarTime(cal, cal[Calendar.HOUR_OF_DAY], cal[Calendar.MINUTE])
         val calRepeatEnd = Calendar.getInstance()
         calRepeatEnd.timeInMillis = drug.occurrence.repeatEnd
-        calRepeatEnd[Calendar.MILLISECOND] = 0
+        //  set seconds and ms to 0
+        DateUtils.setCalendarTime(
+            calRepeatEnd,
+            calRepeatEnd[Calendar.HOUR_OF_DAY],
+            calRepeatEnd[Calendar.MINUTE]
+        )
         // if today is after the repeat end time, to not notify
         if (!(drug.occurrence.repeatEnd > 0 && DateUtils.isDateBefore(calRepeatEnd, cal))) {
             scheduleAlarm(context, email, currentProfile, drug, alarmMgr)
@@ -70,8 +73,12 @@ object IntakeReminderScheduler {
     ) {
         val datetimeToAlarm = Calendar.getInstance(Locale.getDefault())
         datetimeToAlarm.timeInMillis = drug.occurrence.repeatStart
-        datetimeToAlarm.set(Calendar.MILLISECOND, 0)
-        val repeatWeek = drug.occurrence.repeatWeek.toInt()
+        DateUtils.setCalendarTime(
+            datetimeToAlarm,
+            datetimeToAlarm[Calendar.HOUR_OF_DAY],
+            datetimeToAlarm[Calendar.MINUTE]
+        )
+        val repeatWeek = drug.occurrence.repeatWeek
 
         if (repeatWeek != 0) {
             schedualeAllWeekAlarms(
@@ -136,7 +143,7 @@ object IntakeReminderScheduler {
         val days = drug.occurrence.repeatWeekday
         for (day in days) {
             val alarmByDay =
-                getTimeClosestByDayWeek(datetimeToAlarm, day.toInt(), repeatWeek)
+                getTimeClosestByDayWeek(datetimeToAlarm, day, repeatWeek)
             val alarmIntent =
                 createPendingIntent(
                     context,
@@ -156,7 +163,7 @@ object IntakeReminderScheduler {
         datetimeToAlarm: Calendar, alarmIntent: PendingIntent?
     ) {
         val current = Calendar.getInstance()
-        if (!DateUtils.isDateBefore(datetimeToAlarm, current)) {
+        if (DateUtils.isDateBefore(current, datetimeToAlarm)) {
             //future alarm
             alarmMgr.set(AlarmManager.RTC_WAKEUP, datetimeToAlarm.timeInMillis, alarmIntent)
         }
@@ -255,7 +262,9 @@ object IntakeReminderScheduler {
         if (DateUtils.isDateBefore(nextOccur, current)) {
             //future alarm
             //get closest notification after current
-            if (current[Calendar.YEAR] == nextOccur[Calendar.YEAR] && current[Calendar.MONTH] == nextOccur[Calendar.MONTH] && current[Calendar.DAY_OF_MONTH] == nextOccur[Calendar.DAY_OF_MONTH]) {
+            if (current[Calendar.YEAR] == nextOccur[Calendar.YEAR] && current[Calendar.MONTH] == nextOccur[Calendar.MONTH]
+                && current[Calendar.DAY_OF_MONTH] == nextOccur[Calendar.DAY_OF_MONTH]
+            ) {
                 // same day but still before
                 nextOccur.add(Calendar.WEEK_OF_YEAR, repeat)
             } else {
