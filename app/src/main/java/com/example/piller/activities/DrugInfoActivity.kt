@@ -203,11 +203,18 @@ class DrugInfoActivity : AppCompatActivity() {
         _profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
     }
 
+    private fun goToCalendarActivity() {
+        val intent = Intent(this@DrugInfoActivity, CalendarActivity::class.java)
+        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
+        intent.putExtra(DbConstants.LOGGED_USER_NAME, _currentProfile)
+        startActivity(intent)
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         if (!_isFromNotification) {
             onBackPressed()
         } else {
-            finish()
+            goToCalendarActivity()
         }
         return true
     }
@@ -217,7 +224,7 @@ class DrugInfoActivity : AppCompatActivity() {
             setTakenStatusResult()
             super.onBackPressed()
         } else {
-            finish()
+            goToCalendarActivity()
         }
     }
 

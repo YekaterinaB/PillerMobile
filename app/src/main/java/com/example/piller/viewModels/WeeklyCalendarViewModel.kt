@@ -31,8 +31,6 @@ class WeeklyCalendarViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
-    var maxMissDaysThreshold: Int = 1
-
     fun getWeekEvents(loggedUserEmail: String, profile: Profile) {
         if (!profile.getIsInitialized()) {
             // ask db for user calendar if not initialized

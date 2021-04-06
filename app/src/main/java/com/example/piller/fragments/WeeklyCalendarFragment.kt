@@ -84,7 +84,6 @@ class WeeklyCalendarFragment : Fragment() {
         return fragmentView
     }
 
-
     private fun initObservers() {
         weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.observe(
             viewLifecycleOwner,

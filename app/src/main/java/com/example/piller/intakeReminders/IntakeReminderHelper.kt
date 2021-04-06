@@ -63,6 +63,7 @@ object IntakeReminderHelper {
                 putExtra(DbConstants.CALENDAR_EVENT_BUNDLE, bundleDrugObject)
                 putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
                 putExtra(DbConstants.LOGGED_USER_EMAIL, email)
+                putExtra(DbConstants.FROM_NOTIFICATION, true)
             }
             val pendingIntent =
                 PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
