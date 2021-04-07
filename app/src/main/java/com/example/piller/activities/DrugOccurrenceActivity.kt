@@ -66,7 +66,6 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private var refillReminderTime = "11:00"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //  todo if user chooses repeat on week - make sure he chooses at least one day to repeat on
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drug_occurrence)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -677,7 +676,6 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        //  todo set drug occurrences before sending to server!!
         return when (item.itemId) {
             R.id.ndo_menu_add_drug -> {
                 //  if the user didn't choose repeat end - then set it to 0

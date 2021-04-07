@@ -10,8 +10,6 @@ import com.example.piller.utilities.DateUtils
 import java.util.*
 
 object NotificationHelper {
-
-
     fun createNotificationChannel(
         context: Context,
         showBadge: Boolean,
@@ -29,9 +27,15 @@ object NotificationHelper {
             val notificationManager = context.getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
-
     }
 
+    fun closeNotificationChannel(context: Context, name: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "${context.packageName}-$name"
+            val notificationManager = context.getSystemService(NotificationManager::class.java)
+            notificationManager.deleteNotificationChannel(channelId)
+        }
+    }
 
     fun createCalenderEventWithDrug(drug: DrugObject): CalendarEvent {
         val cal = Calendar.getInstance()
@@ -51,5 +55,4 @@ object NotificationHelper {
             isTaken = false
         )
     }
-
 }

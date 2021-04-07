@@ -19,13 +19,8 @@ object AlarmScheduler {
         context: Context,
         drug: DrugObject
     ) {
-        IntakeReminderScheduler.scheduleAlarmsForReminder(
-            context, email, currentProfile, drug
-        )
-
-        RefillReminderScheduler.scheduleAlarmsForReminder(
-            context, email, currentProfile, drug
-        )
+        IntakeReminderScheduler.scheduleAlarmsForReminder(context, email, currentProfile, drug)
+        RefillReminderScheduler.scheduleAlarmsForReminder(context, email, currentProfile, drug)
     }
 
     fun removeAllNotifications(
@@ -34,12 +29,8 @@ object AlarmScheduler {
         context: Context,
         drug: DrugObject
     ) {
-        IntakeReminderScheduler.removeAlarmsForReminder(
-            context, drug, email, currentProfile
-        )
-        RefillReminderScheduler.removeAlarmsForReminder(
-            context, drug, email, currentProfile
-        )
+        IntakeReminderScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
+        RefillReminderScheduler.removeAlarmsForReminder(context, drug, email, currentProfile)
     }
 
     fun runBackgroundService(context: Context, email: String) {
