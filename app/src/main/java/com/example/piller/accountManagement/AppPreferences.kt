@@ -13,6 +13,7 @@ object AppPreferences {
     private val EMAIL = Pair("email", "")
     private val PASSWORD = Pair("password", "")
     private val SHOW_NOTIFICATIONS = Pair("showNotifications", true)
+    private val LOGGED_OUT = Pair("loggedOut", false)
 
     fun init(context: Context) {
         preferences = context.getSharedPreferences(NAME, MODE)
@@ -48,5 +49,10 @@ object AppPreferences {
         get() = preferences.getBoolean(SHOW_NOTIFICATIONS.first, SHOW_NOTIFICATIONS.second)
         set(value) = preferences.edit {
             it.putBoolean(SHOW_NOTIFICATIONS.first, value)
+        }
+    var loggedOut: Boolean
+        get() = preferences.getBoolean(LOGGED_OUT.first, LOGGED_OUT.second)
+        set(value) = preferences.edit {
+            it.putBoolean(LOGGED_OUT.first, value)
         }
 }

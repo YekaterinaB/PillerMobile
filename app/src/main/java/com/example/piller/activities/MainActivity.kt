@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         AppPreferences.init(this)
         ServiceBuilder.updateRetrofit(DbConstants.SERVER_URL)
         //  update fields if user chose to remember email and password, and auto login
-        if (AppPreferences.stayLoggedIn) {
+        if (AppPreferences.stayLoggedIn && !AppPreferences.loggedOut) {
             login_remember.isChecked = true
             edt_email.setText(AppPreferences.email)
             edt_password.setText(AppPreferences.password)
@@ -60,15 +60,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         setOnClickListeners()
-
-        createChannelForNotification()
-    }
-
-
-    private fun createChannelForNotification() {
-        NotificationHelper.createNotificationChannel(
-            this, true, getString(R.string.app_name), NotificationManagerCompat.IMPORTANCE_HIGH
-        )
     }
 
     private fun initObservers() {
@@ -89,19 +80,10 @@ class MainActivity : AppCompatActivity() {
                     //go to calendar activity with response body given
                     val jObject = JSONObject(response.body()!!.string())
                     //go to the next activity
-                    val intent = Intent(
-                        this@MainActivity,
-                        CalendarActivity::class.java
-                    )
+                    val intent = Intent(this@MainActivity, CalendarActivity::class.java)
                     val userName = jObject.get("name").toString()
-                    intent.putExtra(
-                        DbConstants.LOGGED_USER_EMAIL,
-                        jObject.get("email").toString()
-                    )
-                    intent.putExtra(
-                        DbConstants.LOGGED_USER_NAME,
-                        userName
-                    )
+                    intent.putExtra(DbConstants.LOGGED_USER_EMAIL, jObject.get("email").toString())
+                    intent.putExtra(DbConstants.LOGGED_USER_NAME, userName)
                     //  hide loading screen
                     loadingScreen.visibility = View.GONE
                     startActivity(intent)
@@ -243,6 +225,6 @@ class MainActivity : AppCompatActivity() {
         AppPreferences.stayLoggedIn = stayLogged
         AppPreferences.email = email
         AppPreferences.password = password
+        AppPreferences.loggedOut = false
     }
-
 }

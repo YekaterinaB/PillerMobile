@@ -22,7 +22,6 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
-
 class BackgroundReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context != null && intent?.action.equals(Intent.ACTION_BOOT_COMPLETED)) {
@@ -70,30 +69,27 @@ object BackgroundNotificationScheduler {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == 200) {
-                        val jObject = JSONObject(response.body()!!.string())
-                        val mainProfileName = jObject.get("name") as String
-                        getUserProfiles(context, mainProfileName)
+                        scheduleNotificationsForAllProfiles(context, email)
                     }
                 }
             }
         )
     }
 
-    private fun getUserProfiles(context: Context, mainProfileName: String) {
+    fun scheduleNotificationsForAllProfiles(context: Context, email: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.getAllProfilesByEmail(AppPreferences.email).enqueue(
+        retrofit.getAllProfilesByEmail(email).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
 
                 }
 
                 override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
+                    call: Call<ResponseBody>, response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == 200) {
                         val profiles = getAllUserProfiles(response)
-                        getAllDrugsForAllProfiles(profiles, context, mainProfileName)
+                        scheduleNotificationsForAllDrugsForAllProfiles(profiles, context, email)
                     }
                 }
             }
@@ -116,22 +112,18 @@ object BackgroundNotificationScheduler {
         return profiles
     }
 
-    private fun getAllDrugsForAllProfiles(
-        profiles: List<Profile>,
-        context: Context,
-        mainProfileName: String
+    private fun scheduleNotificationsForAllDrugsForAllProfiles(
+        profiles: List<Profile>, context: Context, email: String
     ) {
-        //  first - schedule the notification for the main profile
-        scheduleAlarmForProfile(mainProfileName, context)
-        //  initiate notification for the rest of the profiles
+        //  initiate notification for all of the profiles
         for (profile in profiles) {
-            scheduleAlarmForProfile(profile.getProfileName(), context)
+            scheduleAlarmForProfile(profile.getProfileName(), context, email)
         }
     }
 
-    private fun scheduleAlarmForProfile(profileName: String, context: Context) {
+    private fun scheduleAlarmForProfile(profileName: String, context: Context, email: String) {
         val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
-        retrofit.getCalendarByUser(AppPreferences.email, profileName).enqueue(
+        retrofit.getCalendarByUser(email, profileName).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
 
@@ -149,7 +141,8 @@ object BackgroundNotificationScheduler {
                             profileName,
                             drugInfoList as JSONArray,
                             context,
-                            calendarId
+                            calendarId,
+                            email
                         )
                     }
                 }
@@ -161,16 +154,14 @@ object BackgroundNotificationScheduler {
         profileName: String,
         drugList: JSONArray,
         context: Context,
-        calendarId: String
+        calendarId: String,
+        email: String
     ) {
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
             val intakeDates = drug.get("intake_dates") as JSONObject
             val drugObject = ParserUtils.parsedDrugObject(drug, intakeDates, calendarId)
-            AlarmScheduler.scheduleAllNotifications(
-                AppPreferences.email, profileName, context, drugObject
-            )
+            AlarmScheduler.scheduleAllNotifications(email, profileName, context, drugObject)
         }
     }
-
 }
