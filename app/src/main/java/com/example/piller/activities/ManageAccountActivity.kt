@@ -33,6 +33,7 @@ class ManageAccountActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViewModels()
+        viewModel.loggedUserId = intent.getStringExtra(DbConstants.LOGGED_USER_ID)!!
         viewModel.loggedUserEmail.value = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
         viewModel.loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
 
@@ -150,14 +151,9 @@ class ManageAccountActivity : AppCompatActivity() {
                 this@ManageAccountActivity,
                 ManageSupervisorsActivity::class.java
             )
-            intent.putExtra(
-                DbConstants.LOGGED_USER_EMAIL,
-                viewModel.loggedUserEmail.value!!
-            )
-            intent.putExtra(
-                DbConstants.LOGGED_USER_NAME,
-                viewModel.loggedUserName
-            )
+            intent.putExtra(DbConstants.LOGGED_USER_ID, viewModel.loggedUserId)
+            intent.putExtra(DbConstants.LOGGED_USER_EMAIL, viewModel.loggedUserEmail.value!!)
+            intent.putExtra(DbConstants.LOGGED_USER_NAME, viewModel.loggedUserName)
             startActivity(intent)
         }
 

@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
@@ -17,7 +16,6 @@ import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.notif.AlarmScheduler
-import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.MainActivityViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
@@ -63,7 +61,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        viewModel.mutableToastError.observe(
+        viewModel.mutableToastMessage.observe(
             this,
             Observer { toastMessage ->
                 toastMessage?.let {
@@ -82,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                     //go to the next activity
                     val intent = Intent(this@MainActivity, CalendarActivity::class.java)
                     val userName = jObject.get("name").toString()
+                    intent.putExtra(DbConstants.LOGGED_USER_ID, jObject.get("id").toString())
                     intent.putExtra(DbConstants.LOGGED_USER_EMAIL, jObject.get("email").toString())
                     intent.putExtra(DbConstants.LOGGED_USER_NAME, userName)
                     //  hide loading screen
@@ -219,7 +218,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun updateAppPreferences(stayLogged: Boolean, email: String, password: String) {
         AppPreferences.stayLoggedIn = stayLogged
