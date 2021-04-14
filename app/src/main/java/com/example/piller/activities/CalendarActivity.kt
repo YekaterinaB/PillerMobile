@@ -31,7 +31,6 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var weeklyCalendarViewModel: WeeklyCalendarViewModel
 
-    private lateinit var loggedUserId: String
     private lateinit var loggedUserEmail: String
     private lateinit var currentProfile: String
     private lateinit var currentProfileTV: TextView
@@ -39,8 +38,6 @@ class CalendarActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //  todo move logged user info to view model
-        loggedUserId = intent.getStringExtra(DbConstants.LOGGED_USER_ID)!!
         loggedUserEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
         currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         setContentView(R.layout.activity_calendar)
@@ -143,7 +140,6 @@ class CalendarActivity : AppCompatActivity() {
 
     private fun goToAccountManagement() {
         val intent = Intent(this@CalendarActivity, ManageAccountActivity::class.java)
-        intent.putExtra(DbConstants.LOGGED_USER_ID, loggedUserId)
         intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedUserEmail)
         intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
         startActivity(intent)

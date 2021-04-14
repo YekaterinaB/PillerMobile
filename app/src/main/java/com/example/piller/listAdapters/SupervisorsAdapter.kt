@@ -57,7 +57,7 @@ class SupervisorsAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val currentItem = dataSet[position]
-        val email = currentItem.getSupervisorEmail()
+        val email = currentItem.getsupervisorEmail()
         val name = currentItem.getSupervisorName()
         val isConfirmed=currentItem.getIsConfirmed()
         viewHolder.supervisorName.text = name

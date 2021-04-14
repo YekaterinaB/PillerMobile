@@ -11,7 +11,7 @@ import retrofit2.Call
 import retrofit2.Response
 
 class MainActivityViewModel : ViewModel() {
-    val mutableToastMessage: MutableLiveData<String> by lazy {
+    val mutableToastError: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
 
@@ -26,7 +26,7 @@ class MainActivityViewModel : ViewModel() {
         retrofit.registerUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastMessage.value = "Could not connect to server."
+                    mutableToastError.value = "Could not connect to server."
                 }
 
                 override fun onResponse(
@@ -34,11 +34,10 @@ class MainActivityViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        mutableToastMessage.value = "A user with this email already exists."
-                    } else {
-                        mutableToastMessage.value = "Your account has been successfully created."
-                        val jObject = JSONObject(response.body()!!.string())
+                        mutableToastError.value = "A user with this email already exists."
 
+                    } else {
+                        mutableToastError.value = "Your account has been successfully created."
                     }
                 }
             }
@@ -52,7 +51,7 @@ class MainActivityViewModel : ViewModel() {
         retrofit.loginUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastMessage.value = "Could not connect to server."
+                    mutableToastError.value = "Could not connect to server."
                 }
 
                 override fun onResponse(
@@ -60,8 +59,9 @@ class MainActivityViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        mutableToastMessage.value =
+                        mutableToastError.value =
                             "User does not exist, check your login information."
+
                     } else {
                         mutableActivityChangeResponse.value = response
                     }
@@ -76,7 +76,9 @@ class MainActivityViewModel : ViewModel() {
         retrofit.resetPassword(email).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastMessage.value = "Could not reset password."
+                    mutableToastError.value =
+                        "Could not reset password."
+
                 }
 
                 override fun onResponse(
@@ -85,13 +87,18 @@ class MainActivityViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() != 200) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
-                        mutableToastMessage.value = jObjError["message"] as String
+                        mutableToastError.value =
+                            jObjError["message"] as String
 
                     } else {
-                        mutableToastMessage.value = "Reset email sent!"
+                        mutableToastError.value =
+                            "Reset email sent!"
+
                     }
                 }
             }
         )
     }
+
+
 }
