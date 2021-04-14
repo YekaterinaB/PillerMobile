@@ -12,11 +12,16 @@ import retrofit2.Response
 
 class ManageAccountViewModel : ViewModel() {
     private val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-    var loggedUserId = ""
     var loggedUserName = ""
-    val loggedUserEmail: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val snackBarMessage: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val goToMainActivity: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val loggedUserEmail: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+    val snackBarMessage: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+    val goToMainActivity: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
 
     init {
         goToMainActivity.value = false
