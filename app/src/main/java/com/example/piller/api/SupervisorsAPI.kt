@@ -1,6 +1,5 @@
 package com.example.piller.api
 
-import com.example.piller.models.CalendarEvent
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -8,50 +7,31 @@ import retrofit2.http.*
 interface SupervisorsAPI {
     @Headers("Content-Type: application/json")
 
-    @GET("supervisors/{email}")
-    fun getSupervisors(
-        @Path("email") email: String
-    ): Call<ResponseBody>
+    @GET("supervisors/{userId}")
+    fun getSupervisors(@Path("userId") userId: String): Call<ResponseBody>
 
-    @POST("supervisors/{email}/{supervisorName}/{supervisorEmail}")
+    @POST("supervisors/{userId}/{supervisorName}/{supervisorEmail}")
     fun addSupervisor(
-        @Path("email") email: String,
+        @Path("userId") userId: String,
         @Path("supervisorName") supervisorName: String,
         @Path("supervisorEmail") supervisorEmail: String
     ): Call<ResponseBody>
 
-    @DELETE("supervisors/{email}/{supervisorEmail}")
+    @DELETE("supervisors/{userId}/{supervisorEmail}")
     fun deleteSupervisor(
-        @Path("email") email: String,
+        @Path("userId") email: String,
         @Path("supervisorEmail") supervisorEmail: String
     ): Call<ResponseBody>
 
-    @GET("supervisors/threshold/{email}")
-    fun getThreshold(
-        @Path("email") email: String
-    ): Call<ResponseBody>
+    @GET("supervisors/threshold/{userId}")
+    fun getThreshold(@Path("userId") userId: String): Call<ResponseBody>
 
-    @PUT("supervisors/threshold/{email}/{threshold}")
+    @PUT("supervisors/threshold/{userId}/{threshold}")
     fun updateThreshold(
-        @Path("email") email: String,
+        @Path("userId") userId: String,
         @Path("threshold") threshold: Int
     ): Call<ResponseBody>
 
-    @PUT("supervisors/counter/{email}/{drugName}")
-    fun addMissedToCounterDrug(
-        @Path("email") email: String,
-        @Path("drugName") drugName: String
-    ): Call<ResponseBody>
-
-    @DELETE("supervisors/counter/{email}/{drugName}")
-    fun deleteDrugCounter(
-        @Path("email") email: String,
-        @Path("drugName") drugName: String
-    ): Call<ResponseBody>
-
-    @DELETE("supervisors/{email}")
-    fun deleteSupervisorList(
-        @Path("email") email: String
-    ): Call<ResponseBody>
-
+    @DELETE("supervisors/{userId}")
+    fun deleteSupervisorList(@Path("userId") userId: String): Call<ResponseBody>
 }

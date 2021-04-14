@@ -182,7 +182,8 @@ class ManageSupervisorsActivity : AppCompatActivity() {
 
     private fun initViewModels() {
         viewModel = ViewModelProvider(this).get(ManageSupervisorsViewModel::class.java)
-        viewModel.setEmailAndName(
+        viewModel.setUserInfo(
+            intent.getStringExtra(DbConstants.LOGGED_USER_ID)!!,
             intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!,
             intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
         )
