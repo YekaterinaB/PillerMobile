@@ -388,7 +388,8 @@ class DrugOccurrenceActivity : AppCompatActivity() {
             val selectedMinute = refillReminderTime.substring(3).toInt()
             showTimePickerDialog(selectedHour, selectedMinute) { hourOfDay, minute ->
                 val stringHour = if (hourOfDay < 10) "0$hourOfDay" else "$hourOfDay"
-                refillReminderTime = "$stringHour:$minute"
+                val stringMinute = if (minute < 10) "0$minute" else "$minute"
+                refillReminderTime = "$stringHour:$stringMinute"
                 drugRefillReminderTime.text = refillReminderTime
             }
         }
