@@ -6,7 +6,7 @@ import com.example.piller.R
 
 
 class CheckboxWithTextInside(context: Context?, attrs: AttributeSet?) :
-    androidx.appcompat.widget.AppCompatCheckBox(context, attrs) {
+    androidx.appcompat.widget.AppCompatCheckBox(context!!, attrs) {
     override fun setChecked(t: Boolean) {
         if (t) {
             setBackgroundResource(R.drawable.checkbox_select)

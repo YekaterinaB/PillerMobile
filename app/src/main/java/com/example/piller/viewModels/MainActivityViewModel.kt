@@ -15,8 +15,12 @@ class MainActivityViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
-    val mutableActivityChangeResponse: MutableLiveData<Response<ResponseBody>> by lazy {
+    val mutableActivityLoginChangeResponse: MutableLiveData<Response<ResponseBody>> by lazy {
         MutableLiveData<Response<ResponseBody>>()
+    }
+
+    val mutableActivitySignUpChangeResponse: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
     }
 
 
@@ -35,9 +39,11 @@ class MainActivityViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() != 200) {
                         mutableToastError.value = "A user with this email already exists."
+                        mutableActivitySignUpChangeResponse.value=false
 
                     } else {
                         mutableToastError.value = "Your account has been successfully created."
+                        mutableActivitySignUpChangeResponse.value=true
                     }
                 }
             }
@@ -63,7 +69,7 @@ class MainActivityViewModel : ViewModel() {
                             "User does not exist, check your login information."
 
                     } else {
-                        mutableActivityChangeResponse.value = response
+                        mutableActivityLoginChangeResponse.value = response
                     }
                 }
             }

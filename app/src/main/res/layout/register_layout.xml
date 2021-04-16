@@ -7,7 +7,7 @@
     android:padding="20dp">
 
     <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/edt_email"
+        android:id="@+id/edt_email_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
@@ -31,7 +31,7 @@
         app:met_textColorHint="@color/myTextColor" />
 
     <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/edt_password"
+        android:id="@+id/edt_password_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
