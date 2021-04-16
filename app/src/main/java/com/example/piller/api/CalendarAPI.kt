@@ -9,10 +9,10 @@ import retrofit2.http.*
 interface CalendarAPI {
     @Headers("Content-Type: application/json")
 
-    @GET("calendar/{email}/{name}")
+    @GET("calendar/{userId}/{profileId}")
     fun getCalendarByUser(
-        @Path("email") email: String,
-        @Path("name") name: String
+        @Path("userId") userId: String,
+        @Path("profileId") profileId: String
     ): Call<ResponseBody>
 
 //    @PUT("calendar/{email}/{name}")
@@ -22,39 +22,39 @@ interface CalendarAPI {
 //        @Body calendarEvent: CalendarEvent
 //    ): Call<ResponseBody>
 
-    @DELETE("calendar/{email}")
+    @DELETE("calendar/{userId}")
     fun deleteCalendarByUser(
-        @Path("email") email: String,
+        @Path("userId") userId: String,
         @Body calendarEvent: CalendarEvent
     ): Call<ResponseBody>
 
-    @POST("calendar/addDrug/{email}/{name}")
+    @POST("calendar/addDrug/{userId}/{profileId}")
     fun addDrugCalendarByUser(
-        @Path("email") email: String,
-        @Path("name") name: String,
+        @Path("userId") userId: String,
+        @Path("profileId") profileId: String,
         @Body drug_info: DrugObject
     ): Call<ResponseBody>
 
-    @POST("calendar/updateDrug/{email}/{name}/{drug_id}")
+    @POST("calendar/updateDrug/{userId}/{profileId}/{drug_id}")
     fun updateDrugOccurrence(
-        @Path("email") email: String,
-        @Path("name") name: String,
+        @Path("userId") userId: String,
+        @Path("profileId") profileId: String,
         @Path("drug_id") drug_id: String,
         @Body drug_info: DrugObject
     ): Call<ResponseBody>
 
     //  @Query means that it'll be in the end of the url with ?rxcui=12345
-    @HTTP(method = "DELETE", path = "/calendar/deleteDrug/{email}/{name}", hasBody = true)
+    @HTTP(method = "DELETE", path = "/calendar/deleteDrug/{userId}/{profileId}", hasBody = true)
     fun deleteDrugByUser(
-        @Path("email") email: String,
-        @Path("name") name: String,
+        @Path("userId") userId: String,
+        @Path("profileId") profileId: String,
         @Query("drug_id") drug_id: String
     ): Call<ResponseBody>
 
-    @PUT("calendar/deleteFutureOccurrencesOfDrugByUser/{email}/{name}")
+    @PUT("calendar/deleteFutureOccurrencesOfDrugByUser/{userId}/{profileId}")
     fun deleteFutureOccurrencesOfDrugByUser(
-        @Path("email") email: String,
-        @Path("name") name: String,
+        @Path("userId") userId: String,
+        @Path("profileId") profileId: String,
         @Query("drug_id") drug_id: String,
         @Query("repeat_end") repeatEnd: String
     ): Call<ResponseBody>

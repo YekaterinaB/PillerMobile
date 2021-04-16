@@ -19,7 +19,6 @@ class InteractionPopupFragment : DialogFragment() {
     private lateinit var cancelButton: Button
     private lateinit var proceedButton: Button
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,7 +33,7 @@ class InteractionPopupFragment : DialogFragment() {
         return fragmentView
     }
 
-    private fun initListeners(){
+    private fun initListeners() {
         cancelButton.setOnClickListener {
             dismiss()
         }
@@ -42,7 +41,6 @@ class InteractionPopupFragment : DialogFragment() {
         proceedButton.setOnClickListener {
             (activity as AddNewDrugActivity).goToAddOccurrenceActivity()
         }
-
     }
 
     private fun initViews(fragment: View) {
@@ -51,9 +49,9 @@ class InteractionPopupFragment : DialogFragment() {
 
         interactionScrollViewTV = fragment.findViewById(R.id.inter_popup_list_tv)
         interactionScrollViewTV.movementMethod = ScrollingMovementMethod()
-        interactionScrollViewTV.text=interactionsTxt
-        cancelButton=fragment.findViewById(R.id.inter_button_cancel)
-        proceedButton=fragment.findViewById(R.id.inter_button_proceedAnyway)
+        interactionScrollViewTV.text = interactionsTxt
+        cancelButton = fragment.findViewById(R.id.inter_button_cancel)
+        proceedButton = fragment.findViewById(R.id.inter_button_proceedAnyway)
     }
 
 

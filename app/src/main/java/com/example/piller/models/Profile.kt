@@ -1,41 +1,11 @@
 package com.example.piller.models
 
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 class Profile(
-    name: String,
-    weeklyCal: Array<MutableList<CalendarEvent>>,
-    monthlyCal: Array<MutableList<CalendarEvent>>
-) {
-    private var profileName = name
-    private var weeklyCalendar = weeklyCal
-    private var monthlyCalendar = monthlyCal
-    private var isInitialized = false
-
-    fun getIsInitialized(): Boolean {
-        return isInitialized
-    }
-
-    fun setIsInitialized(isInit: Boolean = true) {
-        isInitialized = isInit
-    }
-
-    fun getProfileName(): String {
-        return profileName
-    }
-
-    fun getWeeklyCalendar(): Array<MutableList<CalendarEvent>> {
-        return weeklyCalendar
-    }
-
-    fun setWeeklyCalendar(calendar: Array<MutableList<CalendarEvent>>) {
-        weeklyCalendar = calendar
-    }
-
-    fun getMonthlyCalendar(): Array<MutableList<CalendarEvent>> {
-        return monthlyCalendar
-    }
-
-    fun setMonthlyCalendar(calendar: Array<MutableList<CalendarEvent>>) {
-        monthlyCalendar = calendar
-    }
-}
+    @SerializedName("profileId") var profileId: String,
+    @SerializedName("name") var name: String
+) : Parcelable

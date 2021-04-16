@@ -26,7 +26,7 @@ class MainActivityViewModel : ViewModel() {
 
     fun registerUser(email: String, name: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(email = email, name = name, password = password)
+        val user = User(email = email, mainProfileName = name, password = password)
         retrofit.registerUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -53,7 +53,7 @@ class MainActivityViewModel : ViewModel() {
 
     fun loginUser(email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(email = email, name = "", password = password)
+        val user = User(email = email, mainProfileName = "", password = password)
         retrofit.loginUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -67,7 +67,6 @@ class MainActivityViewModel : ViewModel() {
                     if (response.raw().code() != 200) {
                         mutableToastError.value =
                             "User does not exist, check your login information."
-
                     } else {
                         mutableActivityLoginChangeResponse.value = response
                     }
@@ -82,9 +81,7 @@ class MainActivityViewModel : ViewModel() {
         retrofit.resetPassword(email).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value =
-                        "Could not reset password."
-
+                    mutableToastError.value = "Could not reset password."
                 }
 
                 override fun onResponse(
@@ -93,18 +90,12 @@ class MainActivityViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() != 200) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
-                        mutableToastError.value =
-                            jObjError["message"] as String
-
+                        mutableToastError.value = jObjError["message"] as String
                     } else {
-                        mutableToastError.value =
-                            "Reset email sent!"
-
+                        mutableToastError.value = "Reset email sent!"
                     }
                 }
             }
         )
     }
-
-
 }

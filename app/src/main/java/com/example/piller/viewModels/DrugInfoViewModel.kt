@@ -10,6 +10,7 @@ import com.example.piller.api.DrugAPI
 import com.example.piller.api.DrugIntakeAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugObject
+import com.example.piller.models.UserObject
 import com.example.piller.notif.AlarmScheduler
 import com.example.piller.utilities.ImageUtils
 import okhttp3.ResponseBody
@@ -52,12 +53,15 @@ class DrugInfoViewModel : ViewModel() {
     }
 
     fun deleteAllOccurrencesOfDrug(
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         drug: DrugObject,
         context: Context
     ) {
-        retrofit.deleteDrugByUser(email, currentProfile, drug.drugId).enqueue(
+        retrofit.deleteDrugByUser(
+            loggedUserObject.userId,
+            loggedUserObject.currentProfile!!.profileId,
+            drug.drugId
+        ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -69,7 +73,7 @@ class DrugInfoViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == 200) {
                         deleteSuccess.value = true
-                        AlarmScheduler.removeAllNotifications(email, currentProfile, context, drug)
+                        AlarmScheduler.removeAllNotifications(loggedUserObject, context, drug)
                     } else {
                         mutableToastError.value = "Could not delete drug."
                     }
@@ -79,15 +83,11 @@ class DrugInfoViewModel : ViewModel() {
     }
 
     fun deleteFutureOccurrencesOfDrug(
-        email: String,
-        currentProfile: String,
-        drug: DrugObject,
-        repeatEnd: String,
-        context: Context
+        loggedUserObject: UserObject, drug: DrugObject, repeatEnd: String, context: Context
     ) {
         retrofit.deleteFutureOccurrencesOfDrugByUser(
-            email,
-            currentProfile,
+            loggedUserObject.userId,
+            loggedUserObject.currentProfile!!.profileId,
             drug.drugId,
             repeatEnd
         ).enqueue(
@@ -103,11 +103,9 @@ class DrugInfoViewModel : ViewModel() {
                     if (response.raw().code() == 200) {
                         deleteFutureSuccess.value = true
                         //  remove the notifications because drug end is not initialized
-                        AlarmScheduler.removeAllNotifications(email, currentProfile, context, drug)
+                        AlarmScheduler.removeAllNotifications(loggedUserObject, context, drug)
                         // create new set of notifications with updated drug
-                        AlarmScheduler.scheduleAllNotifications(
-                            email, currentProfile, context, drug
-                        )
+                        AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drug)
                         DrugMap.instance.setDrugObject(drug.calendarId, drug) //update drug in map
                     } else {
                         mutableToastError.value = "Could not delete future occurrences drug."

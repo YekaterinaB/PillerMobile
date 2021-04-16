@@ -11,9 +11,7 @@ import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ProfileAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
-import com.example.piller.models.CalendarEvent
-import com.example.piller.models.Profile
-import com.example.piller.models.User
+import com.example.piller.models.*
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ParserUtils
 import okhttp3.ResponseBody
@@ -53,7 +51,7 @@ object BackgroundNotificationScheduler {
 
     private fun loginUser(context: Context, email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(email = email, name = "", password = password)
+        val user = User(email = email, mainProfileName = "", password = password)
         retrofit.loginUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -69,16 +67,18 @@ object BackgroundNotificationScheduler {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == 200) {
-                        scheduleNotificationsForAllProfiles(context, email)
+                        val jObject = JSONObject(response.body()!!.string())
+                        val userObject = UserObject(jObject.getString("id"), email, "", null)
+                        scheduleNotificationsForAllProfiles(context, userObject)
                     }
                 }
             }
         )
     }
 
-    fun scheduleNotificationsForAllProfiles(context: Context, email: String) {
+    fun scheduleNotificationsForAllProfiles(context: Context, loggedUserObject: UserObject) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.getAllProfilesByEmail(email).enqueue(
+        retrofit.getAllProfilesByEmail(loggedUserObject.userId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
 
@@ -89,21 +89,30 @@ object BackgroundNotificationScheduler {
                 ) {
                     if (response.raw().code() == 200) {
                         val profiles = getAllUserProfiles(response)
-                        scheduleNotificationsForAllDrugsForAllProfiles(profiles, context, email)
+                        scheduleNotificationsForAllDrugsForAllProfiles(
+                            profiles,
+                            context,
+                            loggedUserObject
+                        )
                     }
                 }
             }
         )
     }
 
-    private fun getAllUserProfiles(response: Response<ResponseBody>): List<Profile> {
+    private fun getAllUserProfiles(response: Response<ResponseBody>): List<CalendarProfile> {
         val jObject = JSONObject(response.body()!!.string())
         val profileListBody = jObject.get("profile_list") as JSONArray
-        val profiles = mutableListOf<Profile>()
+        val profiles = mutableListOf<CalendarProfile>()
         for (i in 0 until profileListBody.length()) {
+            val profileObjectData = profileListBody[i] as JSONObject
+            val profileObject = Profile(
+                profileObjectData.getString("id"),
+                profileObjectData.getString("name")
+            )
             profiles.add(
-                Profile(
-                    profileListBody[i].toString(),
+                CalendarProfile(
+                    profileObject,
                     Array(7) { mutableListOf<CalendarEvent>() },
                     emptyArray()
                 )
@@ -113,20 +122,25 @@ object BackgroundNotificationScheduler {
     }
 
     private fun scheduleNotificationsForAllDrugsForAllProfiles(
-        profiles: List<Profile>, context: Context, email: String
+        calendarProfiles: List<CalendarProfile>, context: Context, loggedUserObject: UserObject
     ) {
         //  initiate notification for all of the profiles
-        for (profile in profiles) {
-            scheduleAlarmForProfile(profile.getProfileName(), context, email)
+        for (profile in calendarProfiles) {
+            scheduleAlarmForProfile(profile.getProfileObject(), context, loggedUserObject)
         }
     }
 
-    private fun scheduleAlarmForProfile(profileName: String, context: Context, email: String) {
+    private fun scheduleAlarmForProfile(
+        profile: Profile,
+        context: Context,
+        loggedUserObject: UserObject
+    ) {
         val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
-        retrofit.getCalendarByUser(email, profileName).enqueue(
+        retrofit.getCalendarByUser(
+            loggedUserObject.userId, profile.profileId
+        ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-
                 }
 
                 override fun onResponse(
@@ -138,11 +152,10 @@ object BackgroundNotificationScheduler {
                         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
                         val calendarId = jObject.get("calendar_id").toString()
                         scheduleAlarmsForAllDrugs(
-                            profileName,
                             drugInfoList as JSONArray,
                             context,
                             calendarId,
-                            email
+                            loggedUserObject
                         )
                     }
                 }
@@ -151,17 +164,16 @@ object BackgroundNotificationScheduler {
     }
 
     private fun scheduleAlarmsForAllDrugs(
-        profileName: String,
         drugList: JSONArray,
         context: Context,
         calendarId: String,
-        email: String
+        loggedUserObject: UserObject
     ) {
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
             val intakeDates = drug.get("intake_dates") as JSONObject
             val drugObject = ParserUtils.parsedDrugObject(drug, intakeDates, calendarId)
-            AlarmScheduler.scheduleAllNotifications(email, profileName, context, drugObject)
+            AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drugObject)
         }
     }
 }

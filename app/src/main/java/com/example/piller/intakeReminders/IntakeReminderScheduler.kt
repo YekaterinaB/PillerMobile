@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.example.piller.R
 import com.example.piller.models.DrugObject
+import com.example.piller.models.UserObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import java.util.*
@@ -15,8 +16,7 @@ import kotlin.math.ceil
 object IntakeReminderScheduler {
     fun scheduleAlarmsForReminder(
         context: Context,
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         drug: DrugObject
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -33,14 +33,13 @@ object IntakeReminderScheduler {
         )
         // if today is after the repeat end time, to not notify
         if (!(drug.occurrence.repeatEnd > 0 && DateUtils.isDateBefore(calRepeatEnd, cal))) {
-            scheduleAlarm(context, email, currentProfile, drug, alarmMgr)
+            scheduleAlarm(context, loggedUserObject, drug, alarmMgr)
         }
     }
 
     private fun createPendingIntent(
         context: Context,
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         drug: DrugObject,
         dayOfWeek: String
     ): PendingIntent? {
@@ -54,8 +53,9 @@ object IntakeReminderScheduler {
             type = "Intake-${drug.drugId}-${drug.rxcui}-" + dayOfWeek
             // 4
             putExtra(DbConstants.DRUG_OBJECT, bundleDrugObject)
-            putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
-            putExtra(DbConstants.LOGGED_USER_EMAIL, email)
+            val userBundle = Bundle()
+            userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, loggedUserObject)
+            putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -66,8 +66,7 @@ object IntakeReminderScheduler {
      */
     private fun scheduleAlarm(
         context: Context,
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         drug: DrugObject,
         alarmMgr: AlarmManager
     ) {
@@ -83,8 +82,7 @@ object IntakeReminderScheduler {
         if (repeatWeek != 0) {
             schedualeAllWeekAlarms(
                 context,
-                email,
-                currentProfile,
+                loggedUserObject,
                 drug,
                 datetimeToAlarm,
                 repeatWeek,
@@ -92,7 +90,7 @@ object IntakeReminderScheduler {
             )
         } else {
             val alarmIntent =
-                createPendingIntent(context, email, currentProfile, drug, "0")
+                createPendingIntent(context, loggedUserObject, drug, "0")
             setScheduleNotWeekAlarms(drug, alarmMgr, datetimeToAlarm, alarmIntent)
         }
     }
@@ -133,8 +131,7 @@ object IntakeReminderScheduler {
 
     private fun schedualeAllWeekAlarms(
         context: Context,
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         drug: DrugObject,
         datetimeToAlarm: Calendar,
         repeatWeek: Int,
@@ -144,14 +141,9 @@ object IntakeReminderScheduler {
         for (day in days) {
             val alarmByDay =
                 getTimeClosestByDayWeek(datetimeToAlarm, day, repeatWeek)
+            // add day in eac
             val alarmIntent =
-                createPendingIntent(
-                    context,
-                    email,
-                    currentProfile,
-                    drug,
-                    day.toString()
-                ) // add day in eac
+                createPendingIntent(context, loggedUserObject, drug, day.toString())
 
             //alert every week on weekday
             setWeekScheduleAlarm(repeatWeek, alarmByDay, alarmIntent, alarmMgr)
@@ -345,8 +337,7 @@ object IntakeReminderScheduler {
     fun removeAlarmsForReminder(
         context: Context,
         drug: DrugObject,
-        email: String,
-        currentProfile: String
+        loggedUserObject: UserObject
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val days = drug.occurrence.repeatWeekday
@@ -354,12 +345,12 @@ object IntakeReminderScheduler {
             //repeat week on
             for (day in days) {
                 val alarmIntent =
-                    createPendingIntent(context, email, currentProfile, drug, day.toString())
+                    createPendingIntent(context, loggedUserObject, drug, day.toString())
                 alarmMgr.cancel(alarmIntent)
             }
         } else {
             val alarmIntent =
-                createPendingIntent(context, email, currentProfile, drug, "0")
+                createPendingIntent(context, loggedUserObject, drug, "0")
             alarmMgr.cancel(alarmIntent)
         }
     }

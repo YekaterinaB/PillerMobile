@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
@@ -16,8 +15,9 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
+import com.example.piller.models.Profile
+import com.example.piller.models.UserObject
 import com.example.piller.notif.AlarmScheduler
-import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.MainActivityViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
@@ -55,8 +55,8 @@ class MainActivity : AppCompatActivity() {
             edt_password_login.setText(AppPreferences.password)
             //  run the background service (it has to run from the application for one time so it'll
             //  be able to tun when the device reboots
-            AlarmScheduler.runBackgroundService(this, AppPreferences.email)
-            loginUserWindow(edt_email_login.text.toString(), edt_password_login.text.toString())
+            AlarmScheduler.runBackgroundService(this)
+            loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
         }
 
         setOnClickListeners()
@@ -79,16 +79,30 @@ class MainActivity : AppCompatActivity() {
                 response?.let {
                     //go to calendar activity with response body given
                     val jObject = JSONObject(response.body()!!.string())
+                    val userObject = createUserObject(
+                        jObject.get("id").toString(),
+                        jObject.get("email").toString(),
+                        jObject.get("mainProfileName").toString()
+                    )
+                    val userBundle = Bundle()
+                    userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, userObject)
                     //go to the next activity
                     val intent = Intent(this@MainActivity, CalendarActivity::class.java)
-                    val userName = jObject.get("name").toString()
-                    intent.putExtra(DbConstants.LOGGED_USER_EMAIL, jObject.get("email").toString())
-                    intent.putExtra(DbConstants.LOGGED_USER_NAME, userName)
+                    intent.putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
                     //  hide loading screen
                     loadingScreen.visibility = View.GONE
                     startActivity(intent)
                 }
             })
+    }
+
+    private fun createUserObject(
+        userId: String,
+        email: String,
+        mainProfileName: String
+    ): UserObject {
+        val profile = Profile(userId, mainProfileName)
+        return UserObject(userId, email, mainProfileName, profile)
     }
 
     private fun initViews() {

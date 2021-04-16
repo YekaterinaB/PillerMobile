@@ -5,7 +5,6 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -15,12 +14,14 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.listAdapters.ProfileAdapter
+import com.example.piller.models.Profile
+import com.example.piller.models.UserObject
 import com.example.piller.viewModels.ProfileViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : FragmentWithUserObject() {
     private val viewModel: ProfileViewModel by activityViewModels()
     private lateinit var profileAdapter: ProfileAdapter
     private lateinit var profileRecycle: RecyclerView
@@ -46,7 +47,6 @@ class ProfileFragment : Fragment() {
                     if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         SnackBar.showToastBar(this.requireContext(), toastMessage)
                     }
-
                 }
             })
 
@@ -57,7 +57,6 @@ class ProfileFragment : Fragment() {
                     if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         updateRecyclersAndAdapters()
                     }
-
                 }
             })
     }
@@ -75,8 +74,8 @@ class ProfileFragment : Fragment() {
         profileRecycle.layoutManager = LinearLayoutManager(fragmentView.context)
         profileAdapter = ProfileAdapter(
             profileList,
-            clickOnItemListener = { clickOnAddProfile(it) },
-            clickOnButtonListener = {clickOnDeleteProfile(it)})
+            clickOnItemListener = { changeProfile(it) },
+            clickOnButtonListener = { clickOnDeleteProfile(it) })
         profileRecycle.adapter = profileAdapter
     }
 
@@ -84,16 +83,15 @@ class ProfileFragment : Fragment() {
         fragmentView.add_profile_button.setOnClickListener {
             showAddProfileToUserWindow()
         }
-
     }
 
-    private fun clickOnAddProfile(profileName: String) {
-        viewModel.setCurrentProfileName(profileName)
+    private fun changeProfile(profile: Profile) {
+        viewModel.setCurrentProfile(profile)
     }
 
-    private fun clickOnDeleteProfile(profileName: String) {
-        //todo add confirmation popup
-        viewModel.deleteOneProfile(profileName)
+    private fun clickOnDeleteProfile(profile: Profile) {
+        //  todo add confirmation popup
+        viewModel.deleteOneProfile(profile)
     }
 
     private fun showAddProfileToUserWindow() {
@@ -122,8 +120,7 @@ class ProfileFragment : Fragment() {
                         return@SingleButtonCallback
                     }
                 }
-                viewModel.addProfileToDB(profileName.text.toString())
-
+                viewModel.addProfileToDB(profileName.text.toString(), loggedUserObject)
             })
             .build()
             .show()
@@ -131,6 +128,11 @@ class ProfileFragment : Fragment() {
 
 
     companion object {
-        fun newInstance(): ProfileFragment = ProfileFragment()
+        fun newInstance(loggedUser: UserObject) =
+            ProfileFragment().apply {
+                arguments = Bundle().apply {
+                    loggedUserObject = loggedUser
+                }
+            }
     }
 }

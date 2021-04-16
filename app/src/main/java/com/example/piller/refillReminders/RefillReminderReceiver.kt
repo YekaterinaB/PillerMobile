@@ -6,6 +6,7 @@ import android.content.Intent
 import com.example.piller.R
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.models.DrugObject
+import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
 
 
@@ -28,30 +29,29 @@ class RefillReminderReceiver : BroadcastReceiver() {
 
     private fun handleRefillDrugReminder(intent: Intent, context: Context) {
         // 2
-        val currentProfile = intent.extras!!.getString(DbConstants.LOGGED_USER_NAME)
-        val email = intent.extras!!.getString(DbConstants.LOGGED_USER_EMAIL)
-        // could not get parceble data to intent
+        val bundle = intent.extras!!.getBundle(DbConstants.LOGGED_USER_BUNDLE)
+        val loggedUserObject = bundle?.getParcelable<UserObject>(DbConstants.LOGGED_USER_OBJECT)!!
+        // could not get parcelable data to intent
         val bundleCalendarEvent = intent.extras!!.getBundle(DbConstants.DRUG_OBJECT)
         // 3
-        if (currentProfile != null && email != null && bundleCalendarEvent != null) {
+        if (bundleCalendarEvent != null) {
             val drug =
                 bundleCalendarEvent.getParcelable<DrugObject>(DbConstants.DRUG_OBJECT)!!
-            if (shouldShowNotifications(context,drug)) {
-                RefillReminderHelper.createNotification(context, drug, currentProfile, email)
+            if (shouldShowNotifications(context, drug)) {
+                RefillReminderHelper.createNotification(
+                    context,
+                    drug,
+                    loggedUserObject
+                )
             }
-            RefillReminderScheduler.scheduleAlarmsForReminder(
-                context,
-                email,
-                currentProfile,
-                drug
-            )
+            RefillReminderScheduler.scheduleAlarmsForReminder(context, loggedUserObject, drug)
         }
     }
 
 
-    private fun shouldShowNotifications(context: Context,drug:DrugObject): Boolean {
-        var shouldShow =false
-        if(drug.refill.isToNotify && drug.refill.pillsLeft <= drug.refill.pillsBeforeReminder){
+    private fun shouldShowNotifications(context: Context, drug: DrugObject): Boolean {
+        var shouldShow = false
+        if (drug.refill.isToNotify && drug.refill.pillsLeft <= drug.refill.pillsBeforeReminder) {
             try {
                 shouldShow = AppPreferences.showNotifications
             } catch (e: UninitializedPropertyAccessException) {

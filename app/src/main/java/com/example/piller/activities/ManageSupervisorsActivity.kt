@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +17,6 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.listAdapters.SupervisorsAdapter
 import com.example.piller.models.Supervisor
-import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.DbConstants.DEFAULT_SUPERVISOR_THRESHOLD
 import com.example.piller.viewModels.ManageSupervisorsViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
@@ -26,7 +24,7 @@ import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.manage_supervisors_layout.*
 
 
-class ManageSupervisorsActivity : AppCompatActivity() {
+class ManageSupervisorsActivity : ActivityWithUserObject() {
     private lateinit var thresholdSpinner: Spinner
     private lateinit var viewModel: ManageSupervisorsViewModel
     private lateinit var supervisorAdapter: SupervisorsAdapter
@@ -34,6 +32,7 @@ class ManageSupervisorsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initUserObject(intent)
         initViewModels()
         initObservers()
         setContentView(R.layout.manage_supervisors_layout)
@@ -41,7 +40,6 @@ class ManageSupervisorsActivity : AppCompatActivity() {
 
         setClickListeners()
         initRecyclersAndAdapters()
-
     }
 
     private fun setClickListeners() {
@@ -90,9 +88,9 @@ class ManageSupervisorsActivity : AppCompatActivity() {
                 }
                 viewModel.addSupervisorsToDB(
                     supervisorName.text.toString(),
-                    supervisorEmail.text.toString()
+                    supervisorEmail.text.toString(),
+                    loggedUserObject.email
                 )
-
             })
             .build()
             .show()
@@ -117,7 +115,7 @@ class ManageSupervisorsActivity : AppCompatActivity() {
     }
 
     private fun clickOnDeleteSupervisorButton(supervisorEmail: String) {
-        viewModel.deleteSupervisorsFromDB(supervisorEmail)
+        viewModel.deleteSupervisorsFromDB(supervisorEmail, loggedUserObject.email)
     }
 
 
@@ -171,7 +169,7 @@ class ManageSupervisorsActivity : AppCompatActivity() {
                 parent: AdapterView<*>,
                 view: View, position: Int, id: Long
             ) {
-                viewModel.updateThresholdInDB(daysThreshold[position]!!)
+                viewModel.updateThresholdInDB(daysThreshold[position]!!, loggedUserObject.email)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -182,14 +180,10 @@ class ManageSupervisorsActivity : AppCompatActivity() {
 
     private fun initViewModels() {
         viewModel = ViewModelProvider(this).get(ManageSupervisorsViewModel::class.java)
-        viewModel.setEmailAndName(
-            intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!,
-            intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
-        )
         viewModel.mutableSupervisorList.value = mutableListOf<Supervisor>()
         viewModel.mutableSupervisorThreshold.value = DEFAULT_SUPERVISOR_THRESHOLD
-        viewModel.getSupervisorsFromDB()
-        viewModel.getThresholdFromDB()
+        viewModel.getSupervisorsFromDB(loggedUserObject.email)
+        viewModel.getThresholdFromDB(loggedUserObject.email)
     }
 
     override fun onSupportNavigateUp(): Boolean {

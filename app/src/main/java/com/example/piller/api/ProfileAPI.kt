@@ -7,26 +7,24 @@ import retrofit2.http.*
 interface ProfileAPI {
     @Headers("Content-Type: application/json")
 
-    @GET("profile/{email}")
-    fun getAllProfilesByEmail(@Path("email") email: String): Call<ResponseBody>
+    @GET("profile/{userId}")
+    fun getAllProfilesByEmail(@Path("userId") userId: String): Call<ResponseBody>
 
-    @POST("profile/{email}/{mainProfile}")
-    fun initProfileList(
-        @Path("email") email: String,
-        @Path("mainProfile") mainProfile: String
-    ): Call<ResponseBody>
+    @POST("profile/{userId}")
+    fun initProfileList(@Path("userId") userId: String): Call<ResponseBody>
 
-    @PUT("profile/{email}/{name}")
+    @PUT("profile/{userId}/{name}")
     fun addProfileToUser(
-        @Path("email") email: String,
+        @Path("userId") userId: String,
         @Path("name") name: String
     ): Call<ResponseBody>
 
-    @DELETE("profile/{email}")
-    fun deleteAllProfiles(@Path("email") email: String): Call<ResponseBody>
+    @DELETE("profile/{userId}")
+    fun deleteAllProfiles(@Path("userId") userId: String): Call<ResponseBody>
 
-    @DELETE("profile/{email}/{name}")
-    fun deleteProfile(@Path("email") email: String, @Path("name") name: String): Call<ResponseBody>
-
-
+    @DELETE("profile/{userId}/{profileId}")
+    fun deleteProfile(
+        @Path("userId") userId: String,
+        @Path("profileId") profileId: String
+    ): Call<ResponseBody>
 }

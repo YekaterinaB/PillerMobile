@@ -7,7 +7,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
@@ -19,7 +18,7 @@ import com.example.piller.fragments.ProfileFragment
 import com.example.piller.fragments.WeeklyCalendarFragment
 import com.example.piller.intakeReminders.NotificationService
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.Profile
+import com.example.piller.models.CalendarProfile
 import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
@@ -27,22 +26,19 @@ import com.example.piller.viewModels.WeeklyCalendarViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class CalendarActivity : AppCompatActivity() {
+class CalendarActivity : ActivityWithUserObject() {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var weeklyCalendarViewModel: WeeklyCalendarViewModel
 
-    private lateinit var loggedUserEmail: String
-    private lateinit var currentProfile: String
     private lateinit var currentProfileTV: TextView
     private lateinit var toolbarBottom: ActionBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loggedUserEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+        initUserObject(intent)
         setContentView(R.layout.activity_calendar)
         startNotificationsService()
-        currentProfileTV = findViewById(R.id.calendar_current_profile)
+        initViews()
         initializeNavigations()
 
         //initiate view model
@@ -50,8 +46,14 @@ class CalendarActivity : AppCompatActivity() {
         initializeFragment(savedInstanceState)
     }
 
+    private fun initViews() {
+        currentProfileTV = findViewById(R.id.calendar_current_profile)
+    }
+
     private fun startNotificationsService() {
-        startService(Intent(this, NotificationService::class.java))
+        val intent = Intent(this, NotificationService::class.java)
+        putLoggedUserObjectInIntent(intent)
+        startService(intent)
 
 //        NotificationHelper.createNotificationChannel(
 //            this, true, getString(R.string.app_name), NotificationManagerCompat.IMPORTANCE_HIGH
@@ -65,23 +67,26 @@ class CalendarActivity : AppCompatActivity() {
             Array(7) { mutableListOf<CalendarEvent>() }
 
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
-        profileViewModel.setCurrentProfileAndEmail(currentProfile, loggedUserEmail)
-        profileViewModel.mutableListOfProfiles.value = mutableListOf<Profile>()
+        profileViewModel.setCurrentProfileAndEmail(
+            loggedUserObject.currentProfile!!,
+            loggedUserObject.email
+        )
+        profileViewModel.mutableListOfProfiles.value = mutableListOf<CalendarProfile>()
 
-        profileViewModel.initProfileListFromDB(currentProfile)
-        profileViewModel.mutableCurrentProfileName.observe(this, Observer { profile ->
-            //update current profile
+        profileViewModel.initProfileListFromDB(loggedUserObject)
+        profileViewModel.mutableCurrentProfile.observe(this, Observer { profile ->
+            //  update current profile
             profile?.let {
-                currentProfileTV.text = it
+                loggedUserObject.currentProfile = it
+                currentProfileTV.text = it.name
             }
         })
     }
 
     private fun initializeFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            val f1 = WeeklyCalendarFragment()
-            val fragmentTransaction: FragmentTransaction =
-                supportFragmentManager.beginTransaction()
+            val f1 = WeeklyCalendarFragment.newInstance(loggedUserObject)
+            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.add(
                 R.id.calender_weekly_container_fragment,
                 f1,
@@ -107,13 +112,14 @@ class CalendarActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.navigation_home -> {
                     supportActionBar?.title = "Piller"
-                    val weeklyCalendarFragment = WeeklyCalendarFragment.newInstance()
+                    val weeklyCalendarFragment =
+                        WeeklyCalendarFragment.newInstance(loggedUserObject)
                     openFragment(weeklyCalendarFragment, DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_profile -> {
                     supportActionBar?.title = "Profiles"
-                    val profileFragment = ProfileFragment.newInstance()
+                    val profileFragment = ProfileFragment.newInstance(loggedUserObject)
                     openFragment(profileFragment, DbConstants.PROFILES_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
@@ -121,7 +127,7 @@ class CalendarActivity : AppCompatActivity() {
                 R.id.navigation_full_view -> {
                     // todo don't create new one if already in full view!
                     supportActionBar?.title = "Full View"
-                    val fullViewFragment = FullViewFragment.newInstance()
+                    val fullViewFragment = FullViewFragment.newInstance(loggedUserObject)
                     openFragment(fullViewFragment, DbConstants.FULL_VIEW_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
@@ -140,8 +146,7 @@ class CalendarActivity : AppCompatActivity() {
 
     private fun goToAccountManagement() {
         val intent = Intent(this@CalendarActivity, ManageAccountActivity::class.java)
-        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedUserEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
+        putLoggedUserObjectInIntent(intent)
         startActivity(intent)
     }
 

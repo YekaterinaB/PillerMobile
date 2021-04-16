@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.piller.api.DrugAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugObject
+import com.example.piller.models.UserObject
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -18,35 +19,22 @@ import java.io.File
 class DrugSearchViewModel : ViewModel() {
     private val drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
 
-    val drugsInteractionResult: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
+    val drugsInteractionResult: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     //  this will hold the name that the user searched but no drug was found
-    val drugSearchNoResult: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
+    val drugSearchNoResult: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     val drugsSearchResult: MutableLiveData<MutableList<DrugObject>> by lazy {
         MutableLiveData<MutableList<DrugObject>>()
     }
 
-    val snackBarMessage: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
+    val snackBarMessage: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
-    val newDrug: MutableLiveData<DrugObject> by lazy {
-        MutableLiveData<DrugObject>()
-    }
+    val newDrug: MutableLiveData<DrugObject> by lazy { MutableLiveData<DrugObject>() }
 
-    val addedDrugSuccess: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>(false)
-    }
+    val addedDrugSuccess: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
-    val showLoadingScreen: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>(false)
-    }
-
+    val showLoadingScreen: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     lateinit var calendarId: String
 
@@ -127,9 +115,13 @@ class DrugSearchViewModel : ViewModel() {
         }
     }
 
-    fun getInteractionList(email: String, profileName: String, rxcui: Int) {
+    fun getInteractionList(loggedUserObject: UserObject, rxcui: Int) {
         showLoadingScreen.value = true
-        drugAPIRetrofit.findInteractionList(email, profileName, rxcui.toString()).enqueue(
+        drugAPIRetrofit.findInteractionList(
+            loggedUserObject.userId,
+            loggedUserObject.currentProfile!!.profileId,
+            rxcui.toString()
+        ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not search interactions."

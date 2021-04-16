@@ -8,8 +8,7 @@ import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.DrugIntakeAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugObject
-import com.example.piller.notif.AlarmScheduler
-import com.example.piller.notif.NotificationHelper
+import com.example.piller.models.UserObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
@@ -37,24 +36,24 @@ class IntakeReminderReceiver : BroadcastReceiver() {
 
     private fun handleNewDrugNotification(intent: Intent, context: Context) {
         // 2
-        val currentProfile = intent.extras!!.getString(DbConstants.LOGGED_USER_NAME)
-        val email = intent.extras!!.getString(DbConstants.LOGGED_USER_EMAIL)
+        val bundle = intent.extras!!.getBundle(DbConstants.LOGGED_USER_BUNDLE)
+        val loggedUserObject = bundle?.getParcelable<UserObject>(DbConstants.LOGGED_USER_OBJECT)!!
         // could not get parceble data to intent
         val bundleCalendarEvent = intent.extras!!.getBundle(DbConstants.DRUG_OBJECT)
         // 3
-        if (currentProfile != null && email != null && bundleCalendarEvent != null) {
+        if (bundleCalendarEvent != null) {
             val drug =
                 bundleCalendarEvent.getParcelable<DrugObject>(DbConstants.DRUG_OBJECT)!!
             addIntakeDateFalse(drug.taken_id, drug.refill.refillId)
             if (shouldShowNotifications(context)) {
-                IntakeReminderHelper.createNotification(context, drug, currentProfile, email)
+                IntakeReminderHelper.createNotification(
+                    context,
+                    drug,
+                    loggedUserObject.currentProfile!!.name,
+                    loggedUserObject
+                )
             }
-            IntakeReminderScheduler.scheduleAlarmsForReminder(
-                context,
-                email,
-                currentProfile,
-                drug
-            )
+            IntakeReminderScheduler.scheduleAlarmsForReminder(context, loggedUserObject, drug)
         }
     }
 

@@ -9,7 +9,6 @@ import android.view.*
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.DrugMap
@@ -27,7 +26,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class DrugInfoActivity : AppCompatActivity() {
+class DrugInfoActivity : ActivityWithUserObject() {
     private lateinit var _viewModel: DrugInfoViewModel
     private lateinit var _profileViewModel: ProfileViewModel
 
@@ -38,8 +37,6 @@ class DrugInfoActivity : AppCompatActivity() {
     private lateinit var _drugTakenCB: CheckBox
     private lateinit var _drugImageIV: ImageView
 
-    private lateinit var _loggedEmail: String
-    private lateinit var _currentProfile: String
     private lateinit var _calendarEvent: CalendarEvent
     private var _isFromNotification = false
 
@@ -67,8 +64,7 @@ class DrugInfoActivity : AppCompatActivity() {
     }
 
     private fun initIntent() {
-        _loggedEmail = intent.extras!!.getString(DbConstants.LOGGED_USER_EMAIL)!!
-        _currentProfile = intent.extras!!.getString(DbConstants.LOGGED_USER_NAME)!!
+        initUserObject(intent)
         _isFromNotification = intent.extras!!.getBoolean(DbConstants.FROM_NOTIFICATION, false)
 
         try {
@@ -205,8 +201,7 @@ class DrugInfoActivity : AppCompatActivity() {
 
     private fun goToCalendarActivity() {
         val intent = Intent(this@DrugInfoActivity, CalendarActivity::class.java)
-        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, _currentProfile)
+        putLoggedUserObjectInIntent(intent)
         startActivity(intent)
     }
 
@@ -257,16 +252,9 @@ class DrugInfoActivity : AppCompatActivity() {
     private fun goToEditActivity(editOnlyFutureOccurrences: Boolean) {
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
-        val intent = Intent(
-            this,
-            DrugOccurrenceActivity::class.java
-        )
-        intent.putExtra(
-            DbConstants.DRUG_OBJECT,
-            drugObject
-        )
-        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, _loggedEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, _currentProfile)
+        val intent = Intent(this, DrugOccurrenceActivity::class.java)
+        intent.putExtra(DbConstants.DRUG_OBJECT, drugObject)
+        putLoggedUserObjectInIntent(intent)
         intent.putExtra(DbConstants.INTAKE_DATE, _calendarEvent.intakeTime.time)
         intent.putExtra(DbConstants.EDIT_ONLY_FUTURE_OCCURRENCES, editOnlyFutureOccurrences)
 
@@ -287,8 +275,7 @@ class DrugInfoActivity : AppCompatActivity() {
                 when (which) {
                     //  delete all occurrences
                     0 -> _viewModel.deleteAllOccurrencesOfDrug(
-                        email = _loggedEmail,
-                        currentProfile = _currentProfile,
+                        loggedUserObject,
                         drug = drugObject,
                         context = this
                     )
@@ -312,8 +299,7 @@ class DrugInfoActivity : AppCompatActivity() {
         DateUtils.setCalendarTime(today, 0, 0, 0)
         _calendarEvent.intakeEndTime = today.time
         _viewModel.deleteFutureOccurrencesOfDrug(
-            email = _loggedEmail,
-            currentProfile = _currentProfile,
+            loggedUserObject,
             drug = drugObject,
             repeatEnd = today.timeInMillis.toString(),
             context = this

@@ -12,7 +12,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -32,7 +31,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class DrugOccurrenceActivity : AppCompatActivity() {
+class DrugOccurrenceActivity : ActivityWithUserObject() {
     private lateinit var newDrugName: TextView
     private lateinit var medsLeftLabel: TextView
     private lateinit var drugOccurrencesDate: TextView
@@ -51,8 +50,6 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     private lateinit var drugWeekdayContainer: ConstraintLayout
     private lateinit var setRepeatEnd: Switch
     private lateinit var repeatEndDateTV: TextView
-    private lateinit var currentProfileName: String
-    private lateinit var loggedEmail: String
     private lateinit var viewModel: DrugOccurrenceViewModel
     private lateinit var drugRepeatOptions: Array<String>
     private lateinit var drugShouldRepeat: Array<String>
@@ -89,8 +86,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
     }
 
     private fun initAllIntentExtras() {
-        currentProfileName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
-        loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        initUserObject(intent)
         initDrugIntakeTime(intent.getLongExtra(DbConstants.INTAKE_DATE, -1))
         setDrug(intent.getParcelableExtra(DbConstants.DRUG_OBJECT)!!)
     }
@@ -288,8 +284,7 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         SnackBar.showToastBar(this, toastBarMessage)
         val intent = Intent(this@DrugOccurrenceActivity, CalendarActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfileName)
+        putLoggedUserObjectInIntent(intent)
         startActivity(intent)
     }
 
@@ -634,17 +629,12 @@ class DrugOccurrenceActivity : AppCompatActivity() {
         ) {
             //edit drug
             viewModel.updateDrugOccurrence(
-                loggedEmail,
-                currentProfileName,
-                repeatOnEnum,
-                drugRepeatsOnEditText.text.toString(),
-                this
+                loggedUserObject, repeatOnEnum, drugRepeatsOnEditText.text.toString(), this
             )
         } else {
             //  otherwise, add a new drug
             viewModel.addNewDrugToUser(
-                loggedEmail,
-                currentProfileName,
+                loggedUserObject,
                 repeatOnEnum,
                 drugRepeatsOnEditText.text.toString(),
                 this
