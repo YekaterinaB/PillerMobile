@@ -52,7 +52,7 @@ class ManageSupervisorsViewModel : ViewModel() {
                             mutableSupervisorList.value!!.add(Supervisor(name, email, isPending))
                         }
                         mutableSupervisorList.notifyObserver()
-
+                        getThresholdFromDB(loggedUserEmail)
                     }
                 }
             }

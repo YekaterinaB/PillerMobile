@@ -45,9 +45,9 @@ class LoginActivity : AppCompatActivity() {
         if (AppPreferences.stayLoggedIn) {
             //  run the background service (it has to run from the application for one time so it'll
             //  be able to tun when the device reboots
-            AlarmScheduler.runBackgroundService(this, AppPreferences.email)
+            AlarmScheduler.runBackgroundService(this)
             _loadingScreen.visibility = View.VISIBLE
-            //  stayloggedin
+            //  stay logged in
             AppPreferences.stayLoggedIn = true
             _viewModel.loginUser(AppPreferences.email, AppPreferences.password)
         }

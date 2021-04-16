@@ -178,30 +178,6 @@ class ProfileViewModel : ViewModel() {
         )
     }
 
-
-    fun initProfileListFromDB(userObject: UserObject) {
-        val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.initProfileList(userObject.userId).enqueue(
-            object : retrofit2.Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
-                }
-
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if (response.raw().code() != 200) {
-                        mutableToastError.value = "Could not get profile list."
-                    } else {
-                        getProfileListFromDB(userObject)
-                    }
-                }
-            }
-        )
-    }
-
-
     fun addProfileToDB(profileName: String, loggedUserObject: UserObject) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
         retrofit.addProfileToUser(loggedUserObject.userId, profileName).enqueue(
