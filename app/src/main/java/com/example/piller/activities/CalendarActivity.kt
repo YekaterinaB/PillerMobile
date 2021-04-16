@@ -73,7 +73,7 @@ class CalendarActivity : ActivityWithUserObject() {
         )
         profileViewModel.mutableListOfProfiles.value = mutableListOf<CalendarProfile>()
 
-        profileViewModel.initProfileListFromDB(loggedUserObject)
+        profileViewModel.getProfileListFromDB(loggedUserObject)
         profileViewModel.mutableCurrentProfile.observe(this, Observer { profile ->
             //  update current profile
             profile?.let {

@@ -68,7 +68,7 @@ object BackgroundNotificationScheduler {
                 ) {
                     if (response.raw().code() == 200) {
                         val jObject = JSONObject(response.body()!!.string())
-                        val userObject = UserObject(jObject.getString("id"), email, "", null)
+                        val userObject = UserObject(jObject.getString("id"), email, null, null)
                         scheduleNotificationsForAllProfiles(context, userObject)
                     }
                 }

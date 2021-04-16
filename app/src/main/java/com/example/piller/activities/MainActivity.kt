@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             //  run the background service (it has to run from the application for one time so it'll
             //  be able to tun when the device reboots
             AlarmScheduler.runBackgroundService(this)
-            loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
+            loginUserWindow(edt_email_login.text.toString(), edt_password_login.text.toString())
         }
 
         setOnClickListeners()
@@ -82,7 +82,8 @@ class MainActivity : AppCompatActivity() {
                     val userObject = createUserObject(
                         jObject.get("id").toString(),
                         jObject.get("email").toString(),
-                        jObject.get("mainProfileName").toString()
+                        jObject.get("profileName").toString(),
+                        jObject.get("profileId").toString()
                     )
                     val userBundle = Bundle()
                     userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, userObject)
@@ -99,10 +100,12 @@ class MainActivity : AppCompatActivity() {
     private fun createUserObject(
         userId: String,
         email: String,
-        mainProfileName: String
+        mainProfileName: String,
+        profileId: String
     ): UserObject {
-        val profile = Profile(userId, mainProfileName)
-        return UserObject(userId, email, mainProfileName, profile)
+        val profile = Profile(profileId, mainProfileName)
+        //  current profile = main profile
+        return UserObject(userId, email, profile, profile)
     }
 
     private fun initViews() {
