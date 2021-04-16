@@ -51,8 +51,8 @@ class MainActivity : AppCompatActivity() {
         //  update fields if user chose to remember email and password, and auto login
         if (AppPreferences.stayLoggedIn && !AppPreferences.loggedOut) {
             login_remember.isChecked = true
-            edt_email.setText(AppPreferences.email)
-            edt_password.setText(AppPreferences.password)
+            edt_email_login.setText(AppPreferences.email)
+            edt_password_login.setText(AppPreferences.password)
             //  run the background service (it has to run from the application for one time so it'll
             //  be able to tun when the device reboots
             AlarmScheduler.runBackgroundService(this)
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-        viewModel.mutableActivityChangeResponse.observe(
+        viewModel.mutableActivityLoginChangeResponse.observe(
             this,
             Observer { response ->
                 response?.let {
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setOnClickListeners() {
         btn_login.setOnClickListener {
-            loginUserWindow(edt_email.text.toString(), edt_password.text.toString())
+            loginUserWindow(edt_email_login.text.toString(), edt_password_login.text.toString())
         }
 
         txt_create_account.setOnClickListener {
@@ -164,10 +164,10 @@ class MainActivity : AppCompatActivity() {
             }
             .setPositiveText("REGISTER")
             .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
-                val edtEmail = itemView.findViewById<View>(R.id.edt_email) as MaterialEditText
+                val edtEmail = itemView.findViewById<View>(R.id.edt_email_login) as MaterialEditText
                 val edtName = itemView.findViewById<View>(R.id.edt_name) as MaterialEditText
                 val edtPassword =
-                    itemView.findViewById<View>(R.id.edt_password) as MaterialEditText
+                    itemView.findViewById<View>(R.id.edt_password_login) as MaterialEditText
 
                 when {
                     TextUtils.isEmpty(edtEmail.text.toString()) -> {
