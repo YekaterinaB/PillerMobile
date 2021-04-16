@@ -12,7 +12,6 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -24,6 +23,7 @@ import com.example.piller.activities.AddNewDrugActivity
 import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.listAdapters.EliAdapter
 import com.example.piller.models.CalendarEvent
+import com.example.piller.models.UserObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
@@ -31,7 +31,7 @@ import com.example.piller.viewModels.WeeklyCalendarViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
-class WeeklyCalendarFragment : Fragment() {
+class WeeklyCalendarFragment : FragmentWithUserObject() {
     private val weeklyCalendarViewModel: WeeklyCalendarViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
@@ -77,7 +77,7 @@ class WeeklyCalendarFragment : Fragment() {
         initListeners()
         initObservers()
         weeklyCalendarViewModel.getWeekEvents(
-            profileViewModel.getCurrentEmail(),
+            loggedUserObject,
             profileViewModel.getCurrentProfile()
         )
         initRecyclersAndAdapters()
@@ -152,13 +152,17 @@ class WeeklyCalendarFragment : Fragment() {
         currentCalendarEvent = calendarEvent
         val intent = Intent(requireContext(), DrugInfoActivity::class.java)
         intent.putExtra(DbConstants.CALENDAR_EVENT, calendarEvent)
-        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
+        putLoggedUserObjectInIntent(intent)
         startActivityForResult(intent, DRUG_INFO_INTENT_ID)
     }
 
     companion object {
-        fun newInstance(): WeeklyCalendarFragment = WeeklyCalendarFragment()
+        fun newInstance(loggedUser: UserObject) =
+            WeeklyCalendarFragment().apply {
+                arguments = Bundle().apply {
+                    loggedUserObject = loggedUser
+                }
+            }
     }
 
     private fun initListeners() {
@@ -189,8 +193,7 @@ class WeeklyCalendarFragment : Fragment() {
     private fun showAddNewDrugActivity(addType: String) {
         val intent = Intent(activity, AddNewDrugActivity::class.java)
         intent.putExtra(DbConstants.ADD_DRUG_TYPE, addType)
-        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
+        putLoggedUserObjectInIntent(intent)
         intent.putExtra(DbConstants.CALENDAR_ID, weeklyCalendarViewModel.calendarId)
         startActivity(intent)
     }

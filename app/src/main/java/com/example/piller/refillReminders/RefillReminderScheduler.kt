@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.example.piller.R
 import com.example.piller.models.DrugObject
-import com.example.piller.notif.BackgroundReceiver
+import com.example.piller.models.UserObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import java.util.Calendar.MILLISECOND
@@ -39,8 +39,7 @@ object RefillReminderScheduler {
 
     fun scheduleAlarmsForReminder(
         context: Context,
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         drug: DrugObject
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -51,31 +50,28 @@ object RefillReminderScheduler {
         calRepeatEnd[MILLISECOND] = 0
         // if today is after the repeat end time, to not notify
         if (!(drug.occurrence.repeatEnd > 0 && DateUtils.isDateBefore(calRepeatEnd, cal))) {
-            scheduleAlarm(context, email, currentProfile, drug, alarmMgr)
+            scheduleAlarm(context, loggedUserObject, drug, alarmMgr)
         }
 
     }
+
     /**
      * Schedules a single alarm
      */
     private fun scheduleAlarm(
         context: Context,
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         drug: DrugObject,
         alarmMgr: AlarmManager
     ) {
-        val timeList=drug.refill.reminderTime.split(":").map{it.toInt()}.toTypedArray()
-        val datetimeToAlarm = DateUtils.getFutureHourDate(timeList[0],timeList[1])
-        val alarmIntent = createPendingIntent(context, email, currentProfile, drug)
+        val timeList = drug.refill.reminderTime.split(":").map { it.toInt() }.toTypedArray()
+        val datetimeToAlarm = DateUtils.getFutureHourDate(timeList[0], timeList[1])
+        val alarmIntent = createPendingIntent(context, loggedUserObject, drug)
         alarmMgr.set(AlarmManager.RTC_WAKEUP, datetimeToAlarm.timeInMillis, alarmIntent)
     }
 
     private fun createPendingIntent(
-        context: Context,
-        email: String,
-        currentProfile: String,
-        drug: DrugObject
+        context: Context, loggedUserObject: UserObject, drug: DrugObject
     ): PendingIntent? {
         val bundleDrugObject = Bundle()
         bundleDrugObject.putParcelable(DbConstants.DRUG_OBJECT, drug)
@@ -87,23 +83,18 @@ object RefillReminderScheduler {
             type = "Refill-${drug.drugId}-${drug.rxcui}-"
             // 4
             putExtra(DbConstants.DRUG_OBJECT, bundleDrugObject)
-            putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
-            putExtra(DbConstants.LOGGED_USER_EMAIL, email)
+            val userBundle = Bundle()
+            userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, loggedUserObject)
+            putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
 
-    fun removeAlarmsForReminder(
-        context: Context,
-        drug: DrugObject,
-        email: String,
-        currentProfile: String
-    ) {
+    fun removeAlarmsForReminder(context: Context, drug: DrugObject, loggedUserObject: UserObject) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent = createPendingIntent(context, email, currentProfile, drug)
+        val alarmIntent = createPendingIntent(context, loggedUserObject, drug)
         alarmMgr.cancel(alarmIntent)
     }
-
 }

@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
@@ -24,15 +23,13 @@ import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugSearchViewModel
 
-class AddNewDrugActivity : AppCompatActivity() {
+class AddNewDrugActivity : ActivityWithUserObject() {
     private lateinit var searchViewModel: DrugSearchViewModel
     private lateinit var drugOptionsList: RecyclerView
     private lateinit var loadingScreen: RelativeLayout
     private lateinit var drugResultLabel: TextView
     private lateinit var selectDrugAnywayBtn: Button
     private lateinit var drugAdapter: NewDrugByNameAdapter
-    private lateinit var currentProfile: String
-    private lateinit var loggedEmail: String
     private lateinit var addType: String
     private lateinit var drugSearchNoResult: String
 
@@ -40,8 +37,7 @@ class AddNewDrugActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
-        currentProfile = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
-        loggedEmail = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
+        initUserObject(intent)
         val calendarId = intent.getStringExtra(DbConstants.CALENDAR_ID)!!
         initViewModels(calendarId)
         setContentView(R.layout.activity_add_new_drug)
@@ -95,8 +91,7 @@ class AddNewDrugActivity : AppCompatActivity() {
 
     private fun initializeFragment(savedInstanceState: Bundle?, fragment: Fragment) {
         if (savedInstanceState == null) {
-            val fragmentTransaction: FragmentTransaction =
-                supportFragmentManager.beginTransaction()
+            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.add(R.id.nd_container_fragment, fragment)
             fragmentTransaction.commit()
         }
@@ -179,7 +174,7 @@ class AddNewDrugActivity : AppCompatActivity() {
         val drug = searchViewModel.getDrugByRxcui(rxcui)
         if (drug != null) {
             searchViewModel.newDrug.value = drug
-            searchViewModel.getInteractionList(loggedEmail, currentProfile, drug.rxcui)
+            searchViewModel.getInteractionList(loggedUserObject, drug.rxcui)
         }
     }
 
@@ -193,14 +188,9 @@ class AddNewDrugActivity : AppCompatActivity() {
     }
 
     fun goToAddOccurrenceActivity() {
-        val intent = Intent(
-            this,
-            DrugOccurrenceActivity::class.java
-        )
+        val intent = Intent(this, DrugOccurrenceActivity::class.java)
         intent.putExtra(DbConstants.DRUG_OBJECT, searchViewModel.newDrug.value!!)
-        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfile)
+        putLoggedUserObjectInIntent(intent)
         startActivity(intent)
     }
-
 }

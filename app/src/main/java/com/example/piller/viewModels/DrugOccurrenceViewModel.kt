@@ -8,8 +8,8 @@ import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.Dose
 import com.example.piller.models.DrugObject
+import com.example.piller.models.UserObject
 import com.example.piller.notif.AlarmScheduler
-import com.example.piller.refillReminders.RefillReminderScheduler
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -110,14 +110,17 @@ class DrugOccurrenceViewModel : ViewModel() {
     }
 
     fun addNewDrugToUser(
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         repeatOn: RepeatOn?,
         repeatValue: String?,
         context: Context
     ) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.addDrugCalendarByUser(email, currentProfile, drug).enqueue(
+        retrofit.addDrugCalendarByUser(
+            loggedUserObject.userId,
+            loggedUserObject.currentProfile!!.profileId,
+            drug
+        ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not add drug."
@@ -131,7 +134,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                         addedDrugSuccess.value = true
                         updateDrugInfo(response)
                         //create notification
-                        AlarmScheduler.scheduleAllNotifications(email,currentProfile,context,drug)
+                        AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drug)
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         snackBarMessage.value = jObjError["message"] as String
@@ -152,14 +155,18 @@ class DrugOccurrenceViewModel : ViewModel() {
     }
 
     fun updateDrugOccurrence(
-        email: String,
-        currentProfile: String,
+        loggedUserObject: UserObject,
         repeatOn: RepeatOn?,
         repeatValue: String?,
         context: Context
     ) {
         repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
-        retrofit.updateDrugOccurrence(email, currentProfile, drug.drugId, drug)
+        retrofit.updateDrugOccurrence(
+            loggedUserObject.userId,
+            loggedUserObject.currentProfile!!.profileId,
+            drug.drugId,
+            drug
+        )
             .enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -172,9 +179,9 @@ class DrugOccurrenceViewModel : ViewModel() {
                     ) {
                         if (response.raw().code() == 200) {
                             updatedDrugSuccess.value = true
-                            AlarmScheduler.removeAllNotifications(email,currentProfile,context,drug)
+                            AlarmScheduler.removeAllNotifications(loggedUserObject, context, drug)
                             updateDrugInfo(response)
-                            AlarmScheduler.scheduleAllNotifications(email,currentProfile,context,drug)
+                            AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drug)
 
                         } else {
                             val jObjError = JSONObject(response.errorBody()!!.string())
@@ -184,7 +191,6 @@ class DrugOccurrenceViewModel : ViewModel() {
                 }
             )
     }
-
 
 
     fun setDrugDosage(measurementType: String, totalDose: Float) {

@@ -13,9 +13,6 @@ import retrofit2.Call
 import retrofit2.Response
 
 class ManageSupervisorsViewModel : ViewModel() {
-    private lateinit var loggedUserName: String
-    private lateinit var loggedUserEmail: String
-
     val mutableSupervisorList: MutableLiveData<MutableList<Supervisor>> by lazy {
         MutableLiveData<MutableList<Supervisor>>()
     }
@@ -28,13 +25,7 @@ class ManageSupervisorsViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
-
-    fun setEmailAndName(email: String, name: String) {
-        loggedUserEmail = email
-        loggedUserName = name
-    }
-
-    fun getSupervisorsFromDB() {
+    fun getSupervisorsFromDB(loggedUserEmail: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.getSupervisors(loggedUserEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -56,8 +47,9 @@ class ManageSupervisorsViewModel : ViewModel() {
                             val name = supervisors.getJSONObject(i).get("supervisorName") as String
                             val email =
                                 supervisors.getJSONObject(i).get("supervisorEmail") as String
-                            val isPending=supervisors.getJSONObject(i).get("isConfirmed") as Boolean
-                            mutableSupervisorList.value!!.add(Supervisor(name, email,isPending))
+                            val isPending =
+                                supervisors.getJSONObject(i).get("isConfirmed") as Boolean
+                            mutableSupervisorList.value!!.add(Supervisor(name, email, isPending))
                         }
                         mutableSupervisorList.notifyObserver()
 
@@ -70,13 +62,17 @@ class ManageSupervisorsViewModel : ViewModel() {
 
     private fun addSupervisorsToList(supervisorName: String, supervisorEmail: String) {
         mutableSupervisorList.value!!.add(
-            Supervisor(supervisorName, supervisorEmail,false)
+            Supervisor(supervisorName, supervisorEmail, false)
         )
 
         mutableSupervisorList.notifyObserver()
     }
 
-    fun addSupervisorsToDB(supervisorName: String, supervisorEmail: String) {
+    fun addSupervisorsToDB(
+        supervisorName: String,
+        supervisorEmail: String,
+        loggedUserEmail: String
+    ) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.addSupervisor(loggedUserEmail, supervisorName, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -109,7 +105,7 @@ class ManageSupervisorsViewModel : ViewModel() {
         mutableSupervisorList.notifyObserver()
     }
 
-    fun deleteSupervisorsFromDB(supervisorEmail: String) {
+    fun deleteSupervisorsFromDB(supervisorEmail: String, loggedUserEmail: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.deleteSupervisor(loggedUserEmail, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -133,7 +129,7 @@ class ManageSupervisorsViewModel : ViewModel() {
     }
 
 
-    fun getThresholdFromDB() {
+    fun getThresholdFromDB(loggedUserEmail: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.getThreshold(loggedUserEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -158,9 +154,7 @@ class ManageSupervisorsViewModel : ViewModel() {
     }
 
 
-    fun updateThresholdInDB(
-        stringThreshold: String
-    ) {
+    fun updateThresholdInDB(stringThreshold: String, loggedUserEmail: String) {
         val threshold: Int
         if (stringThreshold == "None") {
             threshold = 0
@@ -189,5 +183,4 @@ class ManageSupervisorsViewModel : ViewModel() {
             }
         )
     }
-
 }

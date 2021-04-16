@@ -8,7 +8,8 @@ import com.example.piller.EventInterpreter
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.Profile
+import com.example.piller.models.CalendarProfile
+import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -31,13 +32,13 @@ class WeeklyCalendarViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
-    fun getWeekEvents(loggedUserEmail: String, profile: Profile) {
-        if (!profile.getIsInitialized()) {
+    fun getWeekEvents(loggedUserObject: UserObject, calendarProfile: CalendarProfile) {
+        if (!calendarProfile.getIsInitialized()) {
             // ask db for user calendar if not initialized
-            getCalendarByUser(loggedUserEmail, profile)
+            getCalendarByUser(loggedUserObject)
         } else {
             // update mutable calendar
-            changeMutableWeeklyCalendar(profile.getWeeklyCalendar())
+            changeMutableWeeklyCalendar(calendarProfile.getWeeklyCalendar())
         }
     }
 
@@ -84,17 +85,19 @@ class WeeklyCalendarViewModel : ViewModel() {
         mutableDeleteSuccess.value = true
     }
 
-    private fun getCalendarByUser(email: String, profile: Profile) {
+    private fun getCalendarByUser(loggedUserObject: UserObject) {
         val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
-        retrofit.getCalendarByUser(email, profile.getProfileName()).enqueue(
+        retrofit.getCalendarByUser(
+            loggedUserObject.userId,
+            loggedUserObject.currentProfile!!.profileId
+        ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
                 }
 
                 override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
+                    call: Call<ResponseBody>, response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == 200) {
                         initCalenderView(response)

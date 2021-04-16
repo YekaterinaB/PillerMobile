@@ -8,7 +8,8 @@ import com.example.piller.EventInterpreter
 import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.CalendarEvent
-import com.example.piller.models.Profile
+import com.example.piller.models.CalendarProfile
+import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -33,16 +34,16 @@ class FullViewViewModel : ViewModel() {
     }
 
     fun initiateMonthEvents(
-        loggedUserEmail: String,
-        profile: Profile,
+        loggedUserObject: UserObject,
+        calendarProfile: CalendarProfile,
         startDate: Date,
         endDate: Date
     ) {
-        if (profile.getMonthlyCalendar().isEmpty()) {
-            updateCalendarByUser(loggedUserEmail, profile, startDate, endDate)
+        if (calendarProfile.getMonthlyCalendar().isEmpty()) {
+            updateCalendarByUser(loggedUserObject, startDate, endDate)
         } else {
             // update mutable calendar
-            setMutableMonthlyCalendar(profile.getMonthlyCalendar())
+            setMutableMonthlyCalendar(calendarProfile.getMonthlyCalendar())
         }
     }
 
@@ -90,10 +91,13 @@ class FullViewViewModel : ViewModel() {
         mutableDeleteSuccess.value = true
     }
 
-    fun updateCalendarByUser(email: String, profile: Profile, startDate: Date, endDate: Date) {
+    fun updateCalendarByUser(loggedUserObject: UserObject, startDate: Date, endDate: Date) {
         showLoadingScreen.value = true
         val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
-        retrofit.getCalendarByUser(email, profile.getProfileName()).enqueue(
+        retrofit.getCalendarByUser(
+            loggedUserObject.userId,
+            loggedUserObject.currentProfile!!.profileId
+        ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {}
 

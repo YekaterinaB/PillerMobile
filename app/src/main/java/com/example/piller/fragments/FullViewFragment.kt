@@ -9,16 +9,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
-import com.example.piller.utilities.DateUtils
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
+import com.example.piller.models.UserObject
+import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.FullViewViewModel
 import com.example.piller.viewModels.ProfileViewModel
@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class FullViewFragment : Fragment() {
+class FullViewFragment : FragmentWithUserObject() {
     private val viewModel: FullViewViewModel by activityViewModels()
     private val profileViewModel: ProfileViewModel by activityViewModels()
     private lateinit var fragmentView: View
@@ -39,7 +39,11 @@ class FullViewFragment : Fragment() {
     private var currentFirstDayOfMonth = DateUtils.getFirstDayOfMonth()
 
     companion object {
-        fun newInstance() = FullViewFragment()
+        fun newInstance(loggedUser: UserObject) = FullViewFragment().apply {
+            arguments = Bundle().apply {
+                loggedUserObject = loggedUser
+            }
+        }
     }
 
     override fun onCreateView(
@@ -61,10 +65,7 @@ class FullViewFragment : Fragment() {
         val firstAndLastDays = DateUtils.getFirstAndLastDaysOfSpecificMonth(cal)
         currentFirstDayOfMonth = firstAndLastDays.first
         viewModel.updateCalendarByUser(
-            profileViewModel.getCurrentEmail(),
-            profileViewModel.getCurrentProfile(),
-            firstAndLastDays.first,
-            firstAndLastDays.second
+            loggedUserObject, firstAndLastDays.first, firstAndLastDays.second
         )
     }
 
@@ -162,7 +163,7 @@ class FullViewFragment : Fragment() {
         val endDate = DateUtils.getLastDayOfMonth()
         //  get all the events for the selected month
         viewModel.initiateMonthEvents(
-            profileViewModel.getCurrentEmail(),
+            loggedUserObject,
             profileViewModel.getCurrentProfile(),
             startDate,
             endDate

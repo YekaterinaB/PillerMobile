@@ -9,7 +9,6 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -21,7 +20,7 @@ import com.example.piller.viewModels.ManageAccountViewModel
 import org.json.JSONObject
 
 
-class ManageAccountActivity : AppCompatActivity() {
+class ManageAccountActivity : ActivityWithUserObject() {
     private lateinit var viewModel: ManageAccountViewModel
     private lateinit var supervisorsLayout: ConstraintLayout
     private lateinit var emailLayout: ConstraintLayout
@@ -33,8 +32,8 @@ class ManageAccountActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViewModels()
-        viewModel.loggedUserEmail.value = intent.getStringExtra(DbConstants.LOGGED_USER_EMAIL)!!
-        viewModel.loggedUserName = intent.getStringExtra(DbConstants.LOGGED_USER_NAME)!!
+        initUserObject(intent)
+        viewModel.loggedUserEmail.value = loggedUserObject.email
 
         setContentView(R.layout.activity_manage_account)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -133,31 +132,15 @@ class ManageAccountActivity : AppCompatActivity() {
     }
 
     private fun setOnClickListeners() {
-        emailLayout.setOnClickListener {
-            setUpdateEmailDialog()
-        }
+        emailLayout.setOnClickListener { setUpdateEmailDialog() }
 
-        passwordLayout.setOnClickListener {
-            setUpdatePasswordDialog()
-        }
+        passwordLayout.setOnClickListener { setUpdatePasswordDialog() }
 
-        deleteLayout.setOnClickListener {
-            setDeleteAccountDialog()
-        }
+        deleteLayout.setOnClickListener { setDeleteAccountDialog() }
 
         supervisorsLayout.setOnClickListener {
-            val intent = Intent(
-                this@ManageAccountActivity,
-                ManageSupervisorsActivity::class.java
-            )
-            intent.putExtra(
-                DbConstants.LOGGED_USER_EMAIL,
-                viewModel.loggedUserEmail.value!!
-            )
-            intent.putExtra(
-                DbConstants.LOGGED_USER_NAME,
-                viewModel.loggedUserName
-            )
+            val intent = Intent(this@ManageAccountActivity, ManageSupervisorsActivity::class.java)
+            putLoggedUserObjectInIntent(intent)
             startActivity(intent)
         }
 

@@ -16,13 +16,13 @@ import com.example.piller.R
 import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.listAdapters.EliAdapter
 import com.example.piller.models.CalendarEvent
+import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
 
 class FullviewPopupFragment : DialogFragment() {
     private lateinit var dateTV: TextView
     private lateinit var eventsList: RecyclerView
-    private lateinit var loggedEmail: String
-    private lateinit var currentProfileName: String
+    private lateinit var loggedUserObject: UserObject
     private lateinit var selectedDrug: CalendarEvent
     private var dateString: String? = null
     private var eventsData = mutableListOf<CalendarEvent>()
@@ -60,8 +60,9 @@ class FullviewPopupFragment : DialogFragment() {
         selectedDrug = calendarEvent
         val intent = Intent(requireContext(), DrugInfoActivity::class.java)
         intent.putExtra(DbConstants.CALENDAR_EVENT, calendarEvent)
-        intent.putExtra(DbConstants.LOGGED_USER_EMAIL, loggedEmail)
-        intent.putExtra(DbConstants.LOGGED_USER_NAME, currentProfileName)
+        val userBundle = Bundle()
+        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, loggedUserObject)
+        intent.putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
         startActivityForResult(intent, DRUG_INFO_DELETE_CODE)
     }
 
@@ -76,8 +77,7 @@ class FullviewPopupFragment : DialogFragment() {
                 eventsData = a.toMutableList()
             }
 
-            loggedEmail = it.getString(DbConstants.LOGGED_USER_EMAIL).toString()
-            currentProfileName = it.getString(DbConstants.LOGGED_USER_NAME).toString()
+            loggedUserObject = it.getParcelable(DbConstants.LOGGED_USER_OBJECT)!!
         }
     }
 
