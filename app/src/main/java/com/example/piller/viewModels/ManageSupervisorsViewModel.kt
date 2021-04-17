@@ -17,13 +17,9 @@ class ManageSupervisorsViewModel : ViewModel() {
         MutableLiveData<MutableList<Supervisor>>()
     }
 
-    val mutableSupervisorThreshold: MutableLiveData<Int> by lazy {
-        MutableLiveData<Int>()
-    }
+    val mutableSupervisorThreshold: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
-    val mutableToastError: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
+    val mutableToastError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     fun getSupervisorsFromDB(userId: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
@@ -68,11 +64,7 @@ class ManageSupervisorsViewModel : ViewModel() {
         mutableSupervisorList.notifyObserver()
     }
 
-    fun addSupervisorsToDB(
-        supervisorName: String,
-        supervisorEmail: String,
-        userId: String
-    ) {
+    fun addSupervisorsToDB(supervisorName: String, supervisorEmail: String, userId: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.addSupervisor(userId, supervisorName, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {

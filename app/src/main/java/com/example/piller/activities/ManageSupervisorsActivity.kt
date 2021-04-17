@@ -183,7 +183,6 @@ class ManageSupervisorsActivity : ActivityWithUserObject() {
         viewModel.mutableSupervisorList.value = mutableListOf<Supervisor>()
         viewModel.mutableSupervisorThreshold.value = DEFAULT_SUPERVISOR_THRESHOLD
         viewModel.getSupervisorsFromDB(loggedUserObject.userId)
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
