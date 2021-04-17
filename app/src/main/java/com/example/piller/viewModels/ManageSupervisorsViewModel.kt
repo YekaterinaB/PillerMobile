@@ -25,9 +25,9 @@ class ManageSupervisorsViewModel : ViewModel() {
         MutableLiveData<String>()
     }
 
-    fun getSupervisorsFromDB(loggedUserEmail: String) {
+    fun getSupervisorsFromDB(userId: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
-        retrofit.getSupervisors(loggedUserEmail).enqueue(
+        retrofit.getSupervisors(userId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -52,7 +52,7 @@ class ManageSupervisorsViewModel : ViewModel() {
                             mutableSupervisorList.value!!.add(Supervisor(name, email, isPending))
                         }
                         mutableSupervisorList.notifyObserver()
-                        getThresholdFromDB(loggedUserEmail)
+                        getThresholdFromDB(userId)
                     }
                 }
             }
@@ -71,10 +71,10 @@ class ManageSupervisorsViewModel : ViewModel() {
     fun addSupervisorsToDB(
         supervisorName: String,
         supervisorEmail: String,
-        loggedUserEmail: String
+        userId: String
     ) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
-        retrofit.addSupervisor(loggedUserEmail, supervisorName, supervisorEmail).enqueue(
+        retrofit.addSupervisor(userId, supervisorName, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -105,9 +105,9 @@ class ManageSupervisorsViewModel : ViewModel() {
         mutableSupervisorList.notifyObserver()
     }
 
-    fun deleteSupervisorsFromDB(supervisorEmail: String, loggedUserEmail: String) {
+    fun deleteSupervisorsFromDB(supervisorEmail: String, userId: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
-        retrofit.deleteSupervisor(loggedUserEmail, supervisorEmail).enqueue(
+        retrofit.deleteSupervisor(userId, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -129,9 +129,9 @@ class ManageSupervisorsViewModel : ViewModel() {
     }
 
 
-    fun getThresholdFromDB(loggedUserEmail: String) {
+    fun getThresholdFromDB(userId: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
-        retrofit.getThreshold(loggedUserEmail).enqueue(
+        retrofit.getThreshold(userId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -154,7 +154,7 @@ class ManageSupervisorsViewModel : ViewModel() {
     }
 
 
-    fun updateThresholdInDB(stringThreshold: String, loggedUserEmail: String) {
+    fun updateThresholdInDB(stringThreshold: String, userId: String) {
         val threshold: Int
         if (stringThreshold == "None") {
             threshold = 0
@@ -162,7 +162,7 @@ class ManageSupervisorsViewModel : ViewModel() {
             threshold = stringThreshold.toInt()
         }
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
-        retrofit.updateThreshold(loggedUserEmail, threshold).enqueue(
+        retrofit.updateThreshold(userId, threshold).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."

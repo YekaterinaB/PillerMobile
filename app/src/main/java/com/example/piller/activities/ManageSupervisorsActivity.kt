@@ -89,7 +89,7 @@ class ManageSupervisorsActivity : ActivityWithUserObject() {
                 viewModel.addSupervisorsToDB(
                     supervisorName.text.toString(),
                     supervisorEmail.text.toString(),
-                    loggedUserObject.email
+                    loggedUserObject.userId
                 )
             })
             .build()
@@ -115,7 +115,7 @@ class ManageSupervisorsActivity : ActivityWithUserObject() {
     }
 
     private fun clickOnDeleteSupervisorButton(supervisorEmail: String) {
-        viewModel.deleteSupervisorsFromDB(supervisorEmail, loggedUserObject.email)
+        viewModel.deleteSupervisorsFromDB(supervisorEmail, loggedUserObject.userId)
     }
 
 
@@ -169,7 +169,7 @@ class ManageSupervisorsActivity : ActivityWithUserObject() {
                 parent: AdapterView<*>,
                 view: View, position: Int, id: Long
             ) {
-                viewModel.updateThresholdInDB(daysThreshold[position]!!, loggedUserObject.email)
+                viewModel.updateThresholdInDB(daysThreshold[position]!!, loggedUserObject.userId)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -182,7 +182,7 @@ class ManageSupervisorsActivity : ActivityWithUserObject() {
         viewModel = ViewModelProvider(this).get(ManageSupervisorsViewModel::class.java)
         viewModel.mutableSupervisorList.value = mutableListOf<Supervisor>()
         viewModel.mutableSupervisorThreshold.value = DEFAULT_SUPERVISOR_THRESHOLD
-        viewModel.getSupervisorsFromDB(loggedUserObject.email)
+        viewModel.getSupervisorsFromDB(loggedUserObject.userId)
 
     }
 
