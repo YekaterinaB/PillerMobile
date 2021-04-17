@@ -85,12 +85,12 @@
         <activity
             android:name=".activities.CalendarActivity"
             android:noHistory="false"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value=".activities.LoginActivity" />
         </activity>
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

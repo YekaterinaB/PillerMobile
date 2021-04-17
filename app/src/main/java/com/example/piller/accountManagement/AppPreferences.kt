@@ -50,9 +50,4 @@ object AppPreferences {
         set(value) = preferences.edit {
             it.putBoolean(SHOW_NOTIFICATIONS.first, value)
         }
-    var loggedOut: Boolean
-        get() = preferences.getBoolean(LOGGED_OUT.first, LOGGED_OUT.second)
-        set(value) = preferences.edit {
-            it.putBoolean(LOGGED_OUT.first, value)
-        }
 }

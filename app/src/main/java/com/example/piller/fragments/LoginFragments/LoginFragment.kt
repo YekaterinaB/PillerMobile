@@ -1,28 +1,18 @@
 package com.example.piller.fragments.LoginFragments
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import com.example.piller.R
 import com.example.piller.SnackBar
-import com.example.piller.accountManagement.AppPreferences
-import com.example.piller.activities.CalendarActivity
 import com.example.piller.activities.LoginActivity
-import com.example.piller.utilities.DbConstants
-import com.example.piller.viewModels.MainActivityViewModel
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.piller.viewModels.LoginActivityViewModel
 import kotlinx.android.synthetic.main.login_layout.view.*
-import kotlinx.android.synthetic.main.sign_up_layout.view.*
-import org.json.JSONObject
 
 class LoginFragment : Fragment() {
     private lateinit var _fragmentView: View
@@ -31,7 +21,7 @@ class LoginFragment : Fragment() {
     private lateinit var _passwordEdt: EditText
     lateinit var _loadingScreen: RelativeLayout
 
-    private val _viewModel: MainActivityViewModel by activityViewModels()
+    private val _viewModel: LoginActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,42 +29,11 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _fragmentView = inflater.inflate(R.layout.login_layout, container, false)
-        _loadingScreen = (getActivity() as LoginActivity)._loadingScreen
+        _loadingScreen = (activity as LoginActivity)._loadingScreen
         initView()
-        initObservers()
         setClickListeners()
 
         return _fragmentView
-    }
-
-
-    private fun initObservers() {
-        _viewModel.mutableActivityLoginChangeResponse.observe(
-            viewLifecycleOwner,
-            Observer { response ->
-                response?.let {
-                    //go to calendar activity with response body given
-                    val jObject = JSONObject(response.body()!!.string())
-                    //go to the next activity
-                    val intent = Intent(
-                        context,
-                        CalendarActivity::class.java
-                    )
-                    val userName = jObject.get("name").toString()
-                    intent.putExtra(
-                        DbConstants.LOGGED_USER_EMAIL,
-                        jObject.get("email").toString()
-                    )
-                    intent.putExtra(
-                        DbConstants.LOGGED_USER_NAME,
-                        userName
-                    )
-                    //  hide loading screen
-
-                    _loadingScreen.visibility = View.GONE
-                    startActivity(intent)
-                }
-            })
     }
 
     private fun initView() {
@@ -84,7 +43,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun setClickListeners() {
-
         _fragmentView.login_button_login_screen.setOnClickListener {
             loginButtonListener()
         }
@@ -94,24 +52,23 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun loginButtonListener(){
+    private fun loginButtonListener() {
         val emailInput = _emailEdt.text.toString().trim()
         val passwordInput = _passwordEdt.text.toString().trim()
 
-        if (!emailInput.isEmpty() && !passwordInput.isEmpty()) {
+        if (emailInput.isNotEmpty() && passwordInput.isNotEmpty()) {
             //  show loading screen
             _loadingScreen.visibility = View.VISIBLE
-            //  remember email and password if the user wants to
-            updateAppPreferences(true, emailInput, passwordInput)
             _viewModel.loginUser(emailInput, passwordInput)
         } else {
-            SnackBar.showToastBar(context,
+            SnackBar.showToastBar(
+                context,
                 "Email or Password cannot be null or empty."
             )
         }
     }
 
-    private fun forgotPassword(){
+    private fun forgotPassword() {
         val lp = LinearLayout.LayoutParams(700, 200)
         val layout = LinearLayout(context)
         layout.orientation = LinearLayout.HORIZONTAL
@@ -136,11 +93,4 @@ class LoginFragment : Fragment() {
         alertDialog.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
         alertDialog.show()
     }
-
-    private fun updateAppPreferences(stayLogged: Boolean, email: String, password: String) {
-        AppPreferences.stayLoggedIn = stayLogged
-        AppPreferences.email = email
-        AppPreferences.password = password
-    }
-
 }

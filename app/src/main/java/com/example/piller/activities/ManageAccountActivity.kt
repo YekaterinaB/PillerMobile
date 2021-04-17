@@ -60,10 +60,12 @@ class ManageAccountActivity : ActivityWithUserObject() {
             }
         })
 
-        viewModel.goToMainActivity.observe(this, Observer { goToMainActivity ->
-            if (goToMainActivity) {
+        viewModel.goToLoginActivity.observe(this, Observer { goToLoginActivity ->
+            if (goToLoginActivity) {
                 //  go back to login activity
-                val intent = Intent(applicationContext, MainActivity::class.java)
+                val intent = Intent(applicationContext, LoginActivity::class.java)
+                AppPreferences.init(this)
+                AppPreferences.stayLoggedIn = false
                 //  close all previous activities
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)

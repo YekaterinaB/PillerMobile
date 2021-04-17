@@ -171,8 +171,8 @@ class CalendarActivity : ActivityWithUserObject() {
 
     override fun onBackPressed() {
         AppPreferences.init(this)
-        val intent = Intent(this@CalendarActivity, MainActivity::class.java)
-        AppPreferences.loggedOut = true
+        val intent = Intent(this@CalendarActivity, LoginActivity::class.java)
+        AppPreferences.stayLoggedIn = false
         startActivity(intent)
         finish()
 //        super.onBackPressed()
@@ -181,7 +181,7 @@ class CalendarActivity : ActivityWithUserObject() {
     override fun onDestroy() {
         //  if the user chose to logout (by pressing back button or by pressing logout) -
         //  then we should not set notifications
-        if (AppPreferences.loggedOut) {
+        if (!AppPreferences.stayLoggedIn) {
             stopService(Intent(this, NotificationService::class.java))
             NotificationHelper.closeNotificationChannel(this, getString(R.string.app_name))
         }
