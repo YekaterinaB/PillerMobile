@@ -38,7 +38,7 @@ class ManageAccountViewModel : ViewModel() {
         updatedUser: User,
         newEmail: String
     ) {
-        retrofit.updateUser(loggedUserObject.email, updatedUser).enqueue(
+        retrofit.updateUserEmail(loggedUserObject.userId, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not update user."
@@ -84,7 +84,7 @@ class ManageAccountViewModel : ViewModel() {
 
 
     fun updatePassword(loggedUserObject: UserObject, updatedUser: JSONObject) {
-        retrofit.updatePassword(loggedUserObject.email, updatedUser).enqueue(
+        retrofit.updatePassword(loggedUserObject.userId, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     snackBarMessage.value = "Could not update password."
