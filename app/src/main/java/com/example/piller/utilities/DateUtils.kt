@@ -24,6 +24,23 @@ class DateUtils {
             return calendar
         }
 
+        fun getDayOfWeekNumber(): Int {
+            val cal = Calendar.getInstance()
+            return cal[Calendar.DAY_OF_WEEK]
+        }
+
+        fun getDayNumberForCurrentWeek(): List<Int> {
+            val cal = Calendar.getInstance()
+            val stringDates = mutableListOf<Int>()
+            cal.time = getFirstDayOfWeek()
+            for (i in 0 until 7) {
+                stringDates.add(cal[Calendar.DAY_OF_MONTH])
+                cal.add(Calendar.DATE, 1)
+            }
+
+            return stringDates
+        }
+
         fun getDatesOfCurrentWeek(): List<String> {
             val cal = Calendar.getInstance()
             val stringDates = mutableListOf<String>()
