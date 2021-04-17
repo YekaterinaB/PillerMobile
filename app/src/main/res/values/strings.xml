@@ -109,5 +109,10 @@
     <string name="ocr_drug_box">Drug Box</string>
     <string name="ocr_press_on_the_camera_to_take_picture_of_your_medicine_box">Press on the camera to take picture of your medicine box.</string>
     <string name="nd_search_result"><u>Search Result:</u></string>
+    <string name="wdi_drug_name">Drug Name</string>
+    <string name="wdi_drug_intake_time">Drug Intake Time</string>
+    <string name="wdi_intake_status">Intake Status</string>
+    <string name="wdc_day">Day</string>
+    <string name="wdc_day_number">15</string>
 
 </resources>

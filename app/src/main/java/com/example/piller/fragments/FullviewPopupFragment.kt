@@ -76,8 +76,8 @@ class FullviewPopupFragment : DialogFragment() {
             if (a != null) {
                 eventsData = a.toMutableList()
             }
-
-            loggedUserObject = it.getParcelable(DbConstants.LOGGED_USER_OBJECT)!!
+            val bundle = it.getBundle(DbConstants.LOGGED_USER_BUNDLE)
+            loggedUserObject = bundle?.getParcelable(DbConstants.LOGGED_USER_OBJECT)!!
         }
     }
 

@@ -11,7 +11,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -21,9 +20,10 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.AddNewDrugActivity
 import com.example.piller.activities.DrugInfoActivity
-import com.example.piller.listAdapters.EliAdapter
+import com.example.piller.listAdapters.WeeklyDayAdapter
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.UserObject
+import com.example.piller.models.WeeklyDay
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
@@ -53,8 +53,6 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
 
     private var FABClicked = false
 
-    private var eliAdapters = mutableListOf<EliAdapter>()
-    private var eliRecycles = mutableListOf<RecyclerView>()
     private lateinit var fragmentView: View
     private lateinit var currentCalendarEvent: CalendarEvent
 
@@ -66,6 +64,9 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
     private lateinit var newDrugCameraLabel: TextView
     private lateinit var newDrugBoxLabel: TextView
     private lateinit var newDrugNameLabel: TextView
+
+    private lateinit var daysContainer: RecyclerView
+    private lateinit var daysAdapter: WeeklyDayAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,7 +81,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
             loggedUserObject,
             profileViewModel.getCurrentProfile()
         )
-        initRecyclersAndAdapters()
+
         return fragmentView
     }
 
@@ -121,31 +122,9 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
     }
 
     private fun updateRecyclersAndAdapters() {
-        for (i in 0 until 7) {
-            val newList = weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value!![i]
-            eliAdapters[i].setData(newList)
-            eliAdapters[i].notifyDataSetChanged()
-        }
-    }
-
-    private fun initRecyclersAndAdapters() {
-        eliRecycles.add(fragmentView.findViewById(R.id.calendar_sunday_list))
-        eliRecycles.add(fragmentView.findViewById(R.id.calendar_monday_list))
-        eliRecycles.add(fragmentView.findViewById(R.id.calendar_tuesday_list))
-        eliRecycles.add(fragmentView.findViewById(R.id.calendar_wednesday_list))
-        eliRecycles.add(fragmentView.findViewById(R.id.calendar_thursday_list))
-        eliRecycles.add(fragmentView.findViewById(R.id.calendar_friday_list))
-        eliRecycles.add(fragmentView.findViewById(R.id.calendar_saturday_list))
-
-        val weeklyEvents = profileViewModel.getCurrentProfile().getWeeklyCalendar()
-        for (i in 0 until 7) {
-            eliRecycles[i].layoutManager = LinearLayoutManager(fragmentView.context)
-            // add as empty list
-            eliAdapters.add(EliAdapter(weeklyEvents[i]) { showDrugInfo(it) })
-            eliRecycles[i].adapter = eliAdapters[i]
-        }
-
-        setBorderOnToday()
+        daysAdapter.setCalendarEventDataSet(weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value!!)
+        daysContainer.smoothScrollToPosition(DateUtils.getDayOfWeekNumber() - 1)
+        daysAdapter.notifyDataSetChanged()
     }
 
     private fun showDrugInfo(calendarEvent: CalendarEvent) {
@@ -282,71 +261,21 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         newDrugBoxLabel = fragment.findViewById(R.id.calendar_drug_box_label)
         newDrugNameLabel = fragment.findViewById(R.id.calendar_drug_name_label)
 
-        initWeekDatesString(fragment)
+        daysContainer = fragment.findViewById(R.id.weekly_days_container)
+        initWeeklyDaysContainer()
     }
 
-    private fun initWeekDatesString(fragment: View) {
-        val weekStringDates = DateUtils.getDatesOfCurrentWeek()
-        fragment.findViewById<TextView>(R.id.calendar_sunday_date_label).text = weekStringDates[0]
-        fragment.findViewById<TextView>(R.id.calendar_monday_date_label).text = weekStringDates[1]
-        fragment.findViewById<TextView>(R.id.calendar_tuesday_date_label).text = weekStringDates[2]
-        fragment.findViewById<TextView>(R.id.calendar_wednesday_date_label).text =
-            weekStringDates[3]
-        fragment.findViewById<TextView>(R.id.calendar_thursday_date_label).text = weekStringDates[4]
-        fragment.findViewById<TextView>(R.id.calendar_friday_date_label).text = weekStringDates[5]
-        fragment.findViewById<TextView>(R.id.calendar_saturday_date_label).text = weekStringDates[6]
-    }
-
-    private fun setTodayLabelsColor(dayName: TextView, dateName: TextView) {
-        dayName.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
-        dateName.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
-    }
-
-    private fun setBorderOnToday() {
-        when (DateUtils.getCurrentWeekDayNumber() - 1) {
-            0 -> {
-                setTodayLabelsColor(
-                    fragmentView.findViewById(R.id.calendar_sunday_label),
-                    fragmentView.findViewById(R.id.calendar_sunday_date_label)
-                )
-            }
-            1 -> {
-                setTodayLabelsColor(
-                    fragmentView.findViewById(R.id.calendar_monday_label),
-                    fragmentView.findViewById(R.id.calendar_monday_date_label)
-                )
-            }
-            2 -> {
-                setTodayLabelsColor(
-                    fragmentView.findViewById(R.id.calendar_tuesday_label),
-                    fragmentView.findViewById(R.id.calendar_tuesday_date_label)
-                )
-            }
-            3 -> {
-                setTodayLabelsColor(
-                    fragmentView.findViewById(R.id.calendar_wednesday_label),
-                    fragmentView.findViewById(R.id.calendar_wednesday_date_label)
-                )
-            }
-            4 -> {
-                setTodayLabelsColor(
-                    fragmentView.findViewById(R.id.calendar_thursday_label),
-                    fragmentView.findViewById(R.id.calendar_thursday_date_label)
-                )
-            }
-            5 -> {
-                setTodayLabelsColor(
-                    fragmentView.findViewById(R.id.calendar_friday_label),
-                    fragmentView.findViewById(R.id.calendar_friday_date_label)
-                )
-            }
-            6 -> {
-                setTodayLabelsColor(
-                    fragmentView.findViewById(R.id.calendar_saturday_label),
-                    fragmentView.findViewById(R.id.calendar_saturday_date_label)
-                )
-            }
+    private fun initWeeklyDaysContainer() {
+        val weeklyEvents = profileViewModel.getCurrentProfile().getWeeklyCalendar()
+        val weekDaysDates = DateUtils.getDayNumberForCurrentWeek()
+        val dayOfWeekString = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        val daysData = mutableListOf<WeeklyDay>()
+        for (i in 0 until 7) {
+            daysData.add(WeeklyDay(dayOfWeekString[i], weekDaysDates[i]))
         }
+        daysContainer.layoutManager = LinearLayoutManager(context)
+        daysAdapter = WeeklyDayAdapter(daysData, weeklyEvents) { showDrugInfo(it) }
+        daysContainer.adapter = daysAdapter
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

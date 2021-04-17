@@ -17,18 +17,16 @@ import java.util.*
 class EliAdapter(
     private var dataSet: MutableList<CalendarEvent>,
     private val itemClickCallback: (CalendarEvent) -> Unit
-) :
-    RecyclerView.Adapter<EliAdapter.ViewHolder>() {
-
+) : RecyclerView.Adapter<EliAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val drugName: TextView = view.findViewById(R.id.eli_drug_name)
-        val intakeTime: TextView = view.findViewById(R.id.eli_time_intake)
-        val takenStatus: ImageView = view.findViewById(R.id.eli_drug_taken)
-        val layout: ConstraintLayout = view.findViewById(R.id.eli_layout)
+        val drugName: TextView = view.findViewById(R.id.wdi_drug_name)
+        val intakeTime: TextView = view.findViewById(R.id.wdi_intake_time)
+        val takenStatus: ImageView = view.findViewById(R.id.wdi_taken_status)
+        val layout: ConstraintLayout = view.findViewById(R.id.wdi_layout)
     }
 
     fun setData(data: MutableList<CalendarEvent>) {
@@ -39,7 +37,7 @@ class EliAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.event_list_item, viewGroup, false)
+            .inflate(R.layout.weekly_drug_item, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -60,6 +58,9 @@ class EliAdapter(
     private fun setViewHolderBackgroundColor(viewHolder: ViewHolder, calendarEvent: CalendarEvent) {
         //  set the background color only if the intake time passed
         if (DateUtils.isDateAfter(Date(), calendarEvent.intakeTime)) {
+            //  the next line is in order to remove the icon, because if we delete the icon stays
+            //  even though it's not supposed to be there
+            viewHolder.takenStatus.setBackgroundResource(0)
             if (calendarEvent.isTaken) {
                 //  the medicine was taken - set green background (alpha is for opacity)
                 viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_check_green)
@@ -70,7 +71,7 @@ class EliAdapter(
         } else {
             //  the next line is in order to remove the icon, because if we delete the icon stays
             //  even though it's not supposed to be there
-            viewHolder.takenStatus.setBackgroundResource(0)
+            viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_basic_alarm)
         }
     }
 

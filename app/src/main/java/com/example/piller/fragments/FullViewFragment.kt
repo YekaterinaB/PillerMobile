@@ -109,6 +109,9 @@ class FullViewFragment : FragmentWithUserObject() {
         val arguments = Bundle()
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
         val date = sdf.format(eventDay.calendar.time)
+        val userBundle = Bundle()
+        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, loggedUserObject)
+        arguments.putBundle(DbConstants.LOGGED_USER_BUNDLE, userBundle)
         arguments.putString(FullviewPopupFragment.ARG_DATE_STRING, date)
         //  we need to reduce it by 1 because the get day of month starts from 1 (and our list starts from 0..)
         arguments.putParcelableArray(
@@ -118,8 +121,6 @@ class FullViewFragment : FragmentWithUserObject() {
             )?.toTypedArray()
         )
 
-        arguments.putString(DbConstants.LOGGED_USER_EMAIL, profileViewModel.getCurrentEmail())
-        arguments.putString(DbConstants.LOGGED_USER_NAME, profileViewModel.getCurrentProfileName())
         fvpDayFragment.arguments = arguments
         fvpDayFragment.setTargetFragment(this, DbConstants.DRUG_DELETE_POPUP)
         activity?.supportFragmentManager?.let { fvpDayFragment.show(it, "FullViewPopupFragment") }
@@ -228,7 +229,7 @@ class FullViewFragment : FragmentWithUserObject() {
     }
 
     private fun getDayColor(day: MutableList<CalendarEvent>, dayDate: Date): Int {
-        var dayColor = Color.BLACK
+        var dayColor = Color.parseColor("#FFB645")
         //  check whether the day is after tomorrow
         if (DateUtils.isDateAfter(Date(), dayDate)) {
             // check if there is any medicine that wasn't taken
