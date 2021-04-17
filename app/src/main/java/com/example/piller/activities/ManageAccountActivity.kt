@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
-import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ManageAccountViewModel
 import org.json.JSONObject
 
@@ -28,6 +27,7 @@ class ManageAccountActivity : ActivityWithUserObject() {
     private lateinit var deleteLayout: ConstraintLayout
     private lateinit var currentEmailTV: TextView
     private lateinit var showNotificationSW: Switch
+    private var userDataChanged = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,7 +126,8 @@ class ManageAccountActivity : ActivityWithUserObject() {
                     && newEmail.isNotEmpty()
                     && password.isNotEmpty()
                 ) {
-                    viewModel.updateUserEmail(newEmail, password)
+                    viewModel.updateUserEmail(loggedUserObject, newEmail, password)
+                    userDataChanged = true
                 }
             })
     }
@@ -157,7 +158,7 @@ class ManageAccountActivity : ActivityWithUserObject() {
             "Delete Account",
             "Delete",
             arrayOf(label),
-            callback = { viewModel.deleteUser() })
+            callback = { viewModel.deleteUser(loggedUserObject) })
     }
 
     private fun setUpdatePasswordDialog() {
@@ -211,7 +212,7 @@ class ManageAccountActivity : ActivityWithUserObject() {
             updatedUser.put("email", viewModel.loggedUserEmail.value)
             updatedUser.put("password", newPassword)
             updatedUser.put("oldPassword", oldPassword)
-            viewModel.updatePassword(updatedUser)
+            viewModel.updatePassword(loggedUserObject, updatedUser)
         }
     }
 
@@ -314,5 +315,14 @@ class ManageAccountActivity : ActivityWithUserObject() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    override fun onBackPressed() {
+        if (userDataChanged) {
+            val intent = Intent(this, CalendarActivity::class.java)
+            putLoggedUserObjectInIntent(intent)
+            startActivity(intent)
+        }
+        super.onBackPressed()
     }
 }

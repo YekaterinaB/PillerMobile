@@ -13,7 +13,7 @@ import retrofit2.Response
 
 class ManageAccountViewModel : ViewModel() {
     private val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-    lateinit var loggedUserObject: UserObject
+
     val loggedUserEmail: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
@@ -28,12 +28,16 @@ class ManageAccountViewModel : ViewModel() {
         goToMainActivity.value = false
     }
 
-    fun updateUserEmail(newEmail: String, password: String) {
+    fun updateUserEmail(loggedUserObject: UserObject, newEmail: String, password: String) {
         val updatedUser = User(newEmail, loggedUserObject.currentProfile!!.name, password)
-        sendRetrofitUpdateEmail(updatedUser, newEmail)
+        sendRetrofitUpdateEmail(loggedUserObject, updatedUser, newEmail)
     }
 
-    private fun sendRetrofitUpdateEmail(updatedUser: User, newEmail: String) {
+    private fun sendRetrofitUpdateEmail(
+        loggedUserObject: UserObject,
+        updatedUser: User,
+        newEmail: String
+    ) {
         retrofit.updateUser(loggedUserObject.email, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -55,10 +59,9 @@ class ManageAccountViewModel : ViewModel() {
                 }
             }
         )
-
     }
 
-    fun deleteUser() {
+    fun deleteUser(loggedUserObject: UserObject) {
         retrofit.deleteUser(loggedUserObject.email).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -80,7 +83,7 @@ class ManageAccountViewModel : ViewModel() {
     }
 
 
-    fun updatePassword(updatedUser: JSONObject) {
+    fun updatePassword(loggedUserObject: UserObject, updatedUser: JSONObject) {
         retrofit.updatePassword(loggedUserObject.email, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -101,5 +104,4 @@ class ManageAccountViewModel : ViewModel() {
             }
         )
     }
-
 }
