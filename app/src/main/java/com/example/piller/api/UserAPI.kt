@@ -19,11 +19,11 @@ interface UserAPI {
     @DELETE("user/{email}")
     fun deleteUser(@Path("email") email: String): Call<ResponseBody>
 
-    @PUT("user/{email}")
-    fun updateUser(@Path("email") email: String, @Body user: User): Call<ResponseBody>
+    @PUT("user/{userId}")
+    fun updateUserEmail(@Path("userId") userId: String, @Body user: User): Call<ResponseBody>
 
-    @PUT("user/updatePassword/{email}")
-    fun updatePassword(@Path("email") email: String, @Body user: JSONObject): Call<ResponseBody>
+    @PUT("user/updatePassword/{userId}")
+    fun updatePassword(@Path("userId") userId: String, @Body user: JSONObject): Call<ResponseBody>
 
     @GET("user/resetPassword/{email}")
     fun resetPassword(@Path("email") email: String): Call<ResponseBody>
