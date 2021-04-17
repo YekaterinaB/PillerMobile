@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_shape_edit_text">
+
+    <ImageView
+        android:id="@+id/circle_missed_occur_supervisor_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/empty_circle" />
+
+    <TextView
+        android:id="@+id/number_of_missed_occur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/titleInItems"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/circle_missed_occur_supervisor_item"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="3 Missed occurrences" />
+
+    <TextView
+        android:id="@+id/supercisors_will_be_notified_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/myTextColor"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/circle_missed_occur_supervisor_item"
+        app:layout_constraintTop_toBottomOf="@+id/number_of_missed_occur"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="Supervisors will be notified after\nmissed occurrences" />
+
+    <ImageView
+        android:id="@+id/superviosr_eye_image_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/circle_missed_occur_supervisor_item"
+        app:layout_constraintEnd_toEndOf="@+id/circle_missed_occur_supervisor_item"
+        app:layout_constraintStart_toStartOf="@+id/circle_missed_occur_supervisor_item"
+        app:layout_constraintTop_toTopOf="@+id/circle_missed_occur_supervisor_item"
+        app:srcCompat="@drawable/ic_calendar_calendar_missed_days" />
+</androidx.constraintlayout.widget.ConstraintLayout>
