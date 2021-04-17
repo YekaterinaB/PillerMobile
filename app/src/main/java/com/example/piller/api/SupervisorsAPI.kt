@@ -8,46 +8,35 @@ import retrofit2.http.*
 interface SupervisorsAPI {
     @Headers("Content-Type: application/json")
 
-    @GET("supervisors/{email}")
+    @GET("supervisors/{userId}")
     fun getSupervisors(
-        @Path("email") email: String
+        @Path("userId") userId: String
     ): Call<ResponseBody>
 
-    @POST("supervisors/{email}/{supervisorName}/{supervisorEmail}")
+    @POST("supervisors/{userId}/{supervisorName}/{supervisorEmail}")
     fun addSupervisor(
-        @Path("email") email: String,
+        @Path("userId") userId: String,
         @Path("supervisorName") supervisorName: String,
         @Path("supervisorEmail") supervisorEmail: String
     ): Call<ResponseBody>
 
-    @DELETE("supervisors/{email}/{supervisorEmail}")
+    @DELETE("supervisors/{userId}/{supervisorEmail}")
     fun deleteSupervisor(
-        @Path("email") email: String,
+        @Path("userId") userId: String,
         @Path("supervisorEmail") supervisorEmail: String
     ): Call<ResponseBody>
 
-    @GET("supervisors/threshold/{email}")
+    @GET("supervisors/threshold/{userId}")
     fun getThreshold(
-        @Path("email") email: String
+        @Path("userId") userId: String
     ): Call<ResponseBody>
 
-    @PUT("supervisors/threshold/{email}/{threshold}")
+    @PUT("supervisors/threshold/{userId}/{threshold}")
     fun updateThreshold(
-        @Path("email") email: String,
+        @Path("userId") email: String,
         @Path("threshold") threshold: Int
     ): Call<ResponseBody>
 
-    @PUT("supervisors/counter/{email}/{drugName}")
-    fun addMissedToCounterDrug(
-        @Path("email") email: String,
-        @Path("drugName") drugName: String
-    ): Call<ResponseBody>
-
-    @DELETE("supervisors/counter/{email}/{drugName}")
-    fun deleteDrugCounter(
-        @Path("email") email: String,
-        @Path("drugName") drugName: String
-    ): Call<ResponseBody>
 
     @DELETE("supervisors/{email}")
     fun deleteSupervisorList(
