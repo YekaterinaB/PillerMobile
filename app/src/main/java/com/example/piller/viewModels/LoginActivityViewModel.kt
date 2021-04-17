@@ -2,6 +2,7 @@ package com.example.piller.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
 import com.example.piller.models.User
@@ -10,7 +11,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
-class MainActivityViewModel : ViewModel() {
+class LoginActivityViewModel : ViewModel() {
     val mutableToastError: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
@@ -39,11 +40,10 @@ class MainActivityViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() != 200) {
                         mutableToastError.value = "A user with this email already exists."
-                        mutableActivitySignUpChangeResponse.value=false
-
+                        mutableActivitySignUpChangeResponse.value = false
                     } else {
                         mutableToastError.value = "Your account has been successfully created."
-                        mutableActivitySignUpChangeResponse.value=true
+                        mutableActivitySignUpChangeResponse.value = true
                     }
                 }
             }
@@ -69,12 +69,19 @@ class MainActivityViewModel : ViewModel() {
                             "User does not exist, check your login information."
                     } else {
                         mutableActivityLoginChangeResponse.value = response
+                        //  remember email and password if the user wants to
+                        updateAppPreferences(true, email, password)
                     }
                 }
             }
         )
     }
 
+    private fun updateAppPreferences(stayLogged: Boolean, email: String, password: String) {
+        AppPreferences.stayLoggedIn = stayLogged
+        AppPreferences.email = email
+        AppPreferences.password = password
+    }
 
     fun sendEmailToResetPassword(email: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)

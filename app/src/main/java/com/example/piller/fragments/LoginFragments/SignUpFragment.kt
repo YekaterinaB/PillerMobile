@@ -13,7 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.piller.R
 import com.example.piller.accountManagement.AppPreferences
-import com.example.piller.viewModels.MainActivityViewModel
+import com.example.piller.viewModels.LoginActivityViewModel
 import kotlinx.android.synthetic.main.sign_up_layout.view.*
 
 class SignUpFragment : Fragment() {
@@ -22,7 +22,7 @@ class SignUpFragment : Fragment() {
     private lateinit var _fullNameEdt: EditText
     private lateinit var _emailEdt: EditText
     private lateinit var _passwordEdt: EditText
-    private val _viewModel: MainActivityViewModel by activityViewModels()
+    private val _viewModel: LoginActivityViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

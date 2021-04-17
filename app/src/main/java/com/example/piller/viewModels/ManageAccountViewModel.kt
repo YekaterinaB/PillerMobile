@@ -20,12 +20,12 @@ class ManageAccountViewModel : ViewModel() {
     val snackBarMessage: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
-    val goToMainActivity: MutableLiveData<Boolean> by lazy {
+    val goToLoginActivity: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }
 
     init {
-        goToMainActivity.value = false
+        goToLoginActivity.value = false
     }
 
     fun updateUserEmail(loggedUserObject: UserObject, newEmail: String, password: String) {
@@ -73,7 +73,7 @@ class ManageAccountViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == 200) {
-                        goToMainActivity.value = true
+                        goToLoginActivity.value = true
                     } else {
                         snackBarMessage.value = "Error deleting account. Please try again later."
                     }
