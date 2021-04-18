@@ -12,7 +12,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
-class ManageSupervisorsViewModel : ViewModel() {
+class SupervisorsViewModel : ViewModel() {
     val mutableSupervisorList: MutableLiveData<MutableList<Supervisor>> by lazy {
         MutableLiveData<MutableList<Supervisor>>()
     }

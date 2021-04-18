@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
@@ -21,20 +22,16 @@ class SupervisorsAdapter(
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val supervisorName: TextView
         val supervisorEmail: TextView
         val supervisorConfirmationText :TextView
-        //val editButton: ImageButton
-        val deleteButton: ImageButton
+        val deleteButton: ImageView
 
 
         init {
             // Define click listener for the ViewHolder's View.
-            supervisorName = view.findViewById(R.id.supervisor_name)
-            supervisorEmail = view.findViewById(R.id.supervisor_email)
-            //editButton = view.findViewById(R.id.edit_supervisor_button)
-            deleteButton = view.findViewById(R.id.delete_supervisor_button)
-            supervisorConfirmationText=view.findViewById(R.id.waiting_for_confirmation_text)
+            supervisorEmail = view.findViewById(R.id.email_supervisor_item)
+            deleteButton = view.findViewById(R.id.trash_supervisor_item)
+            supervisorConfirmationText=view.findViewById(R.id.waiting_for_confirmation_supervisor_item)
         }
     }
 
@@ -46,7 +43,7 @@ class SupervisorsAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.supervisor_recycleview_item, viewGroup, false)
+            .inflate(R.layout.supervisor_item, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -58,9 +55,7 @@ class SupervisorsAdapter(
         // contents of the view with that element
         val currentItem = dataSet[position]
         val email = currentItem.getsupervisorEmail()
-        val name = currentItem.getSupervisorName()
         val isConfirmed=currentItem.getIsConfirmed()
-        viewHolder.supervisorName.text = name
         viewHolder.supervisorEmail.text = email
         if (isConfirmed){
             viewHolder.supervisorConfirmationText.visibility = View.INVISIBLE

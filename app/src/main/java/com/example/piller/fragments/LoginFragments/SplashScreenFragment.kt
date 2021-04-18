@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.piller.R
-import kotlinx.android.synthetic.main.splash_screen_layout.*
-import kotlinx.android.synthetic.main.splash_screen_layout.view.*
+import kotlinx.android.synthetic.main.login_splash_screen_layout.view.*
 
 class SplashScreenFragment: Fragment() {
     private lateinit var _fragmentView: View
@@ -17,7 +16,7 @@ class SplashScreenFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _fragmentView = inflater.inflate(R.layout.splash_screen_layout, container, false)
+        _fragmentView = inflater.inflate(R.layout.login_splash_screen_layout, container, false)
         setOnClickListeners()
         return _fragmentView
     }

@@ -21,20 +21,33 @@
         app:srcCompat="@drawable/empty_circle" />
 
     <TextView
-        android:id="@+id/number_of_supervisors_item"
+        android:id="@+id/supervisor_title_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:fontFamily="sans-serif"
+        android:text=" Supervisors"
         android:textColor="@color/titleInItems"
         android:textSize="16sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/number_of_supervisors_title_item"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/number_of_supervisors_title_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="sans-serif"
+        android:text="0"
+        android:textColor="@color/titleInItems"
+        android:textSize="16sp"
+        android:textStyle="normal"
         app:layout_constraintStart_toEndOf="@+id/circle_supervisor_item"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="4 Supervisors" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/control_who_gets_title_supervisor"
@@ -50,9 +63,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/circle_supervisor_item"
-        app:layout_constraintTop_toBottomOf="@+id/number_of_supervisors_item"
+        app:layout_constraintTop_toBottomOf="@+id/supervisor_title_item"
         app:layout_constraintVertical_bias="0.0"
-        tools:text="Control who will get notification.." />
+        android:text="Control who will get notification.." />
 
     <ImageView
         android:id="@+id/superviosr_eye_image_item"

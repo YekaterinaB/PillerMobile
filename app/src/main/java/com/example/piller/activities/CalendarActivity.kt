@@ -68,16 +68,16 @@ class CalendarActivity : ActivityWithUserObject() {
 
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         profileViewModel.setCurrentProfileAndEmail(
-            loggedUserObject.currentProfile!!,
-            loggedUserObject.email
+            _loggedUserObject.currentProfile!!,
+            _loggedUserObject.email
         )
         profileViewModel.mutableListOfProfiles.value = mutableListOf<CalendarProfile>()
 
-        profileViewModel.getProfileListFromDB(loggedUserObject)
+        profileViewModel.getProfileListFromDB(_loggedUserObject)
         profileViewModel.mutableCurrentProfile.observe(this, Observer { profile ->
             //  update current profile
             profile?.let {
-                loggedUserObject.currentProfile = it
+                _loggedUserObject.currentProfile = it
                 currentProfileTV.text = it.name
             }
         })
@@ -85,7 +85,7 @@ class CalendarActivity : ActivityWithUserObject() {
 
     private fun initializeFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            val f1 = WeeklyCalendarFragment.newInstance(loggedUserObject)
+            val f1 = WeeklyCalendarFragment.newInstance(_loggedUserObject)
             val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.add(
                 R.id.calender_weekly_container_fragment,
@@ -113,13 +113,13 @@ class CalendarActivity : ActivityWithUserObject() {
                 R.id.navigation_home -> {
                     supportActionBar?.title = "Piller"
                     val weeklyCalendarFragment =
-                        WeeklyCalendarFragment.newInstance(loggedUserObject)
+                        WeeklyCalendarFragment.newInstance(_loggedUserObject)
                     openFragment(weeklyCalendarFragment, DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_profile -> {
                     supportActionBar?.title = "Profiles"
-                    val profileFragment = ProfileFragment.newInstance(loggedUserObject)
+                    val profileFragment = ProfileFragment.newInstance(_loggedUserObject)
                     openFragment(profileFragment, DbConstants.PROFILES_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
@@ -127,7 +127,7 @@ class CalendarActivity : ActivityWithUserObject() {
                 R.id.navigation_full_view -> {
                     // todo don't create new one if already in full view!
                     supportActionBar?.title = "Full View"
-                    val fullViewFragment = FullViewFragment.newInstance(loggedUserObject)
+                    val fullViewFragment = FullViewFragment.newInstance(_loggedUserObject)
                     openFragment(fullViewFragment, DbConstants.FULL_VIEW_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }

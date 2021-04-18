@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/supervisor_recycle_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
@@ -17,42 +18,42 @@
         android:fontFamily="sans-serif"
         android:padding="2dp"
         android:textColor="@color/myTextColor"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toStartOf="@+id/trash_supervisor_item"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Elwin.Sharvill@gmail.com" />
+        android:text="Elwin.Sharvill@gmail.com" />
 
     <TextView
         android:id="@+id/waiting_for_confirmation_supervisor_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="3dp"
         android:layout_marginEnd="9dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="2dp"
         android:fontFamily="sans-serif"
         android:padding="2dp"
+        android:text="Waiting for email confirmation..."
         android:textColor="@color/titleInItems"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/trash_supervisor_item"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_supervisor_item"
-        tools:text="Waiting for email confirmation..." />
+        app:layout_constraintTop_toBottomOf="@+id/email_supervisor_item" />
 
     <ImageView
         android:id="@+id/trash_supervisor_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="27dp"
+        android:layout_height="26dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.489"
         app:srcCompat="@drawable/basic_trash_full" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

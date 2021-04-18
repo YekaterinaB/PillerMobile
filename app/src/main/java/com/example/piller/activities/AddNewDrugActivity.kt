@@ -174,7 +174,7 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         val drug = searchViewModel.getDrugByRxcui(rxcui)
         if (drug != null) {
             searchViewModel.newDrug.value = drug
-            searchViewModel.getInteractionList(loggedUserObject, drug.rxcui)
+            searchViewModel.getInteractionList(_loggedUserObject, drug.rxcui)
         }
     }
 
