@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer
 import com.example.piller.R
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.viewModels.LoginActivityViewModel
-import kotlinx.android.synthetic.main.sign_up_layout.view.*
+import kotlinx.android.synthetic.main.login_sign_up_layout.view.*
 
 class SignUpFragment : Fragment() {
     private lateinit var _fragmentView: View
@@ -29,7 +29,7 @@ class SignUpFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _fragmentView = inflater.inflate(R.layout.sign_up_layout, container, false)
+        _fragmentView = inflater.inflate(R.layout.login_sign_up_layout, container, false)
         initView()
         setClickListeners()
         initObservers()

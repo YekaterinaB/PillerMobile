@@ -33,7 +33,7 @@ class ManageAccountActivity : ActivityWithUserObject() {
         super.onCreate(savedInstanceState)
         initViewModels()
         initUserObject(intent)
-        viewModel.loggedUserEmail.value = loggedUserObject.email
+        viewModel.loggedUserEmail.value = _loggedUserObject.email
 
         setContentView(R.layout.activity_manage_account)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -128,7 +128,7 @@ class ManageAccountActivity : ActivityWithUserObject() {
                     && newEmail.isNotEmpty()
                     && password.isNotEmpty()
                 ) {
-                    viewModel.updateUserEmail(loggedUserObject, newEmail, password)
+                    viewModel.updateUserEmail(_loggedUserObject, newEmail, password)
                     userDataChanged = true
                 }
             })
@@ -142,7 +142,7 @@ class ManageAccountActivity : ActivityWithUserObject() {
         deleteLayout.setOnClickListener { setDeleteAccountDialog() }
 
         supervisorsLayout.setOnClickListener {
-            val intent = Intent(this@ManageAccountActivity, ManageSupervisorsActivity::class.java)
+            val intent = Intent(this@ManageAccountActivity, SupervisorsActivity::class.java)
             putLoggedUserObjectInIntent(intent)
             startActivity(intent)
         }
@@ -160,7 +160,7 @@ class ManageAccountActivity : ActivityWithUserObject() {
             "Delete Account",
             "Delete",
             arrayOf(label),
-            callback = { viewModel.deleteUser(loggedUserObject) })
+            callback = { viewModel.deleteUser(_loggedUserObject) })
     }
 
     private fun setUpdatePasswordDialog() {
@@ -214,7 +214,7 @@ class ManageAccountActivity : ActivityWithUserObject() {
             updatedUser.put("email", viewModel.loggedUserEmail.value)
             updatedUser.put("password", newPassword)
             updatedUser.put("oldPassword", oldPassword)
-            viewModel.updatePassword(loggedUserObject, updatedUser)
+            viewModel.updatePassword(_loggedUserObject, updatedUser)
         }
     }
 

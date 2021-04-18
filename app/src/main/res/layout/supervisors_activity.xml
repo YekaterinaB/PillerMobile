@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/supervisors_activity_laoyut"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,41 +26,43 @@
         android:layout_marginStart="63dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/background"
+        app:layout_constraintBottom_toTopOf="@+id/add_new_supervisor_tx"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/supervisor_title_item" />
 
-<!--    <include-->
-<!--        android:id="@+id/supervisor_item"-->
-<!--        layout="@layout/supervisor_item"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        tools:layout_editor_absoluteX="54dp"-->
-<!--        tools:layout_editor_absoluteY="550dp" />-->
+    <!--    <include-->
+    <!--        android:id="@+id/supervisor_item"-->
+    <!--        layout="@layout/supervisor_item"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        tools:layout_editor_absoluteX="54dp"-->
+    <!--        tools:layout_editor_absoluteY="550dp" />-->
 
     <TextView
         android:id="@+id/add_new_supervisor_tx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginBottom="40dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal"
+        android:text="Add new Supervisior +"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@+id/supervisor_missed_title_item"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/supervisors_list_of_items"
-        tools:text="Add new Supervisior +" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <include
         android:id="@+id/supervisor_missed_title_item"
-        layout="@layout/missed_occurences_supervisor_title"
+        layout="@layout/supervisor_missed_occurences_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -68,8 +70,19 @@
         android:layout_marginBottom="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_new_supervisor_tx"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toStartOf="parent" />
 
+
+    <RelativeLayout
+        android:id="@+id/supervisor_dim_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#C0000000"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

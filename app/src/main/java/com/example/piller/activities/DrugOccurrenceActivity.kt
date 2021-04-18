@@ -629,12 +629,12 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
         ) {
             //edit drug
             viewModel.updateDrugOccurrence(
-                loggedUserObject, repeatOnEnum, drugRepeatsOnEditText.text.toString(), this
+                _loggedUserObject, repeatOnEnum, drugRepeatsOnEditText.text.toString(), this
             )
         } else {
             //  otherwise, add a new drug
             viewModel.addNewDrugToUser(
-                loggedUserObject,
+                _loggedUserObject,
                 repeatOnEnum,
                 drugRepeatsOnEditText.text.toString(),
                 this

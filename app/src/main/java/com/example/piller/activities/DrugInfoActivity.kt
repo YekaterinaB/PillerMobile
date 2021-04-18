@@ -275,7 +275,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
                 when (which) {
                     //  delete all occurrences
                     0 -> _viewModel.deleteAllOccurrencesOfDrug(
-                        loggedUserObject,
+                        _loggedUserObject,
                         drug = drugObject,
                         context = this
                     )
@@ -299,7 +299,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
         DateUtils.setCalendarTime(today, 0, 0, 0)
         _calendarEvent.intakeEndTime = today.time
         _viewModel.deleteFutureOccurrencesOfDrug(
-            loggedUserObject,
+            _loggedUserObject,
             drug = drugObject,
             repeatEnd = today.timeInMillis.toString(),
             context = this
