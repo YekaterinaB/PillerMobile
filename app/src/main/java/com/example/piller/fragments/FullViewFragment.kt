@@ -151,7 +151,7 @@ class FullViewFragment : FragmentWithUserObject() {
 //        text was an argument to this function
 //        paint.getTextBounds(text, 0, text.length, bounds)
         val x = (bitmap.width - bounds.width()) / 2
-        val y = (bitmap.height + bounds.height()) / 2
+        val y = (bitmap.height + bounds.height()) / 4
         canvas.drawCircle(x.toFloat(), y.toFloat(), eventDayCircleRadius, paint)
 //        canvas.drawCircle(x.toFloat() + 40, y.toFloat(), 20F, paint)
 //        canvas.drawText("+5", x.toFloat() + 80, y.toFloat() + 12, paint)
@@ -229,7 +229,8 @@ class FullViewFragment : FragmentWithUserObject() {
     }
 
     private fun getDayColor(day: MutableList<CalendarEvent>, dayDate: Date): Int {
-        var dayColor = Color.parseColor("#FFB645")
+        //  future occurrences will be gray
+        var dayColor = Color.parseColor("#d9d9d9")
         //  check whether the day is after tomorrow
         if (DateUtils.isDateAfter(Date(), dayDate)) {
             // check if there is any medicine that wasn't taken

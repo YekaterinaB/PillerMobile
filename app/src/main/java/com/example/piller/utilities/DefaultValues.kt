@@ -10,7 +10,7 @@ object DbConstants {
     const val EVENT_ID = "event_id"
 
     //  fullview fragment
-    const val EVENTDAY_DRAWABLE_CIRCLE_RADIUS = 20F
+    const val EVENTDAY_DRAWABLE_CIRCLE_RADIUS = 30F
     const val DRUGSLIST = "drug_list"
     const val FUTURE_DRUGSLIST = "future_drug_list"
     const val DRUG_DELETE_POPUP = 1
