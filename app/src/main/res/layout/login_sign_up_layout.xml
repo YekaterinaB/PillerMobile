@@ -13,7 +13,7 @@
         android:background="@drawable/rounded_shape_edit_text"
         android:hint="Full name"
         android:inputType="textEmailAddress"
-        android:padding="5dp"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,7 +26,7 @@
         android:background="@drawable/rounded_shape_edit_text"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:padding="5dp"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_fullname_sign_up" />
@@ -39,7 +39,7 @@
         android:background="@drawable/rounded_shape_edit_text"
         android:hint="Password"
         android:inputType="textPassword"
-        android:padding="5dp"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_email_sign_up" />

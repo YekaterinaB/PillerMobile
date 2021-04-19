@@ -27,7 +27,10 @@ class LoginActivityViewModel : ViewModel() {
 
     fun registerUser(email: String, name: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(email = email, mainProfileName = name, password = password)
+        val user = User(
+            email = email, mainProfileName = name, password = password,
+            oldPassword = password
+        )
         retrofit.registerUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -53,7 +56,10 @@ class LoginActivityViewModel : ViewModel() {
 
     fun loginUser(email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(email = email, mainProfileName = "", password = password)
+        val user = User(
+            email = email, mainProfileName = "", password = password,
+            oldPassword = password
+        )
         retrofit.loginUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

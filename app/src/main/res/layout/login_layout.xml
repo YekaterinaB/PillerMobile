@@ -14,7 +14,7 @@
         android:background="@drawable/rounded_shape_edit_text"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:padding="5dip"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,6 +26,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/rounded_shape_edit_text"
         android:hint="Password"
+        android:padding="10dp"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
