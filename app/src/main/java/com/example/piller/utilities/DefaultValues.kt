@@ -27,6 +27,7 @@ object DbConstants {
     const val INITIALIZED_DRUG = "has_been_initialized"
 
     //  calendar
+    const val CALENDAR_FRAGMENT_ID = "calendar_fragment"
     const val WEEKLY_CALENDAR_FRAGMENT_ID = "weekly_calendar"
     const val PROFILES_FRAGMENT_ID = "profiles"
     const val DRUGS_FRAGMENT_ID = "drugs"

@@ -54,6 +54,11 @@
         <item>mEq</item>
     </string-array>
 
+    <string-array name="monthly_weekly">
+        <item>Weekly</item>
+        <item>Monthly</item>
+    </string-array>
+
     <string name="fab_pill_image_label">Pill Image</string>
     <string name="fab_box_image">Box Image</string>
     <string name="fab_drug_name">Drug Name</string>

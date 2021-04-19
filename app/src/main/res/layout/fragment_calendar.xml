@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragments.CalendarFragment.CalendarFragment">
+
+    <lib.kingja.switchbutton.SwitchMultiButton
+        android:id="@+id/calendar_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="24dp"
+        android:paddingStart="43dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="43dp"
+        android:paddingBottom="8dp"
+        app:selectedColor="@color/colorPrimary"
+        app:selectedTab="0"
+        app:strokeRadius="25dp"
+        app:strokeWidth="1dp"
+        app:switchTabs="@array/monthly_weekly"
+        app:textSize="18sp" />
+
+    <FrameLayout
+        android:id="@+id/calender_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/calendar_switch"
+        android:background="@color/background"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</RelativeLayout>
