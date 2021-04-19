@@ -26,6 +26,10 @@ class CalendarProfile(
         return profile.name
     }
 
+    fun getProfileRelation():String{
+        return profile.relation
+    }
+
     fun getWeeklyCalendar(): Array<MutableList<CalendarEvent>> {
         return weeklyCalendar
     }

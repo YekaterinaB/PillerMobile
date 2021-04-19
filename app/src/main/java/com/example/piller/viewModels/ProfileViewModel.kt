@@ -42,6 +42,18 @@ class ProfileViewModel : ViewModel() {
         return mutableListOfProfiles.value!!
     }
 
+    fun getListOfSecondaryProfiles(): MutableList<CalendarProfile> {
+        val size=mutableListOfProfiles.value!!.size
+        val  slice:MutableList<CalendarProfile>
+        if(size == 0){
+            //no profiles
+            slice = mutableListOf<CalendarProfile>()
+        }else{
+            slice = mutableListOfProfiles.value!!.subList(1,size)
+        }
+        return slice
+    }
+
     fun setCurrentProfile(profile: Profile) {
         mutableCurrentProfile.value = profile
     }
@@ -107,7 +119,8 @@ class ProfileViewModel : ViewModel() {
 
     fun addProfileToProfileList(profileObjectData: JSONObject) {
         val profile =
-            Profile(profileObjectData.getString("id"), profileObjectData.getString("name"))
+            Profile(profileObjectData.getString("id"), profileObjectData.getString("name"),
+                profileObjectData.getString("relation"))
         mutableListOfProfiles.value!!.add(
             CalendarProfile(
                 profile,
@@ -128,17 +141,17 @@ class ProfileViewModel : ViewModel() {
         mutableListOfProfiles.notifyObserver()
     }
 
-    fun deleteOneProfile(profile: Profile) {
+    fun deleteOneProfile(userId: String, profile: Profile) {
         if (getCurrentProfileName() == profile.name) {
             mutableCurrentProfile.value = mutableListOfProfiles.value!![0].getProfileObject()
         }
         deleteProfileFromProfileList(profile.profileId)
-        deleteProfileFromDB(profile.profileId)
+        deleteProfileFromDB(userId,profile.profileId)
     }
 
-    private fun deleteProfileFromDB(profileId: String) {
+    private fun deleteProfileFromDB(userId:String, profileId: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.deleteProfile(loggedEmail, profileId).enqueue(
+        retrofit.deleteProfile(userId, profileId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."
@@ -178,9 +191,9 @@ class ProfileViewModel : ViewModel() {
         )
     }
 
-    fun addProfileToDB(profileName: String, loggedUserObject: UserObject) {
+    fun addProfileToDB(profileName: String, loggedUserObject: UserObject,profileRelation:String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.addProfileToUser(loggedUserObject.userId, profileName).enqueue(
+        retrofit.addProfileToUser(loggedUserObject.userId, profileName,profileRelation).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."

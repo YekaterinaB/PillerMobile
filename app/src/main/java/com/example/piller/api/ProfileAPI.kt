@@ -10,10 +10,11 @@ interface ProfileAPI {
     @GET("profile/{userId}")
     fun getAllProfilesByEmail(@Path("userId") userId: String): Call<ResponseBody>
 
-    @PUT("profile/{userId}/{name}")
+    @PUT("profile/{userId}/{name}/{relation}")
     fun addProfileToUser(
         @Path("userId") userId: String,
-        @Path("name") name: String
+        @Path("name") name: String,
+        @Path("relation") relation: String
     ): Call<ResponseBody>
 
     @DELETE("profile/{userId}")

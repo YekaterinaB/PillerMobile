@@ -78,7 +78,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         initListeners()
         initObservers()
         weeklyCalendarViewModel.getWeekEvents(
-            loggedUserObject,
+            _loggedUserObject,
             profileViewModel.getCurrentProfile()
         )
 
@@ -139,7 +139,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             WeeklyCalendarFragment().apply {
                 arguments = Bundle().apply {
-                    loggedUserObject = loggedUser
+                    _loggedUserObject = loggedUser
                 }
             }
     }

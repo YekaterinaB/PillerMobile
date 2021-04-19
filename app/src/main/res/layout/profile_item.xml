@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profile_recycle_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/rounded_shape_edit_text">
+
+
+    <ImageView
+        android:id="@+id/circle_profile_item"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/empty_circle" />
+
+    <ImageView
+        android:id="@+id/profile_icon_image_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/circle_profile_item"
+        app:layout_constraintEnd_toEndOf="@+id/circle_profile_item"
+        app:layout_constraintStart_toStartOf="@+id/circle_profile_item"
+        app:layout_constraintTop_toTopOf="@+id/circle_profile_item"
+        app:srcCompat="@drawable/ic_profile_blue" />
+
+    <TextView
+        android:id="@+id/profile_name_profile_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="sans-serif"
+        android:padding="2dp"
+        android:text="May Moreira"
+        android:textColor="@color/titleInItems"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toStartOf="@+id/trash_profile_item"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/circle_profile_item"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/profile_relation_profile_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif"
+        android:padding="2dp"
+        android:text="Child"
+        android:textColor="@color/myTextColor"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/trash_profile_item"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/circle_profile_item"
+        app:layout_constraintTop_toBottomOf="@+id/profile_name_profile_item"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/trash_profile_item"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.489"
+        app:srcCompat="@drawable/basic_trash_full" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

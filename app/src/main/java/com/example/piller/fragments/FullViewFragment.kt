@@ -41,7 +41,7 @@ class FullViewFragment : FragmentWithUserObject() {
     companion object {
         fun newInstance(loggedUser: UserObject) = FullViewFragment().apply {
             arguments = Bundle().apply {
-                loggedUserObject = loggedUser
+                _loggedUserObject = loggedUser
             }
         }
     }
@@ -65,7 +65,7 @@ class FullViewFragment : FragmentWithUserObject() {
         val firstAndLastDays = DateUtils.getFirstAndLastDaysOfSpecificMonth(cal)
         currentFirstDayOfMonth = firstAndLastDays.first
         viewModel.updateCalendarByUser(
-            loggedUserObject, firstAndLastDays.first, firstAndLastDays.second
+            _loggedUserObject, firstAndLastDays.first, firstAndLastDays.second
         )
     }
 
@@ -110,7 +110,7 @@ class FullViewFragment : FragmentWithUserObject() {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
         val date = sdf.format(eventDay.calendar.time)
         val userBundle = Bundle()
-        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, loggedUserObject)
+        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, _loggedUserObject)
         arguments.putBundle(DbConstants.LOGGED_USER_BUNDLE, userBundle)
         arguments.putString(FullviewPopupFragment.ARG_DATE_STRING, date)
         //  we need to reduce it by 1 because the get day of month starts from 1 (and our list starts from 0..)
@@ -164,7 +164,7 @@ class FullViewFragment : FragmentWithUserObject() {
         val endDate = DateUtils.getLastDayOfMonth()
         //  get all the events for the selected month
         viewModel.initiateMonthEvents(
-            loggedUserObject,
+            _loggedUserObject,
             profileViewModel.getCurrentProfile(),
             startDate,
             endDate

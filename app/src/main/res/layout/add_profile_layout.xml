@@ -15,7 +15,19 @@
         android:inputType="text"
         app:met_baseColor="@color/myTextColor"
         app:met_iconPadding="0sp"
-        app:met_iconRight="@drawable/ic_profile"
+        app:met_iconRight="@drawable/ic_profile_blue"
+        app:met_primaryColor="@color/myTextColor"
+        app:met_textColorHint="@color/myTextColor" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/profile_relation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Relation"
+        android:inputType="text"
+        app:met_baseColor="@color/myTextColor"
+        app:met_iconPadding="0sp"
+        app:met_iconRight="@drawable/ic_profile_blue"
         app:met_primaryColor="@color/myTextColor"
         app:met_textColorHint="@color/myTextColor" />
 

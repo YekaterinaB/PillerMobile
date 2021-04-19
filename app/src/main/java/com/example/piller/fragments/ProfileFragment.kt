@@ -1,10 +1,15 @@
 package com.example.piller.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -20,27 +25,40 @@ import com.example.piller.viewModels.ProfileViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.fragment_profile.view.*
+import kotlinx.android.synthetic.main.profile_main_layout.*
+import kotlinx.android.synthetic.main.profile_main_layout.view.*
 
 class ProfileFragment : FragmentWithUserObject() {
-    private val viewModel: ProfileViewModel by activityViewModels()
-    private lateinit var profileAdapter: ProfileAdapter
-    private lateinit var profileRecycle: RecyclerView
-    private lateinit var fragmentView: View
+    private val _viewModel: ProfileViewModel by activityViewModels()
+    private lateinit var _profileAdapter: ProfileAdapter
+    private lateinit var _profileRecycle: RecyclerView
+    private lateinit var _fragmentView: View
+    private lateinit var _dimLayout: RelativeLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        fragmentView = inflater.inflate(R.layout.fragment_profile, container, false)
+        _fragmentView = inflater.inflate(R.layout.profile_main_layout, container, false)
+        initViews()
         setOnClickListeners()
         initRecyclersAndAdapters()
         initObservers()
-        return fragmentView
+        return _fragmentView
+    }
+
+
+    private fun initViews(){
+        _dimLayout=_fragmentView.findViewById(R.id.profile_dim_layout)
+        val mainProfileEmailTv=_fragmentView.findViewById<TextView>(R.id.email_main_profile)
+        val mainProfileNameTv=_fragmentView.findViewById<TextView>(R.id.profile_name_title_item)
+        mainProfileEmailTv.text= _loggedUserObject.email
+        mainProfileNameTv.text= _loggedUserObject.mainProfile?.name ?: "Main User"
     }
 
     private fun initObservers() {
-        viewModel.mutableToastError.observe(
+        _viewModel.mutableToastError.observe(
             viewLifecycleOwner,
             Observer { toastMessage ->
                 toastMessage?.let {
@@ -50,7 +68,7 @@ class ProfileFragment : FragmentWithUserObject() {
                 }
             })
 
-        viewModel.mutableListOfProfiles.observe(
+        _viewModel.mutableListOfProfiles.observe(
             viewLifecycleOwner,
             Observer { profileList ->
                 profileList?.let {
@@ -63,35 +81,76 @@ class ProfileFragment : FragmentWithUserObject() {
 
 
     private fun updateRecyclersAndAdapters() {
-        profileAdapter.setData(viewModel.getListOfProfiles())
-        profileAdapter.notifyDataSetChanged()
+        _profileAdapter.setData(_viewModel.getListOfSecondaryProfiles())
+        _profileAdapter.notifyDataSetChanged()
     }
 
     private fun initRecyclersAndAdapters() {
-        profileRecycle = fragmentView.findViewById(R.id.profile_list)
+        _profileRecycle = _fragmentView.findViewById(R.id.profile_list_of_items)
         // initiate list of profiles with recyclers and adapters
-        val profileList = viewModel.getListOfProfiles()
-        profileRecycle.layoutManager = LinearLayoutManager(fragmentView.context)
-        profileAdapter = ProfileAdapter(
+        val profileList = _viewModel.getListOfSecondaryProfiles()
+        _profileRecycle.layoutManager = LinearLayoutManager(_fragmentView.context)
+        _profileAdapter = ProfileAdapter(
             profileList,
             clickOnItemListener = { changeProfile(it) },
-            clickOnButtonListener = { clickOnDeleteProfile(it) })
-        profileRecycle.adapter = profileAdapter
+            clickOnButtonListener = { removeProfilePopup(it) })
+        _profileRecycle.adapter = _profileAdapter
     }
 
     private fun setOnClickListeners() {
-        fragmentView.add_profile_button.setOnClickListener {
+        _fragmentView.supervisor_title_item_in_profiles.setOnClickListener {
+            //go to supervisor fragment
+        }
+
+        _fragmentView.add_new_profile_tx.setOnClickListener{
             showAddProfileToUserWindow()
+        }
+
+        _fragmentView.profile_title_item.setOnClickListener{
+            changeProfile(_loggedUserObject.mainProfile!!)
         }
     }
 
     private fun changeProfile(profile: Profile) {
-        viewModel.setCurrentProfile(profile)
+        _viewModel.setCurrentProfile(profile)
     }
 
-    private fun clickOnDeleteProfile(profile: Profile) {
-        //  todo add confirmation popup
-        viewModel.deleteOneProfile(profile)
+    private fun removeProfilePopup(profile: Profile) {
+        val customView: View = layoutInflater.inflate(R.layout.profile_remove_popup, null)
+        val popup = PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        // Set an elevation value for popup window
+        // Call requires API level 21
+        if (Build.VERSION.SDK_INT >= 21) {
+            popup.setElevation(5.0f);
+        }
+
+        val cancelViewText = customView.findViewById<TextView>(R.id.cancel_remove_profile_popup)
+        val removeViewText = customView.findViewById<TextView>(R.id.remove_profile_remove_profile_popup)
+        val nameViewText = customView.findViewById<TextView>(R.id.profile_name_remove_popup)
+        nameViewText.text = profile.name + " will be removed from your\nprofile list."
+        cancelViewText.setOnClickListener {
+            popup.dismiss()
+            changeDarkBackgroundVisibility(false)
+        }
+
+        removeViewText.setOnClickListener {
+            _viewModel.deleteOneProfile(_loggedUserObject.userId,profile)
+            popup.dismiss()
+            changeDarkBackgroundVisibility(false)
+
+        }
+        changeDarkBackgroundVisibility(true)
+        popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
+    }
+
+
+    private fun changeDarkBackgroundVisibility(isVisible:Boolean){
+        if(isVisible){
+            _dimLayout.visibility=View.VISIBLE
+
+        }else{
+            _dimLayout.visibility=View.GONE
+        }
     }
 
     private fun showAddProfileToUserWindow() {
@@ -100,7 +159,7 @@ class ProfileFragment : FragmentWithUserObject() {
 
         // create pop up window for add profile
         MaterialStyledDialog.Builder(this.context)
-            .setIcon(R.drawable.ic_profile)
+            .setIcon(R.drawable.ic_profile_blue)
             .setTitle("ADD A NEW PROFILE")
             .setCustomView(itemView)
             .setNegativeText("CANCEL")
@@ -110,6 +169,7 @@ class ProfileFragment : FragmentWithUserObject() {
             .setPositiveText("ADD PROFILE")
             .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
                 val profileName = itemView.findViewById<View>(R.id.profile_name) as MaterialEditText
+                val profileRelation = itemView.findViewById<View>(R.id.profile_relation) as MaterialEditText
 
                 when {
                     TextUtils.isEmpty(profileName.text.toString()) -> {
@@ -120,7 +180,7 @@ class ProfileFragment : FragmentWithUserObject() {
                         return@SingleButtonCallback
                     }
                 }
-                viewModel.addProfileToDB(profileName.text.toString(), loggedUserObject)
+                _viewModel.addProfileToDB(profileName.text.toString(), _loggedUserObject,profileRelation.text.toString())
             })
             .build()
             .show()
@@ -131,7 +191,7 @@ class ProfileFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             ProfileFragment().apply {
                 arguments = Bundle().apply {
-                    loggedUserObject = loggedUser
+                    _loggedUserObject = loggedUser
                 }
             }
     }
