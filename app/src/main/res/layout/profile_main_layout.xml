@@ -40,30 +40,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="100dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal"
         android:text="Add new profile +"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/supervisor_title_item_in_profiles"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-
-    <include
-        android:id="@+id/supervisor_title_item_in_profiles"
-        layout="@layout/supervisor_title_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 
     <RelativeLayout
