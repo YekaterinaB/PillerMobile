@@ -48,9 +48,9 @@ class CalendarFragment : FragmentWithUserObject() {
         var fragment: Fragment? = null
         when (fragmentId) {
             DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID ->
-                fragment = WeeklyCalendarFragment.newInstance(loggedUserObject)
+                fragment = WeeklyCalendarFragment.newInstance(_loggedUserObject)
             DbConstants.FULL_VIEW_FRAGMENT_ID ->
-                fragment = FullViewFragment.newInstance(loggedUserObject)
+                fragment = FullViewFragment.newInstance(_loggedUserObject)
         }
         openFragment(fragment!!, fragmentId)
     }
@@ -73,7 +73,7 @@ class CalendarFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             CalendarFragment().apply {
                 arguments = Bundle().apply {
-                    loggedUserObject = loggedUser
+                    _loggedUserObject = loggedUser
                 }
             }
     }
