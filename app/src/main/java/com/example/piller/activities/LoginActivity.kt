@@ -124,6 +124,10 @@ class LoginActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             val fragmentTransaction: FragmentTransaction =
                 supportFragmentManager.beginTransaction()
+//            fragmentTransaction.setCustomAnimations(
+//                R.animator.slide_in_left,
+//                R.animator.slide_out_right
+//            )
             fragmentTransaction.add(R.id.login_fragment, SplashScreenFragment())
             fragmentTransaction.commit()
         }
