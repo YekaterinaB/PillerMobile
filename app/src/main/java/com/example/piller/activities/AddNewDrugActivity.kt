@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -27,8 +28,9 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     private lateinit var searchViewModel: DrugSearchViewModel
     private lateinit var drugOptionsList: RecyclerView
     private lateinit var loadingScreen: RelativeLayout
-    private lateinit var drugResultLabel: TextView
     private lateinit var selectDrugAnywayBtn: Button
+    private lateinit var _toolbarTitle: TextView
+    private lateinit var _toolbarBackBtn: ImageButton
     private lateinit var drugAdapter: NewDrugByNameAdapter
     private lateinit var addType: String
     private lateinit var drugSearchNoResult: String
@@ -65,6 +67,15 @@ class AddNewDrugActivity : ActivityWithUserObject() {
                 SnackBar.showToastBar(this, "Please choose a valid drug!")
             }
         }
+
+        _toolbarTitle.setOnClickListener {
+            //  todo go back to main search fragment
+            onBackPressed()
+        }
+        _toolbarBackBtn.setOnClickListener {
+            //  todo go back to main search fragment
+            onBackPressed()
+        }
     }
 
     private fun initViewModels(calendarId: String) {
@@ -77,14 +88,20 @@ class AddNewDrugActivity : ActivityWithUserObject() {
             DbConstants.DRUG_BY_CAMERA -> {
                 val drugByImageFragment = DrugByImageFragment.newInstance()
                 initializeFragment(savedInstanceState, drugByImageFragment)
+                _toolbarTitle.text = "Search by pill image"
             }
             DbConstants.DRUG_BY_BOX -> {
                 val drugByBoxFragment = DrugByBoxFragment.newInstance()
                 initializeFragment(savedInstanceState, drugByBoxFragment)
+                _toolbarTitle.text = "Search by box image"
             }
             DbConstants.DRUG_BY_NAME -> {
                 val drugByNameFragment = DrugByNameFragment.newInstance()
                 initializeFragment(savedInstanceState, drugByNameFragment)
+                _toolbarTitle.text = "Search by name"
+            }
+            else -> {
+                _toolbarTitle.text = ""
             }
         }
     }
@@ -120,7 +137,6 @@ class AddNewDrugActivity : ActivityWithUserObject() {
 
         searchViewModel.drugsSearchResult.observe(this, Observer {
             selectDrugAnywayBtn.visibility = View.VISIBLE
-            drugResultLabel.visibility = View.VISIBLE
             updateRecyclersAndAdapters()
             setButtonsEnabled(true)
         })
@@ -152,6 +168,8 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     private fun initViews() {
         selectDrugAnywayBtn = findViewById(R.id.nd_select_anyway_btn)
         loadingScreen = findViewById(R.id.loading_screen)
+        _toolbarTitle = findViewById(R.id.nd_toolbar_title)
+        _toolbarBackBtn = findViewById(R.id.nd_toolbar_back_button)
     }
 
     private fun updateRecyclersAndAdapters() {
@@ -160,7 +178,6 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     }
 
     private fun initRecyclersAndAdapters() {
-        drugResultLabel = findViewById(R.id.nd_drug_result_label)
         drugOptionsList = findViewById(R.id.nd_drug_options_list)
         drugOptionsList.layoutManager = LinearLayoutManager(this)
         drugAdapter = NewDrugByNameAdapter(

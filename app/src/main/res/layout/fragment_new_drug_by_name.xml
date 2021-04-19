@@ -3,35 +3,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="false"
     tools:context="com.example.piller.fragments.DrugByNameFragment">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/nd_drug_search_til"
+    <EditText
+        android:id="@+id/nd_drug_search_et"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="24dp"
+        android:autofillHints="@string/nd_search_label"
+        android:background="@drawable/rounded_shape_edit_text"
+        android:fontFamily="@font/roboto_medium"
+        android:hint="@string/nd_search_label"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:paddingStart="24dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="6dp"
+        android:textColor="@color/titleInItems"
+        android:textColorHint="#ccd4dc"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/nd_search_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/nd_enter_drug_name_label"
-            android:imeOptions="actionSearch"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
+    <ImageButton
         android:id="@+id/nd_search_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/nd_search_label"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="28dp"
+        android:background="@null"
+        android:clickable="false"
+        android:contentDescription="Search"
+        android:src="@drawable/ic_edit_search"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nd_drug_search_til" />
+        app:layout_constraintTop_toTopOf="@+id/nd_drug_search_et" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
