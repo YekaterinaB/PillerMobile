@@ -85,8 +85,7 @@
         <activity
             android:name=".activities.CalendarActivity"
             android:noHistory="false"
-            android:parentActivityName=".activities.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:parentActivityName=".activities.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.LoginActivity" />

@@ -95,8 +95,6 @@ class CalendarActivity : ActivityWithUserObject() {
     }
 
     private fun initializeNavigations() {
-        // upper navigation
-        // supportActionBar?.title = "Piller"
         val bottomNavigation: BottomNavigationView = findViewById(R.id.BottomNavigationView)
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
@@ -106,22 +104,18 @@ class CalendarActivity : ActivityWithUserObject() {
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    supportActionBar?.title = "Piller"
                     val weeklyCalendarFragment =
                         CalendarFragment.newInstance(_loggedUserObject)
                     openFragment(weeklyCalendarFragment, DbConstants.CALENDAR_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_profile -> {
-                    supportActionBar?.title = "Profiles"
                     val profileFragment = ProfileFragment.newInstance(_loggedUserObject)
                     openFragment(profileFragment, DbConstants.PROFILES_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true
                 }
 
                 R.id.navigation_full_view -> {
-                    // todo don't create new one if already in full view!
-                    supportActionBar?.title = "Full View"
                     val fullViewFragment = FullViewFragment.newInstance(_loggedUserObject)
                     openFragment(fullViewFragment, DbConstants.FULL_VIEW_FRAGMENT_ID)
                     return@OnNavigationItemSelectedListener true

@@ -46,7 +46,6 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         initViews()
         initListeners()
         initRecyclersAndAdapters()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initObservers()
         selectFragment(savedInstanceState, addType)
     }

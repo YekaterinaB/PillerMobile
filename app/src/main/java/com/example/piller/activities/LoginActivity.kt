@@ -38,7 +38,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_activity)
-        supportActionBar?.hide()
         initViews()
         _viewModel = ViewModelProvider(this).get(LoginActivityViewModel::class.java)
         AppPreferences.init(this)
