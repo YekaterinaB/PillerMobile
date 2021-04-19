@@ -98,10 +98,6 @@ class ProfileFragment : FragmentWithUserObject() {
     }
 
     private fun setOnClickListeners() {
-        _fragmentView.supervisor_title_item_in_profiles.setOnClickListener {
-            //go to supervisor fragment
-        }
-
         _fragmentView.add_new_profile_tx.setOnClickListener{
             showAddProfileToUserWindow()
         }
