@@ -78,7 +78,7 @@ class SupervisorsActivity : ActivityWithUserObject() {
 
         // create pop up window for add profile
         MaterialStyledDialog.Builder(this)
-            .setIcon(R.drawable.ic_supervisors)
+            .setIcon(R.drawable.ic_supervisor_eye)
             .setTitle("ADD A NEW SUPERVISOR")
             .setCustomView(itemView)
             .setNegativeText("Cancel")
@@ -179,21 +179,44 @@ class SupervisorsActivity : ActivityWithUserObject() {
     }
 
     private fun removeSupervisorPopup(supervisorEmail: String) {
-        // create pop up window for add profile
-        MaterialStyledDialog.Builder(this)
-            .setIcon(R.drawable.ic_supervisors)
-            .setTitle("Remove Supervisor?")
-            .setDescription(supervisorEmail + " will be removed from your supervisor list.")
-            .setNegativeText("Cancel")
-            .onNegative { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveText("Remove supervisor")
-            .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
-                _viewModel.deleteSupervisorsFromDB(supervisorEmail, _loggedUserObject.userId)
-            })
-            .build()
-            .show()
+        val customView: View = layoutInflater.inflate(R.layout.supervisors_remove_popup, null)
+        val popup = PopupWindow(customView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        // Set an elevation value for popup window
+        // Call requires API level 21
+        if (Build.VERSION.SDK_INT >= 21) {
+            popup.setElevation(5.0f);
+        }
+
+        val cancelViewText = customView.findViewById<TextView>(R.id.cancel_remove_supervisor_popup)
+        val setViewText = customView.findViewById<TextView>(R.id.remove_supervusor_remove_supervisor_popup)
+        cancelViewText.setOnClickListener {
+            popup.dismiss()
+            changeDarkBackgroundVisibility(false)
+        }
+
+        setViewText.setOnClickListener {
+            _viewModel.deleteSupervisorsFromDB(supervisorEmail, _loggedUserObject.userId)
+            popup.dismiss()
+            changeDarkBackgroundVisibility(false)
+
+        }
+        changeDarkBackgroundVisibility(true)
+        popup.showAtLocation(_mRelativeLayout, Gravity.CENTER, 0, 0)
+
+//        // create pop up window for add profile
+//        MaterialStyledDialog.Builder(this)
+//            .setIcon(R.drawable.ic_supervisors)
+//            .setTitle("Remove Supervisor?")
+//            .setDescription(supervisorEmail + " will be removed from your supervisor list.")
+//            .setNegativeText("Cancel")
+//            .onNegative { dialog, _ ->
+//                dialog.dismiss()
+//            }
+//            .setPositiveText("Remove supervisor")
+//            .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
+//            })
+//            .build()
+//            .show()
     }
 
     private fun setMissedThreshold() {
@@ -241,10 +264,7 @@ class SupervisorsActivity : ActivityWithUserObject() {
         cancelViewText: TextView, popup: PopupWindow, seekBar: IndicatorSeekBar,
         setViewText: TextView,thresholdCountPopup:TextView
     ) {
-        cancelViewText.setOnClickListener {
-            popup.dismiss()
-            changeDarkBackgroundVisibility(false)
-        }
+
 
         seekBar.setOnSeekChangeListener(object : OnSeekChangeListener {
             override fun onSeeking(seekParams: SeekParams) {
@@ -260,6 +280,10 @@ class SupervisorsActivity : ActivityWithUserObject() {
             override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {}
             override fun onStopTrackingTouch(seekBar: IndicatorSeekBar) {}
         })
+        cancelViewText.setOnClickListener {
+            popup.dismiss()
+            changeDarkBackgroundVisibility(false)
+        }
 
         setViewText.setOnClickListener {
             val numberOfMissed = seekBar.progress.toString()
