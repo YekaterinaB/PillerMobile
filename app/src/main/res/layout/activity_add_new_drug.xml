@@ -6,6 +6,36 @@
     android:layout_height="match_parent"
     tools:context="com.example.piller.activities.AddNewDrugActivity">
 
+    <LinearLayout
+        android:id="@+id/nd_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/nd_toolbar_back_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:id="@+id/nd_toolbar_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="23dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="TextView"
+            android:textColor="@color/titleInItems"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/nd_container_fragment"
         android:layout_width="0dp"
@@ -15,32 +45,20 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/nd_drug_result_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/nd_search_result"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nd_container_fragment" />
+        app:layout_constraintTop_toBottomOf="@+id/nd_toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/nd_drug_options_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/nd_select_anyway_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nd_drug_result_label" />
+        app:layout_constraintTop_toBottomOf="@+id/nd_container_fragment" />
 
     <Button
         android:id="@+id/nd_select_anyway_btn"
