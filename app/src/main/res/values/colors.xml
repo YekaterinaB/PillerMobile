@@ -5,7 +5,7 @@
     <color name="notComplete">#b6dcff</color>
     <color name="circleItem">#00f0c2</color>
     <color name="titleInItems">#002a52</color>
-
+    <color name="removeColor">#ff6060</color>
     <color name="background">#f6f6f8</color>
     <color name="colorPrimaryDark">#f6f6f8</color>
 
