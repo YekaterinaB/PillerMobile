@@ -34,6 +34,7 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     private lateinit var drugAdapter: NewDrugByNameAdapter
     private lateinit var addType: String
     private lateinit var drugSearchNoResult: String
+    private var _isSearchingByName = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,16 +86,19 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     private fun selectFragment(savedInstanceState: Bundle?, fragmentID: String) {
         when (fragmentID) {
             DbConstants.DRUG_BY_CAMERA -> {
+                _isSearchingByName = false
                 val drugByImageFragment = DrugByImageFragment.newInstance()
                 initializeFragment(savedInstanceState, drugByImageFragment)
                 _toolbarTitle.text = "Search by pill image"
             }
             DbConstants.DRUG_BY_BOX -> {
+                _isSearchingByName = false
                 val drugByBoxFragment = DrugByBoxFragment.newInstance()
                 initializeFragment(savedInstanceState, drugByBoxFragment)
                 _toolbarTitle.text = "Search by box image"
             }
             DbConstants.DRUG_BY_NAME -> {
+                _isSearchingByName = true
                 val drugByNameFragment = DrugByNameFragment.newInstance()
                 initializeFragment(savedInstanceState, drugByNameFragment)
                 _toolbarTitle.text = "Search by name"
@@ -135,7 +139,9 @@ class AddNewDrugActivity : ActivityWithUserObject() {
             })
 
         searchViewModel.drugsSearchResult.observe(this, Observer {
-            selectDrugAnywayBtn.visibility = View.VISIBLE
+            if (_isSearchingByName) {
+                selectDrugAnywayBtn.visibility = View.VISIBLE
+            }
             updateRecyclersAndAdapters()
             setButtonsEnabled(true)
         })
@@ -195,7 +201,9 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     }
 
     fun setButtonsEnabled(enabled: Boolean) {
-        selectDrugAnywayBtn.isEnabled = enabled
+        if (_isSearchingByName) {
+            selectDrugAnywayBtn.isEnabled = enabled
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
