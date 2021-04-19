@@ -27,7 +27,7 @@ import java.util.*
 
 class DrugByBoxFragment : Fragment() {
     private lateinit var boxImage: ImageView
-    private lateinit var noteTV: TextView
+    private lateinit var openCameraButton: ImageView
     private val searchViewModel: DrugSearchViewModel by activityViewModels()
     private lateinit var imageFilePath: String
 //    private val ORIENTATIONS = SparseIntArray()
@@ -56,7 +56,7 @@ class DrugByBoxFragment : Fragment() {
     }
 
     private fun initListeners() {
-        boxImage.setOnClickListener {
+        openCameraButton.setOnClickListener {
             if (checkCameraPermission()) {
                 openCameraIntent()
             } else {
@@ -70,7 +70,7 @@ class DrugByBoxFragment : Fragment() {
 
     private fun initViews(fragmentView: View) {
         boxImage = fragmentView.findViewById(R.id.ocr_image)
-        noteTV = fragmentView.findViewById(R.id.ocr_note)
+        openCameraButton = fragmentView.findViewById(R.id.ocr_open_camera)
     }
 
     private fun createImageFile(): File {
@@ -157,7 +157,6 @@ class DrugByBoxFragment : Fragment() {
             //  don't compare the data to null, it will always come as  null because we are providing
             // a file URI, so load with the imageFilePath we obtained before opening the cameraIntent
             updateImage()
-            noteTV.text = "Press again to change the picture."
         }
     }
 
