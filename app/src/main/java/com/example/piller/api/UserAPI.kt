@@ -16,15 +16,19 @@ interface UserAPI {
     @POST("user/authenticate")
     fun loginUser(@Body user: User): Call<ResponseBody>
 
-    @DELETE("user/{email}")
-    fun deleteUser(@Path("email") email: String): Call<ResponseBody>
+    @HTTP(method="DELETE",path="user/{userId}",hasBody = true)
+    fun deleteUser(@Path("userId") userId: String,@Body password: HashMap<String,String>): Call<ResponseBody>
 
-    @PUT("user/{userId}")
-    fun updateUserEmail(@Path("userId") userId: String, @Body user: User): Call<ResponseBody>
-
-    @PUT("user/updatePassword/{userId}")
-    fun updatePassword(@Path("userId") userId: String, @Body user: JSONObject): Call<ResponseBody>
+    @POST("user/{userId}")
+    fun updateEmailUsernamePassword(@Path("userId") userId: String, @Body user: User): Call<ResponseBody>
 
     @GET("user/resetPassword/{email}")
     fun resetPassword(@Path("email") email: String): Call<ResponseBody>
+
+//    @PUT("user/{userId}")
+//    fun updateUserEmail(@Path("userId") userId: String, @Body user: User): Call<ResponseBody>
+//
+//    @PUT("user/updatePassword/{userId}")
+//    fun updatePassword(@Path("userId") userId: String, @Body user: User): Call<ResponseBody>
+
 }

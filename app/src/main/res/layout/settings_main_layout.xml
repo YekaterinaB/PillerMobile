@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settings_main_laoyut"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+
+    <TextView
+        android:id="@+id/settings_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Settings"
+        android:textColor="@color/titleInItems"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/go_back_from_settings"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/go_back_from_settings"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_left" />
+
+    <include
+        android:id="@+id/profile_title_item_in_settings"
+        layout="@layout/profile_title_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/go_back_from_settings" />
+
+
+    <EditText
+        android:id="@+id/edt_fullname_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="36dp"
+        android:background="@drawable/rounded_shape_edit_text"
+        android:padding="8dp"
+        android:paddingStart="36dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="Katya Batashov"
+        android:textColor="@color/titleInItems"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_title_item_in_settings" />
+
+    <EditText
+        android:id="@+id/edt_email_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="36dp"
+        android:background="@drawable/rounded_shape_edit_text"
+        android:inputType="textEmailAddress"
+        android:padding="8dp"
+        android:paddingStart="36dp"
+        android:paddingBottom="8dp"
+        android:text="Katya@gmail.com"
+        android:textColor="@color/titleInItems"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_fullname_settings" />
+
+    <EditText
+        android:id="@+id/edt_password_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="36dp"
+        android:background="@drawable/rounded_shape_edit_text"
+        android:inputType="textPassword"
+        android:padding="8dp"
+        android:paddingStart="36dp"
+        android:text="password"
+        android:textColor="@color/titleInItems"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_email_settings" />
+
+    <RelativeLayout
+        android:id="@+id/settings_dim_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#C0000000"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="2dp"
+        android:clickable="true"
+        android:focusable="true">
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/save_settings"
+        android:layout_width="119dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Save"
+        android:textAlignment="textEnd"
+        android:textColor="@color/myTextColor"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/settings_toolbar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/go_to_supervisors_settings"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="36dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_marginEnd="36dp"-->
+<!--        android:background="@drawable/rounded_shape_edit_text"-->
+<!--        android:paddingStart="36dp"-->
+<!--        android:paddingTop="8dp"-->
+<!--        android:paddingEnd="36dp"-->
+<!--        android:paddingBottom="8dp"-->
+<!--        android:text="Manage supervisors"-->
+<!--        android:textColor="@color/titleInItems"-->
+<!--        android:textSize="18sp"-->
+<!--        android:textStyle="normal"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/edt_password_settings" />-->
+
+    <include
+        android:id="@+id/notifications_settings"
+        layout="@layout/settings_notifications_fields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_password_settings" />
+
+    <TextView
+        android:id="@+id/log_out_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/rounded_shape_edit_text"
+        android:fontFamily="sans-serif-medium"
+        android:paddingStart="52dp"
+        android:paddingTop="13dp"
+        android:paddingEnd="52dp"
+        android:paddingBottom="13dp"
+        android:text="Log out"
+        android:textAlignment="center"
+        android:textColor="@color/titleInItems"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notifications_settings" />
+
+    <TextView
+        android:id="@+id/delete_account_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:fontFamily="sans-serif"
+        android:text="Delete account"
+        android:textColor="@color/removeColor"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/log_out_settings"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

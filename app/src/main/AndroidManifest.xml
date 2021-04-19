@@ -77,11 +77,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.CalendarActivity" />
         </activity>
-        <activity android:name=".activities.ManageAccountActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.CalendarActivity" />
-        </activity>
         <activity
             android:name=".activities.CalendarActivity"
             android:noHistory="false"
@@ -96,11 +91,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".activities.SupervisorsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ManageAccountActivity" />
         </activity>
 
         <meta-data

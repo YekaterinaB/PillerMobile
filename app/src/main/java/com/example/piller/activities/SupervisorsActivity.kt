@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.fragments.ProfileFragment
 import com.example.piller.listAdapters.SupervisorsAdapter
 import com.example.piller.models.Supervisor
 import com.example.piller.utilities.DbConstants.DEFAULT_SUPERVISOR_THRESHOLD
@@ -59,10 +60,14 @@ class SupervisorsActivity : ActivityWithUserObject() {
     private fun initViews() {
         _thresholdCount = findViewById(R.id.number_of_missed_occur_textview)
         _supervisorCount = findViewById(R.id.number_of_supervisors_title_item)
-        _dimLayout=findViewById(R.id.supervisor_dim_layout)
+        _dimLayout = findViewById(R.id.supervisor_dim_layout)
     }
 
     private fun setClickListeners() {
+        go_back_from_supervisors.setOnClickListener{
+            //onPressBack()
+        }
+
         add_new_supervisor_tx.setOnClickListener {
             showAddSupervisorWindow()
         }
@@ -148,11 +153,12 @@ class SupervisorsActivity : ActivityWithUserObject() {
             Observer { threshold ->
                 threshold?.let {
                     if (this.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                        var numberOfMissed=(_viewModel.mutableSupervisorThreshold.value!!).toString()
-                        if(numberOfMissed == "0"){
-                            numberOfMissed="No"
+                        var numberOfMissed =
+                            (_viewModel.mutableSupervisorThreshold.value!!).toString()
+                        if (numberOfMissed == "0") {
+                            numberOfMissed = "No"
                         }
-                        _thresholdCount.text =numberOfMissed
+                        _thresholdCount.text = numberOfMissed
 
                     }
                 }
@@ -180,16 +186,15 @@ class SupervisorsActivity : ActivityWithUserObject() {
     private fun removeSupervisorPopup(supervisorEmail: String) {
         val customView: View = layoutInflater.inflate(R.layout.supervisors_remove_popup, null)
         val popup = PopupWindow(customView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        // Set an elevation value for popup window
-        // Call requires API level 21
-        if (Build.VERSION.SDK_INT >= 21) {
-            popup.setElevation(5.0f);
-        }
+
+        popup.elevation = 5.0f;
+
 
         val cancelViewText = customView.findViewById<TextView>(R.id.cancel_remove_supervisor_popup)
-        val setViewText = customView.findViewById<TextView>(R.id.remove_supervusor_remove_supervisor_popup)
+        val setViewText =
+            customView.findViewById<TextView>(R.id.remove_supervusor_remove_supervisor_popup)
         val mailViewText = customView.findViewById<TextView>(R.id.supervisor_mail_remove_popup)
-        mailViewText.text = supervisorEmail+" will be\nremoved from your supervisor list."
+        mailViewText.text = supervisorEmail + " will be\nremoved from your supervisor list."
 
         cancelViewText.setOnClickListener {
             popup.dismiss()
@@ -220,36 +225,37 @@ class SupervisorsActivity : ActivityWithUserObject() {
         val seekBar = customView.findViewById<IndicatorSeekBar>(R.id.indicatorSeekBar_missed_popup)
         val thresholdCountInPopup =
             customView.findViewById<TextView>(R.id.number_of_missed_occur_textview)
-        updateMissedInPopup(seekBar,thresholdCountInPopup)
+        updateMissedInPopup(seekBar, thresholdCountInPopup)
 
-        setClickListenersInPopup(cancelViewText, popup, seekBar, setViewText
-            ,thresholdCountInPopup)
+        setClickListenersInPopup(
+            cancelViewText, popup, seekBar, setViewText, thresholdCountInPopup
+        )
         changeDarkBackgroundVisibility(true)
         popup.showAtLocation(_mRelativeLayout, Gravity.CENTER, 0, 0)
 
     }
 
-    private fun updateMissedInPopup(seekBar:IndicatorSeekBar,thresholdCountPopup:TextView){
+    private fun updateMissedInPopup(seekBar: IndicatorSeekBar, thresholdCountPopup: TextView) {
         seekBar.setProgress(_viewModel.mutableSupervisorThreshold.value!!.toFloat())
-        if(_viewModel.mutableSupervisorThreshold.value!! == 0){
-            thresholdCountPopup.text="No"
-        }else{
-            thresholdCountPopup.text=_viewModel.mutableSupervisorThreshold.value!!.toString()
+        if (_viewModel.mutableSupervisorThreshold.value!! == 0) {
+            thresholdCountPopup.text = "No"
+        } else {
+            thresholdCountPopup.text = _viewModel.mutableSupervisorThreshold.value!!.toString()
         }
     }
 
-    private fun changeDarkBackgroundVisibility(isVisible:Boolean){
-        if(isVisible){
-            _dimLayout.visibility=View.VISIBLE
+    private fun changeDarkBackgroundVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            _dimLayout.visibility = View.VISIBLE
 
-        }else{
-            _dimLayout.visibility=View.GONE
+        } else {
+            _dimLayout.visibility = View.GONE
         }
     }
 
     private fun setClickListenersInPopup(
         cancelViewText: TextView, popup: PopupWindow, seekBar: IndicatorSeekBar,
-        setViewText: TextView,thresholdCountPopup:TextView
+        setViewText: TextView, thresholdCountPopup: TextView
     ) {
 
 
@@ -257,8 +263,8 @@ class SupervisorsActivity : ActivityWithUserObject() {
             override fun onSeeking(seekParams: SeekParams) {
 
                 var numberOfMissed = seekBar.progress.toString()
-                if(numberOfMissed == "0"){
-                    numberOfMissed="No"
+                if (numberOfMissed == "0") {
+                    numberOfMissed = "No"
                 }
                 _thresholdCount.text = numberOfMissed
                 thresholdCountPopup.text = numberOfMissed
@@ -287,6 +293,19 @@ class SupervisorsActivity : ActivityWithUserObject() {
         _viewModel.mutableSupervisorThreshold.value = DEFAULT_SUPERVISOR_THRESHOLD
         _viewModel.getSupervisorsFromDB(_loggedUserObject.userId)
     }
+
+
+//    private fun onPressBack() {
+//        val transaction = activity?.supportFragmentManager?.beginTransaction()
+//        if (transaction != null) {
+//            transaction.replace(
+//                R.id.calender_weekly_container_fragment, ProfileFragment
+//                    .newInstance(_loggedUserObject)
+//            )
+//            transaction.disallowAddToBackStack()
+//            transaction.commit()
+//        }
+//    }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()

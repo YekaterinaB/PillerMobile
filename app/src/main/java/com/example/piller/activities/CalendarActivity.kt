@@ -133,18 +133,18 @@ class CalendarActivity : ActivityWithUserObject() {
     }
 
 
-    private fun goToAccountManagement() {
-        val intent = Intent(this@CalendarActivity, ManageAccountActivity::class.java)
-        putLoggedUserObjectInIntent(intent)
-        startActivity(intent)
-    }
+//    private fun goToAccountManagement() {
+//        val intent = Intent(this@CalendarActivity, ManageAccountActivity::class.java)
+//        putLoggedUserObjectInIntent(intent)
+//        startActivity(intent)
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_manage_account -> {
-                goToAccountManagement()
-                true
-            }
+//            R.id.menu_manage_account -> {
+//                goToAccountManagement()
+//                true
+//            }
             R.id.menu_help -> {
                 val intent = Intent(this@CalendarActivity, HelpActivity::class.java)
                 startActivity(intent)

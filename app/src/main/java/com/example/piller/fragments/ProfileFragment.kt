@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -49,12 +50,12 @@ class ProfileFragment : FragmentWithUserObject() {
     }
 
 
-    private fun initViews(){
-        _dimLayout=_fragmentView.findViewById(R.id.profile_dim_layout)
-        val mainProfileEmailTv=_fragmentView.findViewById<TextView>(R.id.email_main_profile)
-        val mainProfileNameTv=_fragmentView.findViewById<TextView>(R.id.profile_name_title_item)
-        mainProfileEmailTv.text= _loggedUserObject.email
-        mainProfileNameTv.text= _loggedUserObject.mainProfile?.name ?: "Main User"
+    private fun initViews() {
+        _dimLayout = _fragmentView.findViewById(R.id.profile_dim_layout)
+        val mainProfileEmailTv = _fragmentView.findViewById<TextView>(R.id.email_main_profile)
+        val mainProfileNameTv = _fragmentView.findViewById<TextView>(R.id.profile_name_title_item)
+        mainProfileEmailTv.text = _loggedUserObject.email
+        mainProfileNameTv.text = _loggedUserObject.mainProfile?.name ?: "Main User"
     }
 
     private fun initObservers() {
@@ -98,12 +99,32 @@ class ProfileFragment : FragmentWithUserObject() {
     }
 
     private fun setOnClickListeners() {
-        _fragmentView.add_new_profile_tx.setOnClickListener{
+        _fragmentView.supervisor_title_item_in_profiles.setOnClickListener{
+            //gotosupervisorfragemnt
+        }
+
+        _fragmentView.settings_image_view.setOnClickListener {
+            openSettingFragment()
+        }
+
+        _fragmentView.add_new_profile_tx.setOnClickListener {
             showAddProfileToUserWindow()
         }
 
-        _fragmentView.profile_title_item.setOnClickListener{
+        _fragmentView.profile_title_item.setOnClickListener {
             changeProfile(_loggedUserObject.mainProfile!!)
+        }
+    }
+
+    private fun openSettingFragment() {
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        if (transaction != null) {
+            transaction.replace(
+                R.id.calender_weekly_container_fragment, SettingsFragment
+                    .newInstance(_loggedUserObject)
+            )
+            transaction.disallowAddToBackStack()
+            transaction.commit()
         }
     }
 
@@ -113,15 +134,18 @@ class ProfileFragment : FragmentWithUserObject() {
 
     private fun removeProfilePopup(profile: Profile) {
         val customView: View = layoutInflater.inflate(R.layout.profile_remove_popup, null)
-        val popup = PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        // Set an elevation value for popup window
-        // Call requires API level 21
-        if (Build.VERSION.SDK_INT >= 21) {
-            popup.setElevation(5.0f);
-        }
+        val popup = PopupWindow(
+            customView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        popup.elevation = 5.0f;
+
 
         val cancelViewText = customView.findViewById<TextView>(R.id.cancel_remove_profile_popup)
-        val removeViewText = customView.findViewById<TextView>(R.id.remove_profile_remove_profile_popup)
+        val removeViewText =
+            customView.findViewById<TextView>(R.id.remove_profile_remove_profile_popup)
         val nameViewText = customView.findViewById<TextView>(R.id.profile_name_remove_popup)
         nameViewText.text = profile.name + " will be removed from your\nprofile list."
         cancelViewText.setOnClickListener {
@@ -130,7 +154,7 @@ class ProfileFragment : FragmentWithUserObject() {
         }
 
         removeViewText.setOnClickListener {
-            _viewModel.deleteOneProfile(_loggedUserObject.userId,profile)
+            _viewModel.deleteOneProfile(_loggedUserObject.userId, profile)
             popup.dismiss()
             changeDarkBackgroundVisibility(false)
 
@@ -140,18 +164,18 @@ class ProfileFragment : FragmentWithUserObject() {
     }
 
 
-    private fun changeDarkBackgroundVisibility(isVisible:Boolean){
-        if(isVisible){
-            _dimLayout.visibility=View.VISIBLE
+    private fun changeDarkBackgroundVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            _dimLayout.visibility = View.VISIBLE
 
-        }else{
-            _dimLayout.visibility=View.GONE
+        } else {
+            _dimLayout.visibility = View.GONE
         }
     }
 
     private fun showAddProfileToUserWindow() {
         val itemView = LayoutInflater.from(this.context)
-            .inflate(R.layout.add_profile_layout, null)
+            .inflate(R.layout.profile_add_profile_layout, null)
 
         // create pop up window for add profile
         MaterialStyledDialog.Builder(this.context)
@@ -165,7 +189,8 @@ class ProfileFragment : FragmentWithUserObject() {
             .setPositiveText("ADD PROFILE")
             .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
                 val profileName = itemView.findViewById<View>(R.id.profile_name) as MaterialEditText
-                val profileRelation = itemView.findViewById<View>(R.id.profile_relation) as MaterialEditText
+                val profileRelation =
+                    itemView.findViewById<View>(R.id.profile_relation) as MaterialEditText
 
                 when {
                     TextUtils.isEmpty(profileName.text.toString()) -> {
@@ -176,7 +201,11 @@ class ProfileFragment : FragmentWithUserObject() {
                         return@SingleButtonCallback
                     }
                 }
-                _viewModel.addProfileToDB(profileName.text.toString(), _loggedUserObject,profileRelation.text.toString())
+                _viewModel.addProfileToDB(
+                    profileName.text.toString(),
+                    _loggedUserObject,
+                    profileRelation.text.toString()
+                )
             })
             .build()
             .show()
