@@ -29,7 +29,7 @@ import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 import kotlinx.android.synthetic.main.drug_by_name_list_item.*
-import kotlinx.android.synthetic.main.supervisors_activity.*
+import kotlinx.android.synthetic.main.supervisors_main_layout.*
 
 
 class SupervisorsActivity : ActivityWithUserObject() {
@@ -45,7 +45,7 @@ class SupervisorsActivity : ActivityWithUserObject() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initUserObject(intent)
-        setContentView(R.layout.supervisors_activity)
+        setContentView(R.layout.supervisors_main_layout)
         _mRelativeLayout = findViewById(R.id.supervisors_activity_laoyut)
 
         initViews()
@@ -189,6 +189,9 @@ class SupervisorsActivity : ActivityWithUserObject() {
 
         val cancelViewText = customView.findViewById<TextView>(R.id.cancel_remove_supervisor_popup)
         val setViewText = customView.findViewById<TextView>(R.id.remove_supervusor_remove_supervisor_popup)
+        val mailViewText = customView.findViewById<TextView>(R.id.supervisor_mail_remove_popup)
+        mailViewText.text = supervisorEmail+" will be\nremoved from your supervisor list."
+
         cancelViewText.setOnClickListener {
             popup.dismiss()
             changeDarkBackgroundVisibility(false)
@@ -202,21 +205,6 @@ class SupervisorsActivity : ActivityWithUserObject() {
         }
         changeDarkBackgroundVisibility(true)
         popup.showAtLocation(_mRelativeLayout, Gravity.CENTER, 0, 0)
-
-//        // create pop up window for add profile
-//        MaterialStyledDialog.Builder(this)
-//            .setIcon(R.drawable.ic_supervisors)
-//            .setTitle("Remove Supervisor?")
-//            .setDescription(supervisorEmail + " will be removed from your supervisor list.")
-//            .setNegativeText("Cancel")
-//            .onNegative { dialog, _ ->
-//                dialog.dismiss()
-//            }
-//            .setPositiveText("Remove supervisor")
-//            .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
-//            })
-//            .build()
-//            .show()
     }
 
     private fun setMissedThreshold() {

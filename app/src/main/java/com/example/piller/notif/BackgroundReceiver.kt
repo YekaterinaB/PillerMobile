@@ -108,7 +108,8 @@ object BackgroundNotificationScheduler {
             val profileObjectData = profileListBody[i] as JSONObject
             val profileObject = Profile(
                 profileObjectData.getString("id"),
-                profileObjectData.getString("name")
+                profileObjectData.getString("name"),
+                profileObjectData.getString("relation")
             )
             profiles.add(
                 CalendarProfile(

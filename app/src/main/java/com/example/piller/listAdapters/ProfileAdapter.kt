@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
@@ -22,8 +23,9 @@ class ProfileAdapter(
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val profileName: TextView = view.findViewById(R.id.profile_name)
-        val deleteButton: ImageButton = view.findViewById(R.id.delete_profile_button)
+        val profileName: TextView = view.findViewById(R.id.profile_name_profile_item)
+        val relation:TextView = view.findViewById(R.id.profile_relation_profile_item)
+        val deleteButton: ImageView = view.findViewById(R.id.trash_profile_item)
 
         init {
             // Define click listener for the ViewHolder's View.
@@ -38,7 +40,7 @@ class ProfileAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.profile_recycleview_item, viewGroup, false)
+            .inflate(R.layout.profile_item, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -50,14 +52,12 @@ class ProfileAdapter(
         val currentItem = dataSet[position]
         val profileName = currentItem.getProfileName()
         viewHolder.profileName.text = profileName
+        val profileRelation = currentItem.getProfileRelation()
+        viewHolder.relation.text = profileRelation
         viewHolder.itemView.setOnClickListener { clickOnItemListener(dataSet[position].getProfileObject()) }
 
-        // do not add main delete button
-        if (position == 0) {
-            viewHolder.deleteButton.visibility = View.GONE
-        } else {
-            viewHolder.deleteButton.setOnClickListener { clickOnButtonListener(dataSet[position].getProfileObject()) }
-        }
+        viewHolder.deleteButton.setOnClickListener { clickOnButtonListener(dataSet[position].getProfileObject()) }
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)

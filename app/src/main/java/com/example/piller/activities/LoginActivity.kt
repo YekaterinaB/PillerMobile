@@ -94,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
         mainProfileName: String,
         profileId: String
     ): UserObject {
-        val profile = Profile(profileId, mainProfileName)
+        val profile = Profile(profileId, mainProfileName,"main-user")
         //  current profile = main profile
         return UserObject(userId, email, profile, profile)
     }
