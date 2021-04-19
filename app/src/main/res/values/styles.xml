@@ -6,6 +6,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorPrimary</item>
+        <!-- removing toolbar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <!--        <item name="windowNoTitle">false</item>-->
         <!--        <item name="android:windowFullscreen">true</item>-->
     </style>

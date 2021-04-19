@@ -43,7 +43,8 @@ class DrugInfoActivity : ActivityWithUserObject() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drug_info)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //  todo remove this after toolbar is no longer needed
+        //  supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initIntent()
         initViewModels()
         initViews()

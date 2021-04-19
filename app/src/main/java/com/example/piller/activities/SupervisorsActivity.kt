@@ -51,7 +51,6 @@ class SupervisorsActivity : ActivityWithUserObject() {
         initViews()
         initViewModels()
         initObservers()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         setClickListeners()
         initRecyclersAndAdapters()

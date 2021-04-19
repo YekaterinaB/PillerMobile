@@ -65,7 +65,8 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drug_occurrence)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //  todo remove this after toolbar is no longer needed
+        //  supportActionBar?.setDisplayHomeAsUpEnabled(true)
         viewModel = ViewModelProvider(this).get(DrugOccurrenceViewModel::class.java)
         initAllIntentExtras()
         initViews()

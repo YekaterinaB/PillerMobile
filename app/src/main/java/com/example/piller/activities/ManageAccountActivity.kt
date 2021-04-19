@@ -36,7 +36,8 @@ class ManageAccountActivity : ActivityWithUserObject() {
         viewModel.loggedUserEmail.value = _loggedUserObject.email
 
         setContentView(R.layout.activity_manage_account)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //  todo remove this after toolbar is no longer needed
+        //  supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initViews()
         setOnClickListeners()
         setViewModelsObservers()
