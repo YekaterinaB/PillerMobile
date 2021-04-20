@@ -80,14 +80,14 @@
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/supervisor_missed_title_item"
+        app:layout_constraintBottom_toTopOf="@+id/supervisor_missed_title_item_supervisors"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
 
     <include
-        android:id="@+id/supervisor_missed_title_item"
+        android:id="@+id/supervisor_missed_title_item_supervisors"
         layout="@layout/supervisor_missed_occurences_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,87 +1,94 @@
-package com.example.piller.activities
+package com.example.piller.fragments.ProfileFragments
 
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup.LayoutParams
+import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
 import com.example.piller.SnackBar
-import com.example.piller.fragments.ProfileFragment
+import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.listAdapters.SupervisorsAdapter
-import com.example.piller.models.Supervisor
-import com.example.piller.utilities.DbConstants.DEFAULT_SUPERVISOR_THRESHOLD
+import com.example.piller.models.UserObject
 import com.example.piller.viewModels.SupervisorsViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
-import kotlinx.android.synthetic.main.drug_by_name_list_item.*
 import kotlinx.android.synthetic.main.supervisors_main_layout.*
 
-
-class SupervisorsActivity : ActivityWithUserObject() {
-    private lateinit var _viewModel: SupervisorsViewModel
+class SupervisorsFragment : FragmentWithUserObject() {
+    private lateinit var _fragmentView: View
+    private val _viewModel: SupervisorsViewModel by activityViewModels()
     private lateinit var _supervisorAdapter: SupervisorsAdapter
     private lateinit var _supervisorRecycle: RecyclerView
-    private lateinit var _thresholdCount: TextView
-    private lateinit var _supervisorCount: TextView
+    private lateinit var _thresholdCountTv: TextView
+    private lateinit var _supervisorCountTv: TextView
     private lateinit var _dimLayout: RelativeLayout
-    private lateinit var _mRelativeLayout: ConstraintLayout
+    private lateinit var _backButton: ImageView
+    private lateinit var _addNewSupervisorTv: TextView
+    private lateinit var _changeMissedThresholdItem: ConstraintLayout
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initUserObject(intent)
-        setContentView(R.layout.supervisors_main_layout)
-        _mRelativeLayout = findViewById(R.id.supervisors_activity_laoyut)
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _fragmentView = inflater.inflate(R.layout.supervisors_main_layout, container, false)
         initViews()
-        initViewModels()
+        initViewModelData()
         initObservers()
 
         setClickListeners()
         initRecyclersAndAdapters()
+        return _fragmentView
     }
 
+
     private fun initViews() {
-        _thresholdCount = findViewById(R.id.number_of_missed_occur_textview)
-        _supervisorCount = findViewById(R.id.number_of_supervisors_title_item)
-        _dimLayout = findViewById(R.id.supervisor_dim_layout)
+        _thresholdCountTv = _fragmentView.findViewById(R.id.number_of_missed_occur_textview)
+        _supervisorCountTv = _fragmentView.findViewById(R.id.number_of_supervisors_title_item)
+        _dimLayout = _fragmentView.findViewById(R.id.supervisor_dim_layout)
+        _backButton = _fragmentView.findViewById(R.id.go_back_from_supervisors)
+        _addNewSupervisorTv = _fragmentView.findViewById(R.id.add_new_supervisor_tx)
+        _changeMissedThresholdItem = _fragmentView.findViewById(R.id.supervisor_missed_title_item_supervisors)
+
     }
 
     private fun setClickListeners() {
-        go_back_from_supervisors.setOnClickListener{
-            //onPressBack()
+        _backButton.setOnClickListener {
+            onPressBack()
         }
 
-        add_new_supervisor_tx.setOnClickListener {
+        _addNewSupervisorTv.setOnClickListener {
             showAddSupervisorWindow()
         }
-        supervisor_missed_title_item.setOnClickListener {
+        _changeMissedThresholdItem.setOnClickListener {
             setMissedThreshold()
         }
     }
 
     private fun showAddSupervisorWindow() {
-        val itemView = LayoutInflater.from(this)
+        val itemView = LayoutInflater.from(context)
             .inflate(R.layout.supervisor_add_supervisor_layout, null)
 
         // create pop up window for add profile
-        MaterialStyledDialog.Builder(this)
+        MaterialStyledDialog.Builder(context)
             .setIcon(R.drawable.ic_supervisor_eye)
             .setTitle("ADD A NEW SUPERVISOR")
             .setCustomView(itemView)
@@ -99,7 +106,7 @@ class SupervisorsActivity : ActivityWithUserObject() {
                 when {
                     TextUtils.isEmpty(supervisorName.text.toString()) -> {
                         SnackBar.showToastBar(
-                            this,
+                            context,
                             "Supervisor name cannot be empty"
                         )
                         return@SingleButtonCallback
@@ -107,7 +114,7 @@ class SupervisorsActivity : ActivityWithUserObject() {
 
                     TextUtils.isEmpty(supervisorEmail.text.toString()) -> {
                         SnackBar.showToastBar(
-                            this,
+                            context,
                             "Supervisor email cannot be empty"
                         )
                         return@SingleButtonCallback
@@ -125,16 +132,16 @@ class SupervisorsActivity : ActivityWithUserObject() {
 
 
     private fun updateRecyclersAndAdapters() {
-        _supervisorAdapter.setData(_viewModel.mutableSupervisorList.value!!)
+        _supervisorAdapter.setData(_viewModel._mutableSupervisorList.value!!)
         _supervisorAdapter.notifyDataSetChanged()
     }
 
 
     private fun initRecyclersAndAdapters() {
-        _supervisorRecycle = this.findViewById(R.id.supervisors_list_of_items)
+        _supervisorRecycle = _fragmentView.findViewById(R.id.supervisors_list_of_items)
         // initiate list of profiles with recyclers and adapters
-        val supervisorList = _viewModel.mutableSupervisorList.value!!
-        _supervisorRecycle.layoutManager = LinearLayoutManager(this)
+        val supervisorList = _viewModel._mutableSupervisorList.value!!
+        _supervisorRecycle.layoutManager = LinearLayoutManager(context)
         _supervisorAdapter = SupervisorsAdapter(
             supervisorList,
             clickOnDeleteButtonListener = { clickOnDeleteSupervisorButton(it) })
@@ -148,36 +155,35 @@ class SupervisorsActivity : ActivityWithUserObject() {
 
 
     private fun initObservers() {
-        _viewModel.mutableSupervisorThreshold.observe(
-            this,
+        _viewModel._mutableSupervisorThreshold.observe(viewLifecycleOwner,
             Observer { threshold ->
                 threshold?.let {
                     if (this.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         var numberOfMissed =
-                            (_viewModel.mutableSupervisorThreshold.value!!).toString()
+                            (_viewModel._mutableSupervisorThreshold.value!!).toString()
                         if (numberOfMissed == "0") {
                             numberOfMissed = "No"
                         }
-                        _thresholdCount.text = numberOfMissed
+                        _thresholdCountTv.text = numberOfMissed
 
                     }
                 }
             })
 
-        _viewModel.mutableToastError.observe(
-            this,
+        _viewModel._mutableToastError.observe(
+            viewLifecycleOwner,
             Observer { toastMessage ->
                 toastMessage?.let {
-                    SnackBar.showToastBar(this, toastMessage)
+                    SnackBar.showToastBar(context, toastMessage)
                 }
             })
 
-        _viewModel.mutableSupervisorList.observe(
-            this,
+        _viewModel._mutableSupervisorList.observe(
+            viewLifecycleOwner,
             Observer { supervisorList ->
                 supervisorList?.let {
                     updateRecyclersAndAdapters()
-                    _supervisorCount.text = supervisorList.size.toString()
+                    _supervisorCountTv.text = supervisorList.size.toString()
                 }
             })
 
@@ -185,7 +191,11 @@ class SupervisorsActivity : ActivityWithUserObject() {
 
     private fun removeSupervisorPopup(supervisorEmail: String) {
         val customView: View = layoutInflater.inflate(R.layout.supervisors_remove_popup, null)
-        val popup = PopupWindow(customView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        val popup = PopupWindow(
+            customView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
 
         popup.elevation = 5.0f;
 
@@ -208,17 +218,20 @@ class SupervisorsActivity : ActivityWithUserObject() {
 
         }
         changeDarkBackgroundVisibility(true)
-        popup.showAtLocation(_mRelativeLayout, Gravity.CENTER, 0, 0)
+        popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
     }
 
     private fun setMissedThreshold() {
         val customView: View = layoutInflater.inflate(R.layout.supervisor_missed_popup, null)
-        val popup = PopupWindow(customView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        val popup = PopupWindow(
+            customView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         // Set an elevation value for popup window
-        // Call requires API level 21
-        if (Build.VERSION.SDK_INT >= 21) {
-            popup.setElevation(5.0f);
-        }
+
+        popup.elevation = 5.0f;
+
 
         val cancelViewText = customView.findViewById<TextView>(R.id.cancel_missed_popup)
         val setViewText = customView.findViewById<TextView>(R.id.set_missed_popup)
@@ -231,16 +244,16 @@ class SupervisorsActivity : ActivityWithUserObject() {
             cancelViewText, popup, seekBar, setViewText, thresholdCountInPopup
         )
         changeDarkBackgroundVisibility(true)
-        popup.showAtLocation(_mRelativeLayout, Gravity.CENTER, 0, 0)
+        popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
 
     }
 
     private fun updateMissedInPopup(seekBar: IndicatorSeekBar, thresholdCountPopup: TextView) {
-        seekBar.setProgress(_viewModel.mutableSupervisorThreshold.value!!.toFloat())
-        if (_viewModel.mutableSupervisorThreshold.value!! == 0) {
+        seekBar.setProgress(_viewModel._mutableSupervisorThreshold.value!!.toFloat())
+        if (_viewModel._mutableSupervisorThreshold.value!! == 0) {
             thresholdCountPopup.text = "No"
         } else {
-            thresholdCountPopup.text = _viewModel.mutableSupervisorThreshold.value!!.toString()
+            thresholdCountPopup.text = _viewModel._mutableSupervisorThreshold.value!!.toString()
         }
     }
 
@@ -266,7 +279,7 @@ class SupervisorsActivity : ActivityWithUserObject() {
                 if (numberOfMissed == "0") {
                     numberOfMissed = "No"
                 }
-                _thresholdCount.text = numberOfMissed
+                _thresholdCountTv.text = numberOfMissed
                 thresholdCountPopup.text = numberOfMissed
             }
 
@@ -287,28 +300,28 @@ class SupervisorsActivity : ActivityWithUserObject() {
         }
     }
 
-    private fun initViewModels() {
-        _viewModel = ViewModelProvider(this).get(SupervisorsViewModel::class.java)
-        _viewModel.mutableSupervisorList.value = mutableListOf<Supervisor>()
-        _viewModel.mutableSupervisorThreshold.value = DEFAULT_SUPERVISOR_THRESHOLD
+    private fun initViewModelData() {
         _viewModel.getSupervisorsFromDB(_loggedUserObject.userId)
     }
 
+    private fun onPressBack() {
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        if (transaction != null) {
+            transaction.replace(
+                R.id.calender_weekly_container_fragment,
+                ProfileFragment.newInstance(_loggedUserObject)
+            )
+            transaction.disallowAddToBackStack()
+            transaction.commit()
+        }
+    }
 
-//    private fun onPressBack() {
-//        val transaction = activity?.supportFragmentManager?.beginTransaction()
-//        if (transaction != null) {
-//            transaction.replace(
-//                R.id.calender_weekly_container_fragment, ProfileFragment
-//                    .newInstance(_loggedUserObject)
-//            )
-//            transaction.disallowAddToBackStack()
-//            transaction.commit()
-//        }
-//    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
+    companion object {
+        fun newInstance(loggedUser: UserObject) =
+            SupervisorsFragment().apply {
+                arguments = Bundle().apply {
+                    _loggedUserObject = loggedUser
+                }
+            }
     }
 }

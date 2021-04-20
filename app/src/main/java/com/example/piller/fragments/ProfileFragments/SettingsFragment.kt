@@ -1,4 +1,4 @@
-package com.example.piller.fragments
+package com.example.piller.fragments.ProfileFragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,10 +17,10 @@ import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.activities.LoginActivity
+import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.models.UserObject
 import com.example.piller.viewModels.ManageAccountViewModel
 import kotlinx.android.synthetic.main.settings_main_layout.*
-import org.json.JSONObject
 
 class SettingsFragment : FragmentWithUserObject() {
     private lateinit var _viewModel: ManageAccountViewModel
@@ -35,6 +34,8 @@ class SettingsFragment : FragmentWithUserObject() {
     private lateinit var _mainProfileEmailTitle: TextView
     private lateinit var _mainProfileNameTitle: TextView
     private lateinit var _backButton: ImageView
+    private lateinit var _logoutTextView: TextView
+    private lateinit var _deleteAccountTextView: TextView
 
 
     private val _mutableIsValidInfo: MutableLiveData<Boolean> by lazy {
@@ -123,10 +124,10 @@ class SettingsFragment : FragmentWithUserObject() {
             }
         }
 
-        log_out_settings.setOnClickListener {
+        _logoutTextView.setOnClickListener {
             logOut()
         }
-        delete_account_settings.setOnClickListener {
+        _deleteAccountTextView.setOnClickListener {
             confirmationDeleteUser()
         }
 
@@ -169,9 +170,9 @@ class SettingsFragment : FragmentWithUserObject() {
         popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
     }
 
-    private fun createHashtFromPassword(newPassword: String): HashMap<String,String> {
-        val map = hashMapOf<String,String>()
-        map["password"]= newPassword
+    private fun createHashtFromPassword(newPassword: String): HashMap<String, String> {
+        val map = hashMapOf<String, String>()
+        map["password"] = newPassword
         return map
     }
 
@@ -250,6 +251,8 @@ class SettingsFragment : FragmentWithUserObject() {
         _passwordEditText.setText(AppPreferences.password)
 
         _saveTextView = _fragmentView.findViewById(R.id.save_settings)
+        _deleteAccountTextView = _fragmentView.findViewById(R.id.delete_account_settings)
+        _logoutTextView = _fragmentView.findViewById(R.id.log_out_settings)
 
         _showNotificationSW = _fragmentView.findViewById(R.id.ma_show_notifications)
         _showNotificationSW.isChecked = AppPreferences.showNotifications
@@ -266,8 +269,8 @@ class SettingsFragment : FragmentWithUserObject() {
         val transaction = activity?.supportFragmentManager?.beginTransaction()
         if (transaction != null) {
             transaction.replace(
-                R.id.calender_weekly_container_fragment, ProfileFragment
-                    .newInstance(_loggedUserObject)
+                R.id.calender_weekly_container_fragment,
+                ProfileFragment.newInstance(_loggedUserObject)
             )
             transaction.disallowAddToBackStack()
             transaction.commit()
