@@ -145,11 +145,11 @@ class CalendarActivity : ActivityWithUserObject() {
 //                goToAccountManagement()
 //                true
 //            }
-            R.id.menu_help -> {
-                val intent = Intent(this@CalendarActivity, HelpActivity::class.java)
-                startActivity(intent)
-                true
-            }
+//            R.id.menu_help -> {
+//                val intent = Intent(this@CalendarActivity, HelpActivity::class.java)
+//                startActivity(intent)
+//                true
+//            }
             R.id.menu_logout -> {
                 onBackPressed()
                 true

@@ -33,12 +33,6 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activities.HelpActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.CalendarActivity" />
-        </activity>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

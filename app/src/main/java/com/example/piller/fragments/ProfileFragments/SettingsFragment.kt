@@ -36,6 +36,7 @@ class SettingsFragment : FragmentWithUserObject() {
     private lateinit var _backButton: ImageView
     private lateinit var _logoutTextView: TextView
     private lateinit var _deleteAccountTextView: TextView
+    private lateinit var _helpTextView: TextView
 
 
     private val _mutableIsValidInfo: MutableLiveData<Boolean> by lazy {
@@ -133,6 +134,22 @@ class SettingsFragment : FragmentWithUserObject() {
 
         _showNotificationSW.setOnClickListener {
             AppPreferences.showNotifications = _showNotificationSW.isChecked
+        }
+
+        _helpTextView.setOnClickListener {
+            goToHelpFragment()
+        }
+    }
+
+    private fun goToHelpFragment() {
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        if (transaction != null) {
+            transaction.replace(
+                R.id.calender_weekly_container_fragment,
+                HelpFragment.newInstance(_loggedUserObject)
+            )
+            transaction.disallowAddToBackStack()
+            transaction.commit()
         }
     }
 
@@ -263,6 +280,7 @@ class SettingsFragment : FragmentWithUserObject() {
         _mainProfileNameTitle = _fragmentView.findViewById(R.id.profile_name_title_item)
 
         _backButton = _fragmentView.findViewById(R.id.go_back_from_settings)
+        _helpTextView = _fragmentView.findViewById(R.id.help_select_item_in_settings)
     }
 
     private fun onPressBack() {
