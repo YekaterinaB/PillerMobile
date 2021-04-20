@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="false"
-    tools:context="com.example.piller.fragments.DrugByNameFragment">
+    tools:context="com.example.piller.fragments.AddDrugFragments.DrugByNameFragment">
 
     <EditText
         android:id="@+id/nd_drug_search_et"

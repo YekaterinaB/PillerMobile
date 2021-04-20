@@ -29,9 +29,10 @@ object DbConstants {
     //  calendar
     const val CALENDAR_FRAGMENT_ID = "calendar_fragment"
     const val WEEKLY_CALENDAR_FRAGMENT_ID = "weekly_calendar"
+    const val FULL_VIEW_FRAGMENT_ID ="full_view_calendar"
     const val PROFILES_FRAGMENT_ID = "profiles"
     const val DRUGS_FRAGMENT_ID = "drugs"
-    const val FULL_VIEW_FRAGMENT_ID = "full_view"
+    const val ADD_DRUG_FRAGMENT_ID = "add_drug_options"
 
     // calendar events
     const val CALENDAR_EVENT = "Calendar_event"
