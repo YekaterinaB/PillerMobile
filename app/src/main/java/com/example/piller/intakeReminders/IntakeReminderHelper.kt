@@ -37,11 +37,11 @@ object IntakeReminderHelper {
     ): NotificationCompat.Builder {
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
         return NotificationCompat.Builder(context, channelId).apply {
-            setSmallIcon(R.drawable.pill)
+            setSmallIcon(R.drawable.pill_dark_blue)
             setContentTitle("$currentProfile, It's time to take your medicine!")
             setAutoCancel(true)
             // 2
-            val drawable = R.drawable.pill
+            val drawable = R.drawable.pill_dark_blue
             // 3
             setLargeIcon(BitmapFactory.decodeResource(context.resources, drawable))
             setContentText("It's time to take ${drug.drugName}.")
