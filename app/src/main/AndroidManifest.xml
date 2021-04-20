@@ -69,17 +69,17 @@
         <activity android:name=".activities.AddNewDrugActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.CalendarActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.CalendarActivity"
-            android:noHistory="false"
+            android:name=".activities.MainActivity"
+            android:noHistory="true"
             android:parentActivityName=".activities.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.LoginActivity" />
         </activity>
-        <activity android:name=".activities.LoginActivity">
+        <activity android:name=".activities.LoginActivity" android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

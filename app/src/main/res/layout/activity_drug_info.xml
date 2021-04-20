@@ -62,7 +62,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/di_refills_left"
-        app:srcCompat="@drawable/pill" />
+        app:srcCompat="@drawable/pill_dark_blue" />
 
     <TextView
         android:id="@+id/di_refills_left"

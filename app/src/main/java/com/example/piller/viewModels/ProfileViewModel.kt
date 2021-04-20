@@ -17,7 +17,7 @@ import retrofit2.Response
 
 class ProfileViewModel : ViewModel() {
     val mutableListOfProfiles: MutableLiveData<MutableList<CalendarProfile>> by lazy {
-        MutableLiveData<MutableList<CalendarProfile>>()
+        MutableLiveData<MutableList<CalendarProfile>>(mutableListOf<CalendarProfile>())
     }
     val mutableCurrentProfile: MutableLiveData<Profile> by lazy {
         MutableLiveData<Profile>()

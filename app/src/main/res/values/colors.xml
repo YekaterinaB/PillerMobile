@@ -11,5 +11,7 @@
     <color name="statusBarColor">#000000</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="myTextColor">#848484</color>
-    <color name="dotted">#59002a52</color>
+    <color name="shadowEnd">#1e8386a3</color>
+    <color name="shadowCenter">#59002a52</color>
+    <color name="shadowStart">#848484</color>
 </resources>
