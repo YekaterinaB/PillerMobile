@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.accountManagement.AppPreferences
+import com.example.piller.fragments.AddDrugFragments.AddDrugOptionsFragment
 import com.example.piller.fragments.CalendarFragment.CalendarFragment
 import com.example.piller.fragments.FullViewFragment
 import com.example.piller.fragments.ProfileFragments.ProfileFragment
@@ -114,8 +115,8 @@ class MainActivity : ActivityWithUserObject() {
     }
 
     private fun goToAddDrugLayout(){
-        val fullViewFragment = FullViewFragment.newInstance(_loggedUserObject)
-        openFragment(fullViewFragment, DbConstants.FULL_VIEW_FRAGMENT_ID)
+        val addDrugFragment = AddDrugOptionsFragment.newInstance(_loggedUserObject)
+        openFragment(addDrugFragment, DbConstants.ADD_DRUG_FRAGMENT_ID)
         _calendarNav.setImageResource(R.drawable.pill_dark_blue)
         _profileNav.setImageResource(R.drawable.ic_profile_blue)
         _addDrugNav.setImageResource(R.drawable.edit_plus_light_blue)

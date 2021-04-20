@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
-import com.example.piller.fragments.DrugByBoxFragment
-import com.example.piller.fragments.DrugByImageFragment
-import com.example.piller.fragments.DrugByNameFragment
+import com.example.piller.fragments.AddDrugFragments.DrugByBoxFragment
+import com.example.piller.fragments.AddDrugFragments.DrugByImageFragment
+import com.example.piller.fragments.AddDrugFragments.DrugByNameFragment
 import com.example.piller.fragments.InteractionPopupFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.models.DrugObject
