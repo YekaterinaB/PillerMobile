@@ -9,7 +9,7 @@
 
 
     <include
-        android:id="@+id/supervisor_missed_title_item"
+        android:id="@+id/supervisor_missed_title_item_in_missed_popup"
         layout="@layout/supervisor_missed_occurences_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
         app:isb_track_progress_size="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/supervisor_missed_title_item" />
+        app:layout_constraintTop_toBottomOf="@+id/supervisor_missed_title_item_in_missed_popup" />
 
     <TextView
         android:id="@+id/set_missed_popup"

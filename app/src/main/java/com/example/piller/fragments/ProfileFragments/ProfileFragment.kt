@@ -1,12 +1,12 @@
-package com.example.piller.fragments
+package com.example.piller.fragments.ProfileFragments
 
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.listAdapters.ProfileAdapter
 import com.example.piller.models.Profile
 import com.example.piller.models.UserObject
@@ -28,6 +29,7 @@ import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.profile_main_layout.*
 import kotlinx.android.synthetic.main.profile_main_layout.view.*
+import kotlinx.android.synthetic.main.supervisor_title_item.view.*
 
 class ProfileFragment : FragmentWithUserObject() {
     private val _viewModel: ProfileViewModel by activityViewModels()
@@ -35,6 +37,10 @@ class ProfileFragment : FragmentWithUserObject() {
     private lateinit var _profileRecycle: RecyclerView
     private lateinit var _fragmentView: View
     private lateinit var _dimLayout: RelativeLayout
+    private lateinit var _settingsImage: ImageView
+    private lateinit var _supervisorTitle: ConstraintLayout
+    private lateinit var _addNewProfile: TextView
+    private lateinit var _profileTitle: ConstraintLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +62,14 @@ class ProfileFragment : FragmentWithUserObject() {
         val mainProfileNameTv = _fragmentView.findViewById<TextView>(R.id.profile_name_title_item)
         mainProfileEmailTv.text = _loggedUserObject.email
         mainProfileNameTv.text = _loggedUserObject.mainProfile?.name ?: "Main User"
+        //remove number of supervisors
+        _fragmentView.number_of_supervisors_title_item.visibility = View.INVISIBLE
+        _settingsImage = _fragmentView.findViewById(R.id.settings_image_view)
+        _supervisorTitle = _fragmentView.findViewById(R.id.supervisor_title_item_in_profiles)
+        _addNewProfile = _fragmentView.findViewById(R.id.add_new_profile_tx)
+        _profileTitle = _fragmentView.findViewById(R.id.profile_title_item)
+
+
     }
 
     private fun initObservers() {
@@ -99,20 +113,32 @@ class ProfileFragment : FragmentWithUserObject() {
     }
 
     private fun setOnClickListeners() {
-        _fragmentView.supervisor_title_item_in_profiles.setOnClickListener{
-            //gotosupervisorfragemnt
+        _supervisorTitle.setOnClickListener {
+            openSupervisorsFragment()
         }
 
-        _fragmentView.settings_image_view.setOnClickListener {
+        _settingsImage.setOnClickListener {
             openSettingFragment()
         }
 
-        _fragmentView.add_new_profile_tx.setOnClickListener {
+        _addNewProfile.setOnClickListener {
             showAddProfileToUserWindow()
         }
 
-        _fragmentView.profile_title_item.setOnClickListener {
+        _profileTitle.setOnClickListener {
             changeProfile(_loggedUserObject.mainProfile!!)
+        }
+    }
+
+    private fun openSupervisorsFragment() {
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        if (transaction != null) {
+            transaction.replace(
+                R.id.calender_weekly_container_fragment, SupervisorsFragment
+                    .newInstance(_loggedUserObject)
+            )
+            transaction.disallowAddToBackStack()
+            transaction.commit()
         }
     }
 
