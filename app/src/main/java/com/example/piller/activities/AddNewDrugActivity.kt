@@ -206,11 +206,6 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
-
     fun goToAddOccurrenceActivity() {
         val intent = Intent(this, DrugOccurrenceActivity::class.java)
         intent.putExtra(DbConstants.DRUG_OBJECT, _searchViewModel.newDrug.value!!)

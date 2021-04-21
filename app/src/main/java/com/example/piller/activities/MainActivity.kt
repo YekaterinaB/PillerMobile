@@ -151,6 +151,7 @@ class MainActivity : ActivityWithUserObject() {
 
 
     override fun onBackPressed() {
+        //  todo logout user when he presses back?
         //do not log out, just finish all
         val intent = Intent(this@MainActivity, LoginActivity::class.java)
         //AppPreferences.init(this)

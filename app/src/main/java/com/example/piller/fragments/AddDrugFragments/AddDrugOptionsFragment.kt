@@ -46,13 +46,13 @@ class AddDrugOptionsFragment : FragmentWithUserObject() {
         startActivity(intent)
     }
 
-    private fun initViews(){
-        _searchName=_fragmentView.findViewById(R.id.drug_option_name)
-        _searchBox=_fragmentView.findViewById(R.id.drug_option_box)
-        _searchPill=_fragmentView.findViewById(R.id.drug_option_pill)
+    private fun initViews() {
+        _searchName = _fragmentView.findViewById(R.id.drug_option_name)
+        _searchBox = _fragmentView.findViewById(R.id.drug_option_box)
+        _searchPill = _fragmentView.findViewById(R.id.drug_option_pill)
     }
 
-    private fun setOnClickListeners(){
+    private fun setOnClickListeners() {
         _searchName.setOnClickListener {
             showAddNewDrugActivity(DbConstants.DRUG_BY_NAME)
         }
