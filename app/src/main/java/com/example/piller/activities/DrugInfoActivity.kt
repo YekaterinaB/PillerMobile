@@ -33,23 +33,35 @@ class DrugInfoActivity : ActivityWithUserObject() {
     private lateinit var _drugNameTV: TextView
     private lateinit var _drugDosageTV: TextView
     private lateinit var _drugRefillsTV: TextView
+    private lateinit var _drugRefillsIV: ImageView
     private lateinit var _drugIntakeTimeTV: TextView
     private lateinit var _drugTakenCB: CheckBox
+    private lateinit var _drugTakenTV: TextView
+    private lateinit var _drugTakenGreenTV: TextView
+    private lateinit var _deleteBtn: ImageView
+    private lateinit var _editBtn: ImageView
     private lateinit var _drugImageIV: ImageView
+    private lateinit var _backButton: ImageView
+    private lateinit var _backTV: TextView
 
     private lateinit var _calendarEvent: CalendarEvent
     private var _isFromNotification = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme_Dialog)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_drug_info)
-        //  todo remove this after toolbar is no longer needed
-        //  supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setContentView(R.layout.drug_info_layout)
+        setFinishOnTouchOutside(false)
+        setWindowDimensions()
         initIntent()
         initViewModels()
         initViews()
         initObservers()
         initListeners()
+    }
+
+    private fun setWindowDimensions() {
+        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, 1450)
     }
 
     private fun initListeners() {
@@ -61,6 +73,23 @@ class DrugInfoActivity : ActivityWithUserObject() {
                 _drugTakenCB.isChecked, drugObject.taken_id, drugObject.refill.refillId,
                 _calendarEvent.intakeTime.time
             )
+            updateTakenViews()
+        }
+
+        _backButton.setOnClickListener { onBackPressed() }
+        _backTV.setOnClickListener { onBackPressed() }
+
+        _deleteBtn.setOnClickListener { showDeletePopup() }
+        _editBtn.setOnClickListener { showEditPopup() }
+    }
+
+    private fun updateTakenViews() {
+        if (_drugTakenCB.isChecked) {
+            _drugTakenGreenTV.visibility = View.VISIBLE
+            _drugTakenTV.text = getString(R.string.di_un_take)
+        } else {
+            _drugTakenGreenTV.visibility = View.INVISIBLE
+            _drugTakenTV.text = getString(R.string.di_take)
         }
     }
 
@@ -146,15 +175,23 @@ class DrugInfoActivity : ActivityWithUserObject() {
     private fun initViews() {
         _drugNameTV = findViewById(R.id.di_drug_name)
         _drugDosageTV = findViewById(R.id.di_drug_dosage)
-        _drugRefillsTV = findViewById(R.id.di_refills_left)
+        _drugRefillsTV = findViewById(R.id.di_drug_refills_left)
+        _drugRefillsIV = findViewById(R.id.di_drug_refills_left_icon)
         _drugIntakeTimeTV = findViewById(R.id.di_drug_intake_time)
         _drugTakenCB = findViewById(R.id.di_drug_taken)
+        _drugTakenTV = findViewById(R.id.di_drug_taken_text)
+        _drugTakenGreenTV = findViewById(R.id.di_drug_taken_green)
         _drugImageIV = findViewById(R.id.di_drug_image)
+        _backButton = findViewById(R.id.di_toolbar_back_button)
+        _backTV = findViewById(R.id.di_toolbar_title)
+        _deleteBtn = findViewById(R.id.di_delete_btn)
+        _editBtn = findViewById(R.id.di_edit_btn)
 
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
         if (!drugObject.refill.isToNotify) {
             _drugRefillsTV.visibility = View.GONE
+            _drugRefillsIV.visibility = View.GONE
         }
 
         initViewsData()
@@ -166,6 +203,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
         _drugNameTV.text = drugObject.drugName
         setIntakeTimeTextView()
         _drugTakenCB.isChecked = _calendarEvent.isTaken
+        updateTakenViews()
 
         val dosage = "Total Dosage: ${drugObject.dose.totalDose} ${drugObject.dose.measurementType}"
         _drugDosageTV.text = dosage
@@ -234,20 +272,6 @@ class DrugInfoActivity : ActivityWithUserObject() {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.di_menu, menu)
         return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.di_menu_delete -> {
-                showDeletePopup()
-                true
-            }
-            R.id.di_menu_edit -> {
-                showEditPopup()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun goToEditActivity(editOnlyFutureOccurrences: Boolean) {

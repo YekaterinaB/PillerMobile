@@ -53,7 +53,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
 
     private var FABClicked = false
 
-    private lateinit var fragmentView: View
+    private lateinit var _fragmentView: View
     private lateinit var currentCalendarEvent: CalendarEvent
 
     private lateinit var newDrugFAB: FloatingActionButton
@@ -73,8 +73,8 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        fragmentView = inflater.inflate(R.layout.fragment_weekly_calendar, container, false)
-        initViews(fragmentView)
+        _fragmentView = inflater.inflate(R.layout.fragment_weekly_calendar, container, false)
+        initViews(_fragmentView)
         initListeners()
         initObservers()
         weeklyCalendarViewModel.getWeekEvents(
@@ -82,7 +82,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
             profileViewModel.getCurrentProfile()
         )
 
-        return fragmentView
+        return _fragmentView
     }
 
     private fun initObservers() {
@@ -281,7 +281,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (data!!.hasExtra(DbConstants.TAKEN_NEW_VALUE)) {
+        if (data != null && data.hasExtra(DbConstants.TAKEN_NEW_VALUE)) {
             //  update taken status
             val newTakenValue = data.getBooleanExtra(
                 DbConstants.TAKEN_NEW_VALUE,

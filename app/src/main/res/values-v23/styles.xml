@@ -13,6 +13,18 @@
         <item name="windowNoTitle">true</item>
         <!--        <item name="windowNoTitle">false</item>-->
         <!--        <item name="android:windowFullscreen">true</item>-->
+    </style>
+
+    <style name="CustomDialog" parent="@android:style/Theme.Translucent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- custom dialog activity theme -->
+    <style name="AppTheme.Dialog" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize">
+        <!-- removing the dialog's action bar -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

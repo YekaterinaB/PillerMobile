@@ -86,6 +86,8 @@
     <string name="di_drug_name">Drug Name</string>
     <string name="di_menu_delete">Delete</string>
     <string name="di_menu_edit">Edit</string>
+    <string name="di_take">Take</string>
+    <string name="di_un_take">Un-take</string>
 
     <string name="action_notify_medication">It\'s time to take your medicine!</string>
     <string name="action_refill_reminder">It\'s time to refill your medicine!</string>
@@ -119,5 +121,9 @@
     <string name="wdi_intake_status">Intake Status</string>
     <string name="wdc_day">Day</string>
     <string name="wdc_day_number">15</string>
+    <string name="di_edit">Edit</string>
+    <string name="di_delete">Delete</string>
+    <string name="di_taken">Taken</string>
+    <string name="di_schedule">Schedule</string>
 
 </resources>

@@ -64,7 +64,10 @@
         <receiver android:name=".refillReminders.RefillReminderReceiver" />
         <receiver android:name=".intakeReminders.IntakeReminderReceiver" />
 
-        <activity android:name=".activities.DrugInfoActivity" />
+        <activity
+            android:name=".activities.DrugInfoActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/CustomDialog" />
         <activity
             android:name=".activities.DrugOccurrenceActivity"
             android:parentActivityName=".activities.AddNewDrugActivity">

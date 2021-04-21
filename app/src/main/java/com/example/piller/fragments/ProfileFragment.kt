@@ -25,7 +25,6 @@ import com.example.piller.models.UserObject
 import com.example.piller.viewModels.ProfileViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
-import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.profile_main_layout.*
 import kotlinx.android.synthetic.main.profile_main_layout.view.*
 
