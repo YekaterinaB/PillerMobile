@@ -1,19 +1,25 @@
 package com.example.piller.fragments.AddDrugFragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.activityViewModels
 import com.example.piller.R
+import com.example.piller.activities.AddNewDrugActivity
 import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.models.UserObject
+import com.example.piller.utilities.DbConstants
+import com.example.piller.viewModels.WeeklyCalendarViewModel
 
 class AddDrugOptionsFragment : FragmentWithUserObject() {
     private lateinit var _fragmentView: View
     private lateinit var _searchName: ConstraintLayout
     private lateinit var _searchBox: ConstraintLayout
     private lateinit var _searchPill: ConstraintLayout
+    private val _weeklyCalendarViewModel: WeeklyCalendarViewModel by activityViewModels()
 
 
     override fun onCreateView(
@@ -29,6 +35,17 @@ class AddDrugOptionsFragment : FragmentWithUserObject() {
         return _fragmentView
     }
 
+    /**
+     * @fragmentID: says which fragment AddNewDrugActivity should show
+     */
+    private fun showAddNewDrugActivity(addType: String) {
+        val intent = Intent(activity, AddNewDrugActivity::class.java)
+        intent.putExtra(DbConstants.ADD_DRUG_TYPE, addType)
+        putLoggedUserObjectInIntent(intent)
+        intent.putExtra(DbConstants.CALENDAR_ID, _weeklyCalendarViewModel.calendarId)
+        startActivity(intent)
+    }
+
     private fun initViews(){
         _searchName=_fragmentView.findViewById(R.id.drug_option_name)
         _searchBox=_fragmentView.findViewById(R.id.drug_option_box)
@@ -37,42 +54,19 @@ class AddDrugOptionsFragment : FragmentWithUserObject() {
 
     private fun setOnClickListeners(){
         _searchName.setOnClickListener {
-//            val transaction = activity?.supportFragmentManager?.beginTransaction()
-//            if (transaction != null) {
-//                transaction.replace(
-//                    R.id.calender_weekly_container_fragment, DrugByNameFragment
-//                        .newInstance(_loggedUserObject)
-//                )
-//                transaction.disallowAddToBackStack()
-//                transaction.commit()
-//            }
+            showAddNewDrugActivity(DbConstants.DRUG_BY_NAME)
         }
 
         _searchBox.setOnClickListener {
-//            val transaction = activity?.supportFragmentManager?.beginTransaction()
-//            if (transaction != null) {
-//                transaction.replace(
-//                    R.id.calender_weekly_container_fragment, DrugByBoxFragment
-//                        .newInstance(_loggedUserObject)
-//                )
-//                transaction.disallowAddToBackStack()
-//                transaction.commit()
-//            }
+            showAddNewDrugActivity(DbConstants.DRUG_BY_BOX)
+
         }
 
         _searchPill.setOnClickListener {
-//            val transaction = activity?.supportFragmentManager?.beginTransaction()
-//            if (transaction != null) {
-//                transaction.replace(
-//                    R.id.calender_weekly_container_fragment, DrugByImageFragment
-//                        .newInstance(_loggedUserObject)
-//                )
-//                transaction.disallowAddToBackStack()
-//                transaction.commit()
-//            }
+            showAddNewDrugActivity(DbConstants.DRUG_BY_PILL)
+
         }
     }
-
 
     companion object {
         fun newInstance(loggedUser: UserObject) =

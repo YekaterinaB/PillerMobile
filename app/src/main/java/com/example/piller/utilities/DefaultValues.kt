@@ -43,7 +43,7 @@ object DbConstants {
 
     //  adding drugs
     const val DRUG_BY_NAME = "add_drug_by_name"
-    const val DRUG_BY_CAMERA = "add_drug_by_camera"
+    const val DRUG_BY_PILL = "add_drug_by_pill"
     const val DRUG_BY_BOX = "add_drug_by_box"
     const val DRUG_OCCURRENCE = "add_drug_occurrence"
     const val DRUG_RESULT_NAME = "add_drug_result_name"

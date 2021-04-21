@@ -1,4 +1,4 @@
-package com.example.piller.fragments
+package com.example.piller.fragments.AddDrugFragments
 
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod

@@ -18,28 +18,28 @@ import com.example.piller.SnackBar
 import com.example.piller.fragments.AddDrugFragments.DrugByBoxFragment
 import com.example.piller.fragments.AddDrugFragments.DrugByImageFragment
 import com.example.piller.fragments.AddDrugFragments.DrugByNameFragment
-import com.example.piller.fragments.InteractionPopupFragment
+import com.example.piller.fragments.AddDrugFragments.InteractionPopupFragment
 import com.example.piller.listAdapters.NewDrugByNameAdapter
 import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugSearchViewModel
 
 class AddNewDrugActivity : ActivityWithUserObject() {
-    private lateinit var searchViewModel: DrugSearchViewModel
-    private lateinit var drugOptionsList: RecyclerView
-    private lateinit var loadingScreen: RelativeLayout
-    private lateinit var selectDrugAnywayBtn: Button
+    private lateinit var _searchViewModel: DrugSearchViewModel
+    private lateinit var _drugOptionsList: RecyclerView
+    private lateinit var _loadingScreen: RelativeLayout
+    private lateinit var _selectDrugAnywayBtn: Button
     private lateinit var _toolbarTitle: TextView
     private lateinit var _toolbarBackBtn: ImageButton
-    private lateinit var drugAdapter: NewDrugByNameAdapter
-    private lateinit var addType: String
-    private lateinit var drugSearchNoResult: String
+    private lateinit var _drugAdapter: NewDrugByNameAdapter
+    private lateinit var _addType: String
+    private lateinit var _drugSearchNoResult: String
     private var _isSearchingByName = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
+        _addType = intent.getStringExtra(DbConstants.ADD_DRUG_TYPE)!!
         initUserObject(intent)
         val calendarId = intent.getStringExtra(DbConstants.CALENDAR_ID)!!
         initViewModels(calendarId)
@@ -48,18 +48,18 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         initListeners()
         initRecyclersAndAdapters()
         initObservers()
-        selectFragment(savedInstanceState, addType)
+        selectFragment(savedInstanceState, _addType)
     }
 
     private fun initListeners() {
-        selectDrugAnywayBtn.setOnClickListener {
-            if (searchViewModel.drugSearchNoResult.value != null) {
+        _selectDrugAnywayBtn.setOnClickListener {
+            if (_searchViewModel.drugSearchNoResult.value != null) {
                 //  no need to show interaction
-                searchViewModel.newDrug.value =
+                _searchViewModel.newDrug.value =
                     DrugObject(
                         "", //  drugid is empty because it's a new drug and we didn't save it in db
-                        searchViewModel.calendarId,
-                        searchViewModel.drugSearchNoResult.value!!,
+                        _searchViewModel.calendarId,
+                        _searchViewModel.drugSearchNoResult.value!!,
                         0
                     )
                 goToAddOccurrenceActivity()
@@ -79,13 +79,13 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     }
 
     private fun initViewModels(calendarId: String) {
-        searchViewModel = ViewModelProvider(this).get(DrugSearchViewModel::class.java)
-        searchViewModel.calendarId = calendarId
+        _searchViewModel = ViewModelProvider(this).get(DrugSearchViewModel::class.java)
+        _searchViewModel.calendarId = calendarId
     }
 
     private fun selectFragment(savedInstanceState: Bundle?, fragmentID: String) {
         when (fragmentID) {
-            DbConstants.DRUG_BY_CAMERA -> {
+            DbConstants.DRUG_BY_PILL -> {
                 _isSearchingByName = false
                 val drugByImageFragment = DrugByImageFragment.newInstance()
                 initializeFragment(savedInstanceState, drugByImageFragment)
@@ -118,7 +118,7 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     }
 
     private fun initObservers() {
-        searchViewModel.addedDrugSuccess.observe(
+        _searchViewModel.addedDrugSuccess.observe(
             this,
             Observer {
                 //  added drug successfully, close activity
@@ -127,36 +127,36 @@ class AddNewDrugActivity : ActivityWithUserObject() {
                 }
             })
 
-        searchViewModel.showLoadingScreen.observe(
+        _searchViewModel.showLoadingScreen.observe(
             this,
             Observer {
                 if (it) {
-                    loadingScreen.animate().alpha(1.0F).duration = 500
-                    loadingScreen.visibility = View.VISIBLE
+                    _loadingScreen.animate().alpha(1.0F).duration = 500
+                    _loadingScreen.visibility = View.VISIBLE
                 } else {
-                    loadingScreen.visibility = View.GONE
+                    _loadingScreen.visibility = View.GONE
                 }
             })
 
-        searchViewModel.drugsSearchResult.observe(this, Observer {
+        _searchViewModel.drugsSearchResult.observe(this, Observer {
             if (_isSearchingByName) {
-                selectDrugAnywayBtn.visibility = View.VISIBLE
+                _selectDrugAnywayBtn.visibility = View.VISIBLE
             }
             updateRecyclersAndAdapters()
             setButtonsEnabled(true)
         })
 
-        searchViewModel.drugSearchNoResult.observe(this, Observer {
+        _searchViewModel.drugSearchNoResult.observe(this, Observer {
             if (it.isNotEmpty()) {
-                drugSearchNoResult = it
+                _drugSearchNoResult = it
             }
         })
 
-        searchViewModel.snackBarMessage.observe(this, Observer { message ->
+        _searchViewModel.snackBarMessage.observe(this, Observer { message ->
             SnackBar.showToastBar(this, message)
         })
 
-        searchViewModel.drugsInteractionResult.observe(this, Observer {
+        _searchViewModel.drugsInteractionResult.observe(this, Observer {
             if (it.isNotBlank()) {
                 //go to fragment with the interactions
                 val popupInteraction: InteractionPopupFragment =
@@ -171,38 +171,38 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     }
 
     private fun initViews() {
-        selectDrugAnywayBtn = findViewById(R.id.nd_select_anyway_btn)
-        loadingScreen = findViewById(R.id.loading_screen)
+        _selectDrugAnywayBtn = findViewById(R.id.nd_select_anyway_btn)
+        _loadingScreen = findViewById(R.id.loading_screen)
         _toolbarTitle = findViewById(R.id.nd_toolbar_title)
         _toolbarBackBtn = findViewById(R.id.nd_toolbar_back_button)
     }
 
     private fun updateRecyclersAndAdapters() {
-        searchViewModel.drugsSearchResult.value?.let { drugAdapter.setData(it) }
-        drugAdapter.notifyDataSetChanged()
+        _searchViewModel.drugsSearchResult.value?.let { _drugAdapter.setData(it) }
+        _drugAdapter.notifyDataSetChanged()
     }
 
     private fun initRecyclersAndAdapters() {
-        drugOptionsList = findViewById(R.id.nd_drug_options_list)
-        drugOptionsList.layoutManager = LinearLayoutManager(this)
-        drugAdapter = NewDrugByNameAdapter(
+        _drugOptionsList = findViewById(R.id.nd_drug_options_list)
+        _drugOptionsList.layoutManager = LinearLayoutManager(this)
+        _drugAdapter = NewDrugByNameAdapter(
             mutableListOf(),
             clickOnItemListener = { drug -> clickOnDrug(drug) })
 
-        drugOptionsList.adapter = drugAdapter
+        _drugOptionsList.adapter = _drugAdapter
     }
 
     private fun clickOnDrug(rxcui: Int) {
-        val drug = searchViewModel.getDrugByRxcui(rxcui)
+        val drug = _searchViewModel.getDrugByRxcui(rxcui)
         if (drug != null) {
-            searchViewModel.newDrug.value = drug
-            searchViewModel.getInteractionList(_loggedUserObject, drug.rxcui)
+            _searchViewModel.newDrug.value = drug
+            _searchViewModel.getInteractionList(_loggedUserObject, drug.rxcui)
         }
     }
 
     fun setButtonsEnabled(enabled: Boolean) {
         if (_isSearchingByName) {
-            selectDrugAnywayBtn.isEnabled = enabled
+            _selectDrugAnywayBtn.isEnabled = enabled
         }
     }
 
@@ -213,7 +213,7 @@ class AddNewDrugActivity : ActivityWithUserObject() {
 
     fun goToAddOccurrenceActivity() {
         val intent = Intent(this, DrugOccurrenceActivity::class.java)
-        intent.putExtra(DbConstants.DRUG_OBJECT, searchViewModel.newDrug.value!!)
+        intent.putExtra(DbConstants.DRUG_OBJECT, _searchViewModel.newDrug.value!!)
         putLoggedUserObjectInIntent(intent)
         startActivity(intent)
     }

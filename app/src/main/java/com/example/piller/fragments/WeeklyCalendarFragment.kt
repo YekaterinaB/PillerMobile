@@ -32,22 +32,22 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class WeeklyCalendarFragment : FragmentWithUserObject() {
-    private val weeklyCalendarViewModel: WeeklyCalendarViewModel by activityViewModels()
-    private val profileViewModel: ProfileViewModel by activityViewModels()
+    private val _weeklyCalendarViewModel: WeeklyCalendarViewModel by activityViewModels()
+    private val _profileViewModel: ProfileViewModel by activityViewModels()
 
     private val DRUG_INFO_INTENT_ID = 1
 
     // add drug animation
-    private val rotateOpen: Animation by lazy {
+    private val _rotateOpen: Animation by lazy {
         AnimationUtils.loadAnimation(this.context, R.anim.rotate_open_anim)
     }
-    private val rotateClose: Animation by lazy {
+    private val _rotateClose: Animation by lazy {
         AnimationUtils.loadAnimation(this.context, R.anim.rotate_close_anim)
     }
-    private val fromBottom: Animation by lazy {
+    private val _fromBottom: Animation by lazy {
         AnimationUtils.loadAnimation(this.context, R.anim.from_bottom_anim)
     }
-    private val toBottom: Animation by lazy {
+    private val _toBottom: Animation by lazy {
         AnimationUtils.loadAnimation(this.context, R.anim.to_botton_anim)
     }
 
@@ -77,16 +77,16 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         initViews(_fragmentView)
         initListeners()
         initObservers()
-        weeklyCalendarViewModel.getWeekEvents(
+        _weeklyCalendarViewModel.getWeekEvents(
             _loggedUserObject,
-            profileViewModel.getCurrentProfile()
+            _profileViewModel.getCurrentProfile()
         )
 
         return _fragmentView
     }
 
     private fun initObservers() {
-        weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.observe(
+        _weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.observe(
             viewLifecycleOwner,
             Observer { calendar ->
                 calendar?.let {
@@ -94,12 +94,12 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
                         //update view
                         updateRecyclersAndAdapters()
                         //update current profile calendar
-                        profileViewModel.changeCalendarForCurrentProfile(it)
+                        _profileViewModel.changeCalendarForCurrentProfile(it)
                     }
                 }
             })
 
-        weeklyCalendarViewModel.mutableToastError.observe(
+        _weeklyCalendarViewModel.mutableToastError.observe(
             viewLifecycleOwner,
             Observer { toastMessage ->
                 toastMessage?.let {
@@ -110,19 +110,19 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
                 }
             })
 
-        weeklyCalendarViewModel.mutableDeleteSuccess.observe(
+        _weeklyCalendarViewModel.mutableDeleteSuccess.observe(
             viewLifecycleOwner,
             Observer { deleteSuccess ->
                 if (deleteSuccess) {
                     //update view
                     updateRecyclersAndAdapters()
-                    weeklyCalendarViewModel.mutableDeleteSuccess.value = false
+                    _weeklyCalendarViewModel.mutableDeleteSuccess.value = false
                 }
             })
     }
 
     private fun updateRecyclersAndAdapters() {
-        daysAdapter.setCalendarEventDataSet(weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value!!)
+        daysAdapter.setCalendarEventDataSet(_weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value!!)
         daysContainer.smoothScrollToPosition(DateUtils.getDayOfWeekNumber() - 1)
         daysAdapter.notifyDataSetChanged()
     }
@@ -150,7 +150,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         }
 
         newDrugCameraFAB.setOnClickListener {
-            showAddNewDrugActivity(DbConstants.DRUG_BY_CAMERA)
+            showAddNewDrugActivity(DbConstants.DRUG_BY_PILL)
         }
 
         newDrugBoxFAB.setOnClickListener {
@@ -173,7 +173,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         val intent = Intent(activity, AddNewDrugActivity::class.java)
         intent.putExtra(DbConstants.ADD_DRUG_TYPE, addType)
         putLoggedUserObjectInIntent(intent)
-        intent.putExtra(DbConstants.CALENDAR_ID, weeklyCalendarViewModel.calendarId)
+        intent.putExtra(DbConstants.CALENDAR_ID, _weeklyCalendarViewModel.calendarId)
         startActivity(intent)
     }
 
@@ -219,21 +219,21 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
 
     private fun setFABAnimation(clicked: Boolean) {
         if (!clicked) {
-            newDrugBoxFAB.startAnimation(fromBottom)
-            newDrugCameraFAB.startAnimation(fromBottom)
-            newDrugCameraLabel.startAnimation(fromBottom)
-            newDrugNameFAB.startAnimation(fromBottom)
-            newDrugBoxLabel.startAnimation(fromBottom)
-            newDrugNameLabel.startAnimation(fromBottom)
-            newDrugFAB.startAnimation(rotateOpen)
+            newDrugBoxFAB.startAnimation(_fromBottom)
+            newDrugCameraFAB.startAnimation(_fromBottom)
+            newDrugCameraLabel.startAnimation(_fromBottom)
+            newDrugNameFAB.startAnimation(_fromBottom)
+            newDrugBoxLabel.startAnimation(_fromBottom)
+            newDrugNameLabel.startAnimation(_fromBottom)
+            newDrugFAB.startAnimation(_rotateOpen)
         } else {
-            newDrugBoxFAB.startAnimation(toBottom)
-            newDrugCameraFAB.startAnimation(toBottom)
-            newDrugCameraLabel.startAnimation(toBottom)
-            newDrugNameFAB.startAnimation(toBottom)
-            newDrugNameLabel.startAnimation(toBottom)
-            newDrugBoxLabel.startAnimation(toBottom)
-            newDrugFAB.startAnimation(rotateClose)
+            newDrugBoxFAB.startAnimation(_toBottom)
+            newDrugCameraFAB.startAnimation(_toBottom)
+            newDrugCameraLabel.startAnimation(_toBottom)
+            newDrugNameFAB.startAnimation(_toBottom)
+            newDrugNameLabel.startAnimation(_toBottom)
+            newDrugBoxLabel.startAnimation(_toBottom)
+            newDrugFAB.startAnimation(_rotateClose)
         }
     }
 
@@ -266,7 +266,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
     }
 
     private fun initWeeklyDaysContainer() {
-        val weeklyEvents = profileViewModel.getCurrentProfile().getWeeklyCalendar()
+        val weeklyEvents = _profileViewModel.getCurrentProfile().getWeeklyCalendar()
         val weekDaysDates = DateUtils.getDayNumberForCurrentWeek()
         val dayOfWeekString = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         val daysData = mutableListOf<WeeklyDay>()
@@ -296,10 +296,10 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         if (requestCode == DRUG_INFO_INTENT_ID) {
             when (resultCode) {
                 Activity.RESULT_OK -> {
-                    weeklyCalendarViewModel.deleteDrug(currentCalendarEvent)
+                    _weeklyCalendarViewModel.deleteDrug(currentCalendarEvent)
                 }
                 DbConstants.REMOVE_DRUG_FUTURE -> {
-                    weeklyCalendarViewModel.deleteFutureDrug(currentCalendarEvent)
+                    _weeklyCalendarViewModel.deleteFutureDrug(currentCalendarEvent)
                 }
             }
         }
