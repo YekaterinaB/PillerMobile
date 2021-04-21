@@ -1,8 +1,6 @@
 package com.example.piller.activities
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -14,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.piller.DrugMap
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.fragments.DrugBottomDialogFragment
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DateUtils
@@ -80,6 +79,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
         _backTV.setOnClickListener { onBackPressed() }
 
         _deleteBtn.setOnClickListener { showDeletePopup() }
+
         _editBtn.setOnClickListener { showEditPopup() }
     }
 
@@ -289,33 +289,18 @@ class DrugInfoActivity : ActivityWithUserObject() {
     private fun showDeletePopup() {
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle("Are you sure you want to delete this drug?")
-        builder.setItems(arrayOf<CharSequence>(
-            "Delete all occurrences",
-            "Delete this and future occurrences",
-            "cancel"
-        ),
-            DialogInterface.OnClickListener { _, which ->
-                when (which) {
-                    //  delete all occurrences
-                    0 -> _viewModel.deleteAllOccurrencesOfDrug(
-                        _loggedUserObject,
-                        drug = drugObject,
-                        context = this
-                    )
-
-                    //  delete future occurrences
-                    1 -> {
-                        deleteFutureOccurrences(drugObject)
-                    }
-
-                    else -> {
-                        return@OnClickListener
-                    }
-                }
-            })
-        builder.create().show()
+        DrugBottomDialogFragment(
+            "Are you sure you want to delete this drug?",
+            listOf("Delete all occurrences", "Delete this and future occurrences"),
+            clickOnFirstButtonListener = {
+                _viewModel.deleteAllOccurrencesOfDrug(
+                    _loggedUserObject, drug = drugObject, context = this
+                )
+            },
+            clickOnSecondButtonListener = { deleteFutureOccurrences(drugObject) }
+        ).apply {
+            show(supportFragmentManager, DrugBottomDialogFragment.TAG)
+        }
     }
 
     private fun deleteFutureOccurrences(drugObject: DrugObject) {
@@ -334,32 +319,16 @@ class DrugInfoActivity : ActivityWithUserObject() {
     private fun showEditPopup() {
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle("Edit")
-        builder.setItems(arrayOf<CharSequence>(
-            "Edit all occurrences",
-            "Edit this and future occurrences",
-            "cancel"
-        ),
-            DialogInterface.OnClickListener { _, which ->
-                when (which) {
-                    //  edit all occurrences
-                    0 -> {
-                        goToEditActivity(true)
-                    }
-
-                    //  edit future occurrences
-                    1 -> {
-                        deleteFutureOccurrences(drugObject)
-                        //  todo wait for it to end?
-                        goToEditActivity(false)
-                    }
-
-                    else -> {
-                        return@OnClickListener
-                    }
-                }
-            })
-        builder.create().show()
+        DrugBottomDialogFragment(
+            "Edit",
+            listOf("Edit all occurrences", "Edit this and future occurrences"),
+            clickOnFirstButtonListener = { goToEditActivity(true) },
+            clickOnSecondButtonListener = {
+                deleteFutureOccurrences(drugObject)
+                goToEditActivity(true)
+            }
+        ).apply {
+            show(supportFragmentManager, DrugBottomDialogFragment.TAG)
+        }
     }
 }
