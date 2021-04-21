@@ -209,6 +209,10 @@ class DrugInfoActivity : ActivityWithUserObject() {
         _drugDosageTV.text = dosage
 
         updateMedsLeft(drugObject.refill.pillsLeft)
+        if (_isFromNotification) {
+            _backTV.visibility = View.GONE
+            _backButton.setImageResource(R.drawable.ic_x_blue)
+        }
     }
 
     private fun updateMedsLeft(currentMeds: Int) {
@@ -258,7 +262,8 @@ class DrugInfoActivity : ActivityWithUserObject() {
             setTakenStatusResult()
             super.onBackPressed()
         } else {
-            goToCalendarActivity()
+            finish()
+//            goToCalendarActivity()
         }
     }
 
