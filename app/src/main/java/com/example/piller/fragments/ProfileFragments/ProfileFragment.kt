@@ -6,10 +6,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.PopupWindow
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -52,6 +49,7 @@ class ProfileFragment : FragmentWithUserObject() {
         setOnClickListeners()
         initRecyclersAndAdapters()
         initObservers()
+        updateCurrentProfile(_loggedUserObject.currentProfile!!)
         return _fragmentView
     }
 
@@ -68,7 +66,6 @@ class ProfileFragment : FragmentWithUserObject() {
         _supervisorTitle = _fragmentView.findViewById(R.id.supervisor_title_item_in_profiles)
         _addNewProfile = _fragmentView.findViewById(R.id.add_new_profile_tx)
         _profileTitle = _fragmentView.findViewById(R.id.profile_title_item)
-
 
     }
 
@@ -107,10 +104,12 @@ class ProfileFragment : FragmentWithUserObject() {
         _profileRecycle.layoutManager = LinearLayoutManager(_fragmentView.context)
         _profileAdapter = ProfileAdapter(
             profileList,
-            clickOnItemListener = { changeProfile(it) },
+            _loggedUserObject.currentProfile!!.name,
+            clickOnItemListener = { updateCurrentProfile(it) },
             clickOnButtonListener = { removeProfilePopup(it) })
         _profileRecycle.adapter = _profileAdapter
     }
+
 
     private fun setOnClickListeners() {
         _supervisorTitle.setOnClickListener {
@@ -126,7 +125,7 @@ class ProfileFragment : FragmentWithUserObject() {
         }
 
         _profileTitle.setOnClickListener {
-            changeProfile(_loggedUserObject.mainProfile!!)
+            updateCurrentProfile(_loggedUserObject.mainProfile!!)
         }
     }
 
@@ -154,9 +153,19 @@ class ProfileFragment : FragmentWithUserObject() {
         }
     }
 
-    private fun changeProfile(profile: Profile) {
+
+    private fun updateCurrentProfile(profile: Profile) {
         _viewModel.setCurrentProfile(profile)
+        if (profile.name == _loggedUserObject.mainProfile!!.name) {
+            _profileTitle.setBackgroundResource(R.drawable.rounded_shape_green_edge)
+        } else {
+            _profileTitle.setBackgroundResource(R.drawable.rounded_shape_edit_text)
+
+        }
+        _profileAdapter.updateCurrentProfile(profile.name)
+        _profileAdapter.notifyDataSetChanged()
     }
+
 
     private fun removeProfilePopup(profile: Profile) {
         val customView: View = layoutInflater.inflate(R.layout.profile_remove_popup, null)
@@ -165,8 +174,6 @@ class ProfileFragment : FragmentWithUserObject() {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-
-        popup.elevation = 5.0f;
 
 
         val cancelViewText = customView.findViewById<TextView>(R.id.cancel_remove_profile_popup)
@@ -181,6 +188,7 @@ class ProfileFragment : FragmentWithUserObject() {
 
         removeViewText.setOnClickListener {
             _viewModel.deleteOneProfile(_loggedUserObject.userId, profile)
+            updateCurrentProfile(_loggedUserObject.mainProfile!!)
             popup.dismiss()
             changeDarkBackgroundVisibility(false)
 
@@ -205,7 +213,6 @@ class ProfileFragment : FragmentWithUserObject() {
 
         // create pop up window for add profile
         MaterialStyledDialog.Builder(this.context)
-            .setIcon(R.drawable.ic_profile_blue)
             .setTitle("ADD A NEW PROFILE")
             .setCustomView(itemView)
             .setNegativeText("CANCEL")

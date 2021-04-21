@@ -13,6 +13,7 @@ import com.example.piller.models.Profile
 
 class ProfileAdapter(
     private var dataSet: MutableList<CalendarProfile>,
+    private var currentProfile:String,
     private val clickOnItemListener: (Profile) -> Unit,
     private val clickOnButtonListener: (Profile) -> Unit
 ) :
@@ -27,9 +28,6 @@ class ProfileAdapter(
         val relation:TextView = view.findViewById(R.id.profile_relation_profile_item)
         val deleteButton: ImageView = view.findViewById(R.id.trash_profile_item)
 
-        init {
-            // Define click listener for the ViewHolder's View.
-        }
     }
 
     fun setData(data: MutableList<CalendarProfile>) {
@@ -45,6 +43,11 @@ class ProfileAdapter(
         return ViewHolder(view)
     }
 
+    fun updateCurrentProfile(profile:String){
+            currentProfile=profile
+
+    }
+
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
@@ -54,7 +57,15 @@ class ProfileAdapter(
         viewHolder.profileName.text = profileName
         val profileRelation = currentItem.getProfileRelation()
         viewHolder.relation.text = profileRelation
-        viewHolder.itemView.setOnClickListener { clickOnItemListener(dataSet[position].getProfileObject()) }
+
+        if(currentProfile == profileName){
+            viewHolder.itemView.setBackgroundResource(R.drawable.rounded_shape_green_edge)
+        }else{
+            viewHolder.itemView.setBackgroundResource(R.drawable.rounded_shape_edit_text)
+        }
+
+        viewHolder.itemView.setOnClickListener {
+            clickOnItemListener(dataSet[position].getProfileObject()) }
 
         viewHolder.deleteButton.setOnClickListener { clickOnButtonListener(dataSet[position].getProfileObject()) }
 

@@ -33,10 +33,6 @@ class ProfileViewModel : ViewModel() {
         return mutableCurrentProfile.value!!.name
     }
 
-    fun getCurrentEmail(): String {
-        return loggedEmail
-    }
-
 
     fun getListOfProfiles(): MutableList<CalendarProfile> {
         return mutableListOfProfiles.value!!
@@ -147,6 +143,7 @@ class ProfileViewModel : ViewModel() {
         }
         deleteProfileFromProfileList(profile.profileId)
         deleteProfileFromDB(userId,profile.profileId)
+
     }
 
     private fun deleteProfileFromDB(userId:String, profileId: String) {
