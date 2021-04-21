@@ -21,7 +21,7 @@ class WeeklyCalendarViewModel : ViewModel() {
     private val eventInterpreter = EventInterpreter()
     lateinit var calendarId: String
     val mutableCurrentWeeklyCalendar: MutableLiveData<Array<MutableList<CalendarEvent>>> by lazy {
-        MutableLiveData<Array<MutableList<CalendarEvent>>>()
+        MutableLiveData<Array<MutableList<CalendarEvent>>>(Array(7) { mutableListOf<CalendarEvent>() })
     }
 
     val mutableToastError: MutableLiveData<String> by lazy {

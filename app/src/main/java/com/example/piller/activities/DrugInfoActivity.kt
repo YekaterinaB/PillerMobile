@@ -239,7 +239,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
     }
 
     private fun goToCalendarActivity() {
-        val intent = Intent(this@DrugInfoActivity, CalendarActivity::class.java)
+        val intent = Intent(this@DrugInfoActivity, MainActivity::class.java)
         putLoggedUserObjectInIntent(intent)
         startActivity(intent)
     }

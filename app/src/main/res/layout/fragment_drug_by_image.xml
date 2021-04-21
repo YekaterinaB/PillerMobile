@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.piller.fragments.DrugByImageFragment">
+    tools:context="com.example.piller.fragments.AddDrugFragments.DrugByImageFragment">
 
     <Button
         android:id="@+id/dbi_take_picture_btn"
@@ -22,7 +22,7 @@
         android:layout_marginTop="32dp"
         android:contentDescription="@string/dbi_drug_image"
         android:scaleType="centerCrop"
-        android:src="@drawable/pill"
+        android:src="@drawable/pill_dark_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

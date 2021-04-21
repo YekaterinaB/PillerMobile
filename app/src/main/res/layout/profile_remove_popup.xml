@@ -4,7 +4,8 @@
     android:id="@+id/remove_profile"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:elevation="3dp">
 
     <TextView
         android:id="@+id/remove_profile_title_popup"

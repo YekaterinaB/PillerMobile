@@ -21,7 +21,7 @@ class HelpAdapter(private var dataSet: MutableList<Pair<String, String>>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.help_qa_item, parent, false)
+            .inflate(R.layout.settings_help_qa_item, parent, false)
 
         return ViewHolder(view)
     }

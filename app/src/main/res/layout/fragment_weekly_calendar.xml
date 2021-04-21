@@ -65,7 +65,7 @@
         app:fabSize="normal"
         app:layout_constraintBottom_toTopOf="@+id/calendar_new_drag_fab"
         app:layout_constraintEnd_toEndOf="@+id/calendar_new_drag_fab"
-        app:srcCompat="@drawable/pill" />
+        app:srcCompat="@drawable/pill_dark_blue" />
 
     <TextView
         android:id="@+id/calendar_drug_box_label"

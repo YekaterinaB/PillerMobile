@@ -71,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
     private fun userAuthenticated(response: Response<ResponseBody>) {
         //go to calendar activity with response body given
         //go to the next activity
-        val intent = Intent(this, CalendarActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         val jObject = JSONObject(response.body()!!.string())
         val userObject = createUserObject(
             jObject.get("id").toString(),
@@ -82,6 +82,7 @@ class LoginActivity : AppCompatActivity() {
         val userBundle = Bundle()
         userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, userObject)
         intent.putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
+
         //  hide loading screen
         _loadingScreen.visibility = View.GONE
         startActivity(intent)

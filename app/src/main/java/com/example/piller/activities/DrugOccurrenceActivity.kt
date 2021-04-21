@@ -283,7 +283,7 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
 
     private fun goBackToCalendarActivity(toastBarMessage: String) {
         SnackBar.showToastBar(this, toastBarMessage)
-        val intent = Intent(this@DrugOccurrenceActivity, CalendarActivity::class.java)
+        val intent = Intent(this@DrugOccurrenceActivity, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         putLoggedUserObjectInIntent(intent)
         startActivity(intent)

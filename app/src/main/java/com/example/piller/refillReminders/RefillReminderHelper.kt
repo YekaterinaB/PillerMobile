@@ -36,7 +36,7 @@ object RefillReminderHelper {
     ): NotificationCompat.Builder {
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
         return NotificationCompat.Builder(context, channelId).apply {
-            setSmallIcon(R.drawable.pill)
+            setSmallIcon(R.drawable.pill_dark_blue)
             setContentTitle("$currentProfile, It's time to refill your medication!")
             setAutoCancel(true)
             // 2

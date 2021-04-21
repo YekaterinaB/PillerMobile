@@ -39,11 +39,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/go_back_from_settings" />
+        app:layout_constraintTop_toBottomOf="@+id/settings_toolbar" />
 
 
     <EditText
@@ -98,6 +98,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_email_settings" />
+
+    <TextView
+        android:id="@+id/help_select_item_in_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="36dp"
+        android:background="@drawable/rounded_shape_edit_text"
+        android:fontFamily="sans-serif"
+        android:padding="8dp"
+        android:paddingStart="36dp"
+        android:text="Help"
+        android:textColor="@color/titleInItems"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notifications_settings" />
 
     <RelativeLayout
         android:id="@+id/settings_dim_layout"
@@ -169,7 +188,7 @@
         android:id="@+id/log_out_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/rounded_shape_edit_text"
         android:fontFamily="sans-serif-medium"
         android:paddingStart="52dp"
@@ -183,7 +202,7 @@
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notifications_settings" />
+        app:layout_constraintTop_toBottomOf="@+id/help_select_item_in_settings" />
 
     <TextView
         android:id="@+id/delete_account_settings"
