@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -15,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
-import com.example.piller.activities.AddNewDrugActivity
 import com.example.piller.activities.DrugInfoActivity
 import com.example.piller.listAdapters.WeeklyDayAdapter
 import com.example.piller.models.CalendarEvent
