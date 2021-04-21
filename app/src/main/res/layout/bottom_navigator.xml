@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/bottom_navigator"
@@ -19,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_profile_blue" />
+        app:srcCompat="@drawable/ic_profile_blue"/>
 
     <ImageView
         android:id="@+id/calendar_navigation"
@@ -32,7 +31,7 @@
         app:layout_constraintStart_toEndOf="@+id/profile_navigation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/pill_dark_blue" />
+        app:srcCompat="@drawable/ic_pill_light_blue"/>
 
     <ImageView
         android:id="@+id/add_drug_navigation"
@@ -48,5 +47,6 @@
         app:layout_constraintStart_toEndOf="@+id/calendar_navigation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/edit_plus_dark" />
+        app:srcCompat="@drawable/edit_plus_dark"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

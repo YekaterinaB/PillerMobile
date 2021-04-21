@@ -134,7 +134,7 @@ class MainActivity : ActivityWithUserObject() {
         val weeklyCalendarFragment =
             CalendarFragment.newInstance(_loggedUserObject)
         openFragment(weeklyCalendarFragment, DbConstants.CALENDAR_FRAGMENT_ID)
-        _calendarNav.setImageResource(R.drawable.pill_dark_blue)
+        _calendarNav.setImageResource(R.drawable.ic_pill_light_blue)
         _profileNav.setImageResource(R.drawable.ic_profile_blue)
         _addDrugNav.setImageResource(R.drawable.edit_plus_dark)
     }
