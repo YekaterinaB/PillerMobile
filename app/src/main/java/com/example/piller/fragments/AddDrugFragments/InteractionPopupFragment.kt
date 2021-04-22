@@ -13,11 +13,10 @@ import com.example.piller.activities.AddNewDrugActivity
 
 
 class InteractionPopupFragment : DialogFragment() {
-    private lateinit var interactionsTxt: String
-    private lateinit var titleTv: TextView
-    private lateinit var interactionScrollViewTV: TextView
-    private lateinit var cancelButton: Button
-    private lateinit var proceedButton: Button
+    private lateinit var _interactionsTxt: String
+    private lateinit var _interactionScrollViewTV: TextView
+    private lateinit var _cancelButton: TextView
+    private lateinit var _proceedButton: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,31 +26,28 @@ class InteractionPopupFragment : DialogFragment() {
         //  set round corners
         dialog!!.window?.setBackgroundDrawableResource(R.drawable.round_corner)
         val fragmentView = inflater.inflate(R.layout.interaction_popup, container, false)
-        interactionsTxt = arguments?.getString(DRUG_INTERACTIONS).toString()
+        _interactionsTxt = arguments?.getString(DRUG_INTERACTIONS).toString()
         initViews(fragmentView)
         initListeners()
         return fragmentView
     }
 
     private fun initListeners() {
-        cancelButton.setOnClickListener {
+        _cancelButton.setOnClickListener {
             dismiss()
         }
 
-        proceedButton.setOnClickListener {
+        _proceedButton.setOnClickListener {
             (activity as AddNewDrugActivity).goToAddOccurrenceActivity()
         }
     }
 
     private fun initViews(fragment: View) {
-        titleTv = fragment.findViewById(R.id.inter_popup_title_tv)
-        titleTv.text = "WARNING:\nThere are interactions with the drug you added:"
-
-        interactionScrollViewTV = fragment.findViewById(R.id.inter_popup_list_tv)
-        interactionScrollViewTV.movementMethod = ScrollingMovementMethod()
-        interactionScrollViewTV.text = interactionsTxt
-        cancelButton = fragment.findViewById(R.id.inter_button_cancel)
-        proceedButton = fragment.findViewById(R.id.inter_button_proceedAnyway)
+        _interactionScrollViewTV = fragment.findViewById(R.id.inter_popup_list_tv)
+        _interactionScrollViewTV.movementMethod = ScrollingMovementMethod()
+        _interactionScrollViewTV.text = _interactionsTxt
+        _cancelButton = fragment.findViewById(R.id.cancel_interaction_popup)
+        _proceedButton = fragment.findViewById(R.id.proceed_anyway_interaction_popup)
     }
 
 
