@@ -10,7 +10,7 @@
     <EditText
         android:id="@+id/edt_email_login"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/rounded_shape_edit_text"
         android:hint="Email"
         android:inputType="textEmailAddress"
@@ -22,12 +22,12 @@
     <EditText
         android:id="@+id/edt_password_login"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/rounded_shape_edit_text"
         android:hint="Password"
-        android:padding="10dp"
         android:inputType="textPassword"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_email_login" />
@@ -37,14 +37,14 @@
         android:id="@+id/login_button_login_screen"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/rounded_shape_primary_color_full"
-        android:text="Login"
         android:fontFamily="sans-serif-medium"
-        android:textStyle="normal"
-        android:textSize="18sp"
+        android:text="Login"
         android:textAllCaps="false"
         android:textColor="@color/background"
+        android:textSize="18sp"
+        android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_password_login" />
@@ -72,7 +72,7 @@
         android:id="@+id/login_with_google"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/rounded_shape_primary_color_edge"
         android:fontFamily="sans-serif-medium"
         android:text="Login using Google"
@@ -90,34 +90,32 @@
         android:id="@+id/or_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="5dp"
         android:padding="4dp"
         android:text="OR"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_reset_password" />
 
-    <ImageView
+
+    <View
         android:id="@+id/or_line_left"
+        style="@style/Divider.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
         app:layout_constraintBottom_toTopOf="@+id/login_with_google"
         app:layout_constraintEnd_toStartOf="@+id/or_text_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_reset_password"
-        app:srcCompat="@drawable/stright_line" />
+        app:layout_constraintTop_toBottomOf="@+id/login_reset_password"/>
 
-    <ImageView
+
+    <View
         android:id="@+id/or_line_right"
+        style="@style/Divider.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         app:layout_constraintBottom_toTopOf="@+id/login_with_google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/or_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/login_reset_password"
-        app:srcCompat="@drawable/stright_line" />
+        app:layout_constraintTop_toBottomOf="@+id/login_reset_password" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

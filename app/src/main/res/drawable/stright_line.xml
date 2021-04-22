@@ -3,8 +3,8 @@
     <shape xmlns:android="http://schemas.android.com/apk/res/android"
         android:shape="line"
         android:top="1dip">
-        <stroke android:width="1dip" />
-        <solid android:color="@color/shadowEnd" />
+        <stroke android:height="1dp" />
+        <solid android:color="@color/shadowCenter" />
 
     </shape>
 
