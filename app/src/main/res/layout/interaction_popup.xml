@@ -2,54 +2,85 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
 
     <TextView
         android:id="@+id/inter_popup_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="Warning!"
+        android:fontFamily="sans-serif-medium"
+        android:textStyle="normal"
+        android:textSize="18sp"
+        android:textColor="@color/titleInItems"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
         android:id="@+id/inter_popup_list_tv"
-        android:layout_width="fill_parent"
-        android:layout_height="450dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="sans-serif"
         android:orientation="vertical"
+        android:scrollbars="vertical"
         android:text="TextView"
-        android:scrollbars = "vertical"
-        app:layout_constraintBottom_toTopOf="@+id/inter_button_cancel"
+        android:textColor="@color/myTextColor"
+        android:textSize="14sp"
+        android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inter_popup_title_tv" />
 
-
-    <Button
-        android:id="@+id/inter_button_cancel"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/cancel_interaction_popup"
+        android:layout_width="133dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginBottom="26dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:text="Cancel"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inter_popup_list_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/inter_popup_list_tv"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/inter_button_proceedAnyway"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/proceed_anyway_interaction_popup"
+        android:layout_width="165dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="25dp"
-        android:text="Proceed Anyway"
+        android:layout_marginStart="10dp"
+
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="26dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:text="Proceed anyway"
+        android:textColor="@color/removeColor"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/inter_button_cancel" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/cancel_interaction_popup"
+        app:layout_constraintTop_toBottomOf="@+id/inter_popup_list_tv"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
