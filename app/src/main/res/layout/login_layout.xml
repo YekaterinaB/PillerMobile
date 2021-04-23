@@ -68,22 +68,31 @@
         app:layout_constraintTop_toBottomOf="@+id/login_button_login_screen"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/login_with_google"
-        android:layout_width="0dp"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@drawable/rounded_shape_primary_color_edge"
-        android:fontFamily="sans-serif-medium"
-        android:text="Login using Google"
-        android:textAllCaps="false"
-        android:textColor="@color/colorPrimary"
-        android:textSize="18sp"
-        android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/or_text_view" />
+        app:layout_constraintTop_toBottomOf="@+id/or_text_view"/>
+
+<!--    <Button-->
+<!--        android:id="@+id/login_with_google"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:background="@drawable/rounded_shape_primary_color_edge"-->
+<!--        android:fontFamily="sans-serif-medium"-->
+<!--        android:text="Login using Google"-->
+<!--        android:textAllCaps="false"-->
+<!--        android:textColor="@color/colorPrimary"-->
+<!--        android:textSize="18sp"-->
+<!--        android:textStyle="normal"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/or_text_view" />-->
 
 
     <TextView
@@ -102,7 +111,7 @@
         android:id="@+id/or_line_left"
         style="@style/Divider.Horizontal"
         android:layout_width="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/login_with_google"
+        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
         app:layout_constraintEnd_toStartOf="@+id/or_text_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_reset_password"/>
@@ -112,7 +121,7 @@
         android:id="@+id/or_line_right"
         style="@style/Divider.Horizontal"
         android:layout_width="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/login_with_google"
+        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/or_text_view"
         app:layout_constraintTop_toBottomOf="@+id/login_reset_password" />

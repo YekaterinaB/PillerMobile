@@ -117,4 +117,8 @@ dependencies {
 
     //  Switch
     implementation 'lib.kingja.switchbutton:switchbutton:1.1.8'
+
+    //google
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+
 }
