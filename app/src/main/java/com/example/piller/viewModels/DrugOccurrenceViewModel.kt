@@ -8,6 +8,7 @@ import com.example.piller.api.CalendarAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.Dose
 import com.example.piller.models.DrugObject
+import com.example.piller.models.Occurrence
 import com.example.piller.models.UserObject
 import com.example.piller.notif.AlarmScheduler
 import okhttp3.ResponseBody
@@ -37,6 +38,15 @@ class DrugOccurrenceViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
+    fun convertRepeatEnumToString(repeatOn: RepeatOn): String {
+        return when (repeatOn) {
+            RepeatOn.DAY -> "Daily"
+            RepeatOn.WEEK -> "Weekly"
+            RepeatOn.MONTH -> "Monthly"
+            RepeatOn.YEAR -> "Yearly"
+            else -> "Repeat once"
+        }
+    }
 
     fun setDrug(newDrug: DrugObject) {
         drug = newDrug
@@ -46,12 +56,16 @@ class DrugOccurrenceViewModel : ViewModel() {
         return drug
     }
 
-    fun setWeekdayChecked(weekdayNumber: Int, checked: Boolean) {
-        if (checked) {
-            weekdayRepeat.add(weekdayNumber)
-        } else {
-            weekdayRepeat.remove(weekdayNumber)
+    private fun setWeekdayChecked(selectedDays: Array<Boolean>): List<Int> {
+        //  0 = sunday, 1 = monday and so on
+        for ((index, isDaySelected) in selectedDays.withIndex()) {
+            if (isDaySelected) {
+                weekdayRepeat.add(index + 1)
+            } else {
+                weekdayRepeat.remove(index + 1)
+            }
         }
+        return weekdayRepeat.toList()
     }
 
     fun setDrugRepeatStartDate(yearSelected: Int, monthOfYear: Int, dayOfMonth: Int) {
@@ -83,39 +97,44 @@ class DrugOccurrenceViewModel : ViewModel() {
         drug.occurrence.repeatStart = calendar.timeInMillis
     }
 
-    private fun updateDrugWeekday() {
-        if (weekdayRepeat.size > 0) {
-            drug.occurrence.repeatWeekday = weekdayRepeat.toList()
-        }
-    }
-
-    private fun setRepeatOn(repeatOn: RepeatOn, repeatValue: String) {
+    private fun setDrugRepeatOn(
+        repeatOn: RepeatOn,
+        repeatValue: Int,
+        daysRepeatCheck: Array<Boolean>
+    ) {
+        //  create a new occurrence so if it is in edit mode - we won't save the previous repeat
+        val occurrence = Occurrence()
+        occurrence.eventId = drug.occurrence.eventId
+        occurrence.repeatStart = drug.occurrence.repeatStart
+        occurrence.repeatEnd = drug.occurrence.repeatEnd
         when (repeatOn) {
             RepeatOn.DAY -> {
-                drug.occurrence.repeatDay = repeatValue.toInt()
+                occurrence.repeatDay = repeatValue
             }
             RepeatOn.WEEK -> {
-                drug.occurrence.repeatWeek = repeatValue.toInt()
-                updateDrugWeekday()
+                occurrence.repeatWeek = repeatValue
+                occurrence.repeatWeekday = setWeekdayChecked(daysRepeatCheck)
             }
             RepeatOn.MONTH -> {
-                drug.occurrence.repeatMonth = repeatValue.toInt()
+                occurrence.repeatMonth = repeatValue
             }
             RepeatOn.YEAR -> {
-                drug.occurrence.repeatYear = repeatValue.toInt()
+                occurrence.repeatYear = repeatValue
             }
             else -> {
             }
         }
+        drug.occurrence = occurrence
     }
 
     fun addNewDrugToUser(
         loggedUserObject: UserObject,
-        repeatOn: RepeatOn?,
-        repeatValue: String?,
+        repeatOn: RepeatOn,
+        repeatValue: Int,
+        daysRepeatCheck: Array<Boolean>,
         context: Context
     ) {
-        repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
+        setDrugRepeatOn(repeatOn, repeatValue, daysRepeatCheck)
         retrofit.addDrugCalendarByUser(
             loggedUserObject.userId,
             loggedUserObject.currentProfile!!.profileId,
@@ -156,40 +175,40 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     fun updateDrugOccurrence(
         loggedUserObject: UserObject,
-        repeatOn: RepeatOn?,
-        repeatValue: String?,
+        repeatOn: RepeatOn,
+        repeatValue: Int,
+        daysRepeatCheck: Array<Boolean>,
         context: Context
     ) {
-        repeatValue?.let { repeatOn?.let { it1 -> setRepeatOn(it1, it) } }
+        setDrugRepeatOn(repeatOn, repeatValue, daysRepeatCheck)
         retrofit.updateDrugOccurrence(
             loggedUserObject.userId,
             loggedUserObject.currentProfile!!.profileId,
             drug.drugId,
             drug
-        )
-            .enqueue(
-                object : retrofit2.Callback<ResponseBody> {
-                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        snackBarMessage.value = "Could not add drug."
-                    }
+        ).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    snackBarMessage.value = "Could not add drug."
+                }
 
-                    override fun onResponse(
-                        call: Call<ResponseBody>,
-                        response: Response<ResponseBody>
-                    ) {
-                        if (response.raw().code() == 200) {
-                            updatedDrugSuccess.value = true
-                            AlarmScheduler.removeAllNotifications(loggedUserObject, context, drug)
-                            updateDrugInfo(response)
-                            AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drug)
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() == 200) {
+                        updatedDrugSuccess.value = true
+                        AlarmScheduler.removeAllNotifications(loggedUserObject, context, drug)
+                        updateDrugInfo(response)
+                        AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drug)
 
-                        } else {
-                            val jObjError = JSONObject(response.errorBody()!!.string())
-                            snackBarMessage.value = jObjError["message"] as String
-                        }
+                    } else {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        snackBarMessage.value = jObjError["message"] as String
                     }
                 }
-            )
+            }
+        )
     }
 
 
@@ -206,5 +225,9 @@ class DrugOccurrenceViewModel : ViewModel() {
         drug.refill.pillsBeforeReminder = refillReminder
         drug.refill.pillsLeft = currentlyHave
         drug.refill.reminderTime = refillReminderTime
+    }
+
+    fun removeDrugRefill() {
+        drug.refill.isToNotify = false
     }
 }

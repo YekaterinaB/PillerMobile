@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.DrugOccurrenceActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        tools:context="com.example.piller.activities.DrugOccurrenceActivity">
+
+        <ImageView
+            android:id="@+id/do_back_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/go_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_left" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_shape_edit_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/do_back_btn">
+
+            <TextView
+                android:id="@+id/do_drug_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/di_drug_name"
+                android:textColor="@color/titleInItems"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="42dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/do_start_date"
+            android:textColor="@color/myTextColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+
+
+        <LinearLayout
+            android:id="@+id/do_repeat_start_container"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/rounded_shape_edit_text"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@+id/textView6"
+            app:layout_constraintTop_toBottomOf="@+id/textView6">
+
+            <TextView
+                android:id="@+id/do_repeat_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="37dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="37dp"
+                android:layout_marginBottom="13dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/do_04_04_21"
+                android:textColor="@color/titleInItems"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="133dp"
+            android:text="@string/do_end_date"
+            android:textColor="@color/myTextColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView6" />
+
+        <LinearLayout
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="29dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/rounded_shape_edit_text"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/do_repeat_start_container"
+            app:layout_constraintTop_toTopOf="@+id/do_repeat_start_container">
+
+            <TextView
+                android:id="@+id/do_repeat_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="37dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="37dp"
+                android:layout_marginBottom="13dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/none"
+                android:textColor="@color/titleInItems"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/do_frequency_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/do_frequency"
+            android:textColor="@color/myTextColor"
+            app:layout_constraintStart_toStartOf="@+id/textView6"
+            app:layout_constraintTop_toBottomOf="@+id/do_repeat_start_container" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/do_frequency_container"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/rounded_shape_edit_text"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@+id/do_frequency_title"
+            app:layout_constraintTop_toBottomOf="@+id/do_frequency_title">
+
+            <TextView
+                android:id="@+id/do_frequency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="13dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/do_freq_repeat_once"
+                android:textColor="@color/titleInItems"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/do_at"
+            android:textColor="@color/myTextColor"
+            app:layout_constraintStart_toStartOf="@+id/textView7"
+            app:layout_constraintTop_toTopOf="@+id/do_frequency_title" />
+
+        <LinearLayout
+            android:id="@+id/do_hour_container"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="29dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/rounded_shape_edit_text"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/do_frequency_container"
+            app:layout_constraintTop_toTopOf="@+id/do_frequency_container">
+
+            <TextView
+                android:id="@+id/do_repeat_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="37dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="37dp"
+                android:layout_marginBottom="13dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/do_16_30"
+                android:textColor="@color/titleInItems"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/do_dosage"
+            android:textColor="@color/myTextColor"
+            app:layout_constraintStart_toStartOf="@+id/do_frequency_title"
+            app:layout_constraintTop_toBottomOf="@+id/do_frequency_container" />
+
+        <LinearLayout
+            android:id="@+id/do_dosage_container"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/rounded_shape_edit_text"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintTop_toBottomOf="@id/textView8">
+
+            <EditText
+                android:id="@+id/do_dosage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="13dp"
+                android:autofillHints="Dosage"
+                android:background="@drawable/rounded_shape_edit_text"
+                android:ems="4"
+                android:inputType="numberDecimal"
+                android:labelFor="@+id/do_dosage"
+                android:maxLength="5"
+                android:maxLines="1"
+                android:minLines="1"
+                android:text="@string/ndo_1"
+                android:textAlignment="center"
+                android:textColor="@color/titleInItems" />
+
+            <TextView
+                android:id="@+id/do_dosage_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="37dp"
+                android:layout_marginBottom="13dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/do_pills"
+                android:textColor="@color/titleInItems"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/do_refill_container"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/rounded_shape_edit_text"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/do_dosage_container"
+            app:layout_constraintTop_toBottomOf="@id/do_dosage_container">
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="39dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="13dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/do_refill_reminder"
+                android:textColor="@color/titleInItems"
+                android:textSize="18sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/do_refill_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="28dp" />
+        </RelativeLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/do_refill_data_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/do_refill_container"
+            app:layout_constraintStart_toStartOf="@+id/do_refill_container"
+            app:layout_constraintTop_toBottomOf="@id/do_refill_container">
+
+            <TextView
+                android:id="@+id/do_enter_meds_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/ndo_enter_the_amount_of_meds_you_currently_have_to_get_a_refill_reminder"
+                android:textColor="@color/myTextColor"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/do_current_meds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:autofillHints="1"
+                android:background="@drawable/rounded_shape_edit_text"
+                android:digits="0123456789"
+                android:ems="10"
+                android:hint="100"
+                android:imeOptions="actionDone"
+                android:inputType="numberSigned"
+                android:maxLength="3"
+                android:maxLines="1"
+                android:textAlignment="center"
+                android:textColor="@color/titleInItems"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/do_enter_meds_label" />
+
+            <TextView
+                android:id="@+id/do_remaining_meds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/ndo_when_i_have_20_meds_remaining"
+                android:textColor="@color/colorPrimary"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="@+id/do_enter_meds_label"
+                app:layout_constraintTop_toBottomOf="@+id/do_current_meds" />
+
+            <TextView
+                android:id="@+id/do_what_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/ndo_what_time"
+                android:textColor="@color/myTextColor"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="@+id/do_remaining_meds"
+                app:layout_constraintTop_toBottomOf="@+id/do_remaining_meds" />
+
+            <TextView
+                android:id="@+id/do_refill_reminder_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/ndo_11_00"
+                android:textColor="@color/colorPrimary"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="@+id/do_what_time"
+                app:layout_constraintTop_toBottomOf="@+id/do_what_time" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/do_add_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_shape_primary_color_full"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            android:text="@string/do_add_new_medicine"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/do_refill_data_container" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

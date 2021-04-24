@@ -76,7 +76,7 @@
         android:paddingEnd="31dip"
         android:text="@string/nd_next_btn"
         android:textAllCaps="false"
-        android:textColor="@color/titleInItems"
+        android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

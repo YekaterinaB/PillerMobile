@@ -60,7 +60,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
     }
 
     private fun setWindowDimensions() {
-        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, 1450)
+        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, 1500)
     }
 
     private fun initListeners() {

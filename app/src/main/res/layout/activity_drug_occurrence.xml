@@ -136,7 +136,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -299,7 +299,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="@string/ndo_last_occurrence_date"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintStart_toEndOf="@+id/ndo_set_last_occurrence_tv"
                 app:layout_constraintTop_toTopOf="@+id/ndo_set_last_occurrence_tv" />
 
@@ -329,7 +329,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/ndo_enter_the_amount_of_meds_you_currently_have_to_get_a_refill_reminder"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ndo_refill_switch" />
 
@@ -346,7 +346,7 @@
                 android:maxLength="3"
                 android:maxLines="1"
                 android:textAlignment="center"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ndo_enter_meds_label" />
@@ -359,7 +359,7 @@
                 android:layout_marginTop="4dp"
                 android:text="@string/ndo_when_i_have_20_meds_remaining"
                 android:textColor="@android:color/holo_blue_dark"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ndoCurrentMedsET" />
 
@@ -369,7 +369,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/ndo_what_time"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="@+id/ndoRemainingMeds"
                 app:layout_constraintTop_toBottomOf="@+id/ndoRemainingMeds" />
 
@@ -380,7 +380,7 @@
                 android:layout_marginTop="4dp"
                 android:text="@string/ndo_11_00"
                 android:textColor="@android:color/holo_blue_dark"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="@+id/ndoWhatTimeTv"
                 app:layout_constraintTop_toBottomOf="@+id/ndoWhatTimeTv" />
         </androidx.constraintlayout.widget.ConstraintLayout>
