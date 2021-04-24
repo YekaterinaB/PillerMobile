@@ -47,6 +47,7 @@
     </string-array>
 
     <string-array name="drug_dosage">
+        <item>pills</item>
         <item>mg</item>
         <item>g</item>
         <item>IU</item>
@@ -125,5 +126,23 @@
     <string name="di_delete">Delete</string>
     <string name="di_taken">Taken</string>
     <string name="di_schedule">Schedule</string>
+    <string name="do_start_date">Start date</string>
+    <string name="do_end_date">End date</string>
+    <string name="do_04_04_21">04/04/21</string>
+    <string name="do_frequency">Frequency</string>
+    <string name="do_daily">Daily</string>
+    <string name="do_at">At</string>
+    <string name="do_16_30">16:30</string>
+    <string name="do_add_new_medicine">Add new medicine</string>
+    <string name="do_dosage">Dosage</string>
+    <string name="do_pills">Pills</string>
+    <string name="do_refill_reminder">Refill reminder</string>
+    <string name="go_back">Go back</string>
+    <string name="do_freq_close">Close</string>
+    <string name="do_freq_frequency">Frequency</string>
+    <string name="do_freq_repeat_once">Repeat once</string>
+    <string name="do_freq_repeat_on">Repeat on...</string>
+    <string name="do_freq_done">Done</string>
+    <string name="none">None</string>
 
 </resources>

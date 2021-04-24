@@ -1,0 +1,89 @@
+package com.example.piller.fragments.AddDrugFragments
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.piller.R
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.android.synthetic.main.drug_frequency_weekly_dialog.*
+
+
+class DrugFrequencyWeeklyDialogFragment(
+    private val doneCallback: (daysCheck: Array<Boolean>) -> Unit,
+    private val backCallback: () -> Unit,
+    private var daysCheck: Array<Boolean>
+) : BottomSheetDialogFragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.drug_frequency_weekly_dialog, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        do_freq_week_list.layoutManager = LinearLayoutManager(context)
+        do_freq_week_list.adapter = DrugObjectAdapter(getDaysList())
+        do_freq_back_btn.setOnClickListener {
+            backCallback()
+            dismiss()
+        }
+        do_freq_done.setOnClickListener {
+            doneCallback(daysCheck)
+            dismiss()
+        }
+    }
+
+    private fun getDaysList(): List<Pair<String, Boolean>> {
+        val dayOfWeekString = arrayOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        return dayOfWeekString.zip(daysCheck) { a, b -> Pair(a, b) }
+    }
+
+    private inner class ViewHolder(
+        inflater: LayoutInflater,
+        parent: ViewGroup
+    ) : RecyclerView.ViewHolder(
+        inflater.inflate(
+            R.layout.drug_frequency_weekly_dialog_item,
+            parent,
+            false
+        )
+    ) {
+        val checkBox: CheckBox = itemView.findViewById(R.id.do_freq_week_day_name_cb)
+    }
+
+    private inner class DrugObjectAdapter(private val dataset: List<Pair<String, Boolean>>) :
+        RecyclerView.Adapter<ViewHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            return ViewHolder(LayoutInflater.from(parent.context), parent)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.checkBox.text = dataset[position].first
+            holder.checkBox.isChecked = dataset[position].second
+            holder.checkBox.setOnClickListener {
+                daysCheck[position] = holder.checkBox.isChecked
+            }
+        }
+
+        override fun getItemCount() = dataset.size
+    }
+
+    companion object {
+
+        const val TAG = "DrugFrequencyWeeklyDialogFragment"
+
+        fun newInstance(
+            doneCallback: (daysCheck: Array<Boolean>) -> Unit,
+            backCallback: () -> Unit,
+            daysCheck: Array<Boolean>
+        ): DrugFrequencyWeeklyDialogFragment =
+            DrugFrequencyWeeklyDialogFragment(doneCallback, backCallback, daysCheck)
+
+    }
+}
