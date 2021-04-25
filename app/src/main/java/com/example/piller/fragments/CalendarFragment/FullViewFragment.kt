@@ -1,4 +1,4 @@
-package com.example.piller.fragments
+package com.example.piller.fragments.CalendarFragment
 
 import android.content.Intent
 import android.graphics.*
@@ -16,6 +16,7 @@ import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnCalendarPageChangeListener
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import com.example.piller.R
+import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.UserObject
 import com.example.piller.utilities.DateUtils

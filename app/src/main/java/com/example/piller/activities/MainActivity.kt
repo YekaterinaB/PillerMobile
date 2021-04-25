@@ -14,7 +14,6 @@ import com.example.piller.R
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.fragments.AddDrugFragments.AddDrugOptionsFragment
 import com.example.piller.fragments.CalendarFragment.CalendarFragment
-import com.example.piller.fragments.FullViewFragment
 import com.example.piller.fragments.ProfileFragments.ProfileFragment
 import com.example.piller.intakeReminders.NotificationService
 import com.example.piller.notif.NotificationHelper

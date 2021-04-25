@@ -1,8 +1,7 @@
 package com.example.piller.api
 
-import com.example.piller.models.User
+import com.example.piller.models.UserSerializable
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -11,10 +10,10 @@ interface UserAPI {
     @Headers("Content-Type: application/json")
 
     @POST("user/register")
-    fun registerUser(@Body user: User): Call<ResponseBody>
+    fun registerUser(@Body user: UserSerializable): Call<ResponseBody>
 
     @POST("user/authenticate")
-    fun loginUser(@Body user: User): Call<ResponseBody>
+    fun loginUser(@Body user: UserSerializable): Call<ResponseBody>
 
     @HTTP(method = "DELETE", path = "user/{userId}", hasBody = true)
     fun deleteUser(
@@ -25,7 +24,7 @@ interface UserAPI {
     @POST("user/{userId}")
     fun updateEmailUsernamePassword(
         @Path("userId") userId: String,
-        @Body user: User
+        @Body user: UserSerializable
     ): Call<ResponseBody>
 
     @GET("user/resetPassword/{email}")
@@ -39,7 +38,7 @@ interface UserAPI {
 
     //google login
     @POST("user/googleUser/getGoogleAccount")
-    fun getGoogleUser(@Body user: User): Call<ResponseBody>
+    fun getGoogleUser(@Body user: UserSerializable): Call<ResponseBody>
 
     @HTTP(method = "DELETE", path = "user/googleUser/{userId}", hasBody = false)
     fun deleteGoogleUser(@Path("userId") userId: String): Call<ResponseBody>

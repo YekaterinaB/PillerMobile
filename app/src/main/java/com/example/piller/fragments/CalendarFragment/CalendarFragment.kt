@@ -9,8 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.piller.R
 import com.example.piller.fragments.FragmentWithUserObject
-import com.example.piller.fragments.FullViewFragment
-import com.example.piller.fragments.WeeklyCalendarFragment
 import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
 import lib.kingja.switchbutton.SwitchMultiButton

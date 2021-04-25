@@ -1,15 +1,11 @@
 package com.example.piller.viewModels
 
-import android.content.Context
-import android.content.Intent
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.piller.accountManagement.AppPreferences
-import com.example.piller.activities.LoginActivity
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
-import com.example.piller.models.User
+import com.example.piller.models.UserSerializable
 import com.example.piller.models.UserObject
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -37,14 +33,14 @@ class ManageAccountViewModel : ViewModel() {
         loggedUserObject: UserObject, oldPassword: String,
         newEmail: String, newPassword: String, newName: String
     ) {
-        val updatedUser = User(newEmail, newName, newPassword, oldPassword)
+        val updatedUser = UserSerializable(newEmail, newName, newPassword, oldPassword)
         sendRetrofitUpdateEmailUsernamePassword(loggedUserObject, updatedUser)
     }
 
 
     private fun sendRetrofitUpdateEmailUsernamePassword(
         loggedUserObject: UserObject,
-        updatedUser: User
+        updatedUser: UserSerializable
     ) {
         _retrofit.updateEmailUsernamePassword(loggedUserObject.userId, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
