@@ -176,6 +176,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/di_missed_days_icon"
             app:layout_constraintTop_toBottomOf="@+id/di_drug_dosage" />
+
+        <ImageView
+            android:id="@+id/di_taken_image_animation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check_green"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.7" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout
@@ -201,6 +213,7 @@
             android:scaleType="fitCenter"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
+
         <TextView
             android:id="@+id/di_drug_taken_text"
             android:layout_width="wrap_content"
@@ -213,4 +226,5 @@
             android:textColor="@color/titleInItems"
             android:textSize="16sp" />
     </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
