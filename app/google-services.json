@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "955109607465",
+    "project_id": "piller-34e58",
+    "storage_bucket": "piller-34e58.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955109607465:android:7ab6a5d9dc353b935af438",
+        "android_client_info": {
+          "package_name": "com.example.piller"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "955109607465-ts3kko99p0b61v2a64kcvd3kfh3t8bbf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.piller",
+            "certificate_hash": "bbe501a295c0a6e448eb1d82b8b5f395ded87774"
+          }
+        },
+        {
+          "client_id": "955109607465-4idkfa55ut1gh55n4c8pojjqh0pvqnlm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCX5y0EttuSulhWqhafmoCddsFp1od3-hk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "955109607465-4idkfa55ut1gh55n4c8pojjqh0pvqnlm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
