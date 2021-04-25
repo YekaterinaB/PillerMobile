@@ -31,4 +31,11 @@ interface UserAPI {
 //    @PUT("user/updatePassword/{userId}")
 //    fun updatePassword(@Path("userId") userId: String, @Body user: User): Call<ResponseBody>
 
+    //google login
+    @POST("googleUser/getGoogleAccount")
+    fun getGoogleUser(@Body user: User): Call<ResponseBody>
+
+    @HTTP(method="DELETE",path="googleUser/{userId}",hasBody = false)
+    fun deleteGoogleUser(@Path("userId") userId: String): Call<ResponseBody>
+
 }

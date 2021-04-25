@@ -38,7 +38,7 @@ class LoginFragment : Fragment() {
     private lateinit var _mGoogleSignInClient: GoogleSignInClient
 
     private val _viewModel: LoginActivityViewModel by activityViewModels()
-    private lateinit var auth: FirebaseAuth
+    private lateinit var _auth: FirebaseAuth
     private val TAG = "LOGIN_TAG"
 
     override fun onCreateView(
@@ -56,7 +56,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun googleLogin() {
-        auth = Firebase.auth
+        _auth = Firebase.auth
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -66,7 +66,7 @@ class LoginFragment : Fragment() {
 
         _mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
 
-        val currentUser = auth.currentUser
+        val currentUser = _auth.currentUser
         updateUI(currentUser)
 
     }
@@ -75,9 +75,10 @@ class LoginFragment : Fragment() {
         if (account != null) {
             val personName = account.displayName
             val personEmail = account.email
+            _viewModel.getGoogleUser(personEmail!!,personName!!)
 
         } else {
-            // show login
+            SnackBar.showToastBar(context, "Could not log in via Google.")
         }
 
     }
@@ -85,12 +86,12 @@ class LoginFragment : Fragment() {
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
+        _auth.signInWithCredential(credential)
             .addOnCompleteListener() { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
-                    val user = auth.currentUser
+                    val user = _auth.currentUser
                     updateUI(user)
                 } else {
                     // If sign in fails, display a message to the user.

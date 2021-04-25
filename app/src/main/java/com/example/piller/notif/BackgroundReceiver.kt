@@ -51,7 +51,8 @@ object BackgroundNotificationScheduler {
 
     private fun loginUser(context: Context, email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(email = email, mainProfileName = "", password = password,
+        val user = User(
+            email = email, mainProfileName = "", password = password,
             oldPassword = password
         )
         retrofit.loginUser(user).enqueue(
@@ -70,7 +71,13 @@ object BackgroundNotificationScheduler {
                 ) {
                     if (response.raw().code() == 200) {
                         val jObject = JSONObject(response.body()!!.string())
-                        val userObject = UserObject(jObject.getString("id"), email, null, null)
+                        val userObject = UserObject(
+                            jObject.getString("id"),
+                            email,
+                            null,
+                            null,
+                            jObject.getString("googleUser")!!.toBoolean()
+                        )
                         scheduleNotificationsForAllProfiles(context, userObject)
                     }
                 }
