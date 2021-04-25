@@ -83,6 +83,35 @@ class LoginActivityViewModel : ViewModel() {
         )
     }
 
+    fun getGoogleUser(email: String,mainProfileName:String) {
+        val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
+        val user = User(
+            email = email, mainProfileName = mainProfileName, password = "",
+            oldPassword=""
+        )
+        retrofit.getGoogleUser(user).enqueue(
+            object : retrofit2.Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    mutableToastError.value = "Could not connect to server."
+                }
+
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.raw().code() != 200) {
+                        mutableToastError.value =
+                            "There is a problem with user."
+                    } else {
+                        mutableActivityLoginChangeResponse.value = response
+                        //  remember email and password if the user wants to
+                        //updateAppPreferences(true, email, password)
+                    }
+                }
+            }
+        )
+    }
+
     private fun updateAppPreferences(stayLogged: Boolean, email: String, password: String) {
         AppPreferences.stayLoggedIn = stayLogged
         AppPreferences.email = email

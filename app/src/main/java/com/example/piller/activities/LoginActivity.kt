@@ -77,7 +77,8 @@ class LoginActivity : AppCompatActivity() {
             jObject.get("id").toString(),
             jObject.get("email").toString(),
             jObject.get("profileName").toString(),
-            jObject.get("profileId").toString()
+            jObject.get("profileId").toString(),
+            jObject.get("googleUser").toString().toBoolean()
         )
         val userBundle = Bundle()
         userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, userObject)
@@ -92,11 +93,12 @@ class LoginActivity : AppCompatActivity() {
         userId: String,
         email: String,
         mainProfileName: String,
-        profileId: String
+        profileId: String,
+        isGoogleUser:Boolean
     ): UserObject {
         val profile = Profile(profileId, mainProfileName,"main-user")
         //  current profile = main profile
-        return UserObject(userId, email, profile, profile)
+        return UserObject(userId, email, profile, profile,isGoogleUser)
     }
 
     private fun stayLoggedIn() {
