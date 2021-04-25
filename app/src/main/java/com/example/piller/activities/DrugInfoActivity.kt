@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
@@ -42,6 +44,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
     private lateinit var _drugImageIV: ImageView
     private lateinit var _backButton: ImageView
     private lateinit var _backTV: TextView
+    private lateinit var _takenCompleteAnimation: ImageView
 
     private lateinit var _calendarEvent: CalendarEvent
     private var _isFromNotification = false
@@ -73,6 +76,9 @@ class DrugInfoActivity : ActivityWithUserObject() {
                 _calendarEvent.intakeTime.time
             )
             updateTakenViews()
+            if(_drugTakenCB.isChecked){
+                animateV()
+            }
         }
 
         _backButton.setOnClickListener { onBackPressed() }
@@ -186,6 +192,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
         _backTV = findViewById(R.id.di_toolbar_title)
         _deleteBtn = findViewById(R.id.di_delete_btn)
         _editBtn = findViewById(R.id.di_edit_btn)
+        _takenCompleteAnimation=findViewById(R.id.di_taken_image_animation)
 
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
@@ -336,4 +343,22 @@ class DrugInfoActivity : ActivityWithUserObject() {
             show(supportFragmentManager, DrugBottomDialogFragment.TAG)
         }
     }
+
+    private fun animateV(){
+
+        val animation = AnimationUtils.loadAnimation(this, R.anim.taken_animation)
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(arg0: Animation) {
+                _takenCompleteAnimation.visibility=View.VISIBLE
+            }
+            override fun onAnimationRepeat(arg0: Animation) {}
+            override fun onAnimationEnd(arg0: Animation) {
+                _takenCompleteAnimation.visibility=View.INVISIBLE
+
+            }
+        })
+        _takenCompleteAnimation.startAnimation(animation)
+
+    }
+
 }
