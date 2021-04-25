@@ -16,11 +16,17 @@ interface UserAPI {
     @POST("user/authenticate")
     fun loginUser(@Body user: User): Call<ResponseBody>
 
-    @HTTP(method="DELETE",path="user/{userId}",hasBody = true)
-    fun deleteUser(@Path("userId") userId: String,@Body password: HashMap<String,String>): Call<ResponseBody>
+    @HTTP(method = "DELETE", path = "user/{userId}", hasBody = true)
+    fun deleteUser(
+        @Path("userId") userId: String,
+        @Body password: HashMap<String, String>
+    ): Call<ResponseBody>
 
     @POST("user/{userId}")
-    fun updateEmailUsernamePassword(@Path("userId") userId: String, @Body user: User): Call<ResponseBody>
+    fun updateEmailUsernamePassword(
+        @Path("userId") userId: String,
+        @Body user: User
+    ): Call<ResponseBody>
 
     @GET("user/resetPassword/{email}")
     fun resetPassword(@Path("email") email: String): Call<ResponseBody>
@@ -32,10 +38,10 @@ interface UserAPI {
 //    fun updatePassword(@Path("userId") userId: String, @Body user: User): Call<ResponseBody>
 
     //google login
-    @POST("googleUser/getGoogleAccount")
+    @POST("user/googleUser/getGoogleAccount")
     fun getGoogleUser(@Body user: User): Call<ResponseBody>
 
-    @HTTP(method="DELETE",path="googleUser/{userId}",hasBody = false)
+    @HTTP(method = "DELETE", path = "user/googleUser/{userId}", hasBody = false)
     fun deleteGoogleUser(@Path("userId") userId: String): Call<ResponseBody>
 
 }

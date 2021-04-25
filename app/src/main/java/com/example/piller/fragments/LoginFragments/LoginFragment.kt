@@ -66,9 +66,8 @@ class LoginFragment : Fragment() {
 
         _mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
 
-        val currentUser = _auth.currentUser
-        updateUI(currentUser)
-
+//        val currentUser = _auth.currentUser
+//        updateUI(currentUser)
     }
 
     private fun updateUI(account: FirebaseUser?) {
@@ -125,13 +124,12 @@ class LoginFragment : Fragment() {
         _passwordEdt = _fragmentView.findViewById<View>(R.id.edt_password_login) as EditText
 
         // Set the dimensions of the sign-in button.
-        // Set the dimensions of the sign-in button.
         _signInButton = _fragmentView.findViewById(R.id.sign_in_button)
         _signInButton.setSize(SignInButton.SIZE_WIDE)
     }
 
     private fun setClickListeners() {
-        _fragmentView.findViewById<Button>(R.id.login_button_login_screen).setOnClickListener {
+        _loginButton.setOnClickListener {
             loginButtonListener()
         }
 

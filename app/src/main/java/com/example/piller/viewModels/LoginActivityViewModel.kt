@@ -83,11 +83,11 @@ class LoginActivityViewModel : ViewModel() {
         )
     }
 
-    fun getGoogleUser(email: String,mainProfileName:String) {
+    fun getGoogleUser(email: String, mainProfileName: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
         val user = User(
             email = email, mainProfileName = mainProfileName, password = "",
-            oldPassword=""
+            oldPassword = ""
         )
         retrofit.getGoogleUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
@@ -100,8 +100,7 @@ class LoginActivityViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != 200) {
-                        mutableToastError.value =
-                            "There is a problem with user."
+                        mutableToastError.value = "There is a problem with user."
                     } else {
                         mutableActivityLoginChangeResponse.value = response
                         //  remember email and password if the user wants to
