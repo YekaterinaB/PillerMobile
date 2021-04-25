@@ -1,4 +1,4 @@
-package com.example.piller.fragments
+package com.example.piller.fragments.CalendarFragment
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.DrugInfoActivity
+import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.listAdapters.WeeklyDayAdapter
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.UserObject

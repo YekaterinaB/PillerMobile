@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
-import com.example.piller.models.User
+import com.example.piller.models.UserSerializable
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -27,7 +27,7 @@ class LoginActivityViewModel : ViewModel() {
 
     fun registerUser(email: String, name: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(
+        val user = UserSerializable(
             email = email, mainProfileName = name, password = password,
             oldPassword = password
         )
@@ -56,7 +56,7 @@ class LoginActivityViewModel : ViewModel() {
 
     fun loginUser(email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(
+        val user = UserSerializable(
             email = email, mainProfileName = "", password = password,
             oldPassword = password
         )
@@ -85,7 +85,7 @@ class LoginActivityViewModel : ViewModel() {
 
     fun getGoogleUser(email: String, mainProfileName: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(
+        val user = UserSerializable(
             email = email, mainProfileName = mainProfileName, password = "",
             oldPassword = ""
         )

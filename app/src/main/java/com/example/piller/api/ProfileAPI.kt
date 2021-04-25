@@ -1,5 +1,6 @@
 package com.example.piller.api
 
+import com.example.piller.models.ProfileSerializable
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -10,11 +11,10 @@ interface ProfileAPI {
     @GET("profile/{userId}")
     fun getAllProfilesByEmail(@Path("userId") userId: String): Call<ResponseBody>
 
-    @PUT("profile/{userId}/{name}/{relation}")
+    @PUT("profile/{userId}")
     fun addProfileToUser(
         @Path("userId") userId: String,
-        @Path("name") name: String,
-        @Path("relation") relation: String
+        @Body profile: ProfileSerializable
     ): Call<ResponseBody>
 
     @DELETE("profile/{userId}")

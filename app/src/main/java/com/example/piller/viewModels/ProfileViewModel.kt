@@ -4,10 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.piller.api.ProfileAPI
 import com.example.piller.api.ServiceBuilder
-import com.example.piller.models.CalendarEvent
-import com.example.piller.models.CalendarProfile
-import com.example.piller.models.Profile
-import com.example.piller.models.UserObject
+import com.example.piller.models.*
 import com.example.piller.utilities.notifyObserver
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -190,7 +187,8 @@ class ProfileViewModel : ViewModel() {
 
     fun addProfileToDB(profileName: String, loggedUserObject: UserObject,profileRelation:String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        retrofit.addProfileToUser(loggedUserObject.userId, profileName,profileRelation).enqueue(
+        val profileSerializable=ProfileSerializable(profileName,profileRelation)
+        retrofit.addProfileToUser(loggedUserObject.userId, profileSerializable).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not connect to server."

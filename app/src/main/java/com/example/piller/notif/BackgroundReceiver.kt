@@ -51,7 +51,7 @@ object BackgroundNotificationScheduler {
 
     private fun loginUser(context: Context, email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
-        val user = User(
+        val user = UserSerializable(
             email = email, mainProfileName = "", password = password,
             oldPassword = password
         )
