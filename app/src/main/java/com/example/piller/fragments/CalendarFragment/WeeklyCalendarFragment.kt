@@ -53,6 +53,10 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         return _fragmentView
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
     private fun initObservers() {
         _weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.observe(
             viewLifecycleOwner,

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -20,6 +21,7 @@ import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.listAdapters.ProfileAdapter
 import com.example.piller.models.Profile
 import com.example.piller.models.UserObject
+import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.ProfileViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
@@ -112,11 +114,17 @@ class ProfileFragment : FragmentWithUserObject() {
 
     private fun setOnClickListeners() {
         _supervisorTitle.setOnClickListener {
-            openSupervisorsFragment()
+            switchFragment(
+                SupervisorsFragment.newInstance(_loggedUserObject),
+                DbConstants.SUPERVISOR_FRAGMENT_ID
+            )
         }
 
         _settingsImage.setOnClickListener {
-            openSettingFragment()
+            switchFragment(
+                SettingsFragment.newInstance(_loggedUserObject),
+                DbConstants.SETTINGS_FRAGMENT_ID
+            )
         }
 
         _addNewProfile.setOnClickListener {
@@ -128,30 +136,16 @@ class ProfileFragment : FragmentWithUserObject() {
         }
     }
 
-    private fun openSupervisorsFragment() {
+    private fun switchFragment(fragment: Fragment, fragmentId: String) {
         val transaction = activity?.supportFragmentManager?.beginTransaction()
         if (transaction != null) {
             transaction.replace(
-                R.id.calender_weekly_container_fragment, SupervisorsFragment
-                    .newInstance(_loggedUserObject)
+                R.id.calender_weekly_container_fragment, fragment, fragmentId
             )
-            transaction.disallowAddToBackStack()
+            transaction.addToBackStack(fragmentId)
             transaction.commit()
         }
     }
-
-    private fun openSettingFragment() {
-        val transaction = activity?.supportFragmentManager?.beginTransaction()
-        if (transaction != null) {
-            transaction.replace(
-                R.id.calender_weekly_container_fragment, SettingsFragment
-                    .newInstance(_loggedUserObject)
-            )
-            transaction.disallowAddToBackStack()
-            transaction.commit()
-        }
-    }
-
 
     private fun updateCurrentProfile(profile: Profile) {
         _viewModel.setCurrentProfile(profile)
@@ -242,7 +236,6 @@ class ProfileFragment : FragmentWithUserObject() {
             .build()
             .show()
     }
-
 
     companion object {
         fun newInstance(loggedUser: UserObject) =

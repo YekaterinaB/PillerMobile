@@ -29,7 +29,7 @@ object DbConstants {
     //  calendar
     const val CALENDAR_FRAGMENT_ID = "calendar_fragment"
     const val WEEKLY_CALENDAR_FRAGMENT_ID = "weekly_calendar"
-    const val FULL_VIEW_FRAGMENT_ID ="full_view_calendar"
+    const val FULL_VIEW_FRAGMENT_ID = "full_view_calendar"
     const val PROFILES_FRAGMENT_ID = "profiles"
     const val DRUGS_FRAGMENT_ID = "drugs"
     const val ADD_DRUG_FRAGMENT_ID = "add_drug_options"
@@ -40,6 +40,8 @@ object DbConstants {
 
     //  supervisors
     const val DEFAULT_SUPERVISOR_THRESHOLD = 3
+    const val SUPERVISOR_FRAGMENT_ID = "supervisor_fragment_id"
+    const val SETTINGS_FRAGMENT_ID = "settings_fragment_id"
 
     //  adding drugs
     const val DRUG_BY_NAME = "add_drug_by_name"
@@ -60,4 +62,10 @@ object DbConstants {
 
     // server
     const val SERVER_URL = "http://10.0.2.2:3000"
+
+    //  Login
+    const val LOGIN_FRAGMENT_ID = "login_fragment"
+    const val SIGN_IN_FRAGMENT_ID = "sign_in_fragment"
+    const val REGISTER_FRAGMENT_ID = "register_fragment"
+    const val SPLASH_FRAGMENT_ID = "splash_fragment"
 }

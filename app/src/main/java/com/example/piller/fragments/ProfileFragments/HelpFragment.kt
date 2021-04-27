@@ -34,14 +34,14 @@ class HelpFragment : FragmentWithUserObject() {
     }
 
 
-    private fun setOnClickListeners(){
+    private fun setOnClickListeners() {
         _backButton.setOnClickListener {
             onPressBack()
         }
     }
 
-    private fun initViews(){
-        _backButton=_fragmentView.findViewById(R.id.go_back_from_help)
+    private fun initViews() {
+        _backButton = _fragmentView.findViewById(R.id.go_back_from_help)
         _qAndARV = _fragmentView.findViewById(R.id.help_q_and_a_rv)
 
     }
@@ -58,7 +58,7 @@ class HelpFragment : FragmentWithUserObject() {
         qAndA.add(
             Pair(
                 "How to stop receiving notifications?",
-                "Press on the three dots on top right, and turn off the notifications"
+                "Press on person section on bottom left, then settings and turn off the notifications"
             )
         )
 

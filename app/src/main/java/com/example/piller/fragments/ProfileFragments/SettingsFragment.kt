@@ -20,7 +20,6 @@ import com.example.piller.activities.LoginActivity
 import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.models.UserObject
 import com.example.piller.viewModels.ManageAccountViewModel
-import kotlinx.android.synthetic.main.settings_main_layout.*
 
 class SettingsFragment : FragmentWithUserObject() {
     private lateinit var _viewModel: ManageAccountViewModel
@@ -198,6 +197,7 @@ class SettingsFragment : FragmentWithUserObject() {
         AppPreferences.stayLoggedIn = false
         val intent = Intent(context, LoginActivity::class.java)
         startActivity(intent)
+        activity?.finish()
     }
 
     private fun checkIsInfoValid() {
