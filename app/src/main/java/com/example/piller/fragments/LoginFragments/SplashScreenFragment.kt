@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.piller.R
+import com.example.piller.utilities.DbConstants
 import kotlinx.android.synthetic.main.login_splash_screen_layout.view.*
 
-class SplashScreenFragment: Fragment() {
+class SplashScreenFragment : Fragment() {
     private lateinit var _fragmentView: View
 
     override fun onCreateView(
@@ -21,27 +22,26 @@ class SplashScreenFragment: Fragment() {
         return _fragmentView
     }
 
+    private fun switchFragment(fragment: Fragment, fragmentId: String) {
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        if (transaction != null) {
+            transaction.replace(R.id.login_fragment, fragment, fragmentId)
+            transaction.addToBackStack(fragmentId)
+            transaction.commit()
+        }
+    }
+
     private fun setOnClickListeners() {
         _fragmentView.login_button_splash_screen.setOnClickListener {
-            val transaction = activity?.supportFragmentManager?.beginTransaction()
-            if (transaction != null) {
-                transaction.replace(R.id.login_fragment, LoginFragment())
-                transaction.disallowAddToBackStack()
-                transaction.commit()
-            }
+            switchFragment(LoginFragment(), DbConstants.LOGIN_FRAGMENT_ID)
         }
 
         _fragmentView.sign_up_button_splash_screen.setOnClickListener {
-            val transaction = activity?.supportFragmentManager?.beginTransaction()
-            if (transaction != null) {
-                transaction.replace(R.id.login_fragment, SignUpFragment())
-                transaction.disallowAddToBackStack()
-                transaction.commit()
-            }
-
+            switchFragment(SignUpFragment(), DbConstants.SIGN_IN_FRAGMENT_ID)
         }
     }
-        companion object {
+
+    companion object {
         fun newInstance(): SplashScreenFragment = SplashScreenFragment()
     }
 }

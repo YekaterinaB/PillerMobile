@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.piller.R
 import com.example.piller.accountManagement.AppPreferences
+import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.LoginActivityViewModel
 import kotlinx.android.synthetic.main.login_sign_up_layout.view.*
 
@@ -59,8 +60,12 @@ class SignUpFragment : Fragment() {
     private fun goToSplashScreen() {
         val transaction = activity?.supportFragmentManager?.beginTransaction()
         if (transaction != null) {
-            transaction.replace(R.id.login_fragment, SplashScreenFragment())
-            transaction.disallowAddToBackStack()
+            transaction.replace(
+                R.id.login_fragment,
+                SplashScreenFragment(),
+                DbConstants.SPLASH_FRAGMENT_ID
+            )
+            transaction.addToBackStack(DbConstants.SPLASH_FRAGMENT_ID)
             transaction.commit()
         }
     }

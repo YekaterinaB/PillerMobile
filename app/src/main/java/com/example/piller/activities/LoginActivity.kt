@@ -94,11 +94,11 @@ class LoginActivity : AppCompatActivity() {
         email: String,
         mainProfileName: String,
         profileId: String,
-        isGoogleUser:Boolean
+        isGoogleUser: Boolean
     ): UserObject {
-        val profile = Profile(profileId, mainProfileName,"main-user")
+        val profile = Profile(profileId, mainProfileName, "main-user")
         //  current profile = main profile
-        return UserObject(userId, email, profile, profile,isGoogleUser)
+        return UserObject(userId, email, profile, profile, isGoogleUser)
     }
 
     private fun stayLoggedIn() {
@@ -130,8 +130,27 @@ class LoginActivity : AppCompatActivity() {
 //                R.animator.slide_in_left,
 //                R.animator.slide_out_right
 //            )
-            fragmentTransaction.add(R.id.login_fragment, SplashScreenFragment())
+            fragmentTransaction.add(
+                R.id.login_fragment,
+                SplashScreenFragment(),
+                DbConstants.SPLASH_FRAGMENT_ID
+            )
+            fragmentTransaction.addToBackStack(DbConstants.SPLASH_FRAGMENT_ID)
             fragmentTransaction.commit()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 1) {
+//            val tag = backEntry.name
+//            val fragment = supportFragmentManager.findFragmentByTag(tag)
+            supportFragmentManager.popBackStack(null, 0)
+            val index = supportFragmentManager.backStackEntryCount - 2
+            val backEntry = supportFragmentManager.getBackStackEntryAt(index)
+//            backEntry.name?.let { updateNavBarIcons(it) }
+        } else {
+            finish()
+            super.onBackPressed()
         }
     }
 }

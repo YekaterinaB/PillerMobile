@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -48,13 +49,13 @@ class MainActivity : ActivityWithUserObject() {
 
     private fun initViews() {
         _currentProfileTV = findViewById(R.id.calendar_current_profile)
-        _calendarNav= findViewById(R.id.calendar_navigation)
-        _profileNav =findViewById(R.id.profile_navigation)
-        _addDrugNav =findViewById(R.id.add_drug_navigation)
+        _calendarNav = findViewById(R.id.calendar_navigation)
+        _profileNav = findViewById(R.id.profile_navigation)
+        _addDrugNav = findViewById(R.id.add_drug_navigation)
 
     }
 
-    private fun initObservers(){
+    private fun initObservers() {
         _profileViewModel.mutableCurrentProfile.observe(this, Observer { profile ->
             //  update current profile
             profile?.let {
@@ -85,57 +86,51 @@ class MainActivity : ActivityWithUserObject() {
 
     private fun initializeFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            val f1 = CalendarFragment.newInstance(_loggedUserObject)
+            val calendarFragment = CalendarFragment.newInstance(_loggedUserObject)
             val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.add(
                 R.id.calender_weekly_container_fragment,
-                f1,
+                calendarFragment,
                 DbConstants.CALENDAR_FRAGMENT_ID
             )
+            fragmentTransaction.addToBackStack(DbConstants.CALENDAR_FRAGMENT_ID)
             fragmentTransaction.commit()
         }
     }
 
 
-
-    private fun navigationListeners(){
-        _calendarNav.setOnClickListener{
+    private fun navigationListeners() {
+        _calendarNav.setOnClickListener {
             goToCalendarLayout()
         }
-        _profileNav.setOnClickListener{
+        _profileNav.setOnClickListener {
             goToProfileLayout()
 
 
         }
-        _addDrugNav.setOnClickListener{
+        _addDrugNav.setOnClickListener {
             goToAddDrugLayout()
         }
 
     }
 
-    private fun goToAddDrugLayout(){
+    private fun goToAddDrugLayout() {
         val addDrugFragment = AddDrugOptionsFragment.newInstance(_loggedUserObject)
         openFragment(addDrugFragment, DbConstants.ADD_DRUG_FRAGMENT_ID)
-        _calendarNav.setImageResource(R.drawable.pill_dark_blue)
-        _profileNav.setImageResource(R.drawable.ic_profile_blue)
-        _addDrugNav.setImageResource(R.drawable.edit_plus_light_blue)
+        updateNavBarIcons(DbConstants.ADD_DRUG_FRAGMENT_ID)
     }
 
-    private fun goToProfileLayout(){
+    private fun goToProfileLayout() {
         val profileFragment = ProfileFragment.newInstance(_loggedUserObject)
         openFragment(profileFragment, DbConstants.PROFILES_FRAGMENT_ID)
-        _calendarNav.setImageResource(R.drawable.pill_dark_blue)
-        _profileNav.setImageResource(R.drawable.ic_profile_light_blue)
-        _addDrugNav.setImageResource(R.drawable.edit_plus_dark)
+        updateNavBarIcons(DbConstants.PROFILES_FRAGMENT_ID)
     }
 
-    private fun goToCalendarLayout(){
+    private fun goToCalendarLayout() {
         val weeklyCalendarFragment =
             CalendarFragment.newInstance(_loggedUserObject)
         openFragment(weeklyCalendarFragment, DbConstants.CALENDAR_FRAGMENT_ID)
-        _calendarNav.setImageResource(R.drawable.ic_pill_light_blue)
-        _profileNav.setImageResource(R.drawable.ic_profile_blue)
-        _addDrugNav.setImageResource(R.drawable.edit_plus_dark)
+        updateNavBarIcons(DbConstants.CALENDAR_FRAGMENT_ID)
     }
 
 
@@ -143,20 +138,51 @@ class MainActivity : ActivityWithUserObject() {
         val fragmentTransaction: FragmentTransaction =
             this.supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.calender_weekly_container_fragment, fragment, id_fragment)
-        fragmentTransaction.disallowAddToBackStack()
+        fragmentTransaction.addToBackStack(id_fragment)
         fragmentTransaction.commit()
     }
 
-
+    private fun updateNavBarIcons(fragmentId: String) {
+        when (fragmentId) {
+            DbConstants.PROFILES_FRAGMENT_ID -> {
+                _calendarNav.setImageResource(R.drawable.pill_dark_blue)
+                _profileNav.setImageResource(R.drawable.ic_profile_light_blue)
+                _addDrugNav.setImageResource(R.drawable.edit_plus_dark)
+            }
+            DbConstants.ADD_DRUG_FRAGMENT_ID -> {
+                _calendarNav.setImageResource(R.drawable.pill_dark_blue)
+                _profileNav.setImageResource(R.drawable.ic_profile_blue)
+                _addDrugNav.setImageResource(R.drawable.edit_plus_light_blue)
+            }
+            DbConstants.CALENDAR_FRAGMENT_ID -> {
+                _calendarNav.setImageResource(R.drawable.ic_pill_light_blue)
+                _profileNav.setImageResource(R.drawable.ic_profile_blue)
+                _addDrugNav.setImageResource(R.drawable.edit_plus_dark)
+            }
+            else -> {
+            }
+        }
+    }
 
     override fun onBackPressed() {
         //  todo logout user when he presses back?
         //do not log out, just finish all
-        val intent = Intent(this@MainActivity, LoginActivity::class.java)
-        //AppPreferences.init(this)
-        //AppPreferences.stayLoggedIn = false
-        startActivity(intent)
-        finish()
+        if (supportFragmentManager.backStackEntryCount > 1) {
+//            val tag = backEntry.name
+//            val fragment = supportFragmentManager.findFragmentByTag(tag)
+            supportFragmentManager.popBackStack(null, 0)
+            val index = supportFragmentManager.backStackEntryCount - 2
+            val backEntry = supportFragmentManager.getBackStackEntryAt(index)
+            backEntry.name?.let { updateNavBarIcons(it) }
+        } else {
+            finish()
+            super.onBackPressed()
+        }
+//        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+//        //AppPreferences.init(this)
+//        //AppPreferences.stayLoggedIn = false
+//        startActivity(intent)
+//        finish()
 //        super.onBackPressed()
     }
 
