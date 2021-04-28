@@ -8,12 +8,11 @@ object AppPreferences {
     private const val MODE = Context.MODE_PRIVATE
     private lateinit var preferences: SharedPreferences
 
-    //SharedPreferences variables
+    //  SharedPreferences variables
     private val IS_LOGIN = Pair("is_login", false)
     private val EMAIL = Pair("email", "")
     private val PASSWORD = Pair("password", "")
     private val SHOW_NOTIFICATIONS = Pair("showNotifications", true)
-    private val LOGGED_OUT = Pair("loggedOut", false)
 
     fun init(context: Context) {
         preferences = context.getSharedPreferences(NAME, MODE)

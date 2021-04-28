@@ -31,6 +31,7 @@ class MainActivity : ActivityWithUserObject() {
     private lateinit var _addDrugNav: ImageView
 
     private lateinit var _currentProfileTV: TextView
+    private lateinit var _calendarFragment: CalendarFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,13 +47,16 @@ class MainActivity : ActivityWithUserObject() {
         initializeFragment(savedInstanceState)
     }
 
+    override fun onResume() {
+        super.onResume()
+        _calendarFragment.updateDataInFragment()
+    }
 
     private fun initViews() {
         _currentProfileTV = findViewById(R.id.calendar_current_profile)
         _calendarNav = findViewById(R.id.calendar_navigation)
         _profileNav = findViewById(R.id.profile_navigation)
         _addDrugNav = findViewById(R.id.add_drug_navigation)
-
     }
 
     private fun initObservers() {
@@ -86,11 +90,11 @@ class MainActivity : ActivityWithUserObject() {
 
     private fun initializeFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            val calendarFragment = CalendarFragment.newInstance(_loggedUserObject)
+            _calendarFragment = CalendarFragment.newInstance(_loggedUserObject)
             val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.add(
                 R.id.calender_weekly_container_fragment,
-                calendarFragment,
+                _calendarFragment,
                 DbConstants.CALENDAR_FRAGMENT_ID
             )
             fragmentTransaction.addToBackStack(DbConstants.CALENDAR_FRAGMENT_ID)
@@ -103,11 +107,11 @@ class MainActivity : ActivityWithUserObject() {
         _calendarNav.setOnClickListener {
             goToCalendarLayout()
         }
+
         _profileNav.setOnClickListener {
             goToProfileLayout()
-
-
         }
+
         _addDrugNav.setOnClickListener {
             goToAddDrugLayout()
         }
@@ -127,9 +131,8 @@ class MainActivity : ActivityWithUserObject() {
     }
 
     private fun goToCalendarLayout() {
-        val weeklyCalendarFragment =
-            CalendarFragment.newInstance(_loggedUserObject)
-        openFragment(weeklyCalendarFragment, DbConstants.CALENDAR_FRAGMENT_ID)
+        _calendarFragment = CalendarFragment.newInstance(_loggedUserObject)
+        openFragment(_calendarFragment, DbConstants.CALENDAR_FRAGMENT_ID)
         updateNavBarIcons(DbConstants.CALENDAR_FRAGMENT_ID)
     }
 

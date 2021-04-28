@@ -1,5 +1,6 @@
 package com.example.piller.fragments.ProfileFragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -8,9 +9,10 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.MutableLiveData
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
@@ -19,9 +21,13 @@ import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.activities.LoginActivity
 import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.models.UserObject
+import com.example.piller.utilities.notifyObserver
 import com.example.piller.viewModels.ManageAccountViewModel
+import com.example.piller.viewModels.ProfileViewModel
 
 class SettingsFragment : FragmentWithUserObject() {
+    private val _profileViewModel: ProfileViewModel by activityViewModels()
+
     private lateinit var _viewModel: ManageAccountViewModel
     private lateinit var _emailEditText: EditText
     private lateinit var _passwordEditText: EditText
@@ -36,11 +42,6 @@ class SettingsFragment : FragmentWithUserObject() {
     private lateinit var _logoutTextView: TextView
     private lateinit var _deleteAccountTextView: TextView
     private lateinit var _helpTextView: TextView
-
-
-    private val _mutableIsValidInfo: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>(false)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,11 +64,11 @@ class SettingsFragment : FragmentWithUserObject() {
     }
 
     private fun setViewModelsObservers() {
-        _mutableIsValidInfo.observe(viewLifecycleOwner, Observer { valid ->
+        _viewModel._mutableIsValidInfo.observe(viewLifecycleOwner, Observer { valid ->
             if (valid) {
-                _saveTextView.setTextColor(getResources().getColor(R.color.colorPrimary))
+                _saveTextView.setTextColor(resources.getColor(R.color.colorPrimary))
             } else {
-                _saveTextView.setTextColor(getResources().getColor(R.color.notComplete))
+                _saveTextView.setTextColor(resources.getColor(R.color.notComplete))
             }
         })
 
@@ -80,6 +81,8 @@ class SettingsFragment : FragmentWithUserObject() {
         })
 
         _viewModel._mutableUsername.observe(viewLifecycleOwner, Observer { name ->
+            _profileViewModel.mutableCurrentProfile.value?.name = name
+            _profileViewModel.mutableCurrentProfile.notifyObserver()
             _loggedUserObject.mainProfile?.name = name
             _mainProfileNameTitle.text = name
         })
@@ -94,8 +97,6 @@ class SettingsFragment : FragmentWithUserObject() {
                 logOut()
             }
         })
-
-
     }
 
     private val fieldsWatcher = object : TextWatcher {
@@ -119,7 +120,8 @@ class SettingsFragment : FragmentWithUserObject() {
         }
 
         _saveTextView.setOnClickListener {
-            if (_mutableIsValidInfo.value!!) {
+            hideSoftKeyboard()
+            if (_viewModel._mutableIsValidInfo.value!!) {
                 confirmChangesPopup()
             }
         }
@@ -204,10 +206,15 @@ class SettingsFragment : FragmentWithUserObject() {
         val email = _emailEditText.text.toString()
         val newPass = _passwordEditText.text.toString()
         val fullname = _nameEditText.text.toString()
-        _mutableIsValidInfo.value = ((_loggedUserObject.email != email && email.isNotEmpty())
-                || (AppPreferences.password != newPass && newPass.isNotEmpty())
-                || (fullname.isNotEmpty() && fullname != _loggedUserObject.mainProfile?.name))
+        _viewModel._mutableIsValidInfo.value =
+            ((_loggedUserObject.email != email && email.isNotEmpty())
+                    || (AppPreferences.password != newPass && newPass.isNotEmpty())
+                    || (fullname.isNotEmpty() && fullname != _loggedUserObject.mainProfile?.name))
+    }
 
+    fun hideSoftKeyboard() {
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(_fragmentView.windowToken, 0)
     }
 
     private fun confirmChangesPopup() {

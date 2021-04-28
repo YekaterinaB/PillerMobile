@@ -29,6 +29,10 @@ class ManageAccountViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
+    val _mutableIsValidInfo: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+
     fun verifyPassword(
         loggedUserObject: UserObject, oldPassword: String,
         newEmail: String, newPassword: String, newName: String
@@ -59,21 +63,20 @@ class ManageAccountViewModel : ViewModel() {
                         _snackBarMessage.value = "User was updated successfully."
                         _mutableUsername.value = updatedUser.mainProfileName
                         _mutableEmail.value = updatedUser.email
-                        updateAppRefrences(updatedUser.email,updatedUser.password)
+                        updateAppReferences(updatedUser.email, updatedUser.password)
+                        _mutableIsValidInfo.value = false
                     }
                 }
             }
         )
     }
-    private fun updateAppRefrences(email:String,password:String){
-        AppPreferences.email= email
-        AppPreferences.password= password
 
+    private fun updateAppReferences(email: String, password: String) {
+        AppPreferences.email = email
+        AppPreferences.password = password
     }
 
-
-
-    fun deleteUser(loggedUserObject: UserObject,password: HashMap<String,String>) {
+    fun deleteUser(loggedUserObject: UserObject, password: HashMap<String, String>) {
         _retrofit.deleteUser(loggedUserObject.userId, password).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -85,8 +88,7 @@ class ManageAccountViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == 200) {
-                        _isDeleteSucceeded.value=true;
-
+                        _isDeleteSucceeded.value = true
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         _snackBarMessage.value = jObjError["message"] as String

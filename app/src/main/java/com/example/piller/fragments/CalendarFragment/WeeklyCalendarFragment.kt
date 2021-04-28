@@ -53,10 +53,6 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         return _fragmentView
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     private fun initObservers() {
         _weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.observe(
             viewLifecycleOwner,
@@ -93,7 +89,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
             })
     }
 
-    private fun updateRecyclersAndAdapters() {
+    fun updateRecyclersAndAdapters() {
         daysAdapter.setCalendarEventDataSet(_weeklyCalendarViewModel.mutableCurrentWeeklyCalendar.value!!)
         daysContainer.smoothScrollToPosition(DateUtils.getDayOfWeekNumber() - 1)
         daysAdapter.notifyDataSetChanged()
