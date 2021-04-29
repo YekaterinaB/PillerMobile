@@ -15,10 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
-import com.example.piller.fragments.AddDrugFragments.DrugFrequencyDialogFragment
-import com.example.piller.fragments.AddDrugFragments.DrugFrequencyRepeatDialogFragment
-import com.example.piller.fragments.AddDrugFragments.DrugFrequencyWeeklyDialogFragment
-import com.example.piller.fragments.AddDrugFragments.DrugPickerDialogFragment
+import com.example.piller.fragments.AddDrugFragments.*
 import com.example.piller.models.DrugObject
 import com.example.piller.utilities.DateUtils
 import com.example.piller.utilities.DbConstants
@@ -57,6 +54,7 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
     private var _hasRepeatEnd = false
     private var _repeatCheckWeekdays: Array<Boolean> =
         arrayOf(false, false, false, false, false, false, false)
+    private var _repeatStartTime: MutableList<Calendar> = mutableListOf(Calendar.getInstance())
     private var _dosageMeasurementType: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -239,6 +237,7 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
         }
 
         drugOccurrencesTime.setOnClickListener {
+//            showRepeatStartDialog()
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = drugIntakeTime.time
             showTimePickerDialog(
@@ -347,6 +346,17 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
     private fun updateRepeat(repeatEnum: DrugOccurrenceViewModel.RepeatOn) {
         repeatOnEnum = repeatEnum
         _drugFrequencyTV.text = viewModel.convertRepeatEnumToString(repeatOnEnum)
+    }
+
+    private fun showRepeatStartDialog() {
+        DrugStartRepeatDialogFragment(
+            _repeatStartTime,
+            doneCallback = { mutableList ->
+                _repeatStartTime = mutableList
+            }
+        ).apply {
+            show(supportFragmentManager, DrugStartRepeatDialogFragment.TAG)
+        }
     }
 
     private fun chooseRepeatFrequency() {
