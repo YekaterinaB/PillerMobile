@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 import com.example.piller.SnackBar
-import com.example.piller.fragments.AddDrugFragments.DrugByBoxFragment
 import com.example.piller.fragments.AddDrugFragments.DrugByImageFragment
 import com.example.piller.fragments.AddDrugFragments.DrugByNameFragment
 import com.example.piller.fragments.AddDrugFragments.InteractionPopupFragment
@@ -69,11 +68,9 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         }
 
         _toolbarTitle.setOnClickListener {
-            //  todo go back to main search fragment
             onBackPressed()
         }
         _toolbarBackBtn.setOnClickListener {
-            //  todo go back to main search fragment
             onBackPressed()
         }
     }
@@ -87,13 +84,13 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         when (fragmentID) {
             DbConstants.DRUG_BY_PILL -> {
                 _isSearchingByName = false
-                val drugByImageFragment = DrugByImageFragment.newInstance()
+                val drugByImageFragment = DrugByImageFragment.newInstance(DbConstants.DRUG_BY_PILL)
                 initializeFragment(savedInstanceState, drugByImageFragment)
                 _toolbarTitle.text = "Search by pill image"
             }
             DbConstants.DRUG_BY_BOX -> {
                 _isSearchingByName = false
-                val drugByBoxFragment = DrugByBoxFragment.newInstance()
+                val drugByBoxFragment = DrugByImageFragment.newInstance(DbConstants.DRUG_BY_BOX)
                 initializeFragment(savedInstanceState, drugByBoxFragment)
                 _toolbarTitle.text = "Search by box image"
             }
