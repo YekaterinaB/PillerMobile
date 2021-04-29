@@ -141,8 +141,9 @@
     <string name="do_freq_close">Close</string>
     <string name="do_freq_frequency">Frequency</string>
     <string name="do_freq_repeat_once">Repeat once</string>
-    <string name="do_freq_repeat_on">Repeat on...</string>
+    <string name="do_freq_repeat_on">Repeat on…</string>
     <string name="do_freq_done">Done</string>
     <string name="none">None</string>
+    <string name="do_add_new_occurrence">Add new occurrence +</string>
 
 </resources>
