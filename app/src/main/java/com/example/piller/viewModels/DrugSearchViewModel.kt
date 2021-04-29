@@ -54,7 +54,7 @@ class DrugSearchViewModel : ViewModel() {
         return MultipartBody.Part.createFormData("file", imageFile.name, requestFile)
     }
 
-    fun searchDrugByImage(imageFilePath: String) {
+    fun searchDrugByPillImage(imageFilePath: String) {
         val imageFile = File(imageFilePath)
 
         if (imageFile.exists() && imageFile.isFile) {

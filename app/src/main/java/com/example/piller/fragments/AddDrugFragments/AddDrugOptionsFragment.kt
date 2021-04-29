@@ -59,12 +59,10 @@ class AddDrugOptionsFragment : FragmentWithUserObject() {
 
         _searchBox.setOnClickListener {
             showAddNewDrugActivity(DbConstants.DRUG_BY_BOX)
-
         }
 
         _searchPill.setOnClickListener {
             showAddNewDrugActivity(DbConstants.DRUG_BY_PILL)
-
         }
     }
 
