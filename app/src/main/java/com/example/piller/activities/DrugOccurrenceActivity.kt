@@ -54,8 +54,7 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
     private var _hasRepeatEnd = false
     private var _repeatCheckWeekdays: Array<Boolean> =
         arrayOf(false, false, false, false, false, false, false)
-    private var _repeatStartTime: MutableList<Long> =
-        mutableListOf(Calendar.getInstance().timeInMillis)
+    private var _repeatStartTime: MutableList<Calendar> = mutableListOf(Calendar.getInstance())
     private var _dosageMeasurementType: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,7 +142,7 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
         initUserObject(intent)
         initDrugIntakeTime(intent.getLongExtra(DbConstants.INTAKE_DATE, -1))
         val drug = intent.getParcelableExtra<DrugObject>(DbConstants.DRUG_OBJECT)!!
-        drug.occurrence.repeatStart = _repeatStartTime
+        drug.occurrence.repeatStart = drugIntakeTime.time
         viewModel.setDrug(drug)
     }
 
@@ -238,7 +237,16 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
         }
 
         drugOccurrencesTime.setOnClickListener {
-            showRepeatStartDialog()
+//            showRepeatStartDialog()
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = drugIntakeTime.time
+            showTimePickerDialog(
+                calendar[Calendar.HOUR_OF_DAY],
+                calendar[Calendar.MINUTE]
+            ) { hourOfDay, minute ->
+                viewModel.setDrugRepeatStartTime(hourOfDay, minute)
+                setTimeLabel(hourOfDay, minute)
+            }
         }
 
         repeatEndDateTV.setOnClickListener {
@@ -345,7 +353,6 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
             _repeatStartTime,
             doneCallback = { mutableList ->
                 _repeatStartTime = mutableList
-                drugIntakeTime.time = _repeatStartTime[0]
             }
         ).apply {
             show(supportFragmentManager, DrugStartRepeatDialogFragment.TAG)
@@ -576,7 +583,6 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
                 repeatOnEnum,
                 repeatOnValue,
                 _repeatCheckWeekdays,
-                _repeatStartTime,
                 this
             )
         } else {
@@ -586,7 +592,6 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
                 repeatOnEnum,
                 repeatOnValue,
                 _repeatCheckWeekdays,
-                _repeatStartTime,
                 this
             )
         }
