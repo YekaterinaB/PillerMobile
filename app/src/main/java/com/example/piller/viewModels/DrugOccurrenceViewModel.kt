@@ -70,13 +70,15 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     fun setDrugRepeatStartDate(yearSelected: Int, monthOfYear: Int, dayOfMonth: Int) {
         val calendar = Calendar.getInstance()
-        //  in order to save the previous selected time - set the time in millis to the current
-        //  drug time in millis, and update only the date
-        calendar.timeInMillis = drug.occurrence.repeatStart
-        calendar.set(Calendar.YEAR, yearSelected)
-        calendar.set(Calendar.MONTH, monthOfYear)
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        drug.occurrence.repeatStart = calendar.timeInMillis
+        for (i in drug.occurrence.repeatStart.indices) {
+            //  in order to save the previous selected time - set the time in millis to the current
+            //  drug time in millis, and update only the date
+            calendar.timeInMillis = drug.occurrence.repeatStart[i]
+            calendar.set(Calendar.YEAR, yearSelected)
+            calendar.set(Calendar.MONTH, monthOfYear)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            drug.occurrence.repeatStart[i] = calendar.timeInMillis
+        }
     }
 
     fun setDrugRepeatEndDate(repeatEndDate: Date) {
@@ -87,14 +89,18 @@ class DrugOccurrenceViewModel : ViewModel() {
         drug.occurrence.repeatEnd = 0
     }
 
-    fun setDrugRepeatStartTime(hours: Int, minutes: Int) {
-        val calendar = Calendar.getInstance()
-        //  in order to save the previous selected date - set the time in millis to the current
-        //  drug time in millis, and update only the hours and minutes
-        calendar.timeInMillis = drug.occurrence.repeatStart
-        calendar.set(Calendar.HOUR_OF_DAY, hours)
-        calendar.set(Calendar.MINUTE, minutes)
-        drug.occurrence.repeatStart = calendar.timeInMillis
+//    fun setDrugRepeatStartTime(hours: Int, minutes: Int) {
+//        val calendar = Calendar.getInstance()
+//        //  in order to save the previous selected date - set the time in millis to the current
+//        //  drug time in millis, and update only the hours and minutes
+//        calendar.timeInMillis = drug.occurrence.repeatStart
+//        calendar.set(Calendar.HOUR_OF_DAY, hours)
+//        calendar.set(Calendar.MINUTE, minutes)
+//        drug.occurrence.repeatStart = calendar.timeInMillis
+//    }
+
+    private fun setDrugRepeatStarts(repeatStarts: MutableList<Long>) {
+        drug.occurrence.repeatStart = repeatStarts
     }
 
     private fun setDrugRepeatOn(
@@ -132,9 +138,11 @@ class DrugOccurrenceViewModel : ViewModel() {
         repeatOn: RepeatOn,
         repeatValue: Int,
         daysRepeatCheck: Array<Boolean>,
+        repeatStarts: MutableList<Long>,
         context: Context
     ) {
         setDrugRepeatOn(repeatOn, repeatValue, daysRepeatCheck)
+        setDrugRepeatStarts(repeatStarts)
         retrofit.addDrugCalendarByUser(
             loggedUserObject.userId,
             loggedUserObject.currentProfile!!.profileId,
@@ -178,9 +186,11 @@ class DrugOccurrenceViewModel : ViewModel() {
         repeatOn: RepeatOn,
         repeatValue: Int,
         daysRepeatCheck: Array<Boolean>,
+        repeatStarts: MutableList<Long>,
         context: Context
     ) {
         setDrugRepeatOn(repeatOn, repeatValue, daysRepeatCheck)
+        setDrugRepeatStarts(repeatStarts)
         retrofit.updateDrugOccurrence(
             loggedUserObject.userId,
             loggedUserObject.currentProfile!!.profileId,
