@@ -12,6 +12,6 @@ class Occurrence(
     @SerializedName("repeat_day") var repeatDay: Int = 0,
     @SerializedName("repeat_week") var repeatWeek: Int = 0,
     @SerializedName("repeat_weekday") var repeatWeekday: List<Int> = listOf(0),
-    @SerializedName("repeat_start") var repeatStart: Long = 0,
+    @SerializedName("repeat_start") var repeatStart: MutableList<Long> = mutableListOf(0),
     @SerializedName("repeat_end") var repeatEnd: Long = 0
 ) : Parcelable

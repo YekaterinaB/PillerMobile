@@ -16,8 +16,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DrugStartRepeatDialogFragment(
-    private val pickedDatesList: MutableList<Calendar>,
-    private val doneCallback: (MutableList<Calendar>) -> Unit
+    private val pickedDatesList: MutableList<Long>,
+    private val doneCallback: (MutableList<Long>) -> Unit
 ) : BottomSheetDialogFragment() {
 
     private lateinit var calendarsAdapter: DrugObjectAdapter
@@ -31,7 +31,7 @@ class DrugStartRepeatDialogFragment(
 
     private fun initListIfEmpty() {
         if (pickedDatesList.size == 0) {
-            pickedDatesList.add(Calendar.getInstance())
+            pickedDatesList.add(Calendar.getInstance().timeInMillis)
             calendarsAdapter.notifyDataSetChanged()
         }
     }
@@ -58,7 +58,7 @@ class DrugStartRepeatDialogFragment(
     }
 
     private fun addNewRepeatStart() {
-        pickedDatesList.add(Calendar.getInstance())
+        pickedDatesList.add(Calendar.getInstance().timeInMillis)
         calendarsAdapter.notifyDataSetChanged()
         if (pickedDatesList.size >= 5) {
             setAddBtnVisibility(false)
@@ -100,8 +100,7 @@ class DrugStartRepeatDialogFragment(
 
             holder.dateTV.setOnClickListener {
                 showTimePickerDialog(pickedDatesList[position]) { hourOfDay, minute ->
-                    pickedDatesList[position][Calendar.HOUR_OF_DAY] = hourOfDay
-                    pickedDatesList[position][Calendar.MINUTE] = minute
+                    pickedDatesList[position] = getUpdatedTime(hourOfDay, minute)
                     notifyDataSetChanged()
                 }
             }
@@ -118,14 +117,21 @@ class DrugStartRepeatDialogFragment(
             }
         }
 
-        override fun getItemCount(): Int = pickedDatesList.size
-
-        private fun parseDateToString(calendar: Calendar): String {
-            val date = calendar.time
-            return formatter.format(date)
+        private fun getUpdatedTime(hourOfDay: Int, minute: Int): Long {
+            val calendar = Calendar.getInstance()
+            calendar[Calendar.HOUR_OF_DAY] = hourOfDay
+            calendar[Calendar.MINUTE] = minute
+            return calendar.timeInMillis
         }
 
-        private fun showTimePickerDialog(calendar: Calendar, callback: (Int, Int) -> Unit) {
+        override fun getItemCount(): Int = pickedDatesList.size
+
+        private fun parseDateToString(timeInMillis: Long): String = formatter.format(timeInMillis)
+
+
+        private fun showTimePickerDialog(timeInMillis: Long, callback: (Int, Int) -> Unit) {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = timeInMillis
             val initialHour = calendar[Calendar.HOUR_OF_DAY]
             val initialMinute = calendar[Calendar.MINUTE]
             val tpd =
@@ -147,8 +153,8 @@ class DrugStartRepeatDialogFragment(
         const val TAG = "DrugStartRepeatDialogFragment"
 
         fun newInstance(
-            pickedDatesList: MutableList<Calendar>,
-            doneCallback: (MutableList<Calendar>) -> Unit
+            pickedDatesList: MutableList<Long>,
+            doneCallback: (MutableList<Long>) -> Unit
         ): DrugStartRepeatDialogFragment =
             DrugStartRepeatDialogFragment(pickedDatesList, doneCallback)
     }
