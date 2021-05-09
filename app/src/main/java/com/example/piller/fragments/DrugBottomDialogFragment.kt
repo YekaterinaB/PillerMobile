@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.piller.R
+import com.example.piller.utilities.DbConstants
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_drug_dialog_dialog.*
 
-
 class DrugBottomDialogFragment(
     private val title: String,
-    private val buttonsTitles: List<String>,
+    private val buttonsTitles: Pair<String, String>,
     private val clickOnFirstButtonListener: () -> Unit,
     private val clickOnSecondButtonListener: () -> Unit
 ) : BottomSheetDialogFragment() {
@@ -25,8 +25,8 @@ class DrugBottomDialogFragment(
 
     private fun initViewsData() {
         btm_dialog_title.text = title
-        btm_dialog_first_button.text = buttonsTitles[0]
-        btm_dialog_second_button.text = buttonsTitles[1]
+        btm_dialog_first_button.text = buttonsTitles.first
+        btm_dialog_second_button.text = buttonsTitles.second
     }
 
     private fun initListeners() {
@@ -43,11 +43,11 @@ class DrugBottomDialogFragment(
 
     companion object {
 
-        const val TAG = "DrugBottomDialogFragment"
+        const val TAG = DbConstants.drugBottomDialogFragmentTag
 
         fun newInstance(
             title: String,
-            buttonsTitles: List<String>,
+            buttonsTitles: Pair<String, String>,
             clickOnFirstButtonListener: () -> Unit,
             clickOnSecondButtonListener: () -> Unit
         ): DrugBottomDialogFragment =

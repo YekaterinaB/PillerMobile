@@ -1,6 +1,5 @@
 package com.example.piller.utilities
 
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -9,19 +8,20 @@ class DateUtils {
         fun getDaysBetween(first: Date, second: Date): Int { // between 1 to 31 => 30
             val firstCal = Calendar.getInstance()
             firstCal.time = first
-            setCalendarTime(firstCal, 0, 0, 0)
+            zeroTime(firstCal)
             val secondCal = Calendar.getInstance()
             secondCal.time = second
-            setCalendarTime(secondCal, 0, 0, 0)
+            zeroTime(secondCal)
 
             val diff: Long = secondCal.timeInMillis - firstCal.timeInMillis
             return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
         }
 
-        fun getTomorrowCalendar(): Calendar {
-            val calendar = Calendar.getInstance()
-            calendar.add(Calendar.DATE, 1)
-            return calendar
+        fun zeroTime(calendar: Calendar) {
+            calendar[Calendar.HOUR_OF_DAY] = 0
+            calendar[Calendar.MINUTE] = 0
+            calendar[Calendar.SECOND] = 0
+            calendar[Calendar.MILLISECOND] = 0
         }
 
         fun getDayOfWeekNumber(): Int {
@@ -35,19 +35,6 @@ class DateUtils {
             cal.time = getFirstDayOfWeek()
             for (i in 0 until 7) {
                 stringDates.add(cal[Calendar.DAY_OF_MONTH])
-                cal.add(Calendar.DATE, 1)
-            }
-
-            return stringDates
-        }
-
-        fun getDatesOfCurrentWeek(): List<String> {
-            val cal = Calendar.getInstance()
-            val stringDates = mutableListOf<String>()
-            cal.time = getFirstDayOfWeek()
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-            for (i in 0 until 7) {
-                stringDates.add(sdf.format(cal.time))
                 cal.add(Calendar.DATE, 1)
             }
 
@@ -70,8 +57,12 @@ class DateUtils {
 
         fun isDateBeforeToday(date1: Calendar): Boolean {
             val today = Calendar.getInstance()
-            setCalendarTime(today, 23, 59, 59)
+            setToLastTimeOfDay(today)
             return isDateBefore(date1, today)
+        }
+
+        fun setToLastTimeOfDay(calendar: Calendar) {
+            setCalendarTime(calendar, 23, 59, 59)
         }
 
 
@@ -125,7 +116,7 @@ class DateUtils {
             val cal: Calendar = Calendar.getInstance()
             cal.time = startDate
             cal.add(Calendar.DATE, 1)
-            setCalendarTime(cal, 0, 0, 0)
+            zeroTime(cal)
             return cal.timeInMillis
         }
 
@@ -133,14 +124,14 @@ class DateUtils {
             // get start of this week in milliseconds
             val cal: Calendar = Calendar.getInstance()
             cal.set(Calendar.DAY_OF_WEEK, cal.firstDayOfWeek)
-            setCalendarTime(cal, 0, 0, 0)
+            zeroTime(cal)
             return cal.time
         }
 
         fun getLastDayOfWeek(): Date {
             val cal: Calendar = Calendar.getInstance()
             cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
-            setCalendarTime(cal, 23, 59, 59)
+            setToLastTimeOfDay(cal)
             return cal.time
         }
 
@@ -149,7 +140,7 @@ class DateUtils {
             cal.time = date
             //  set time to 00:00:00
             cal.set(Calendar.DAY_OF_MONTH, 1)
-            setCalendarTime(cal, 0, 0, 0)
+            zeroTime(cal)
             return cal.time
         }
 
@@ -162,7 +153,7 @@ class DateUtils {
             cal.time = date
             cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
             //  set time to 23:59:59
-            setCalendarTime(cal, 23, 59, 59)
+            setToLastTimeOfDay(cal)
             return cal.time
         }
 
@@ -200,6 +191,4 @@ class DateUtils {
                     || areDatesEqual(calendarCurrent, calendarEnd)
         }
     }
-
-
 }

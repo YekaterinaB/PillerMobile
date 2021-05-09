@@ -19,9 +19,12 @@ import retrofit2.Response
 
 class WeeklyCalendarViewModel : ViewModel() {
     private val eventInterpreter = EventInterpreter()
+    private val daysInWeek = 7
     lateinit var calendarId: String
+
+
     val mutableCurrentWeeklyCalendar: MutableLiveData<Array<MutableList<CalendarEvent>>> by lazy {
-        MutableLiveData<Array<MutableList<CalendarEvent>>>(Array(7) { mutableListOf<CalendarEvent>() })
+        MutableLiveData<Array<MutableList<CalendarEvent>>>(Array(daysInWeek) { mutableListOf<CalendarEvent>() })
     }
 
     val mutableToastError: MutableLiveData<String> by lazy {
@@ -93,16 +96,16 @@ class WeeklyCalendarViewModel : ViewModel() {
         ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>, response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         initCalenderView(response)
                     } else {
-                        mutableToastError.value = "Could not get weekly calendar view."
+                        mutableToastError.value = DbConstants.cantGetWeeklyDataError
                     }
                 }
             }
@@ -116,7 +119,7 @@ class WeeklyCalendarViewModel : ViewModel() {
     private fun initCalenderView(calendarInfo: Response<ResponseBody>) {
         val jObject = JSONObject(calendarInfo.body()!!.string())
         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
-        calendarId = jObject.get("calendar_id").toString()
+        calendarId = jObject.get(DbConstants.CALENDAR_ID).toString()
         val startDate = DateUtils.getFirstDayOfWeek()
         val endDate = DateUtils.getLastDayOfWeek()
         val weekEvents = eventInterpreter.getEventsForCalendarByDate(

@@ -8,6 +8,7 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
+import com.example.piller.utilities.DbConstants
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.drug_frequency_weekly_dialog.*
 
@@ -17,6 +18,8 @@ class DrugFrequencyWeeklyDialogFragment(
     private val backCallback: () -> Unit,
     private var daysCheck: Array<Boolean>
 ) : BottomSheetDialogFragment() {
+
+    //  TODO: check if at least one day was chosen (mutable live data etc..)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +42,7 @@ class DrugFrequencyWeeklyDialogFragment(
     }
 
     private fun getDaysList(): List<Pair<String, Boolean>> {
-        val dayOfWeekString = arrayOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        val dayOfWeekString = resources.getStringArray(R.array.daysName)
         return dayOfWeekString.zip(daysCheck) { a, b -> Pair(a, b) }
     }
 
@@ -76,7 +79,7 @@ class DrugFrequencyWeeklyDialogFragment(
 
     companion object {
 
-        const val TAG = "DrugFrequencyWeeklyDialogFragment"
+        const val TAG = DbConstants.drugFrequencyWeeklyDialogFragmentTag
 
         fun newInstance(
             doneCallback: (daysCheck: Array<Boolean>) -> Unit,
@@ -84,6 +87,5 @@ class DrugFrequencyWeeklyDialogFragment(
             daysCheck: Array<Boolean>
         ): DrugFrequencyWeeklyDialogFragment =
             DrugFrequencyWeeklyDialogFragment(doneCallback, backCallback, daysCheck)
-
     }
 }

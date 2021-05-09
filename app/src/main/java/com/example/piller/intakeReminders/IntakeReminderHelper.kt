@@ -9,12 +9,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.piller.R
 import com.example.piller.activities.DrugInfoActivity
-import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugObject
 import com.example.piller.models.UserObject
 import com.example.piller.notif.NotificationHelper
 import com.example.piller.utilities.DbConstants
-import java.util.*
 
 object IntakeReminderHelper {
 
@@ -38,13 +36,13 @@ object IntakeReminderHelper {
         val channelId = "${context.packageName}-${context.getString(R.string.app_name)}"
         return NotificationCompat.Builder(context, channelId).apply {
             setSmallIcon(R.drawable.pill_dark_blue)
-            setContentTitle("$currentProfile, It's time to take your medicine!")
+            setContentTitle(context.getString(R.string.intakeReminderTitle, currentProfile))
             setAutoCancel(true)
             // 2
             val drawable = R.drawable.pill_dark_blue
             // 3
             setLargeIcon(BitmapFactory.decodeResource(context.resources, drawable))
-            setContentText("It's time to take ${drug.drugName}.")
+            setContentText(context.getString(R.string.intakeReminderContentText, drug.drugName))
             // 4
 //            setGroup(reminderData.type.name)
 //            if (reminderData.note != null) {

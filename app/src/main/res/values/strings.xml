@@ -145,5 +145,82 @@
     <string name="do_freq_done">Done</string>
     <string name="none">None</string>
     <string name="do_add_new_occurrence">Add new occurrence +</string>
-
+    <string name="chooseValidDrug">Please choose a valid drug!</string>
+    <string name="searchByPillImage">Search by pill image</string>
+    <string name="searchByBoxImage">Search by box image</string>
+    <string name="searchByName">Search by name</string>
+    <string name="interactionPopupFragment">InteractionPopupFragment</string>
+    <string name="timeFormat">HH:mm</string>
+    <string name="dateFormat">dd/MM/yyyy</string>
+    <string name="deletePopupTitle">Are you sure you want to delete this drug?</string>
+    <string name="deleteAllOccurrences">Delete all occurrences</string>
+    <string name="deleteThisAndFutureOccurrences">Delete this and future occurrences</string>
+    <string name="editPopupTitle">Edit</string>
+    <string name="editAllOccurrences">Edit all occurrences</string>
+    <string name="editThisAndFutureOccurrences">Edit this and future occurrences</string>
+    <string name="pleaseEnterAValidDosage">Please enter a valid dosage</string>
+    <string name="minDosage">0</string>
+    <string name="defaultDosage">1</string>
+    <string name="saveChanges">Save changes</string>
+    <string name="newDrugAdded">New drug added!</string>
+    <string name="drugOccurrenceWasUpdated">Drug occurrence was updated!</string>
+    <string name="dosageTitle">Dosage</string>
+    <string name="refillReminderTitle">Refill reminder</string>
+    <string name="cancel">Cancel</string>
+    <string name="invalidRefill">Please enter the amount of meds you currently have</string>
+    <string name="authenticationId">id</string>
+    <string name="authenticationEmail">email</string>
+    <string name="authenticationProfileName">profileName</string>
+    <string name="authenticationProfileId">profileId</string>
+    <string name="authenticationGoogleUser">googleUser</string>
+    <string name="mainUserRelation">main-user</string>
+    <string name="imageDateFormat">yyyyMMdd_HHmmss</string>
+    <string name="imageNamePrefix">IMG_</string>
+    <string name="imageNameSuffix">_</string>
+    <string name="imageNameExtension">.jpg</string>
+    <string name="dotProvider">.provider</string>
+    <string name="noDrugNameError">Please enter drug name!</string>
+    <string name="drugFrequencyNext">Next</string>
+    <string name="drugFrequencyDone">Done</string>
+    <string name="daysFrequencyString">days</string>
+    <string name="weeksFrequencyString">weeks</string>
+    <string name="monthsFrequencyString">months</string>
+    <string name="yearsFrequencyString">years</string>
+    <string-array name="daysName">
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+    </string-array>
+    <string name="drugInteractionsIntentTag">drug_interactions</string>
+    <string name="fullViewPopupFragmentTag">FullViewPopupFragment</string>
+    <string name="futureDayFullView">#d9d9d9</string>
+    <string name="send">Send</string>
+    <string name="enterYourEmail">Enter your email:</string>
+    <string name="loginTag">LOGIN_TAG</string>
+    <string name="emailPasswordInvalid">Email or Password cannot be null or empty.</string>
+    <string name="resetPassword">Reset Password</string>
+    <string name="howCanIContactPiller">How Can I Contact Piller?</string>
+    <string name="contactPiller">Send an email to: piller.inc1@gmail.com</string>
+    <string name="howCanIAddaNewMedicine">How Can I Add a New Medicine?</string>
+    <string name="addNewMedicineWays">In home view, tap on the plus button on bottom right and then there are 2 options:\n1) By name\n2) By box image\n3) By pill image</string>
+    <string name="howToStopReceivingNotifications">How To Stop Receiving Notifications?</string>
+    <string name="stopReceivingNotificationsInstruction">Press on person section on bottom left, then settings and turn off the notifications</string>
+    <string name="mainSpaceUser">Main User</string>
+    <string name="addANewProfileTitle">ADD A NEW PROFILE</string>
+    <string name="addANewProfileAddBtn">ADD PROFILE</string>
+    <string name="profileNameEmptyError">Profile name cannot be empty</string>
+    <string name="passwordValueIsEmpty">Password value is empty</string>
+    <string name="addSupervisorWindowTitle">ADD A NEW SUPERVISOR</string>
+    <string name="addSupervisorWindowAddButton">Add supervisor</string>
+    <string name="addSupervisorWindowEmptyName">Supervisor name cannot be empty</string>
+    <string name="addSupervisorWindowEmptyEmail">Supervisor email cannot be empty</string>
+    <string name="removeSupervisorWarning">%1$s will be removed from\nyour supervisor list.</string>
+    <string name="intakeReminderTitle">%1$s, It\'s time to take your medicine!</string>
+    <string name="intakeReminderContentText">It\'s time to take %1$s.</string>
+    <string name="intakeReminderPendingType">Intake-%1$s-%2$d-%3$s</string>
+    <string name="drugBottomDialogFragmentTag">DrugBottomDialogFragment</string>
 </resources>

@@ -1,12 +1,13 @@
 package com.example.piller.models
 
 import android.os.Parcelable
+import com.example.piller.utilities.DbConstants
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class Dose(
-    @SerializedName("dose_id") var doseId: String = "",
-    @SerializedName("measurement_type") var measurementType: String = "",
-    @SerializedName("total_dose") var totalDose: Float = 0F
+    @SerializedName(DbConstants.doseId) var doseId: String = DbConstants.defaultStringValue,
+    @SerializedName(DbConstants.measurementType) var measurementType: String = DbConstants.defaultStringValue,
+    @SerializedName(DbConstants.totalDose) var totalDose: Float = DbConstants.initialTotalDose
 ) : Parcelable

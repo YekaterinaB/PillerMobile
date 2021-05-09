@@ -1,26 +1,27 @@
 package com.example.piller.api
 
+import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
 interface DrugIntakeAPI {
-    @Headers("Content-Type: application/json")
+    @Headers(DbConstants.contentHeaders)
 
-    @POST("drugIntakes/setIntakeTaken/{taken_id}/{refill_id}/{date}")
+    @POST(DbConstants.drugIntakesURL + "${DbConstants.setIntakeTaken}/{${DbConstants.takenId}}/{${DbConstants.refillId}}/{${DbConstants.intakeDate}}")
     fun setIntakeTaken(
-        @Path("taken_id") taken_id: String,
-        @Path("refill_id") refill_id: String,
-        @Path("date") date: Long
+        @Path(DbConstants.takenId) taken_id: String,
+        @Path(DbConstants.refillId) refill_id: String,
+        @Path(DbConstants.intakeDate) date: Long
     ): Call<ResponseBody>
 
-    @POST("drugIntakes/setIntakeNotTaken/{taken_id}/{refill_id}/{date}")
+    @POST(DbConstants.drugIntakesURL + "${DbConstants.setIntakeNotTaken}/{${DbConstants.takenId}}/{${DbConstants.refillId}}/{${DbConstants.intakeDate}}")
     fun setIntakeNotTaken(
-        @Path("taken_id") taken_id: String,
-        @Path("refill_id") refill_id: String,
-        @Path("date") date: Long
+        @Path(DbConstants.takenId) taken_id: String,
+        @Path(DbConstants.refillId) refill_id: String,
+        @Path(DbConstants.intakeDate) date: Long
     ): Call<ResponseBody>
 
-    @GET("drugIntakes/getAllIntakes/{taken_id}")
-    fun getAllDrugIntakes(@Path("taken_id") taken_id: String): Call<ResponseBody>
+    @GET(DbConstants.drugIntakesURL + "${DbConstants.getAllIntakes}/{${DbConstants.takenId}}")
+    fun getAllDrugIntakes(@Path(DbConstants.takenId) taken_id: String): Call<ResponseBody>
 }

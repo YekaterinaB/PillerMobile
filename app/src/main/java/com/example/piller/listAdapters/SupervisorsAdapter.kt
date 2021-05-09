@@ -3,7 +3,6 @@ package com.example.piller.listAdapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -22,17 +21,9 @@ class SupervisorsAdapter(
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val supervisorEmail: TextView
-        val supervisorConfirmationText :TextView
-        val deleteButton: ImageView
-
-
-        init {
-            // Define click listener for the ViewHolder's View.
-            supervisorEmail = view.findViewById(R.id.email_supervisor_item)
-            deleteButton = view.findViewById(R.id.trash_supervisor_item)
-            supervisorConfirmationText=view.findViewById(R.id.waiting_for_confirmation_supervisor_item)
-        }
+        val supervisorEmail: TextView = view.findViewById(R.id.email_supervisor_item)
+        val supervisorConfirmationText: TextView = view.findViewById(R.id.waiting_for_confirmation_supervisor_item)
+        val deleteButton: ImageView = view.findViewById(R.id.trash_supervisor_item)
     }
 
     fun setData(data: MutableList<Supervisor>) {
@@ -50,25 +41,22 @@ class SupervisorsAdapter(
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val currentItem = dataSet[position]
         val email = currentItem.getsupervisorEmail()
-        val isConfirmed=currentItem.getIsConfirmed()
+        val isConfirmed = currentItem.getIsConfirmed()
         viewHolder.supervisorEmail.text = email
-        if (isConfirmed){
+        if (isConfirmed) {
             viewHolder.supervisorConfirmationText.visibility = View.INVISIBLE
-        }else{
+        } else {
             viewHolder.supervisorConfirmationText.visibility = View.VISIBLE
         }
 
         viewHolder.deleteButton.setOnClickListener { clickOnDeleteButtonListener(email) }
         //viewHolder.editButton.setOnClickListener { clickOnEditButtonListener(name,email) }
-
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
-
 }

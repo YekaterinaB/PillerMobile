@@ -42,5 +42,4 @@ class WeeklyDayAdapter(
     }
 
     override fun getItemCount() = dataSet.size
-
 }

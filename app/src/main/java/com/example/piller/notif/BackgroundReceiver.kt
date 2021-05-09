@@ -69,7 +69,7 @@ object BackgroundNotificationScheduler {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         val jObject = JSONObject(response.body()!!.string())
                         val userObject = UserObject(
                             jObject.getString("id"),
@@ -96,7 +96,7 @@ object BackgroundNotificationScheduler {
                 override fun onResponse(
                     call: Call<ResponseBody>, response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         val profiles = getAllUserProfiles(response)
                         scheduleNotificationsForAllDrugsForAllProfiles(
                             profiles,
@@ -111,14 +111,14 @@ object BackgroundNotificationScheduler {
 
     private fun getAllUserProfiles(response: Response<ResponseBody>): List<CalendarProfile> {
         val jObject = JSONObject(response.body()!!.string())
-        val profileListBody = jObject.get("profile_list") as JSONArray
+        val profileListBody = jObject.get(DbConstants.profileList) as JSONArray
         val profiles = mutableListOf<CalendarProfile>()
         for (i in 0 until profileListBody.length()) {
             val profileObjectData = profileListBody[i] as JSONObject
             val profileObject = Profile(
-                profileObjectData.getString("id"),
-                profileObjectData.getString("name"),
-                profileObjectData.getString("relation")
+                profileObjectData.getString(DbConstants.profileId),
+                profileObjectData.getString(DbConstants.profileName),
+                profileObjectData.getString(DbConstants.profileRelation)
             )
             profiles.add(
                 CalendarProfile(
@@ -157,10 +157,10 @@ object BackgroundNotificationScheduler {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         val jObject = JSONObject(response.body()!!.string())
                         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
-                        val calendarId = jObject.get("calendar_id").toString()
+                        val calendarId = jObject.get(DbConstants.CALENDAR_ID).toString()
                         scheduleAlarmsForAllDrugs(
                             drugInfoList as JSONArray,
                             context,
@@ -181,7 +181,7 @@ object BackgroundNotificationScheduler {
     ) {
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
-            val intakeDates = drug.get("intake_dates") as JSONObject
+            val intakeDates = drug.get(DbConstants.intakeDates) as JSONObject
             val drugObject = ParserUtils.parsedDrugObject(drug, intakeDates, calendarId)
             AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drugObject)
         }

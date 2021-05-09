@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.NumberPicker
 import com.example.piller.R
+import com.example.piller.utilities.DbConstants
 
 
 class NumberPickerMinMax : NumberPicker {
@@ -28,22 +29,30 @@ class NumberPickerMinMax : NumberPicker {
 
     private fun processAttributeSet(attrs: AttributeSet) {
         //This method reads the parameters given in the xml file and sets the properties according to it
-        val stringAttrs = attrs.getAttributeValue(null, "values")
-        var minValue = 0
+        val stringAttrs = attrs.getAttributeValue(null, DbConstants.stringArgsName)
+        var minValue = DbConstants.minNumberPickerValue
         val maxValue: Int
         if (stringAttrs != null) {
             this.displayedValues = stringAttrs.split(',').toTypedArray()
             maxValue = this.displayedValues.size - 1
         } else {
-            minValue = attrs.getAttributeIntValue(null, "min", 0)
-            maxValue = attrs.getAttributeIntValue(null, "max", 0)
+            minValue = attrs.getAttributeIntValue(
+                null,
+                DbConstants.minAttribute,
+                DbConstants.defaultNumberPickerValue
+            )
+            maxValue = attrs.getAttributeIntValue(
+                null,
+                DbConstants.maxAttribute,
+                DbConstants.defaultNumberPickerValue
+            )
         }
         stringItems = this.displayedValues
         this.minValue = minValue
         this.maxValue = maxValue
         setNumberPickerTextColor(R.color.colorPrimary)
         this.wrapSelectorWheel = false
-        this.value = attrs.getAttributeIntValue(null, "value", this.minValue)
+        this.value = attrs.getAttributeIntValue(null, DbConstants.valueAttribute, this.minValue)
     }
 
     fun getItemAt(index: Int): String {
@@ -61,8 +70,8 @@ class NumberPickerMinMax : NumberPicker {
 
     private fun setNumberPickerTextColor(color: Int) {
         try {
-            val selectorWheelPaintField = this.javaClass
-                .getDeclaredField("mSelectorWheelPaint")
+            val selectorWheelPaintField =
+                this.javaClass.getDeclaredField(DbConstants.selectorDeclaredField)
             selectorWheelPaintField.isAccessible = true
             (selectorWheelPaintField.get(this) as Paint).color = color
         } catch (e: NoSuchFieldException) {

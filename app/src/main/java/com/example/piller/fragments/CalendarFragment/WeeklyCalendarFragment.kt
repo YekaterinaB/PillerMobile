@@ -120,7 +120,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
     private fun initWeeklyDaysContainer() {
         val weeklyEvents = _profileViewModel.getCurrentProfile().getWeeklyCalendar()
         val weekDaysDates = DateUtils.getDayNumberForCurrentWeek()
-        val dayOfWeekString = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        val dayOfWeekString = resources.getStringArray(R.array.daysName)
         val daysData = mutableListOf<WeeklyDay>()
         for (i in 0 until 7) {
             daysData.add(WeeklyDay(dayOfWeekString[i], weekDaysDates[i]))

@@ -1,38 +1,39 @@
 package com.example.piller.api
 
+import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
 interface SupervisorsAPI {
-    @Headers("Content-Type: application/json")
+    @Headers(DbConstants.contentHeaders)
 
-    @GET("supervisors/{userId}")
-    fun getSupervisors(@Path("userId") userId: String): Call<ResponseBody>
+    @GET(DbConstants.supervisorsURL + "{${DbConstants.userId}}")
+    fun getSupervisors(@Path(DbConstants.userId) userId: String): Call<ResponseBody>
 
-    @POST("supervisors/{userId}/{supervisorName}/{supervisorEmail}")
+    @POST(DbConstants.supervisorsURL + "{${DbConstants.userId}}/{${DbConstants.supervisorName}}/{${DbConstants.supervisorEmail}}")
     fun addSupervisor(
-        @Path("userId") userId: String,
-        @Path("supervisorName") supervisorName: String,
-        @Path("supervisorEmail") supervisorEmail: String
+        @Path(DbConstants.userId) userId: String,
+        @Path(DbConstants.supervisorName) supervisorName: String,
+        @Path(DbConstants.supervisorEmail) supervisorEmail: String
     ): Call<ResponseBody>
 
-    @DELETE("supervisors/{userId}/{supervisorEmail}")
+    @DELETE(DbConstants.supervisorsURL + "{${DbConstants.userId}}/{${DbConstants.supervisorEmail}}")
     fun deleteSupervisor(
-        @Path("userId") userId: String,
-        @Path("supervisorEmail") supervisorEmail: String
+        @Path(DbConstants.userId) userId: String,
+        @Path(DbConstants.supervisorEmail) supervisorEmail: String
     ): Call<ResponseBody>
 
-    @GET("supervisors/threshold/{userId}")
-    fun getThreshold(@Path("userId") userId: String): Call<ResponseBody>
+    @GET(DbConstants.supervisorsURL + "${DbConstants.threshold}/{${DbConstants.userId}}")
+    fun getThreshold(@Path(DbConstants.userId) userId: String): Call<ResponseBody>
 
-    @PUT("supervisors/threshold/{userId}/{threshold}")
+    @PUT(DbConstants.supervisorsURL + "${DbConstants.threshold}/{${DbConstants.userId}}/{${DbConstants.threshold}}")
     fun updateThreshold(
-        @Path("userId") userId: String,
-        @Path("threshold") threshold: Int
+        @Path(DbConstants.userId) userId: String,
+        @Path(DbConstants.threshold) threshold: Int
     ): Call<ResponseBody>
 
 
-    @DELETE("supervisors/{userId}")
-    fun deleteSupervisorList(@Path("userId") userId: String): Call<ResponseBody>
+    @DELETE(DbConstants.supervisorsURL + "{${DbConstants.userId}}")
+    fun deleteSupervisorList(@Path(DbConstants.userId) userId: String): Call<ResponseBody>
 }

@@ -6,6 +6,7 @@ import com.example.piller.api.DrugAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugObject
 import com.example.piller.models.UserObject
+import com.example.piller.utilities.DbConstants
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -48,10 +49,14 @@ class DrugSearchViewModel : ViewModel() {
 
     private fun getFileAsMultiPart(imageFile: File): MultipartBody.Part {
         val requestFile: RequestBody = RequestBody.create(
-            MediaType.parse("multipart/form-data"), imageFile
+            MediaType.parse(DbConstants.multipartHeader), imageFile
         )
 
-        return MultipartBody.Part.createFormData("file", imageFile.name, requestFile)
+        return MultipartBody.Part.createFormData(
+            DbConstants.multipartFileName,
+            imageFile.name,
+            requestFile
+        )
     }
 
     fun searchDrugByPillImage(imageFilePath: String) {
@@ -64,14 +69,14 @@ class DrugSearchViewModel : ViewModel() {
             drugAPIRetrofit.findDrugByImage(multipartBody).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        snackBarMessage.value = "Could connect to server."
+                        snackBarMessage.value = DbConstants.couldNotConnectServerError
                     }
 
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
                     ) {
-                        if (response.raw().code() == 200) {
+                        if (response.raw().code() == DbConstants.OKCode) {
                             updateDrugsList(response)
                         } else {
                             val jObjError = JSONObject(response.errorBody()!!.string())
@@ -82,7 +87,7 @@ class DrugSearchViewModel : ViewModel() {
                 }
             )
         } else {
-            snackBarMessage.value = "Could not convert image to base64."
+            snackBarMessage.value = DbConstants.convertingToBase64Error
         }
     }
 
@@ -93,14 +98,14 @@ class DrugSearchViewModel : ViewModel() {
             drugAPIRetrofit.findDrugByName(drugName).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        snackBarMessage.value = "Could connect to server."
+                        snackBarMessage.value = DbConstants.couldNotConnectServerError
                     }
 
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
                     ) {
-                        if (response.raw().code() == 200) {
+                        if (response.raw().code() == DbConstants.OKCode) {
                             updateDrugsList(response)
                         } else {
                             val jObjError = JSONObject(response.errorBody()!!.string())
@@ -111,7 +116,7 @@ class DrugSearchViewModel : ViewModel() {
                 }
             )
         } else {
-            snackBarMessage.value = "Please enter a valid drug name"
+            snackBarMessage.value = DbConstants.invalidDrugNameError
         }
     }
 
@@ -124,14 +129,14 @@ class DrugSearchViewModel : ViewModel() {
         ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    snackBarMessage.value = "Could not search interactions."
+                    snackBarMessage.value = DbConstants.unableToSearchInteractionsError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         updateInteractionList(response)
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())
@@ -150,8 +155,8 @@ class DrugSearchViewModel : ViewModel() {
         for (i in 0 until drugInterBody.length()) {
             val interaction = drugInterBody.getJSONObject(i)
             result += "\n#" + (
-                    interaction.get("interaction") as JSONObject).get("name") + "\nDescription:\n" + (
-                    interaction.get("description") as String) + "\n"
+                    interaction.get(DbConstants.interaction) as JSONObject).get(DbConstants.drugName) + "\nDescription:\n" + (
+                    interaction.get(DbConstants.description) as String) + "\n"
         }
 
         drugsInteractionResult.value = result
@@ -161,7 +166,7 @@ class DrugSearchViewModel : ViewModel() {
         val drugListBody = JSONArray(response.body()!!.string())
         drugsSearchResult.value = parseDrugList(drugListBody)
         if (drugsSearchResult.value!!.size == 0) {
-            snackBarMessage.value = "No drugs found!"
+            snackBarMessage.value = DbConstants.noDrugsFoundMessage
         }
     }
 
@@ -173,10 +178,12 @@ class DrugSearchViewModel : ViewModel() {
                 val drugItem = item.get(j) as JSONObject
                 drugs.add(
                     DrugObject(
-                        "", //  drugid is empty because it's search result and we didn't save it in db
+                        DbConstants.defaultStringValue, //  drugid is empty because it's search result and we didn't save it in db
                         calendarId,
-                        drugName = removeParenthesis(drugItem.getString("name")),
-                        rxcui = removeParenthesis(drugItem.get("rxcui").toString()).toInt()
+                        drugName = removeParenthesis(drugItem.getString(DbConstants.drugName)),
+                        rxcui = removeParenthesis(
+                            drugItem.get(DbConstants.rxcui).toString()
+                        ).toInt()
                     )
                 )
             }
@@ -187,8 +194,8 @@ class DrugSearchViewModel : ViewModel() {
 
     private fun removeParenthesis(data: String): String {
         return data
-            .replace("[\"", "")
-            .replace("\"]", "")
+            .replace("[\"", DbConstants.defaultStringValue)
+            .replace("\"]", DbConstants.defaultStringValue)
             .trim()
     }
 
@@ -201,14 +208,14 @@ class DrugSearchViewModel : ViewModel() {
             drugAPIRetrofit.findDrugByBox(multipartBody).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        snackBarMessage.value = "Could connect to server."
+                        snackBarMessage.value = DbConstants.couldNotConnectServerError
                     }
 
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
                     ) {
-                        if (response.raw().code() == 200) {
+                        if (response.raw().code() == DbConstants.OKCode) {
                             updateDrugsList(response)
                         } else {
                             val jObjError = JSONObject(response.errorBody()!!.string())

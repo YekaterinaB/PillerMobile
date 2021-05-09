@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.piller.R
+import com.example.piller.utilities.DbConstants
 import kotlinx.android.synthetic.main.drug_occurrence_picker_dialog.*
 
 class DrugPickerDialogFragment(
@@ -63,7 +64,7 @@ class DrugPickerDialogFragment(
     }
 
     companion object {
-        const val TAG = "DrugPickerDialogFragment"
+        const val TAG = DbConstants.drugPickerDialogFragmentTag
 
         fun newInstance(
             title: String,

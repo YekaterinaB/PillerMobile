@@ -7,7 +7,6 @@ import android.view.MenuInflater
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -63,7 +62,7 @@ class MainActivity : ActivityWithUserObject() {
         _profileViewModel.mutableCurrentProfile.observe(this, Observer { profile ->
             //  update current profile
             profile?.let {
-                _loggedUserObject.currentProfile = it
+                loggedUserObject.currentProfile = it
                 _currentProfileTV.text = it.name
             }
         })
@@ -81,16 +80,16 @@ class MainActivity : ActivityWithUserObject() {
 
         _profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         _profileViewModel.setCurrentProfileAndEmail(
-            _loggedUserObject.currentProfile!!,
-            _loggedUserObject.email
+            loggedUserObject.currentProfile!!,
+            loggedUserObject.email
         )
-        _profileViewModel.getProfileListFromDB(_loggedUserObject)
+        _profileViewModel.getProfileListFromDB(loggedUserObject)
 
     }
 
     private fun initializeFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            _calendarFragment = CalendarFragment.newInstance(_loggedUserObject)
+            _calendarFragment = CalendarFragment.newInstance(loggedUserObject)
             val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.add(
                 R.id.calender_weekly_container_fragment,
@@ -119,19 +118,19 @@ class MainActivity : ActivityWithUserObject() {
     }
 
     private fun goToAddDrugLayout() {
-        val addDrugFragment = AddDrugOptionsFragment.newInstance(_loggedUserObject)
+        val addDrugFragment = AddDrugOptionsFragment.newInstance(loggedUserObject)
         openFragment(addDrugFragment, DbConstants.ADD_DRUG_FRAGMENT_ID)
         updateNavBarIcons(DbConstants.ADD_DRUG_FRAGMENT_ID)
     }
 
     private fun goToProfileLayout() {
-        val profileFragment = ProfileFragment.newInstance(_loggedUserObject)
+        val profileFragment = ProfileFragment.newInstance(loggedUserObject)
         openFragment(profileFragment, DbConstants.PROFILES_FRAGMENT_ID)
         updateNavBarIcons(DbConstants.PROFILES_FRAGMENT_ID)
     }
 
     private fun goToCalendarLayout() {
-        _calendarFragment = CalendarFragment.newInstance(_loggedUserObject)
+        _calendarFragment = CalendarFragment.newInstance(loggedUserObject)
         openFragment(_calendarFragment, DbConstants.CALENDAR_FRAGMENT_ID)
         updateNavBarIcons(DbConstants.CALENDAR_FRAGMENT_ID)
     }
@@ -170,11 +169,12 @@ class MainActivity : ActivityWithUserObject() {
     override fun onBackPressed() {
         //  todo logout user when he presses back?
         //do not log out, just finish all
-        if (supportFragmentManager.backStackEntryCount > 1) {
+        if (supportFragmentManager.backStackEntryCount > DbConstants.backStackEntryCountMin) {
 //            val tag = backEntry.name
 //            val fragment = supportFragmentManager.findFragmentByTag(tag)
-            supportFragmentManager.popBackStack(null, 0)
-            val index = supportFragmentManager.backStackEntryCount - 2
+            supportFragmentManager.popBackStack(null, DbConstants.activityStackNoFlags)
+            val index =
+                supportFragmentManager.backStackEntryCount - DbConstants.previousActivityPositionInStack
             val backEntry = supportFragmentManager.getBackStackEntryAt(index)
             backEntry.name?.let { updateNavBarIcons(it) }
         } else {

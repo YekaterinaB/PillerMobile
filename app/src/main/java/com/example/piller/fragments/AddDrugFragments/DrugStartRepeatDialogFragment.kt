@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
+import com.example.piller.utilities.DbConstants
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.drug_occurrence_start_repeat_dialog.*
 import java.text.SimpleDateFormat
@@ -60,13 +61,11 @@ class DrugStartRepeatDialogFragment(
     private fun addNewRepeatStart() {
         pickedDatesList.add(Calendar.getInstance())
         calendarsAdapter.notifyDataSetChanged()
-        if (pickedDatesList.size >= 5) {
-            setAddBtnVisibility(false)
-        }
+        updateAddBtnVisibility()
     }
 
-    private fun setAddBtnVisibility(visible: Boolean) {
-        if (visible) {
+    private fun updateAddBtnVisibility() {
+        if (pickedDatesList.size <= DbConstants.maxStartRepeats) {
             do_repeat_start_add.visibility = View.VISIBLE
         } else {
             do_repeat_start_add.visibility = View.GONE
@@ -89,7 +88,8 @@ class DrugStartRepeatDialogFragment(
 
     private inner class DrugObjectAdapter : RecyclerView.Adapter<ViewHolder>() {
 
-        private val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+        private val formatter =
+            SimpleDateFormat(getString(R.string.timeFormat), Locale.getDefault())
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(LayoutInflater.from(parent.context), parent)
@@ -113,7 +113,7 @@ class DrugStartRepeatDialogFragment(
                 holder.deleteItem.setOnClickListener {
                     pickedDatesList.removeAt(position)
                     notifyDataSetChanged()
-                    setAddBtnVisibility(true)
+                    updateAddBtnVisibility()
                 }
             }
         }
@@ -144,7 +144,7 @@ class DrugStartRepeatDialogFragment(
     }
 
     companion object {
-        const val TAG = "DrugStartRepeatDialogFragment"
+        const val TAG = DbConstants.drugStartRepeatDialogFragmentTag
 
         fun newInstance(
             pickedDatesList: MutableList<Calendar>,

@@ -2,17 +2,18 @@ package com.example.piller.accountManagement
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.piller.utilities.DbConstants
 
 object AppPreferences {
-    private const val NAME = "LoginPreferences"
+    private const val NAME = DbConstants.loginPreferences
     private const val MODE = Context.MODE_PRIVATE
     private lateinit var preferences: SharedPreferences
 
     //  SharedPreferences variables
-    private val IS_LOGIN = Pair("is_login", false)
-    private val EMAIL = Pair("email", "")
-    private val PASSWORD = Pair("password", "")
-    private val SHOW_NOTIFICATIONS = Pair("showNotifications", true)
+    private val IS_LOGIN = Pair(DbConstants.isLogin, false)
+    private val EMAIL = Pair(DbConstants.email, DbConstants.defaultStringValue)
+    private val PASSWORD = Pair(DbConstants.password, DbConstants.defaultStringValue)
+    private val SHOW_NOTIFICATIONS = Pair(DbConstants.showNotifications, true)
 
     fun init(context: Context) {
         preferences = context.getSharedPreferences(NAME, MODE)
@@ -33,13 +34,14 @@ object AppPreferences {
         }
 
     var email: String
-        get() = preferences.getString(EMAIL.first, EMAIL.second) ?: ""
+        get() = preferences.getString(EMAIL.first, EMAIL.second) ?: DbConstants.defaultStringValue
         set(value) = preferences.edit {
             it.putString(EMAIL.first, value)
         }
 
     var password: String
-        get() = preferences.getString(PASSWORD.first, PASSWORD.second) ?: ""
+        get() = preferences.getString(PASSWORD.first, PASSWORD.second)
+            ?: DbConstants.defaultStringValue
         set(value) = preferences.edit {
             it.putString(PASSWORD.first, value)
         }

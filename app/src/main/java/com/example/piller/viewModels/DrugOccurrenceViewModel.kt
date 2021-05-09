@@ -11,6 +11,7 @@ import com.example.piller.models.DrugObject
 import com.example.piller.models.Occurrence
 import com.example.piller.models.UserObject
 import com.example.piller.notif.AlarmScheduler
+import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -26,15 +27,15 @@ class DrugOccurrenceViewModel : ViewModel() {
     private lateinit var drug: DrugObject
     private val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
 
-    var refillReminder = 20
-    var refillReminderTime = "11:00"
+    var refillReminder = DbConstants.defaultRefillReminder
+    var refillReminderTime = DbConstants.defaultRefillReminderTime
     var repeatCheckWeekdays: Array<Boolean> =
         arrayOf(false, false, false, false, false, false, false)
     var hasRepeatEnd = false
     var repeatOnEnum = RepeatOn.NO_REPEAT
     var repeatStartTime: MutableList<Calendar> = mutableListOf(Calendar.getInstance())
-    var dosageMeasurementType: String = ""
-    var totalDose: Float = 1.0F
+    var dosageMeasurementType: String = DbConstants.defaultStringValue
+    var totalDose: Float = DbConstants.defaultTotalDose
 
     val snackBarMessage: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
@@ -48,13 +49,21 @@ class DrugOccurrenceViewModel : ViewModel() {
         MutableLiveData<Boolean>(false)
     }
 
+    fun getRefillReminderHour(): Int {
+        return refillReminderTime.substring(0, 2).toInt()
+    }
+
+    fun getRefillReminderMinute(): Int {
+        return refillReminderTime.substring(3).toInt()
+    }
+
     fun convertRepeatEnumToString(repeatOn: RepeatOn): String {
         return when (repeatOn) {
-            RepeatOn.DAY -> "Daily"
-            RepeatOn.WEEK -> "Weekly"
-            RepeatOn.MONTH -> "Monthly"
-            RepeatOn.YEAR -> "Yearly"
-            else -> "Repeat once"
+            RepeatOn.DAY -> DbConstants.dailyString
+            RepeatOn.WEEK -> DbConstants.weeklyString
+            RepeatOn.MONTH -> DbConstants.monthlyString
+            RepeatOn.YEAR -> DbConstants.yearlyString
+            else -> DbConstants.repeatOnceString
         }
     }
 
@@ -87,14 +96,6 @@ class DrugOccurrenceViewModel : ViewModel() {
         calendar.set(Calendar.MONTH, monthOfYear)
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         drug.occurrence.repeatStart = calendar.timeInMillis
-    }
-
-    fun setDrugRepeatEndDate(repeatEndDate: Date) {
-        drug.occurrence.repeatEnd = repeatEndDate.time
-    }
-
-    fun removeDrugRepeatEndDate() {
-        drug.occurrence.repeatEnd = 0
     }
 
     fun setDrugRepeatStartTime(hours: Int, minutes: Int) {
@@ -135,10 +136,10 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     private fun setDrugByData(drugRepeatEnd: Date, repeatValue: Int) {
         if (hasRepeatEnd) {
-            setDrugRepeatEndDate(drugRepeatEnd)
+            drug.occurrence.repeatEnd = drugRepeatEnd.time
         } else {
-            //  if the user didn't choose repeat end - then set it to 0
-            removeDrugRepeatEndDate()
+            //  if the user didn't choose repeat end - then set it to default
+            drug.occurrence.repeatEnd = DbConstants.defaultRepeatEnd
         }
         setDrugRepeatOn(repeatValue)
         drug.dose = Dose(measurementType = dosageMeasurementType, totalDose = totalDose)
@@ -159,14 +160,14 @@ class DrugOccurrenceViewModel : ViewModel() {
         ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    snackBarMessage.value = "Could not add drug."
+                    snackBarMessage.value = DbConstants.couldNotAddDrugError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         addedDrugSuccess.value = true
                         updateDrugInfo(response)
                         //create notification
@@ -182,11 +183,11 @@ class DrugOccurrenceViewModel : ViewModel() {
 
     private fun updateDrugInfo(response: Response<ResponseBody>) {
         val responseObject = JSONObject(response.body()!!.string())
-        drug.occurrence.eventId = responseObject.get("event_id").toString()
-        drug.taken_id = responseObject.get("taken_id").toString()
-        drug.dose.doseId = responseObject.get("dose_id").toString()
-        drug.refill.refillId = responseObject.get("refill_id").toString()
-        drug.drugId = responseObject.get("drug_id").toString()
+        drug.occurrence.eventId = responseObject.get(DbConstants.eventId).toString()
+        drug.taken_id = responseObject.get(DbConstants.takenId).toString()
+        drug.dose.doseId = responseObject.get(DbConstants.doseId).toString()
+        drug.refill.refillId = responseObject.get(DbConstants.refillId).toString()
+        drug.drugId = responseObject.get(DbConstants.drugId).toString()
         DrugMap.instance.setDrugObject(drug.calendarId, drug)
     }
 
@@ -205,14 +206,14 @@ class DrugOccurrenceViewModel : ViewModel() {
         ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    snackBarMessage.value = "Could not add drug."
+                    snackBarMessage.value = DbConstants.couldNotAddDrugError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         updatedDrugSuccess.value = true
                         AlarmScheduler.removeAllNotifications(loggedUserObject, context, drug)
                         updateDrugInfo(response)
@@ -242,7 +243,7 @@ class DrugOccurrenceViewModel : ViewModel() {
     }
 
     fun initRepeatCheckedWeekdays() {
-        if (drug.occurrence.repeatWeek > 0) {
+        if (drug.occurrence.hasRepeatWeek()) {
             for (day in drug.occurrence.repeatWeekday) {
                 repeatCheckWeekdays[day - 1] = true
             }

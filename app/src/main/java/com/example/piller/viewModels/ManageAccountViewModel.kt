@@ -7,6 +7,7 @@ import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
 import com.example.piller.models.UserSerializable
 import com.example.piller.models.UserObject
+import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -49,18 +50,18 @@ class ManageAccountViewModel : ViewModel() {
         _retrofit.updateEmailUsernamePassword(loggedUserObject.userId, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _snackBarMessage.value = "Could not update user."
+                    _snackBarMessage.value = DbConstants.couldNotUpdateUserError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
+                    if (response.raw().code() != DbConstants.OKCode) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         _snackBarMessage.value = jObjError["message"] as String
                     } else {
-                        _snackBarMessage.value = "User was updated successfully."
+                        _snackBarMessage.value = DbConstants.updateUserSuccessfulMessage
                         _mutableUsername.value = updatedUser.mainProfileName
                         _mutableEmail.value = updatedUser.email
                         updateAppReferences(updatedUser.email, updatedUser.password)
@@ -80,14 +81,14 @@ class ManageAccountViewModel : ViewModel() {
         _retrofit.deleteUser(loggedUserObject.userId, password).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _snackBarMessage.value = "Could not delete user."
+                    _snackBarMessage.value = DbConstants.couldNotDeleteUserError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         _isDeleteSucceeded.value = true
                     } else {
                         val jObjError = JSONObject(response.errorBody()!!.string())

@@ -41,7 +41,7 @@ class CalendarFragment : FragmentWithUserObject() {
     private fun initListeners() {
         val calendarViewOptions = resources.getStringArray(R.array.monthly_weekly)
         _calendarSwitch.setOnSwitchListener { position, tabText ->
-            if (tabText == calendarViewOptions[0]) {
+            if (tabText == calendarViewOptions[DbConstants.calendarChosenViewPosition]) {
                 showCalendarFragment(DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID)
             } else {
                 showCalendarFragment(DbConstants.FULL_VIEW_FRAGMENT_ID)
