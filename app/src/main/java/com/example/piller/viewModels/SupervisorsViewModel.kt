@@ -15,7 +15,7 @@ import retrofit2.Response
 
 class SupervisorsViewModel : ViewModel() {
     val _mutableSupervisorList: MutableLiveData<MutableList<Supervisor>> by lazy {
-        MutableLiveData<MutableList<Supervisor>>(mutableListOf<Supervisor>())
+        MutableLiveData<MutableList<Supervisor>>(mutableListOf())
     }
 
     val _mutableSupervisorThreshold: MutableLiveData<Int> by lazy {
@@ -29,25 +29,27 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.getSupervisors(userId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = "Could not connect to server."
+                    _mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
+                    if (response.raw().code() != DbConstants.OKCode) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         _mutableToastError.value = jObjError["message"] as String
                     } else {
                         val jObject = JSONObject(response.body()!!.string())
-                        val supervisors = jObject.get("supervisorsList") as JSONArray
+                        val supervisors = jObject.get(DbConstants.supervisorsList) as JSONArray
                         for (i in 0 until supervisors.length()) {
-                            val name = supervisors.getJSONObject(i).get("supervisorName") as String
+                            val name = supervisors.getJSONObject(i)
+                                .get(DbConstants.supervisorName) as String
                             val email =
-                                supervisors.getJSONObject(i).get("supervisorEmail") as String
+                                supervisors.getJSONObject(i)
+                                    .get(DbConstants.supervisorEmail) as String
                             val isPending =
-                                supervisors.getJSONObject(i).get("isConfirmed") as Boolean
+                                supervisors.getJSONObject(i).get(DbConstants.isConfirmed) as Boolean
                             _mutableSupervisorList.value!!.add(Supervisor(name, email, isPending))
                         }
                         _mutableSupervisorList.notifyObserver()
@@ -72,14 +74,14 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.addSupervisor(userId, supervisorName, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = "Could not connect to server."
+                    _mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
+                    if (response.raw().code() != DbConstants.OKCode) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         _mutableToastError.value = jObjError["message"] as String
                     } else {
@@ -105,14 +107,14 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.deleteSupervisor(userId, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = "Could not connect to server."
+                    _mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
+                    if (response.raw().code() != DbConstants.OKCode) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         _mutableToastError.value = jObjError["message"] as String
                     } else {
@@ -129,18 +131,18 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.getThreshold(userId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = "Could not connect to server."
+                    _mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
-                        _mutableToastError.value = "Could not get threshold for supervisors."
+                    if (response.raw().code() != DbConstants.OKCode) {
+                        _mutableToastError.value = DbConstants.cantGetThresholdError
                     } else {
                         val jObject = JSONObject(response.body()!!.string())
-                        val threshold = jObject.get("threshold") as Int
+                        val threshold = jObject.get(DbConstants.threshold) as Int
                         _mutableSupervisorThreshold.value = threshold
                     }
                 }
@@ -151,7 +153,7 @@ class SupervisorsViewModel : ViewModel() {
 
     fun updateThresholdInDB(stringThreshold: String, userId: String) {
         val threshold: Int
-        if (stringThreshold == "None") {
+        if (stringThreshold == DbConstants.noThreshold) {
             threshold = 0
         } else {
             threshold = stringThreshold.toInt()
@@ -160,15 +162,15 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.updateThreshold(userId, threshold).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = "Could not connect to server."
+                    _mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
-                        _mutableToastError.value = "Could not update threshold for supervisors."
+                    if (response.raw().code() != DbConstants.OKCode) {
+                        _mutableToastError.value = DbConstants.cantUpdateThresholdError
                     } else {
                         _mutableSupervisorThreshold.value = threshold
 //                        mutableToastError.value =

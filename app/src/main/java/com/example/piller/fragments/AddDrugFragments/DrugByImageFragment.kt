@@ -32,9 +32,7 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
     private lateinit var imageFilePath: String
 //    private val ORIENTATIONS = SparseIntArray()
 
-    private val MAX_DIMENSION = 640
-    private val REQUEST_CAPTURE_IMAGE = 100
-    private val PERMISSION_REQUEST_CODE = 102
+    //    private val MAX_DIMENSION = 640
 
 //    init {
 //        ORIENTATIONS.append(Surface.ROTATION_0, 0)
@@ -60,7 +58,10 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
             if (checkCameraPermission()) {
                 openCameraIntent()
             } else {
-                requestPermissions(arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUEST_CODE)
+                requestPermissions(
+                    arrayOf(Manifest.permission.CAMERA),
+                    DbConstants.PERMISSION_REQUEST_CODE
+                )
             }
         }
     }
@@ -72,12 +73,16 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
 
     private fun createImageFile(): File {
         val timeStamp: String =
-            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val imageFileName = "IMG_" + timeStamp + "_"
+            SimpleDateFormat(
+                getString(R.string.imageDateFormat),
+                Locale.getDefault()
+            ).format(Date())
+        val imageFileName =
+            getString(R.string.imageNamePrefix) + timeStamp + getString(R.string.imageNameSuffix)
         val storageDir: File? = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val image: File = File.createTempFile(
             imageFileName,  /* prefix */
-            ".jpg",  /* suffix */
+            getString(R.string.imageNameExtension),  /* suffix */
             storageDir /* directory */
         )
         imageFilePath = image.absolutePath
@@ -100,11 +105,11 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
                 val photoURI: Uri =
                     FileProvider.getUriForFile(
                         requireContext(),
-                        BuildConfig.APPLICATION_ID + ".provider",
+                        BuildConfig.APPLICATION_ID + getString(R.string.dotProvider),
                         photoFile
                     )
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE)
+                startActivityForResult(pictureIntent, DbConstants.REQUEST_CAPTURE_IMAGE)
             }
         }
     }
@@ -149,7 +154,7 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAPTURE_IMAGE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == DbConstants.REQUEST_CAPTURE_IMAGE) {
             searchDrug()
             //  don't compare the data to null, it will always come as  null because we are providing
             //  a file URI, so load with the imageFilePath we obtained before opening the cameraIntent
@@ -197,11 +202,12 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
         grantResults: IntArray
     ) {
         when (requestCode) {
-            PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //  permission granted
-                openCameraIntent()
-            } else {
-            }
+            DbConstants.PERMISSION_REQUEST_CODE ->
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //  permission granted
+                    openCameraIntent()
+                } else {
+                }
         }
     }
 

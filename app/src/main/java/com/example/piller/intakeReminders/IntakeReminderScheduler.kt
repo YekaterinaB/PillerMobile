@@ -14,6 +14,10 @@ import java.util.*
 import kotlin.math.ceil
 
 object IntakeReminderScheduler {
+    private const val monthsInYear = 12
+    private const val startOfMonthDay = 1
+    private const val startOfYearDay = 1
+
     fun scheduleAlarmsForReminder(
         context: Context,
         loggedUserObject: UserObject,
@@ -31,8 +35,8 @@ object IntakeReminderScheduler {
             calRepeatEnd[Calendar.HOUR_OF_DAY],
             calRepeatEnd[Calendar.MINUTE]
         )
-        // if today is after the repeat end time, to not notify
-        if (!(drug.occurrence.repeatEnd > 0 && DateUtils.isDateBefore(calRepeatEnd, cal))) {
+        // if today is after the repeat end time, do not notify
+        if (!(drug.occurrence.hasRepeatEnd() && DateUtils.isDateBefore(calRepeatEnd, cal))) {
             scheduleAlarm(context, loggedUserObject, drug, alarmMgr)
         }
     }
@@ -50,7 +54,12 @@ object IntakeReminderScheduler {
         val intent = Intent(context.applicationContext, IntakeReminderReceiver::class.java).apply {
             action = context.getString(R.string.action_notify_medication)
             // 3
-            type = "Intake-${drug.drugId}-${drug.rxcui}-" + dayOfWeek
+            type = context.getString(
+                R.string.intakeReminderPendingType,
+                drug.drugId,
+                drug.rxcui,
+                dayOfWeek
+            )
             // 4
             putExtra(DbConstants.DRUG_OBJECT, bundleDrugObject)
             val userBundle = Bundle()
@@ -58,7 +67,12 @@ object IntakeReminderScheduler {
             putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(
+            context,
+            DbConstants.pendingIntentRequestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     /**
@@ -77,20 +91,18 @@ object IntakeReminderScheduler {
             datetimeToAlarm[Calendar.HOUR_OF_DAY],
             datetimeToAlarm[Calendar.MINUTE]
         )
-        val repeatWeek = drug.occurrence.repeatWeek
-
-        if (repeatWeek != 0) {
+        if (drug.occurrence.hasRepeatWeek()) {
             schedualeAllWeekAlarms(
                 context,
                 loggedUserObject,
                 drug,
                 datetimeToAlarm,
-                repeatWeek,
+                drug.occurrence.repeatWeek,
                 alarmMgr
             )
         } else {
             val alarmIntent =
-                createPendingIntent(context, loggedUserObject, drug, "0")
+                createPendingIntent(context, loggedUserObject, drug, DbConstants.noDayOfWeekStr)
             setScheduleNotWeekAlarms(drug, alarmMgr, datetimeToAlarm, alarmIntent)
         }
     }
@@ -102,12 +114,12 @@ object IntakeReminderScheduler {
         alarmIntent: PendingIntent?
     ) {
         val occurrence = drug.occurrence
-        if (occurrence.repeatYear == 0 && occurrence.repeatMonth == 0 &&
-            occurrence.repeatDay == 0 && occurrence.repeatWeek == 0
+        if (!occurrence.hasRepeatYear() && !occurrence.hasRepeatMonth() &&
+            !occurrence.hasRepeatDay() && !occurrence.hasRepeatWeek()
         ) {
             //repeat once
             setOnceRepeatScheduleAlarm(alarmMgr, datetimeToAlarm, alarmIntent)
-        } else if (occurrence.repeatMonth != 0) {
+        } else if (occurrence.hasRepeatMonth()) {
             //repeatMonth calculated differently
             setScheduleAlarmForMonth(
                 occurrence.repeatMonth,
@@ -115,14 +127,14 @@ object IntakeReminderScheduler {
                 alarmIntent,
                 alarmMgr
             )
-        } else if (occurrence.repeatYear != 0) {
+        } else if (occurrence.hasRepeatYear()) {
             setYearScheduleAlarm(
                 occurrence.repeatYear,
                 alarmMgr,
                 datetimeToAlarm,
                 alarmIntent
             )
-        } else //if (drug.repeatDay.toInt() != 0) {
+        } else //if (drug.hasRepeatDay()) {
         {
             setDayScheduleAlarm(occurrence.repeatDay, alarmMgr, datetimeToAlarm, alarmIntent)
         }
@@ -139,11 +151,9 @@ object IntakeReminderScheduler {
     ) {
         val days = drug.occurrence.repeatWeekday
         for (day in days) {
-            val alarmByDay =
-                getTimeClosestByDayWeek(datetimeToAlarm, day, repeatWeek)
+            val alarmByDay = getTimeClosestByDayWeek(datetimeToAlarm, day, repeatWeek)
             // add day in eac
-            val alarmIntent =
-                createPendingIntent(context, loggedUserObject, drug, day.toString())
+            val alarmIntent = createPendingIntent(context, loggedUserObject, drug, day.toString())
 
             //alert every week on weekday
             setWeekScheduleAlarm(repeatWeek, alarmByDay, alarmIntent, alarmMgr)
@@ -261,7 +271,8 @@ object IntakeReminderScheduler {
                 nextOccur.add(Calendar.WEEK_OF_YEAR, repeat)
             } else {
                 val daysBetween = DateUtils.getDaysBetween(nextOccur.time, current.time)
-                val weeksBetween = (ceil(daysBetween / 7.0)).toInt()
+                val weeksBetween =
+                    (ceil(daysBetween / DbConstants.numberOfDaysAWeekInCalendar)).toInt()
                 //repeat = 2: 1 to 4- daysBet=3, 3/2 ceil=2, plus 2*2 days
                 val addToRepeatGetToCurrDate =
                     (ceil(weeksBetween / repeat.toFloat())).toInt()
@@ -284,7 +295,7 @@ object IntakeReminderScheduler {
         val dayOfMonth = datetimeToAlarm[Calendar.DAY_OF_MONTH]
         val nextOccur = Calendar.getInstance()
         nextOccur.time = datetimeToAlarm.time
-        nextOccur.set(Calendar.DAY_OF_MONTH, 1)
+        nextOccur.set(Calendar.DAY_OF_MONTH, startOfMonthDay)
         setMonthToFirstMonthAlarmAfterCurrent(nextOccur, repeat)
         var monthToAlarm = nextOccur[Calendar.MONTH]
         //check if there is a date in that month
@@ -301,12 +312,12 @@ object IntakeReminderScheduler {
                 foundDate = true
             } catch (e: Exception) {
                 //no such date in month
-                nextOccur.set(Calendar.DAY_OF_MONTH, 1)
-                // skip to the month according to the amout of months we could not find date in
-                nextOccur.set(Calendar.MONTH, (monthToAlarm + skipMonth) % 12)
-                if (monthToAlarm + skipMonth >= 12) {
-                    nextOccur.add(Calendar.YEAR, 1)
-                    monthToAlarm = (monthToAlarm + skipMonth) % 12
+                nextOccur.set(Calendar.DAY_OF_MONTH, startOfMonthDay)
+                // skip to the month according to the amount of months we could not find date in
+                nextOccur.set(Calendar.MONTH, (monthToAlarm + skipMonth) % monthsInYear)
+                if (monthToAlarm + skipMonth >= monthsInYear) {
+                    nextOccur.add(Calendar.YEAR, startOfYearDay)
+                    monthToAlarm = (monthToAlarm + skipMonth) % monthsInYear
                     skipMonth = 0
                 }
                 skipMonth += repeat
@@ -324,11 +335,12 @@ object IntakeReminderScheduler {
         var currentMonth = currentDate[Calendar.MONTH]
         // if curr=3, next=12 -> curr=15, next=12, (15-12)/repeat will give us how many repeats we need to add to get after curr
         if (currentMonth < nextOccur[Calendar.MONTH]) {
-            currentMonth += 12 // month start from 0
+            currentMonth += monthsInYear // month start from 0
         }
         val addToRepeatGetToCurrMonth =
             (ceil((currentMonth - nextOccur[Calendar.MONTH]) / repeat.toFloat())).toInt()
-        val monthToAlarm = (nextOccur[Calendar.MONTH] + (addToRepeatGetToCurrMonth * repeat)) % 12
+        val monthToAlarm =
+            (nextOccur[Calendar.MONTH] + (addToRepeatGetToCurrMonth * repeat)) % monthsInYear
         nextOccur.set(Calendar.MONTH, monthToAlarm)
         nextOccur.set(Calendar.YEAR, currentDate[Calendar.YEAR])
     }
@@ -340,19 +352,17 @@ object IntakeReminderScheduler {
         loggedUserObject: UserObject
     ) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val days = drug.occurrence.repeatWeekday
-        if (days[0].toInt() > 0) {
+        if (drug.occurrence.hasRepeatWeekday()) {
             //repeat week on
-            for (day in days) {
+            for (day in drug.occurrence.repeatWeekday) {
                 val alarmIntent =
                     createPendingIntent(context, loggedUserObject, drug, day.toString())
                 alarmMgr.cancel(alarmIntent)
             }
         } else {
             val alarmIntent =
-                createPendingIntent(context, loggedUserObject, drug, "0")
+                createPendingIntent(context, loggedUserObject, drug, DbConstants.noDayOfWeekStr)
             alarmMgr.cancel(alarmIntent)
         }
     }
-
 }

@@ -21,6 +21,7 @@ import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.activities.LoginActivity
 import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.models.UserObject
+import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.notifyObserver
 import com.example.piller.viewModels.ManageAccountViewModel
 import com.example.piller.viewModels.ProfileViewModel
@@ -179,13 +180,13 @@ class SettingsFragment : FragmentWithUserObject() {
                 popup.dismiss()
                 changeDarkBackgroundVisibility(false)
             } else {
-                _viewModel._snackBarMessage.value = "Password value is empty"
+                _viewModel._snackBarMessage.value = getString(R.string.passwordValueIsEmpty)
             }
         }
         changeDarkBackgroundVisibility(true)
         popup.isFocusable = true
         popup.update()
-        popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
+        popup.showAtLocation(_fragmentView, Gravity.CENTER, DbConstants.popupX, DbConstants.popupY)
     }
 
     private fun createHashtFromPassword(newPassword: String): HashMap<String, String> {
@@ -212,9 +213,9 @@ class SettingsFragment : FragmentWithUserObject() {
                     || (fullname.isNotEmpty() && fullname != _loggedUserObject.mainProfile?.name))
     }
 
-    fun hideSoftKeyboard() {
+    private fun hideSoftKeyboard() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(_fragmentView.windowToken, 0)
+        imm.hideSoftInputFromWindow(_fragmentView.windowToken, DbConstants.HIDE_KEYBOARD_FLAGS)
     }
 
     private fun confirmChangesPopup() {
@@ -245,13 +246,13 @@ class SettingsFragment : FragmentWithUserObject() {
                 popup.dismiss()
                 changeDarkBackgroundVisibility(false)
             } else {
-                _viewModel._snackBarMessage.value = "Password value is empty"
+                _viewModel._snackBarMessage.value = getString(R.string.passwordValueIsEmpty)
             }
         }
         changeDarkBackgroundVisibility(true)
         popup.isFocusable = true
         popup.update()
-        popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
+        popup.showAtLocation(_fragmentView, Gravity.CENTER, DbConstants.popupX, DbConstants.popupY)
     }
 
     private fun changeDarkBackgroundVisibility(isVisible: Boolean) {

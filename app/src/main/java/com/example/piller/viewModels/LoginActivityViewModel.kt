@@ -6,6 +6,7 @@ import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
 import com.example.piller.models.UserSerializable
+import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -28,24 +29,23 @@ class LoginActivityViewModel : ViewModel() {
     fun registerUser(email: String, name: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
         val user = UserSerializable(
-            email = email, mainProfileName = name, password = password,
-            oldPassword = password
+            email = email, mainProfileName = name, password = password, oldPassword = password
         )
         retrofit.registerUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
-                        mutableToastError.value = "A user with this email already exists."
+                    if (response.raw().code() != DbConstants.OKCode) {
+                        mutableToastError.value = DbConstants.existingUserEmailError
                         mutableActivitySignUpChangeResponse.value = false
                     } else {
-                        mutableToastError.value = "Your account has been successfully created."
+                        mutableToastError.value = DbConstants.successfulRegistrationMessage
                         mutableActivitySignUpChangeResponse.value = true
                     }
                 }
@@ -57,22 +57,21 @@ class LoginActivityViewModel : ViewModel() {
     fun loginUser(email: String, password: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
         val user = UserSerializable(
-            email = email, mainProfileName = "", password = password,
+            email = email, mainProfileName = DbConstants.defaultStringValue, password = password,
             oldPassword = password
         )
         retrofit.loginUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
-                        mutableToastError.value =
-                            "User does not exist, check your login information."
+                    if (response.raw().code() != DbConstants.OKCode) {
+                        mutableToastError.value = DbConstants.userDoesNotExistError
                     } else {
                         mutableActivityLoginChangeResponse.value = response
                         //  remember email and password if the user wants to
@@ -86,21 +85,23 @@ class LoginActivityViewModel : ViewModel() {
     fun getGoogleUser(email: String, mainProfileName: String) {
         val retrofit = ServiceBuilder.buildService(UserAPI::class.java)
         val user = UserSerializable(
-            email = email, mainProfileName = mainProfileName, password = "",
-            oldPassword = ""
+            email = email,
+            mainProfileName = mainProfileName,
+            password = DbConstants.defaultStringValue,
+            oldPassword = DbConstants.defaultStringValue
         )
         retrofit.getGoogleUser(user).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
-                        mutableToastError.value = "There is a problem with user."
+                    if (response.raw().code() != DbConstants.OKCode) {
+                        mutableToastError.value = DbConstants.problemWithUserError
                     } else {
                         mutableActivityLoginChangeResponse.value = response
                         //  remember email and password if the user wants to
@@ -122,18 +123,18 @@ class LoginActivityViewModel : ViewModel() {
         retrofit.resetPassword(email).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not reset password."
+                    mutableToastError.value = DbConstants.couldNotResetPasswordError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
+                    if (response.raw().code() != DbConstants.OKCode) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         mutableToastError.value = jObjError["message"] as String
                     } else {
-                        mutableToastError.value = "Reset email sent!"
+                        mutableToastError.value = DbConstants.resetEmailSent
                     }
                 }
             }

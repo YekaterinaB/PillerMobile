@@ -1,6 +1,7 @@
 package com.example.piller.api
 
 
+import com.example.piller.utilities.DbConstants
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -9,8 +10,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ServiceBuilder {
-    private var currentUrl = ""
-    private const val connectionTimeout: Long = 100
+    private var currentUrl = DbConstants.defaultStringValue
+    private const val connectionTimeout: Long = DbConstants.connectionTimeout
 
     private var client = OkHttpClient.Builder()
         .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
@@ -39,7 +40,7 @@ object ServiceBuilder {
                     .build()
             }
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
 

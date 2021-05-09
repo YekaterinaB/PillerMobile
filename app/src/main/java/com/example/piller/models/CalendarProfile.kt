@@ -26,7 +26,7 @@ class CalendarProfile(
         return profile.name
     }
 
-    fun getProfileRelation():String{
+    fun getProfileRelation(): String {
         return profile.relation
     }
 

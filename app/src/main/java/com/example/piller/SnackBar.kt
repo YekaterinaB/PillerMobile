@@ -3,10 +3,7 @@ package com.example.piller
 import android.app.Activity
 import android.content.Context
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import de.mateware.snacky.Snacky
-
-
 
 object SnackBar {
     fun showToastBar(activityContext: Context?, message: String) {
@@ -26,6 +23,4 @@ object SnackBar {
             .build()
             .show()
     }
-
-
 }

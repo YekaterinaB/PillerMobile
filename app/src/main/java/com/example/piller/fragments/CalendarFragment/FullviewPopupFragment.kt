@@ -28,7 +28,7 @@ class FullviewPopupFragment : DialogFragment() {
     private var eventsData = mutableListOf<CalendarEvent>()
     private val drugsToDelete = mutableListOf<Int>()
     private val futureDrugsToDelete = mutableListOf<CalendarEvent>()
-    private val DRUG_INFO_DELETE_CODE = 1
+    private val DRUG_INFO_DELETE_CODE = DbConstants.DRUG_INFO_DELETE_CODE
     private var shouldUpdateData: Boolean = false
 
     override fun onCreateView(

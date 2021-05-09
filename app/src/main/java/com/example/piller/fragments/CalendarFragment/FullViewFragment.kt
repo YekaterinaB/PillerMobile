@@ -35,8 +35,6 @@ class FullViewFragment : FragmentWithUserObject() {
     private lateinit var calendarView: CalendarView
     private lateinit var loadingScreen: RelativeLayout
     private val eventDayCircleRadius = DbConstants.EVENTDAY_DRAWABLE_CIRCLE_RADIUS
-    private val eventDayBitMapWidth = 256
-    private val eventDayBitMapHeight = 128
     private var currentFirstDayOfMonth = DateUtils.getFirstDayOfMonth()
 
     companion object {
@@ -78,8 +76,8 @@ class FullViewFragment : FragmentWithUserObject() {
         startOfMonth.timeInMillis = firstAndLastDays.first.time
         val endOfMonth = Calendar.getInstance()
         endOfMonth.timeInMillis = firstAndLastDays.second.time
-        DateUtils.setCalendarTime(startOfMonth, 0, 0, 0)
-        DateUtils.setCalendarTime(endOfMonth, 23, 59, 59)
+        DateUtils.zeroTime(startOfMonth)
+        DateUtils.setToLastTimeOfDay(endOfMonth)
         return DateUtils.isDateAfter(eventDay.calendar, startOfMonth)
                 && DateUtils.isDateAfter(endOfMonth, eventDay.calendar)
     }
@@ -108,7 +106,7 @@ class FullViewFragment : FragmentWithUserObject() {
     private fun dayClicked(eventDay: EventDay) {
         val fvpDayFragment: FullviewPopupFragment = FullviewPopupFragment.newInstance()
         val arguments = Bundle()
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+        val sdf = SimpleDateFormat(getString(R.string.dateFormat), Locale.ENGLISH)
         val date = sdf.format(eventDay.calendar.time)
         val userBundle = Bundle()
         userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, _loggedUserObject)
@@ -124,7 +122,12 @@ class FullViewFragment : FragmentWithUserObject() {
 
         fvpDayFragment.arguments = arguments
         fvpDayFragment.setTargetFragment(this, DbConstants.DRUG_DELETE_POPUP)
-        activity?.supportFragmentManager?.let { fvpDayFragment.show(it, "FullViewPopupFragment") }
+        activity?.supportFragmentManager?.let {
+            fvpDayFragment.show(
+                it,
+                getString(R.string.fullViewPopupFragmentTag)
+            )
+        }
     }
 
     private fun initViews() {
@@ -135,7 +138,11 @@ class FullViewFragment : FragmentWithUserObject() {
     private fun getDrawableText(typeface: Int?, color: Int): Any {
         //  create a circle bitmapdrawable item
         val bitmap =
-            Bitmap.createBitmap(eventDayBitMapWidth, eventDayBitMapHeight, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(
+                DbConstants.eventDayBitMapWidth,
+                DbConstants.eventDayBitMapHeight,
+                Bitmap.Config.ARGB_8888
+            )
 
         val canvas = Canvas(bitmap)
 //        val scale = this.resources.displayMetrics.density
@@ -151,8 +158,8 @@ class FullViewFragment : FragmentWithUserObject() {
         //  todo - remove comments before submitting final project!
 //        text was an argument to this function
 //        paint.getTextBounds(text, 0, text.length, bounds)
-        val x = (bitmap.width - bounds.width()) / 2
-        val y = (bitmap.height + bounds.height()) / 4
+        val x = (bitmap.width - bounds.width()) / DbConstants.eventDayBitMapWidthFactor
+        val y = (bitmap.height + bounds.height()) / DbConstants.eventDayBitMapHeightFactor
         canvas.drawCircle(x.toFloat(), y.toFloat(), eventDayCircleRadius, paint)
 //        canvas.drawCircle(x.toFloat() + 40, y.toFloat(), 20F, paint)
 //        canvas.drawText("+5", x.toFloat() + 80, y.toFloat() + 12, paint)
@@ -230,8 +237,9 @@ class FullViewFragment : FragmentWithUserObject() {
     }
 
     private fun getDayColor(day: MutableList<CalendarEvent>, dayDate: Date): Int {
-        //  future occurrences will be gray
-        var dayColor = Color.parseColor("#d9d9d9")
+        //  saved it in strings and not in colors because when I saved it in strings it
+        //  didn't convert it from string to color correctly
+        var dayColor = Color.parseColor(getString(R.string.futureDayFullView))
         //  check whether the day is after tomorrow
         if (DateUtils.isDateAfter(Date(), dayDate)) {
             // check if there is any medicine that wasn't taken

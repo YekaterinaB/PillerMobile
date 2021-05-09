@@ -63,7 +63,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
     }
 
     private fun setWindowDimensions() {
-        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, 1500)
+        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, DbConstants.windowHeight)
     }
 
     private fun initListeners() {
@@ -76,7 +76,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
                 _calendarEvent.intakeTime.time
             )
             updateTakenViews()
-            if(_drugTakenCB.isChecked){
+            if (_drugTakenCB.isChecked) {
                 animateV()
             }
         }
@@ -192,7 +192,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
         _backTV = findViewById(R.id.di_toolbar_title)
         _deleteBtn = findViewById(R.id.di_delete_btn)
         _editBtn = findViewById(R.id.di_edit_btn)
-        _takenCompleteAnimation=findViewById(R.id.di_taken_image_animation)
+        _takenCompleteAnimation = findViewById(R.id.di_taken_image_animation)
 
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
@@ -212,8 +212,7 @@ class DrugInfoActivity : ActivityWithUserObject() {
         _drugTakenCB.isChecked = _calendarEvent.isTaken
         updateTakenViews()
 
-        val dosage = "Total Dosage: ${drugObject.dose.totalDose} ${drugObject.dose.measurementType}"
-        _drugDosageTV.text = dosage
+        setDosageText(drugObject)
 
         updateMedsLeft(drugObject.refill.pillsLeft)
         if (_isFromNotification) {
@@ -222,20 +221,25 @@ class DrugInfoActivity : ActivityWithUserObject() {
         }
     }
 
+    private fun setDosageText(drugObject: DrugObject) {
+        val dosage = "Total Dosage: ${drugObject.dose.totalDose} ${drugObject.dose.measurementType}"
+        _drugDosageTV.text = dosage
+    }
+
     private fun updateMedsLeft(currentMeds: Int) {
         val refills = "You have $currentMeds meds left"
         _drugRefillsTV.text = refills
     }
 
     private fun setIntakeTimeTextView() {
-        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val formatter = SimpleDateFormat(getString(R.string.timeFormat), Locale.getDefault())
         val calTime: Date
 
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = _calendarEvent.intakeTime.time
         calTime = calendar.time
 
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat(getString(R.string.dateFormat), Locale.getDefault())
         val intakeTime = "${sdf.format(_calendarEvent.intakeTime)}, ${formatter.format(calTime)}"
         _drugIntakeTimeTV.text = intakeTime
     }
@@ -302,11 +306,14 @@ class DrugInfoActivity : ActivityWithUserObject() {
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
         DrugBottomDialogFragment(
-            "Are you sure you want to delete this drug?",
-            listOf("Delete all occurrences", "Delete this and future occurrences"),
+            getString(R.string.deletePopupTitle),
+            Pair(
+                getString(R.string.deleteAllOccurrences),
+                getString(R.string.deleteThisAndFutureOccurrences)
+            ),
             clickOnFirstButtonListener = {
                 _viewModel.deleteAllOccurrencesOfDrug(
-                    _loggedUserObject, drug = drugObject, context = this
+                    loggedUserObject, drug = drugObject, context = this
                 )
             },
             clickOnSecondButtonListener = { deleteFutureOccurrences(drugObject) }
@@ -318,10 +325,10 @@ class DrugInfoActivity : ActivityWithUserObject() {
     private fun deleteFutureOccurrences(drugObject: DrugObject) {
         val today = Calendar.getInstance()
         today.timeInMillis = _calendarEvent.intakeTime.time
-        DateUtils.setCalendarTime(today, 0, 0, 0)
+        DateUtils.zeroTime(today)
         _calendarEvent.intakeEndTime = today.time
         _viewModel.deleteFutureOccurrencesOfDrug(
-            _loggedUserObject,
+            loggedUserObject,
             drug = drugObject,
             repeatEnd = today.timeInMillis.toString(),
             context = this
@@ -332,8 +339,11 @@ class DrugInfoActivity : ActivityWithUserObject() {
         val drugObject =
             DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
         DrugBottomDialogFragment(
-            "Edit",
-            listOf("Edit all occurrences", "Edit this and future occurrences"),
+            getString(R.string.editPopupTitle),
+            Pair(
+                getString(R.string.editAllOccurrences),
+                getString(R.string.editThisAndFutureOccurrences)
+            ),
             clickOnFirstButtonListener = { goToEditActivity(true) },
             clickOnSecondButtonListener = {
                 deleteFutureOccurrences(drugObject)
@@ -344,21 +354,18 @@ class DrugInfoActivity : ActivityWithUserObject() {
         }
     }
 
-    private fun animateV(){
-
+    private fun animateV() {
         val animation = AnimationUtils.loadAnimation(this, R.anim.taken_animation)
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(arg0: Animation) {
-                _takenCompleteAnimation.visibility=View.VISIBLE
+                _takenCompleteAnimation.visibility = View.VISIBLE
             }
+
             override fun onAnimationRepeat(arg0: Animation) {}
             override fun onAnimationEnd(arg0: Animation) {
-                _takenCompleteAnimation.visibility=View.INVISIBLE
-
+                _takenCompleteAnimation.visibility = View.INVISIBLE
             }
         })
         _takenCompleteAnimation.startAnimation(animation)
-
     }
-
 }

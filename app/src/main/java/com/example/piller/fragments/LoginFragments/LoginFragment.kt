@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.LoginActivity
+import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.LoginActivityViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -39,7 +40,7 @@ class LoginFragment : Fragment() {
 
     private val _viewModel: LoginActivityViewModel by activityViewModels()
     private lateinit var _auth: FirebaseAuth
-    private val TAG = "LOGIN_TAG"
+    private val TAG = getString(R.string.loginTag)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,7 +75,7 @@ class LoginFragment : Fragment() {
         if (account != null) {
             val personName = account.displayName
             val personEmail = account.email
-            _viewModel.getGoogleUser(personEmail!!,personName!!)
+            _viewModel.getGoogleUser(personEmail!!, personName!!)
 
         } else {
             SnackBar.showToastBar(context, "Could not log in via Google.")
@@ -152,19 +153,19 @@ class LoginFragment : Fragment() {
             _loadingScreen.visibility = View.VISIBLE
             _viewModel.loginUser(emailInput, passwordInput)
         } else {
-            SnackBar.showToastBar(
-                context,
-                "Email or Password cannot be null or empty."
-            )
+            SnackBar.showToastBar(context, getString(R.string.emailPasswordInvalid))
         }
     }
 
     private fun forgotPassword() {
-        val lp = LinearLayout.LayoutParams(700, 200)
+        val lp = LinearLayout.LayoutParams(
+            DbConstants.forgotPasswordWidth,
+            DbConstants.forgotPasswordHeight
+        )
         val layout = LinearLayout(context)
         layout.orientation = LinearLayout.HORIZONTAL
         val emailLabel = TextView(context)
-        emailLabel.text = "Enter your email:"
+        emailLabel.text = getString(R.string.enterYourEmail)
         emailLabel.setPadding(20, 0, 0, 0)
         val emailInput = EditText(context)
         emailInput.layoutParams = lp
@@ -172,16 +173,16 @@ class LoginFragment : Fragment() {
         layout.addView(emailLabel)
         layout.addView(emailInput)
         val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context)
-        alertDialog.setTitle("Reset Password")
+        alertDialog.setTitle(getString(R.string.resetPassword))
         alertDialog.setView(layout)
 
-        alertDialog.setPositiveButton("Send") { _, _ ->
+        alertDialog.setPositiveButton(getString(R.string.send)) { _, _ ->
             val email = emailInput.text.toString()
             if (email.isNotEmpty()) {
                 _viewModel.sendEmailToResetPassword(email)
             }
         }
-        alertDialog.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        alertDialog.setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
         alertDialog.show()
     }
 }

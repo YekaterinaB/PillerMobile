@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.piller.R
+import com.example.piller.utilities.DbConstants
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.drug_occurrence_frequency_dialog.*
 
@@ -34,7 +35,7 @@ class DrugFrequencyDialogFragment(
 
 
     companion object {
-        const val TAG = "DrugFrequencyDialogFragment"
+        const val TAG = DbConstants.drugFrequencyDialogFragmentTag
 
         fun newInstance(
             setNoRepeat: () -> Unit,

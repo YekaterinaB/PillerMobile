@@ -48,17 +48,16 @@ class HelpFragment : FragmentWithUserObject() {
 
     private fun getQANDAList(): MutableList<Pair<String, String>> {
         val qAndA = mutableListOf<Pair<String, String>>()
-        qAndA.add(Pair("How Can I Contact Piller?", "Send an email to: piller.inc1@gmail.com"))
         qAndA.add(
-            Pair(
-                "How Can I Add a New Medicine?",
-                "In home view, tap on the plus button on bottom right and then there are 2 options: \n1) By name \n2) By box image\n3) By pill image"
-            )
+            Pair(getString(R.string.howCanIContactPiller), getString(R.string.contactPiller))
+        )
+        qAndA.add(
+            Pair(getString(R.string.howCanIAddaNewMedicine), getString(R.string.addNewMedicineWays))
         )
         qAndA.add(
             Pair(
-                "How to stop receiving notifications?",
-                "Press on person section on bottom left, then settings and turn off the notifications"
+                getString(R.string.howToStopReceivingNotifications),
+                getString(R.string.stopReceivingNotificationsInstruction)
             )
         )
 

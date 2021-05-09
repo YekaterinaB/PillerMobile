@@ -9,10 +9,10 @@ import com.example.piller.intakeReminders.IntakeReminderScheduler
 import com.example.piller.models.DrugObject
 import com.example.piller.models.UserObject
 import com.example.piller.refillReminders.RefillReminderScheduler
+import com.example.piller.utilities.DbConstants
 
 
 object AlarmScheduler {
-
     fun scheduleAllNotifications(loggedUserObject: UserObject, context: Context, drug: DrugObject) {
         IntakeReminderScheduler.scheduleAlarmsForReminder(context, loggedUserObject, drug)
         RefillReminderScheduler.scheduleAlarmsForReminder(context, loggedUserObject, drug)
@@ -26,7 +26,7 @@ object AlarmScheduler {
     fun runBackgroundService(context: Context) {
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmIntent = createPendingIntentForAll(context)
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, 10, alarmIntent)
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, DbConstants.backgroundServiceTriggerAt, alarmIntent)
     }
 
     private fun createPendingIntentForAll(context: Context): PendingIntent? {
@@ -35,7 +35,11 @@ object AlarmScheduler {
             action = context.getString(R.string.action_notify_medication)
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(
+            context,
+            DbConstants.pendingIntentRequestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
-
 }

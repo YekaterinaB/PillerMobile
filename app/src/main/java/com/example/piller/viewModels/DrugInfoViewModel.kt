@@ -12,6 +12,7 @@ import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugObject
 import com.example.piller.models.UserObject
 import com.example.piller.notif.AlarmScheduler
+import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ImageUtils
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -64,18 +65,18 @@ class DrugInfoViewModel : ViewModel() {
         ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         deleteSuccess.value = true
                         AlarmScheduler.removeAllNotifications(loggedUserObject, context, drug)
                     } else {
-                        mutableToastError.value = "Could not delete drug."
+                        mutableToastError.value = DbConstants.couldNotDeleteDrugError
                     }
                 }
             }
@@ -93,14 +94,14 @@ class DrugInfoViewModel : ViewModel() {
         ).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         deleteFutureSuccess.value = true
                         //  remove the notifications because drug end is not initialized
                         AlarmScheduler.removeAllNotifications(loggedUserObject, context, drug)
@@ -120,14 +121,14 @@ class DrugInfoViewModel : ViewModel() {
             drugAPIRetrofit.getDrugImage(rxcui).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        mutableToastError.value = "Could not connect to server."
+                        mutableToastError.value = DbConstants.couldNotConnectServerError
                     }
 
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
                     ) {
-                        if (response.raw().code() == 200) {
+                        if (response.raw().code() == DbConstants.OKCode) {
                             val jObject = JSONObject(response.body()!!.string())
                             setImageFromUrl(context, jObject["imageSrc"].toString(), rxcui)
                         } else {
@@ -190,7 +191,7 @@ class DrugInfoViewModel : ViewModel() {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
+                    if (response.raw().code() != DbConstants.OKCode) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         mutableToastError.value = jObjError["message"] as String
                     } else {
@@ -212,7 +213,7 @@ class DrugInfoViewModel : ViewModel() {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
+                    if (response.raw().code() != DbConstants.OKCode) {
                         val jObjError = JSONObject(response.errorBody()!!.string())
                         mutableToastError.value = jObjError["message"] as String
                     } else {

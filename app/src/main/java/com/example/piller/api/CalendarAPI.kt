@@ -2,17 +2,18 @@ package com.example.piller.api
 
 import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugObject
+import com.example.piller.utilities.DbConstants
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
 interface CalendarAPI {
-    @Headers("Content-Type: application/json")
+    @Headers(DbConstants.contentHeaders)
 
-    @GET("calendar/{userId}/{profileId}")
+    @GET(DbConstants.calendarURL + "{${DbConstants.userId}}/{${DbConstants.profileIdStr}}")
     fun getCalendarByUser(
-        @Path("userId") userId: String,
-        @Path("profileId") profileId: String
+        @Path(DbConstants.userId) userId: String,
+        @Path(DbConstants.profileIdStr) profileId: String
     ): Call<ResponseBody>
 
 //    @PUT("calendar/{email}/{name}")
@@ -22,40 +23,44 @@ interface CalendarAPI {
 //        @Body calendarEvent: CalendarEvent
 //    ): Call<ResponseBody>
 
-    @DELETE("calendar/{userId}")
+    @DELETE(DbConstants.calendarURL + "{${DbConstants.userId}}")
     fun deleteCalendarByUser(
-        @Path("userId") userId: String,
+        @Path(DbConstants.userId) userId: String,
         @Body calendarEvent: CalendarEvent
     ): Call<ResponseBody>
 
-    @POST("calendar/addDrug/{userId}/{profileId}")
+    @POST(DbConstants.calendarURL + "${DbConstants.addDrug}/{${DbConstants.userId}}/{${DbConstants.profileIdStr}}")
     fun addDrugCalendarByUser(
-        @Path("userId") userId: String,
-        @Path("profileId") profileId: String,
+        @Path(DbConstants.userId) userId: String,
+        @Path(DbConstants.profileIdStr) profileId: String,
         @Body drug_info: DrugObject
     ): Call<ResponseBody>
 
-    @POST("calendar/updateDrug/{userId}/{profileId}/{drug_id}")
+    @POST(DbConstants.calendarURL + "${DbConstants.updateDrug}/{${DbConstants.userId}}/{${DbConstants.profileIdStr}}/{${DbConstants.drugId}}")
     fun updateDrugOccurrence(
-        @Path("userId") userId: String,
-        @Path("profileId") profileId: String,
-        @Path("drug_id") drug_id: String,
+        @Path(DbConstants.userId) userId: String,
+        @Path(DbConstants.profileIdStr) profileId: String,
+        @Path(DbConstants.drugId) drug_id: String,
         @Body drug_info: DrugObject
     ): Call<ResponseBody>
 
     //  @Query means that it'll be in the end of the url with ?rxcui=12345
-    @HTTP(method = "DELETE", path = "/calendar/deleteDrug/{userId}/{profileId}", hasBody = true)
+    @HTTP(
+        method = DbConstants.DELETEMethod,
+        path = "/" + DbConstants.calendarURL + "/${DbConstants.deleteDrug}/{${DbConstants.userId}}/{${DbConstants.profileIdStr}}",
+        hasBody = true
+    )
     fun deleteDrugByUser(
-        @Path("userId") userId: String,
-        @Path("profileId") profileId: String,
-        @Query("drug_id") drug_id: String
+        @Path(DbConstants.userId) userId: String,
+        @Path(DbConstants.profileIdStr) profileId: String,
+        @Query(DbConstants.drugId) drug_id: String
     ): Call<ResponseBody>
 
-    @PUT("calendar/deleteFutureOccurrencesOfDrugByUser/{userId}/{profileId}")
+    @PUT(DbConstants.calendarURL + "${DbConstants.deleteFutureOccurrencesOfDrugByUser}/{${DbConstants.userId}}/{${DbConstants.profileIdStr}}")
     fun deleteFutureOccurrencesOfDrugByUser(
-        @Path("userId") userId: String,
-        @Path("profileId") profileId: String,
-        @Query("drug_id") drug_id: String,
-        @Query("repeat_end") repeatEnd: String
+        @Path(DbConstants.userId) userId: String,
+        @Path(DbConstants.profileIdStr) profileId: String,
+        @Query(DbConstants.drugId) drug_id: String,
+        @Query(DbConstants.repeatEnd) repeatEnd: String
     ): Call<ResponseBody>
 }

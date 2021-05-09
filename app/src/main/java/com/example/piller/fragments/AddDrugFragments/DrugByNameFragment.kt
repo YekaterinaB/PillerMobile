@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.activities.AddNewDrugActivity
+import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugSearchViewModel
 
 class DrugByNameFragment : Fragment() {
@@ -78,7 +79,7 @@ class DrugByNameFragment : Fragment() {
         val drugName = drugNameET.text.toString()
         if (drugName.isEmpty()) {
             activity?.let { thisActivity ->
-                SnackBar.showToastBar(thisActivity, "Please enter drug name!")
+                SnackBar.showToastBar(thisActivity, getString(R.string.noDrugNameError))
                 setButtonsEnabled(true)
                 return
             }
@@ -90,7 +91,7 @@ class DrugByNameFragment : Fragment() {
         setButtonsEnabled(false)
         //  close the keyboard when clicking search
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(fragmentView.windowToken, 0)
+        imm.hideSoftInputFromWindow(fragmentView.windowToken, DbConstants.HIDE_KEYBOARD_FLAGS)
         //  todo check if the drug name changed from before??
         searchDrug()
     }

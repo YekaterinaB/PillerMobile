@@ -11,6 +11,7 @@ import com.example.piller.DrugMap
 import com.example.piller.R
 import com.example.piller.models.CalendarEvent
 import com.example.piller.utilities.DateUtils
+import com.example.piller.utilities.DbConstants
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -18,10 +19,8 @@ class EliAdapter(
     private var dataSet: MutableList<CalendarEvent>,
     private val itemClickCallback: (CalendarEvent) -> Unit
 ) : RecyclerView.Adapter<EliAdapter.ViewHolder>() {
-    /**
-     * Provide a reference to the type of views that you are using
-     * (custom ViewHolder).
-     */
+    private val noBackground = 0
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val drugName: TextView = view.findViewById(R.id.wdi_drug_name)
         val intakeTime: TextView = view.findViewById(R.id.wdi_intake_time)
@@ -49,7 +48,10 @@ class EliAdapter(
         val currentItem = dataSet[position]
         val drugObject = DrugMap.instance.getDrugObject(currentItem.calendarId, currentItem.drugId)
         viewHolder.drugName.text = drugObject.drugName
-        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(currentItem.intakeTime)
+        val time = SimpleDateFormat(
+            DbConstants.timeFormat,
+            Locale.getDefault()
+        ).format(currentItem.intakeTime)
         viewHolder.intakeTime.text = time
         viewHolder.layout.setOnClickListener { itemClickCallback(currentItem) }
         setViewHolderBackgroundColor(viewHolder, currentItem)
@@ -57,22 +59,42 @@ class EliAdapter(
 
     private fun setViewHolderBackgroundColor(viewHolder: ViewHolder, calendarEvent: CalendarEvent) {
         //  set the background color only if the intake time passed
-        if (DateUtils.isDateAfter(Date(), calendarEvent.intakeTime)) {
-            //  the next line is in order to remove the icon, because if we delete the icon stays
-            //  even though it's not supposed to be there
-            viewHolder.takenStatus.setBackgroundResource(0)
-            if (calendarEvent.isTaken) {
+        //  the next line is in order to remove the icon, because if we delete the icon stays
+        //  even though it's not supposed to be there
+        viewHolder.takenStatus.setBackgroundResource(noBackground)
+        when {
+            calendarEvent.isTaken -> {
                 //  the medicine was taken - set green background (alpha is for opacity)
                 viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_check_green)
-            } else {
+            }
+            DateUtils.isDateAfter(Date(), calendarEvent.intakeTime) -> {
                 //  the medicine wasn't taken - set red background (alpha is for opacity)
                 viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_exclamation_red)
             }
-        } else {
-            //  the next line is in order to remove the icon, because if we delete the icon stays
-            //  even though it's not supposed to be there
-            viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_basic_alarm)
+            else -> {
+                //  the next line is in order to remove the icon, because if we delete the icon stays
+                //  even though it's not supposed to be there
+                viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_basic_alarm)
+            }
         }
+
+        //TODO remove this
+//        if (DateUtils.isDateAfter(Date(), calendarEvent.intakeTime)) {
+//            //  the next line is in order to remove the icon, because if we delete the icon stays
+//            //  even though it's not supposed to be there
+//            viewHolder.takenStatus.setBackgroundResource(0)
+//            if (calendarEvent.isTaken) {
+//                //  the medicine was taken - set green background (alpha is for opacity)
+//                viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_check_green)
+//            } else {
+//                //  the medicine wasn't taken - set red background (alpha is for opacity)
+//                viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_exclamation_red)
+//            }
+//        } else {
+//            //  the next line is in order to remove the icon, because if we delete the icon stays
+//            //  even though it's not supposed to be there
+//            viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_basic_alarm)
+//        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

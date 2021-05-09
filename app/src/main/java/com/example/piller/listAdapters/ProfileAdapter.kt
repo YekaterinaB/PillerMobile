@@ -3,7 +3,6 @@ package com.example.piller.listAdapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,7 @@ import com.example.piller.models.Profile
 
 class ProfileAdapter(
     private var dataSet: MutableList<CalendarProfile>,
-    private var currentProfile:String,
+    private var currentProfile: String,
     private val clickOnItemListener: (Profile) -> Unit,
     private val clickOnButtonListener: (Profile) -> Unit
 ) :
@@ -25,9 +24,8 @@ class ProfileAdapter(
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val profileName: TextView = view.findViewById(R.id.profile_name_profile_item)
-        val relation:TextView = view.findViewById(R.id.profile_relation_profile_item)
+        val relation: TextView = view.findViewById(R.id.profile_relation_profile_item)
         val deleteButton: ImageView = view.findViewById(R.id.trash_profile_item)
-
     }
 
     fun setData(data: MutableList<CalendarProfile>) {
@@ -43,9 +41,8 @@ class ProfileAdapter(
         return ViewHolder(view)
     }
 
-    fun updateCurrentProfile(profile:String){
-            currentProfile=profile
-
+    fun updateCurrentProfile(profile: String) {
+        currentProfile = profile
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -58,14 +55,15 @@ class ProfileAdapter(
         val profileRelation = currentItem.getProfileRelation()
         viewHolder.relation.text = profileRelation
 
-        if(currentProfile == profileName){
+        if (currentProfile == profileName) {
             viewHolder.itemView.setBackgroundResource(R.drawable.rounded_shape_green_edge)
-        }else{
+        } else {
             viewHolder.itemView.setBackgroundResource(R.drawable.rounded_shape_edit_text)
         }
 
         viewHolder.itemView.setOnClickListener {
-            clickOnItemListener(dataSet[position].getProfileObject()) }
+            clickOnItemListener(dataSet[position].getProfileObject())
+        }
 
         viewHolder.deleteButton.setOnClickListener { clickOnButtonListener(dataSet[position].getProfileObject()) }
 

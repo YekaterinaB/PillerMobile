@@ -74,11 +74,12 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         val jObject = JSONObject(response.body()!!.string())
         val userObject = createUserObject(
-            jObject.get("id").toString(),
-            jObject.get("email").toString(),
-            jObject.get("profileName").toString(),
-            jObject.get("profileId").toString(),
-            jObject.get("googleUser").toString().toBoolean()
+            jObject.get(getString(R.string.authenticationId)).toString(),
+            jObject.get(getString(R.string.authenticationEmail)).toString(),
+            jObject.get(getString(R.string.authenticationProfileName)).toString(),
+            jObject.get(getString(R.string.authenticationProfileId)).toString(),
+            false
+//            jObject.get(getString(R.string.authenticationGoogleUser)).toString().toBoolean()
         )
         val userBundle = Bundle()
         userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, userObject)
@@ -96,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
         profileId: String,
         isGoogleUser: Boolean
     ): UserObject {
-        val profile = Profile(profileId, mainProfileName, "main-user")
+        val profile = Profile(profileId, mainProfileName, getString(R.string.mainUserRelation))
         //  current profile = main profile
         return UserObject(userId, email, profile, profile, isGoogleUser)
     }
@@ -141,11 +142,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 1) {
+        if (supportFragmentManager.backStackEntryCount > DbConstants.backStackEntryCountMin) {
 //            val tag = backEntry.name
 //            val fragment = supportFragmentManager.findFragmentByTag(tag)
-            supportFragmentManager.popBackStack(null, 0)
-            val index = supportFragmentManager.backStackEntryCount - 2
+            supportFragmentManager.popBackStack(null, DbConstants.activityStackNoFlags)
+            val index =
+                supportFragmentManager.backStackEntryCount - DbConstants.previousActivityPositionInStack
             val backEntry = supportFragmentManager.getBackStackEntryAt(index)
 //            backEntry.name?.let { updateNavBarIcons(it) }
         } else {

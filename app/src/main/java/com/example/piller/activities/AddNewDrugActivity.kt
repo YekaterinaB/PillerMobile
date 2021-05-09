@@ -56,14 +56,14 @@ class AddNewDrugActivity : ActivityWithUserObject() {
                 //  no need to show interaction
                 _searchViewModel.newDrug.value =
                     DrugObject(
-                        "", //  drugid is empty because it's a new drug and we didn't save it in db
+                        DbConstants.defaultStringValue, //  drugid is empty because it's a new drug and we didn't save it in db
                         _searchViewModel.calendarId,
                         _searchViewModel.drugSearchNoResult.value!!,
-                        0
+                        DbConstants.defaultRxcui
                     )
                 goToAddOccurrenceActivity()
             } else {
-                SnackBar.showToastBar(this, "Please choose a valid drug!")
+                SnackBar.showToastBar(this, getString(R.string.chooseValidDrug))
             }
         }
 
@@ -86,22 +86,22 @@ class AddNewDrugActivity : ActivityWithUserObject() {
                 _isSearchingByName = false
                 val drugByImageFragment = DrugByImageFragment.newInstance(DbConstants.DRUG_BY_PILL)
                 initializeFragment(savedInstanceState, drugByImageFragment)
-                _toolbarTitle.text = "Search by pill image"
+                _toolbarTitle.text = getString(R.string.searchByPillImage)
             }
             DbConstants.DRUG_BY_BOX -> {
                 _isSearchingByName = false
                 val drugByBoxFragment = DrugByImageFragment.newInstance(DbConstants.DRUG_BY_BOX)
                 initializeFragment(savedInstanceState, drugByBoxFragment)
-                _toolbarTitle.text = "Search by box image"
+                _toolbarTitle.text = getString(R.string.searchByBoxImage)
             }
             DbConstants.DRUG_BY_NAME -> {
                 _isSearchingByName = true
                 val drugByNameFragment = DrugByNameFragment.newInstance()
                 initializeFragment(savedInstanceState, drugByNameFragment)
-                _toolbarTitle.text = "Search by name"
+                _toolbarTitle.text = getString(R.string.searchByName)
             }
             else -> {
-                _toolbarTitle.text = ""
+                _toolbarTitle.text = DbConstants.defaultStringValue
             }
         }
     }
@@ -128,7 +128,6 @@ class AddNewDrugActivity : ActivityWithUserObject() {
             this,
             Observer {
                 if (it) {
-                    _loadingScreen.animate().alpha(1.0F).duration = 500
                     _loadingScreen.visibility = View.VISIBLE
                 } else {
                     _loadingScreen.visibility = View.GONE
@@ -158,7 +157,9 @@ class AddNewDrugActivity : ActivityWithUserObject() {
                 //go to fragment with the interactions
                 val popupInteraction: InteractionPopupFragment =
                     InteractionPopupFragment.newInstance(it)
-                supportFragmentManager.let { popupInteraction.show(it, "InteractionPopupFragment") }
+                supportFragmentManager.let { fm ->
+                    popupInteraction.show(fm, getString(R.string.interactionPopupFragment))
+                }
             } else {
                 //no interactions
                 goToAddOccurrenceActivity()
@@ -194,7 +195,7 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         val drug = _searchViewModel.getDrugByRxcui(rxcui)
         if (drug != null) {
             _searchViewModel.newDrug.value = drug
-            _searchViewModel.getInteractionList(_loggedUserObject, drug.rxcui)
+            _searchViewModel.getInteractionList(loggedUserObject, drug.rxcui)
         }
     }
 

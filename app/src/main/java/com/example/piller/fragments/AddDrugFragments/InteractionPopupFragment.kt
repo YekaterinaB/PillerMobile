@@ -5,11 +5,11 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.piller.R
 import com.example.piller.activities.AddNewDrugActivity
+import com.example.piller.utilities.DbConstants
 
 
 class InteractionPopupFragment : DialogFragment() {
@@ -54,13 +54,14 @@ class InteractionPopupFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         //  set size
-        val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
+        val width =
+            (resources.displayMetrics.widthPixels * DbConstants.interactionWindowWidthFactor).toInt()
         //val height = (resources.displayMetrics.heightPixels * 0.40).toInt()
         dialog!!.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     companion object {
-        const val DRUG_INTERACTIONS = "drug_interactions"
+        const val DRUG_INTERACTIONS = DbConstants.drugInteractionsIntentTag
 
         fun newInstance(interactionTxt: String): InteractionPopupFragment {
             val fragment = InteractionPopupFragment()

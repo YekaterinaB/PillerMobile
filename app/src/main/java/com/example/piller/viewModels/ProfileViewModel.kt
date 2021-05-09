@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.piller.api.ProfileAPI
 import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.*
+import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.notifyObserver
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -13,8 +14,10 @@ import retrofit2.Call
 import retrofit2.Response
 
 class ProfileViewModel : ViewModel() {
+    private val daysOfWeek = 7
+
     val mutableListOfProfiles: MutableLiveData<MutableList<CalendarProfile>> by lazy {
-        MutableLiveData<MutableList<CalendarProfile>>(mutableListOf<CalendarProfile>())
+        MutableLiveData<MutableList<CalendarProfile>>(mutableListOf())
     }
     val mutableCurrentProfile: MutableLiveData<Profile> by lazy {
         MutableLiveData<Profile>()
@@ -36,13 +39,12 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun getListOfSecondaryProfiles(): MutableList<CalendarProfile> {
-        val size=mutableListOfProfiles.value!!.size
-        val  slice:MutableList<CalendarProfile>
-        if(size == 0){
+        val slice: MutableList<CalendarProfile>
+        if (mutableListOfProfiles.value!!.isEmpty()) {
             //no profiles
             slice = mutableListOf<CalendarProfile>()
-        }else{
-            slice = mutableListOfProfiles.value!!.subList(1,size)
+        } else {
+            slice = mutableListOfProfiles.value!!.subList(1, mutableListOfProfiles.value!!.size)
         }
         return slice
     }
@@ -74,7 +76,7 @@ class ProfileViewModel : ViewModel() {
         var profile =
             CalendarProfile(
                 mutableCurrentProfile.value!!,
-                Array(7) { mutableListOf<CalendarEvent>() },
+                Array(daysOfWeek) { mutableListOf<CalendarEvent>() },
                 emptyArray()
             )
 
@@ -104,7 +106,7 @@ class ProfileViewModel : ViewModel() {
 
     private fun initSecondaryProfileList(response: Response<ResponseBody>) {
         val jObject = JSONObject(response.body()!!.string())
-        val profileListBody = jObject.get("profile_list") as JSONArray
+        val profileListBody = jObject.get(DbConstants.profileList) as JSONArray
         for (i in 0 until profileListBody.length()) {
             addProfileToProfileList(profileListBody[i] as JSONObject)
         }
@@ -112,12 +114,15 @@ class ProfileViewModel : ViewModel() {
 
     fun addProfileToProfileList(profileObjectData: JSONObject) {
         val profile =
-            Profile(profileObjectData.getString("id"), profileObjectData.getString("name"),
-                profileObjectData.getString("relation"))
+            Profile(
+                profileObjectData.getString(DbConstants.profileId),
+                profileObjectData.getString(DbConstants.profileName),
+                profileObjectData.getString(DbConstants.profileRelation)
+            )
         mutableListOfProfiles.value!!.add(
             CalendarProfile(
                 profile,
-                Array(7) { mutableListOf<CalendarEvent>() },
+                Array(daysOfWeek) { mutableListOf<CalendarEvent>() },
                 emptyArray()
             )
         )
@@ -139,24 +144,24 @@ class ProfileViewModel : ViewModel() {
             mutableCurrentProfile.value = mutableListOfProfiles.value!![0].getProfileObject()
         }
         deleteProfileFromProfileList(profile.profileId)
-        deleteProfileFromDB(userId,profile.profileId)
+        deleteProfileFromDB(userId, profile.profileId)
 
     }
 
-    private fun deleteProfileFromDB(userId:String, profileId: String) {
+    private fun deleteProfileFromDB(userId: String, profileId: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
         retrofit.deleteProfile(userId, profileId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
-                        mutableToastError.value = "Could not delete profile."
+                    if (response.raw().code() != DbConstants.OKCode) {
+                        mutableToastError.value = DbConstants.couldNotDeleteProfileError
                     }
                 }
             }
@@ -168,15 +173,15 @@ class ProfileViewModel : ViewModel() {
         retrofit.getAllProfilesByEmail(loggedUserObject.userId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
-                        mutableToastError.value = "Could not init profile list."
+                    if (response.raw().code() != DbConstants.OKCode) {
+                        mutableToastError.value = DbConstants.couldNotInitProfileListError
                     } else {
                         initSecondaryProfileList(response)
                     }
@@ -185,21 +190,21 @@ class ProfileViewModel : ViewModel() {
         )
     }
 
-    fun addProfileToDB(profileName: String, loggedUserObject: UserObject,profileRelation:String) {
+    fun addProfileToDB(profileName: String, loggedUserObject: UserObject, profileRelation: String) {
         val retrofit = ServiceBuilder.buildService(ProfileAPI::class.java)
-        val profileSerializable=ProfileSerializable(profileName,profileRelation)
+        val profileSerializable = ProfileSerializable(profileName, profileRelation)
         retrofit.addProfileToUser(loggedUserObject.userId, profileSerializable).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    mutableToastError.value = "Could not connect to server."
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() != 200) {
-                        mutableToastError.value = "Profile name already exists"
+                    if (response.raw().code() != DbConstants.OKCode) {
+                        mutableToastError.value = DbConstants.profileExistsError
                     } else {
                         val profileObjectData = JSONObject(response.body()!!.string())
                         addProfileToProfileList(profileObjectData)

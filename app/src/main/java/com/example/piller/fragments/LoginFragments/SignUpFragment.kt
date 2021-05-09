@@ -101,7 +101,7 @@ class SignUpFragment : Fragment() {
             val nameInput = _fullNameEdt.text.toString().trim()
             val passwordInput = _passwordEdt.text.toString().trim()
 
-            if (!emailInput.isEmpty() && !nameInput.isEmpty() && !passwordInput.isEmpty()) {
+            if (emailInput.isNotEmpty() && nameInput.isNotEmpty() && passwordInput.isNotEmpty()) {
                 _signUpButton.isEnabled = true
                 _signUpButton.setBackgroundResource(R.drawable.rounded_shape_primary_color_full)
             } else {

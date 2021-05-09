@@ -22,6 +22,7 @@ import com.example.piller.SnackBar
 import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.listAdapters.SupervisorsAdapter
 import com.example.piller.models.UserObject
+import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.SupervisorsViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.rengwuxian.materialedittext.MaterialEditText
@@ -41,7 +42,6 @@ class SupervisorsFragment : FragmentWithUserObject() {
     private lateinit var _backButton: ImageView
     private lateinit var _addNewSupervisorTv: TextView
     private lateinit var _changeMissedThresholdItem: ConstraintLayout
-
 
 
     override fun onCreateView(
@@ -66,7 +66,8 @@ class SupervisorsFragment : FragmentWithUserObject() {
         _dimLayout = _fragmentView.findViewById(R.id.supervisor_dim_layout)
         _backButton = _fragmentView.findViewById(R.id.go_back_from_supervisors)
         _addNewSupervisorTv = _fragmentView.findViewById(R.id.add_new_supervisor_tx)
-        _changeMissedThresholdItem = _fragmentView.findViewById(R.id.supervisor_missed_title_item_supervisors)
+        _changeMissedThresholdItem =
+            _fragmentView.findViewById(R.id.supervisor_missed_title_item_supervisors)
 
     }
 
@@ -78,6 +79,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
         _addNewSupervisorTv.setOnClickListener {
             showAddSupervisorWindow()
         }
+
         _changeMissedThresholdItem.setOnClickListener {
             setMissedThreshold()
         }
@@ -90,13 +92,13 @@ class SupervisorsFragment : FragmentWithUserObject() {
         // create pop up window for add profile
         MaterialStyledDialog.Builder(context)
             .setIcon(R.drawable.ic_supervisor_eye)
-            .setTitle("ADD A NEW SUPERVISOR")
+            .setTitle(getString(R.string.addSupervisorWindowTitle))
             .setCustomView(itemView)
-            .setNegativeText("Cancel")
+            .setNegativeText(getString(R.string.cancel))
             .onNegative { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveText("Add supervisor")
+            .setPositiveText(getString(R.string.addSupervisorWindowAddButton))
             .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
                 val supervisorName =
                     itemView.findViewById<View>(R.id.supervisor_name) as MaterialEditText
@@ -107,7 +109,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
                     TextUtils.isEmpty(supervisorName.text.toString()) -> {
                         SnackBar.showToastBar(
                             context,
-                            "Supervisor name cannot be empty"
+                            getString(R.string.addSupervisorWindowEmptyName)
                         )
                         return@SingleButtonCallback
                     }
@@ -115,7 +117,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
                     TextUtils.isEmpty(supervisorEmail.text.toString()) -> {
                         SnackBar.showToastBar(
                             context,
-                            "Supervisor email cannot be empty"
+                            getString(R.string.addSupervisorWindowEmptyEmail)
                         )
                         return@SingleButtonCallback
                     }
@@ -150,9 +152,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
 
     private fun clickOnDeleteSupervisorButton(supervisorEmail: String) {
         removeSupervisorPopup(supervisorEmail)
-
     }
-
 
     private fun initObservers() {
         _viewModel._mutableSupervisorThreshold.observe(viewLifecycleOwner,
@@ -161,8 +161,8 @@ class SupervisorsFragment : FragmentWithUserObject() {
                     if (this.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         var numberOfMissed =
                             (_viewModel._mutableSupervisorThreshold.value!!).toString()
-                        if (numberOfMissed == "0") {
-                            numberOfMissed = "No"
+                        if (numberOfMissed == DbConstants.noMissedDaysCountStr) {
+                            numberOfMissed = DbConstants.noMissedDaysText
                         }
                         _thresholdCountTv.text = numberOfMissed
 
@@ -197,14 +197,13 @@ class SupervisorsFragment : FragmentWithUserObject() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        popup.elevation = 5.0f;
-
+        popup.elevation = DbConstants.popupElevation
 
         val cancelViewText = customView.findViewById<TextView>(R.id.cancel_remove_supervisor_popup)
         val setViewText =
             customView.findViewById<TextView>(R.id.remove_supervusor_remove_supervisor_popup)
         val mailViewText = customView.findViewById<TextView>(R.id.supervisor_mail_remove_popup)
-        mailViewText.text = supervisorEmail + " will be\nremoved from your supervisor list."
+        mailViewText.text = getString(R.string.removeSupervisorWarning, supervisorEmail)
 
         cancelViewText.setOnClickListener {
             popup.dismiss()
@@ -218,7 +217,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
 
         }
         changeDarkBackgroundVisibility(true)
-        popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
+        popup.showAtLocation(_fragmentView, Gravity.CENTER, DbConstants.popupX, DbConstants.popupY)
     }
 
     private fun setMissedThreshold() {
@@ -228,10 +227,9 @@ class SupervisorsFragment : FragmentWithUserObject() {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+
         // Set an elevation value for popup window
-
-        popup.elevation = 5.0f;
-
+        popup.elevation = DbConstants.popupElevation
 
         val cancelViewText = customView.findViewById<TextView>(R.id.cancel_missed_popup)
         val setViewText = customView.findViewById<TextView>(R.id.set_missed_popup)
@@ -244,14 +242,14 @@ class SupervisorsFragment : FragmentWithUserObject() {
             cancelViewText, popup, seekBar, setViewText, thresholdCountInPopup
         )
         changeDarkBackgroundVisibility(true)
-        popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
+        popup.showAtLocation(_fragmentView, Gravity.CENTER, DbConstants.popupX, DbConstants.popupY)
 
     }
 
     private fun updateMissedInPopup(seekBar: IndicatorSeekBar, thresholdCountPopup: TextView) {
         seekBar.setProgress(_viewModel._mutableSupervisorThreshold.value!!.toFloat())
-        if (_viewModel._mutableSupervisorThreshold.value!! == 0) {
-            thresholdCountPopup.text = "No"
+        if (_viewModel._mutableSupervisorThreshold.value!! == DbConstants.noMissedDaysCount) {
+            thresholdCountPopup.text = DbConstants.noMissedDaysText
         } else {
             thresholdCountPopup.text = _viewModel._mutableSupervisorThreshold.value!!.toString()
         }
@@ -272,12 +270,12 @@ class SupervisorsFragment : FragmentWithUserObject() {
     ) {
 
 
-        seekBar.setOnSeekChangeListener(object : OnSeekChangeListener {
+        seekBar.onSeekChangeListener = object : OnSeekChangeListener {
             override fun onSeeking(seekParams: SeekParams) {
 
                 var numberOfMissed = seekBar.progress.toString()
-                if (numberOfMissed == "0") {
-                    numberOfMissed = "No"
+                if (numberOfMissed == DbConstants.noMissedDaysCountStr) {
+                    numberOfMissed = DbConstants.noMissedDaysText
                 }
                 _thresholdCountTv.text = numberOfMissed
                 thresholdCountPopup.text = numberOfMissed
@@ -285,7 +283,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
 
             override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {}
             override fun onStopTrackingTouch(seekBar: IndicatorSeekBar) {}
-        })
+        }
         cancelViewText.setOnClickListener {
             popup.dismiss()
             changeDarkBackgroundVisibility(false)

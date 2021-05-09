@@ -49,7 +49,7 @@ object RefillReminderScheduler {
         calRepeatEnd.timeInMillis = drug.occurrence.repeatEnd
         calRepeatEnd[MILLISECOND] = 0
         // if today is after the repeat end time, to not notify
-        if (!(drug.occurrence.repeatEnd > 0 && DateUtils.isDateBefore(calRepeatEnd, cal))) {
+        if (!(drug.occurrence.hasRepeatEnd() && DateUtils.isDateBefore(calRepeatEnd, cal))) {
             scheduleAlarm(context, loggedUserObject, drug, alarmMgr)
         }
 

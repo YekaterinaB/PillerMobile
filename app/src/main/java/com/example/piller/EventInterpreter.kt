@@ -4,12 +4,16 @@ import com.example.piller.models.CalendarEvent
 import com.example.piller.models.DrugObject
 import com.example.piller.models.Occurrence
 import com.example.piller.utilities.DateUtils
+import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ParserUtils.Companion.parsedDrugObject
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 
 class EventInterpreter {
+    private val everyInterval = 1
+    private val monthsInYear = 12
+
     fun getEventsForCalendarByDate(
         start: Date,
         end: Date,
@@ -19,8 +23,8 @@ class EventInterpreter {
         val eventList = Array(daysBetween) { mutableListOf<CalendarEvent>() }
         for (i in 0 until drugList.length()) {
             val drug = drugList.getJSONObject(i)
-            val intakeDates = drug.get("intake_dates") as JSONObject
-            val intakes = intakeDates.get("intakes") as JSONArray
+            val intakeDates = drug.get(DbConstants.intakeDates) as JSONObject
+            val intakes = intakeDates.get(DbConstants.intakes) as JSONArray
             val drugObject = parsedDrugObject(drug, intakeDates, calendarId)
             val drugEventList = getDrugEvent(drugObject, intakes, start, end, calendarId)
             // put all event in array
@@ -54,9 +58,9 @@ class EventInterpreter {
         calendarEnd.time = end
 
         val calendarRepeatEnd = Calendar.getInstance()
-        //  the next lines are: if repeatEnd != 0 then set calendarCurrent to repeatEnd
+        //  the next lines are: if has repeatEnd then set calendarCurrent to repeatEnd
         //  otherwise set it to calendarEnd time
-        calendarRepeatEnd.timeInMillis = when (occurrence.repeatEnd != 0.toLong()) {
+        calendarRepeatEnd.timeInMillis = when (occurrence.hasRepeatEnd()) {
             true -> occurrence.repeatEnd
             false -> calendarEnd.timeInMillis
         }
@@ -65,19 +69,19 @@ class EventInterpreter {
         val calendarStartRepeat = Calendar.getInstance()
         calendarStartRepeat.timeInMillis = occurrence.repeatStart
         //save intake time
-        calendarMap["hourOfDay"] = calendarStartRepeat.get(Calendar.HOUR_OF_DAY)
-        calendarMap["minuteOfDay"] = calendarStartRepeat.get(Calendar.MINUTE)
+        calendarMap[DbConstants.hourOfDay] = calendarStartRepeat.get(Calendar.HOUR_OF_DAY)
+        calendarMap[DbConstants.minuteOfDay] = calendarStartRepeat.get(Calendar.MINUTE)
         // start of day at 00:00
-        DateUtils.setCalendarTime(calendarStartRepeat, 0, 0, 0)
+        DateUtils.zeroTime(calendarStartRepeat)
 
         // if the start intake is after start day
         if (DateUtils.isDateBefore(calendarCurrent, calendarStartRepeat)) {
             calendarCurrent = calendarStartRepeat
         }
-        calendarMap["calendarRepeatEnd"] = calendarRepeatEnd //calendar
-        calendarMap["calendarCurrent"] = calendarCurrent //calendar
-        calendarMap["calendarStartRepeat"] = calendarStartRepeat//calendar
-        calendarMap["calendarEnd"] = calendarEnd
+        calendarMap[DbConstants.calendarRepeatEnd] = calendarRepeatEnd //calendar
+        calendarMap[DbConstants.calendarCurrent] = calendarCurrent //calendar
+        calendarMap[DbConstants.calendarStartRepeat] = calendarStartRepeat//calendar
+        calendarMap[DbConstants.calendarEnd] = calendarEnd
         return calendarMap
     }
 
@@ -95,8 +99,8 @@ class EventInterpreter {
         // check days between actual start date and the new start date
         val calendarClosestRepeat = Calendar.getInstance()
         calendarClosestRepeat.timeInMillis =
-            (calendarValuesMap["calendarStartRepeat"] as Calendar).timeInMillis
-        val onlyOnce = isOnlyRepeatOnce(drugObject.occurrence)
+            (calendarValuesMap[DbConstants.calendarStartRepeat] as Calendar).timeInMillis
+        val onlyOnce = drugObject.occurrence.repeatOnce()
 
         return createEventListFromRepeats(
             drugObject, calendarValuesMap,
@@ -110,23 +114,31 @@ class EventInterpreter {
         start: Date, intakes: JSONArray, calendarId: String
     ): MutableList<CalendarEvent> {
         val eventList: MutableList<CalendarEvent> = mutableListOf()
-        val calendarCurrent = calendarValuesMap["calendarCurrent"] as Calendar
-        val calendarRepeatEnd = calendarValuesMap["calendarRepeatEnd"] as Calendar
+        val calendarCurrent = calendarValuesMap[DbConstants.calendarCurrent] as Calendar
+        val calendarRepeatEnd = calendarValuesMap[DbConstants.calendarRepeatEnd] as Calendar
         var indexDay = DateUtils.getDaysBetween(start, calendarCurrent.time)
 
         while (DateUtils.isDateInRange(
-                calendarCurrent, calendarValuesMap["calendarEnd"] as Calendar, calendarRepeatEnd
+                calendarCurrent,
+                calendarValuesMap[DbConstants.calendarEnd] as Calendar,
+                calendarRepeatEnd
             )
         ) {
             val isInRepeat = isDateInRepeat(
                 drugObject.occurrence,
-                calendarValuesMap["calendarCurrent"] as Calendar,
+                calendarValuesMap[DbConstants.calendarCurrent] as Calendar,
                 calendarClosestRepeat, onlyOnce
             )
             if (isInRepeat) {
                 //event is in repeats
-                calendarCurrent.set(Calendar.HOUR_OF_DAY, calendarValuesMap["hourOfDay"] as Int)
-                calendarCurrent.set(Calendar.MINUTE, calendarValuesMap["minuteOfDay"] as Int)
+                calendarCurrent.set(
+                    Calendar.HOUR_OF_DAY,
+                    calendarValuesMap[DbConstants.hourOfDay] as Int
+                )
+                calendarCurrent.set(
+                    Calendar.MINUTE,
+                    calendarValuesMap[DbConstants.minuteOfDay] as Int
+                )
 
                 val isTaken = intakeStatusOfCalendarEvent(calendarCurrent, intakes)
 
@@ -139,7 +151,7 @@ class EventInterpreter {
                     )
 
                 eventList.add(event)
-                DateUtils.setCalendarTime(calendarCurrent, 0, 0, 0)
+                DateUtils.zeroTime(calendarCurrent)
             }
             if (onlyOnce) {
                 //  if the event happens only once - stop the loop (whether we added it or not)
@@ -156,9 +168,9 @@ class EventInterpreter {
         for (i in 0 until intakesArray.length()) {
             val intakeObject = intakesArray.get(i) as JSONObject
             val dateCal = Calendar.getInstance()
-            dateCal.timeInMillis = intakeObject.get("date") as Long
+            dateCal.timeInMillis = intakeObject.get(DbConstants.intakeDate) as Long
             if (DateUtils.areDatesEqual(calendar, dateCal)) {
-                result = intakeObject.get("isTaken") as Boolean
+                result = intakeObject.get(DbConstants.isTaken) as Boolean
                 break
             }
         }
@@ -166,26 +178,19 @@ class EventInterpreter {
         return result
     }
 
-
-    private fun getRepeatWeekdayForCalendarEvent(
-        repeatWeekday: List<Int>
-    ): String {
-        // for knowing the repeat weekdays, to make a good pending intent type
-        val repeats: String
-        if (repeatWeekday[0] > 0) {
-            // repeat week is on
-            repeats = repeatWeekday.joinToString(",")
-        } else {
-            repeats = "0"
-        }
-        return repeats
-    }
-
-
-    fun isOnlyRepeatOnce(occurrence: Occurrence): Boolean =
-        (occurrence.repeatYear == 0 && occurrence.repeatMonth == 0 &&
-                occurrence.repeatWeek == 0 && occurrence.repeatDay == 0)
-
+//    private fun getRepeatWeekdayForCalendarEvent(
+//        repeatWeekday: List<Int>
+//    ): String {
+//        // for knowing the repeat weekdays, to make a good pending intent type
+//        val repeats: String
+//        if (repeatWeekday[0] > 0) {
+//            // repeat week is on
+//            repeats = repeatWeekday.joinToString(",")
+//        } else {
+//            repeats = DbConstants.noDayOfWeekStr
+//        }
+//        return repeats
+//    }
 
     private fun isDateInRepeat(
         occurrence: Occurrence,
@@ -200,7 +205,7 @@ class EventInterpreter {
                 //  check whether it's a one time event (all the fields are equal to 0)
                 isInRepeat = true
             }
-            (occurrence.repeatYear != 0) -> {
+            (occurrence.hasRepeatYear()) -> {
                 isInRepeat =
                     setRepeatEvent(
                         currentDate,
@@ -209,7 +214,7 @@ class EventInterpreter {
                         Calendar.YEAR
                     )
             }
-            (occurrence.repeatMonth != 0) -> {
+            (occurrence.hasRepeatMonth()) -> {
                 isInRepeat =
                     setRepeatEventMonth(
                         currentDate,
@@ -218,8 +223,8 @@ class EventInterpreter {
                     )
 
             }
-            (occurrence.repeatDay != 0) -> {
-                if (occurrence.repeatDay == 1) {
+            (occurrence.hasRepeatDay()) -> {
+                if (occurrence.repeatDay == everyInterval) {
                     isInRepeat = true
                 } else {
                     isInRepeat =
@@ -231,8 +236,8 @@ class EventInterpreter {
                         )
                 }
             }
-            (occurrence.repeatWeek != 0) -> {
-                if (occurrence.repeatWeek == 1) {
+            (occurrence.hasRepeatWeek()) -> {
+                if (occurrence.repeatWeek == everyInterval) {
                     if (currentDate.get(Calendar.DAY_OF_WEEK) in occurrence.repeatWeekday) {
                         //  all the days of week in the list are at the same week, so we can add all of them
                         isInRepeat = true
@@ -298,12 +303,12 @@ class EventInterpreter {
                 Calendar.DAY_OF_MONTH,
                 1
             )// must set to avoid exception on set month
-            val monthSet = (month + skipMonth) % 12
+            val monthSet = (month + skipMonth) % monthsInYear
             tempRunFromStart.set(Calendar.MONTH, monthSet)
-            if (month + skipMonth >= 12) {
-                year = year + 1
+            if (month + skipMonth >= monthsInYear) {
+                year += 1
                 tempRunFromStart.set(Calendar.YEAR, year)
-                month = (month + skipMonth) % 12
+                month = (month + skipMonth) % monthsInYear
                 skipMonth = 0
             }
             tempRunFromStart.set(Calendar.DAY_OF_MONTH, dayOfMonth)

@@ -60,7 +60,8 @@ class ProfileFragment : FragmentWithUserObject() {
         val mainProfileEmailTv = _fragmentView.findViewById<TextView>(R.id.email_main_profile)
         val mainProfileNameTv = _fragmentView.findViewById<TextView>(R.id.profile_name_title_item)
         mainProfileEmailTv.text = _loggedUserObject.email
-        mainProfileNameTv.text = _loggedUserObject.mainProfile?.name ?: "Main User"
+        mainProfileNameTv.text =
+            _loggedUserObject.mainProfile?.name ?: getString(R.string.mainSpaceUser)
         //remove number of supervisors
         _fragmentView.number_of_supervisors_title_item.visibility = View.INVISIBLE
         _settingsImage = _fragmentView.findViewById(R.id.settings_image_view)
@@ -187,7 +188,12 @@ class ProfileFragment : FragmentWithUserObject() {
 
         }
         changeDarkBackgroundVisibility(true)
-        popup.showAtLocation(_fragmentView, Gravity.CENTER, 0, 0)
+        popup.showAtLocation(
+            _fragmentView,
+            Gravity.CENTER,
+            DbConstants.popupX,
+            DbConstants.popupY
+        )
     }
 
 
@@ -206,13 +212,13 @@ class ProfileFragment : FragmentWithUserObject() {
 
         // create pop up window for add profile
         MaterialStyledDialog.Builder(this.context)
-            .setTitle("ADD A NEW PROFILE")
+            .setTitle(getString(R.string.addANewProfileTitle))
             .setCustomView(itemView)
-            .setNegativeText("CANCEL")
+            .setNegativeText(getString(R.string.cancel))
             .onNegative { dialog, _ ->
                 dialog.dismiss()
             }
-            .setPositiveText("ADD PROFILE")
+            .setPositiveText(getString(R.string.addANewProfileAddBtn))
             .onPositive(MaterialDialog.SingleButtonCallback { _, _ ->
                 val profileName = itemView.findViewById<View>(R.id.profile_name) as MaterialEditText
                 val profileRelation =
@@ -222,7 +228,7 @@ class ProfileFragment : FragmentWithUserObject() {
                     TextUtils.isEmpty(profileName.text.toString()) -> {
                         SnackBar.showToastBar(
                             this.context,
-                            "Profile name cannot be empty"
+                            getString(R.string.profileNameEmptyError)
                         )
                         return@SingleButtonCallback
                     }

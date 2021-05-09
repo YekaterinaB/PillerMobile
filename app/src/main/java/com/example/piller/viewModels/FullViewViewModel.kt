@@ -105,7 +105,7 @@ class FullViewViewModel : ViewModel() {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    if (response.raw().code() == 200) {
+                    if (response.raw().code() == DbConstants.OKCode) {
                         initCalenderView(response, startDate, endDate)
                     } else {
                         //  todo handle error
@@ -127,7 +127,7 @@ class FullViewViewModel : ViewModel() {
     ) {
         val jObject = JSONObject(calendarInfo.body()!!.string())
         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
-        val calendarId = jObject.get("calendar_id").toString()
+        val calendarId = jObject.get(DbConstants.CALENDAR_ID).toString()
         val monthEvents = eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate, drugInfoList as JSONArray, calendarId
         )
