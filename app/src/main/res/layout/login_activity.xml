@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/piller_logo" />
+        app:srcCompat="@drawable/piller_logo"
+        android:contentDescription="@string/logo" />
 
     <FrameLayout
         android:id="@+id/login_fragment"
@@ -29,7 +30,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_imageView"></FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/login_imageView"/>
 
     <include
         android:id="@+id/loading_screen"

@@ -14,7 +14,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/roboto_medium"
-        android:text="Drug Name"
+        android:text="@string/dbn_drug_name"
         android:textColor="@color/myTextColor"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -17,7 +17,7 @@
         android:layout_marginEnd="9dp"
         android:fontFamily="sans-serif"
         android:padding="2dp"
-        android:text="Elwin.Sharvill@gmail.com"
+        android:text="@string/supervisor_elwin_sharvill_gmail_com"
         android:textColor="@color/myTextColor"
         android:textSize="16sp"
         android:textStyle="normal"
@@ -35,7 +35,7 @@
         android:layout_marginBottom="2dp"
         android:fontFamily="sans-serif"
         android:padding="2dp"
-        android:text="Waiting for email confirmation..."
+        android:text="@string/supervisor_waiting_for_email_confirmation"
         android:textColor="@color/titleInItems"
         android:textSize="14sp"
         android:textStyle="normal"
@@ -54,6 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.489"
-        app:srcCompat="@drawable/basic_trash_full" />
+        app:srcCompat="@drawable/basic_trash_full"
+        android:contentDescription="@string/supervisor_remove" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

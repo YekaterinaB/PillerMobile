@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Help"
+        android:text="@string/help_help"
         android:textColor="@color/titleInItems"
         android:textSize="18sp"
         android:textStyle="normal"
@@ -27,11 +27,10 @@
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:contentDescription="@string/help_go_back_to_settings"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_arrow_left"
-        android:contentDescription="Go back to settings" />
-
+        app:srcCompat="@drawable/ic_arrow_left" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/help_q_and_a_rv"

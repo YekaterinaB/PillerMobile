@@ -24,6 +24,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:background="@android:color/transparent"
+            android:contentDescription="@string/di_go_back"
             android:src="@drawable/ic_arrow_left"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,7 +36,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="11dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="Calendar"
+            android:text="@string/di_calendar"
             android:textColor="@color/titleInItems"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/di_toolbar_back_button"
@@ -80,6 +81,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
+            android:contentDescription="@string/di_drug_image"
             android:src="@drawable/ic_pill_light_blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -128,7 +130,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
-            android:text="Scheduled for 08:00, 20/04/21"
+            android:text="@string/di_scheduled_for_08_00_20_04_21"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/di_missed_days_icon"
             app:layout_constraintTop_toBottomOf="@+id/di_drug_taken_green" />
@@ -138,7 +140,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="16dp"
-            android:contentDescription="Schedule"
+            android:contentDescription="@string/di_schedule"
             android:src="@drawable/ic_info_blue"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/di_drug_dosage" />
@@ -150,7 +152,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="1 mg"
+            android:text="@string/di__1_mg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/di_missed_days_icon"
             app:layout_constraintTop_toBottomOf="@+id/di_drug_intake_time" />
@@ -160,7 +162,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="16dp"
-            android:contentDescription="Meds left"
+            android:contentDescription="@string/di_meds_left"
             android:src="@drawable/ic_refill"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/di_drug_refills_left" />
@@ -172,7 +174,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="You have 20 meds left"
+            android:text="@string/di_you_have_20_meds_left"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/di_missed_days_icon"
             app:layout_constraintTop_toBottomOf="@+id/di_drug_dosage" />
@@ -187,7 +189,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.7" />
+            app:layout_constraintVertical_bias="0.7"
+            android:contentDescription="@string/di_drug_taken" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout
@@ -222,7 +225,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="Take"
+            android:text="@string/di_take"
             android:textColor="@color/titleInItems"
             android:textSize="16sp" />
     </RelativeLayout>

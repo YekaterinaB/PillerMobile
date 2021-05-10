@@ -35,7 +35,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_title_item" />
 
-
     <TextView
         android:id="@+id/add_new_profile_tx"
         android:layout_width="wrap_content"
@@ -44,7 +43,7 @@
         android:layout_marginBottom="50dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal"
-        android:text="Add new profile +"
+        android:text="@string/profile_add_new_profile"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="normal"
@@ -53,21 +52,19 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-
-
     <RelativeLayout
         android:id="@+id/profile_dim_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#C0000000"
+        android:clickable="true"
+        android:elevation="2dp"
+        android:focusable="true"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:elevation="2dp">
+        app:layout_constraintTop_toTopOf="parent">
 
     </RelativeLayout>
 
@@ -78,7 +75,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:fontFamily="sans-serif-medium"
-        android:text="My Profile"
+        android:text="@string/profile_my_profile"
         android:textColor="@color/titleInItems"
         android:textSize="18sp"
         android:textStyle="normal"
@@ -97,7 +94,8 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/my_profile_toolbar"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/basic_settings" />
+        app:srcCompat="@drawable/basic_settings"
+        android:contentDescription="@string/profile_settings" />
 
     <include
         android:id="@+id/supervisor_title_item_in_profiles"

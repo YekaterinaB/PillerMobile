@@ -17,7 +17,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/empty_circle" />
+        app:srcCompat="@drawable/empty_circle"
+        android:contentDescription="@string/ado_item_circle" />
 
     <TextView
         android:id="@+id/add_drug_by_box_title"
@@ -26,7 +27,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:fontFamily="sans-serif"
-        android:text="Box image"
+        android:text="@string/ado_box_image"
         android:textColor="@color/titleInItems"
         android:textSize="16sp"
         android:textStyle="normal"
@@ -49,7 +50,7 @@
         app:layout_constraintStart_toEndOf="@+id/circle_box_item"
         app:layout_constraintTop_toBottomOf="@+id/add_drug_by_box_title"
         app:layout_constraintVertical_bias="0.0"
-        android:text="Search by box image" />
+        android:text="@string/ado_search_by_box_image" />
 
     <ImageView
         android:id="@+id/add_medicine_box_image"
@@ -59,5 +60,6 @@
         app:layout_constraintEnd_toEndOf="@+id/circle_box_item"
         app:layout_constraintStart_toStartOf="@+id/circle_box_item"
         app:layout_constraintTop_toTopOf="@+id/circle_box_item"
-        app:srcCompat="@drawable/basic_credit_card" />
+        app:srcCompat="@drawable/basic_credit_card"
+        android:contentDescription="@string/ado_medicine_box" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -306,7 +306,7 @@
                 android:background="@drawable/rounded_shape_edit_text"
                 android:digits="0123456789"
                 android:ems="10"
-                android:hint="100"
+                android:hint="@string/di_current_meds_hint"
                 android:imeOptions="actionDone"
                 android:inputType="numberSigned"
                 android:maxLength="3"
