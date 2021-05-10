@@ -134,6 +134,7 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
                 DbConstants.defaultIntakeTime
             )
         )
+
         val drug = intent.getParcelableExtra<DrugObject>(DbConstants.DRUG_OBJECT)!!
         drug.occurrence.repeatStart = drugIntakeTime.time
         viewModel.setDrug(drug)
