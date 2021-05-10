@@ -6,6 +6,7 @@ import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.SupervisorsAPI
 import com.example.piller.models.Supervisor
 import com.example.piller.utilities.DbConstants
+import com.example.piller.utilities.JSONMessageExtractor
 import com.example.piller.utilities.notifyObserver
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -37,8 +38,7 @@ class SupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        _mutableToastError.value = jObjError["message"] as String
+                        _mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         val jObject = JSONObject(response.body()!!.string())
                         val supervisors = jObject.get(DbConstants.supervisorsList) as JSONArray
@@ -82,8 +82,7 @@ class SupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        _mutableToastError.value = jObjError["message"] as String
+                        _mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         addSupervisorsToList(supervisorName, supervisorEmail)
                     }
@@ -115,8 +114,7 @@ class SupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        _mutableToastError.value = jObjError["message"] as String
+                        _mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         deleteSupervisorFromList(supervisorEmail)
                     }

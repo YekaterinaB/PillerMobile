@@ -7,6 +7,7 @@ import com.example.piller.api.ServiceBuilder
 import com.example.piller.models.DrugObject
 import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
+import com.example.piller.utilities.JSONMessageExtractor
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -79,8 +80,7 @@ class DrugSearchViewModel : ViewModel() {
                         if (response.raw().code() == DbConstants.OKCode) {
                             updateDrugsList(response)
                         } else {
-                            val jObjError = JSONObject(response.errorBody()!!.string())
-                            snackBarMessage.value = jObjError["message"] as String
+                            snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
                         }
                         showLoadingScreen.value = false
                     }
@@ -108,8 +108,7 @@ class DrugSearchViewModel : ViewModel() {
                         if (response.raw().code() == DbConstants.OKCode) {
                             updateDrugsList(response)
                         } else {
-                            val jObjError = JSONObject(response.errorBody()!!.string())
-                            snackBarMessage.value = jObjError["message"] as String
+                            snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
                         }
                         showLoadingScreen.value = false
                     }
@@ -139,8 +138,7 @@ class DrugSearchViewModel : ViewModel() {
                     if (response.raw().code() == DbConstants.OKCode) {
                         updateInteractionList(response)
                     } else {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        snackBarMessage.value = jObjError["message"] as String
+                        snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
                     }
                     showLoadingScreen.value = false
                 }
@@ -218,8 +216,7 @@ class DrugSearchViewModel : ViewModel() {
                         if (response.raw().code() == DbConstants.OKCode) {
                             updateDrugsList(response)
                         } else {
-                            val jObjError = JSONObject(response.errorBody()!!.string())
-                            snackBarMessage.value = jObjError["message"] as String
+                            snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
                         }
                         showLoadingScreen.value = false
                     }

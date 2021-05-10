@@ -7,6 +7,7 @@ import com.example.piller.api.ServiceBuilder
 import com.example.piller.api.UserAPI
 import com.example.piller.models.UserSerializable
 import com.example.piller.utilities.DbConstants
+import com.example.piller.utilities.JSONMessageExtractor
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -131,8 +132,7 @@ class LoginActivityViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        mutableToastError.value = jObjError["message"] as String
+                        mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         mutableToastError.value = DbConstants.resetEmailSent
                     }

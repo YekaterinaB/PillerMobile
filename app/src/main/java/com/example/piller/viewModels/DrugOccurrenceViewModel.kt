@@ -12,6 +12,7 @@ import com.example.piller.models.Occurrence
 import com.example.piller.models.UserObject
 import com.example.piller.notif.AlarmScheduler
 import com.example.piller.utilities.DbConstants
+import com.example.piller.utilities.JSONMessageExtractor
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -173,8 +174,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                         //create notification
                         AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drug)
                     } else {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        snackBarMessage.value = jObjError["message"] as String
+                        snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
                     }
                 }
             }
@@ -219,8 +219,7 @@ class DrugOccurrenceViewModel : ViewModel() {
                         updateDrugInfo(response)
                         AlarmScheduler.scheduleAllNotifications(loggedUserObject, context, drug)
                     } else {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        snackBarMessage.value = jObjError["message"] as String
+                        snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
                     }
                 }
             }

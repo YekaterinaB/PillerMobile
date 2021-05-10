@@ -14,6 +14,7 @@ import com.example.piller.models.UserObject
 import com.example.piller.notif.AlarmScheduler
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.ImageUtils
+import com.example.piller.utilities.JSONMessageExtractor
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -192,8 +193,7 @@ class DrugInfoViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        mutableToastError.value = jObjError["message"] as String
+                        mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         updateIntakeByResult(response.body()!!.string().replace('\"', ' ').toInt())
                     }
@@ -214,8 +214,7 @@ class DrugInfoViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        val jObjError = JSONObject(response.errorBody()!!.string())
-                        mutableToastError.value = jObjError["message"] as String
+                        mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         updateIntakeByResult(response.body()!!.string().replace('\"', ' ').toInt())
                     }
