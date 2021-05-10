@@ -11,12 +11,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
+        android:contentDescription="@string/profile_delete_profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_delete"
-        android:contentDescription="Delete profile" />
-
+        app:srcCompat="@drawable/ic_delete" />
 
     <TextView
         android:id="@+id/profile_name"
@@ -29,6 +28,4 @@
         app:layout_constraintEnd_toStartOf="@id/delete_profile_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

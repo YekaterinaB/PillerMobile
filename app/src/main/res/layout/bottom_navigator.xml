@@ -18,7 +18,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_profile_blue"/>
+        app:srcCompat="@drawable/ic_profile_blue"
+        android:contentDescription="@string/bn_profiles" />
 
     <ImageView
         android:id="@+id/calendar_navigation"
@@ -31,7 +32,8 @@
         app:layout_constraintStart_toEndOf="@+id/profile_navigation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_pill_light_blue"/>
+        app:srcCompat="@drawable/ic_pill_light_blue"
+        android:contentDescription="@string/bn_calendar" />
 
     <ImageView
         android:id="@+id/add_drug_navigation"
@@ -47,6 +49,7 @@
         app:layout_constraintStart_toEndOf="@+id/calendar_navigation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/edit_plus_dark"/>
+        app:srcCompat="@drawable/edit_plus_dark"
+        android:contentDescription="@string/bn_new_drug" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

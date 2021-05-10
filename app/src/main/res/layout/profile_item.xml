@@ -8,7 +8,6 @@
     android:layout_marginBottom="16dp"
     android:background="@drawable/rounded_shape_edit_text">
 
-
     <ImageView
         android:id="@+id/circle_profile_item"
         android:layout_width="40dp"
@@ -19,7 +18,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/empty_circle" />
+        app:srcCompat="@drawable/empty_circle"
+        android:contentDescription="@string/ado_item_circle"  />
 
     <ImageView
         android:id="@+id/profile_icon_image_item"
@@ -29,7 +29,8 @@
         app:layout_constraintEnd_toEndOf="@+id/circle_profile_item"
         app:layout_constraintStart_toStartOf="@+id/circle_profile_item"
         app:layout_constraintTop_toTopOf="@+id/circle_profile_item"
-        app:srcCompat="@drawable/ic_profile_blue" />
+        app:srcCompat="@drawable/ic_profile_blue"
+        android:contentDescription="@string/profile_profile" />
 
     <TextView
         android:id="@+id/profile_name_profile_item"
@@ -40,7 +41,7 @@
         android:layout_marginEnd="32dp"
         android:fontFamily="sans-serif"
         android:padding="2dp"
-        android:text="May Moreira"
+        android:text="@string/profile_may_moreira"
         android:textColor="@color/titleInItems"
         android:textSize="16sp"
         android:textStyle="normal"
@@ -59,7 +60,7 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="sans-serif"
         android:padding="2dp"
-        android:text="Child"
+        android:text="@string/profile_relation_child"
         android:textColor="@color/myTextColor"
         android:textSize="14sp"
         android:textStyle="normal"
@@ -79,7 +80,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.489"
-        app:srcCompat="@drawable/basic_trash_full" />
-
-
+        app:srcCompat="@drawable/basic_trash_full"
+        android:contentDescription="@string/profile_remove" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,12 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background"
-        android:gravity="center"
         android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:text="@string/main_name"
         android:textColor="@color/titleInItems"
         android:textSize="18sp"
         android:textStyle="normal"
-        android:text="name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,11 +30,7 @@
         app:layout_constraintBottom_toTopOf="@+id/navigation_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar_current_profile">
-
-
-    </FrameLayout>
-
+        app:layout_constraintTop_toBottomOf="@+id/calendar_current_profile"/>
 
     <include
         android:id="@+id/navigation_toolbar"
@@ -44,9 +40,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-
-
-
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

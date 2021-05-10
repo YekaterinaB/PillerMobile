@@ -38,7 +38,7 @@
         android:layout_marginEnd="28dp"
         android:background="@null"
         android:clickable="false"
-        android:contentDescription="Search"
+        android:contentDescription="@string/fnd_search"
         android:src="@drawable/ic_edit_search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/nd_drug_search_et" />

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Settings"
+        android:text="@string/settings_settings"
         android:textColor="@color/titleInItems"
         android:textSize="18sp"
         android:textStyle="normal"
@@ -29,6 +29,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:contentDescription="@string/settings_go_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_left" />
@@ -57,8 +58,9 @@
         android:padding="8dp"
         android:paddingStart="36dp"
         android:paddingTop="8dp"
+        android:paddingEnd="36dp"
         android:paddingBottom="8dp"
-        android:text="Katya Batashov"
+        android:text="@string/settings_katya_batashov"
         android:textColor="@color/titleInItems"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,8 +77,9 @@
         android:inputType="textEmailAddress"
         android:padding="8dp"
         android:paddingStart="36dp"
+        android:paddingEnd="36dp"
         android:paddingBottom="8dp"
-        android:text="Katya@gmail.com"
+        android:text="@string/settings_katya_gmail_com"
         android:textColor="@color/titleInItems"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +96,8 @@
         android:inputType="textPassword"
         android:padding="8dp"
         android:paddingStart="36dp"
-        android:text="password"
+        android:paddingEnd="36dp"
+        android:text="@string/settings_password"
         android:textColor="@color/titleInItems"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,7 +114,8 @@
         android:fontFamily="sans-serif"
         android:padding="8dp"
         android:paddingStart="36dp"
-        android:text="Help"
+        android:paddingEnd="36dp"
+        android:text="@string/settings_help"
         android:textColor="@color/titleInItems"
         android:textSize="18sp"
         android:textStyle="normal"
@@ -123,14 +128,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#C0000000"
+        android:clickable="true"
+        android:elevation="2dp"
+        android:focusable="true"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:elevation="2dp"
-        android:clickable="true"
-        android:focusable="true">
+        app:layout_constraintTop_toTopOf="parent">
 
     </RelativeLayout>
 
@@ -141,7 +146,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Save"
+        android:text="@string/settings_save"
         android:textAlignment="textEnd"
         android:textColor="@color/myTextColor"
         android:textSize="18sp"
@@ -151,25 +156,25 @@
         app:layout_constraintStart_toEndOf="@+id/settings_toolbar"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/go_to_supervisors_settings"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="36dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_marginEnd="36dp"-->
-<!--        android:background="@drawable/rounded_shape_edit_text"-->
-<!--        android:paddingStart="36dp"-->
-<!--        android:paddingTop="8dp"-->
-<!--        android:paddingEnd="36dp"-->
-<!--        android:paddingBottom="8dp"-->
-<!--        android:text="Manage supervisors"-->
-<!--        android:textColor="@color/titleInItems"-->
-<!--        android:textSize="18sp"-->
-<!--        android:textStyle="normal"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/edt_password_settings" />-->
+    <!--    <TextView-->
+    <!--        android:id="@+id/go_to_supervisors_settings"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="36dp"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:layout_marginEnd="36dp"-->
+    <!--        android:background="@drawable/rounded_shape_edit_text"-->
+    <!--        android:paddingStart="36dp"-->
+    <!--        android:paddingTop="8dp"-->
+    <!--        android:paddingEnd="36dp"-->
+    <!--        android:paddingBottom="8dp"-->
+    <!--        android:text="Manage supervisors"-->
+    <!--        android:textColor="@color/titleInItems"-->
+    <!--        android:textSize="18sp"-->
+    <!--        android:textStyle="normal"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/edt_password_settings" />-->
 
     <include
         android:id="@+id/notifications_settings"
@@ -195,7 +200,7 @@
         android:paddingTop="13dp"
         android:paddingEnd="52dp"
         android:paddingBottom="13dp"
-        android:text="Log out"
+        android:text="@string/settings_log_out"
         android:textAlignment="center"
         android:textColor="@color/titleInItems"
         android:textSize="18sp"
@@ -210,7 +215,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
         android:fontFamily="sans-serif"
-        android:text="Delete account"
+        android:text="@string/settings_delete_account"
         android:textColor="@color/removeColor"
         android:textSize="18sp"
         android:textStyle="normal"
@@ -219,6 +224,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/log_out_settings"
         app:layout_constraintVertical_bias="0.0" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
