@@ -313,13 +313,13 @@
     <string name="supervisor_elwin_sharvill_gmail_com">Elwin.Sharvill@gmail.com</string>
     <string name="supervisor_waiting_for_email_confirmation">Waiting for email confirmation...</string>
     <string name="supervisor_remove">Remove</string>
-    <string name="supervisor_missed_occurrences">Missed occurrences</string>
+    <string name="supervisor_missed_occurrences"> Missed occurrences</string>
     <string name="supervisor_supervisors_will_be_notified_after_nmissed_occurrences">Supervisors will be notified after\nmissed occurrences</string>
     <string name="supervisor_3">3</string>
     <string name="supervisor_missed_days">Missed Days</string>
     <string name="supervisor_set">Set</string>
     <string name="supervisor_cancel">Cancel</string>
-    <string name="supervisor_supervisors">Supervisors</string>
+    <string name="supervisor_supervisors"> Supervisors</string>
     <string name="supervisor_0">0</string>
     <string name="supervisor_control_who_will_get_notification">Control who will get notification..</string>
     <string name="supervisor_supervisor">Supervisor</string>

@@ -65,7 +65,6 @@ class DateUtils {
             setCalendarTime(calendar, 23, 59, 59)
         }
 
-
         fun getFutureHourDate(hour: Int, minutes: Int): Calendar {
             val futureDate = Calendar.getInstance()
             if ((futureDate.get(Calendar.HOUR_OF_DAY) > hour) ||
