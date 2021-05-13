@@ -164,8 +164,8 @@ class SupervisorsFragment : FragmentWithUserObject() {
                         if (numberOfMissed == DbConstants.noMissedDaysCountStr) {
                             numberOfMissed = DbConstants.noMissedDaysText
                         }
-                        _thresholdCountTv.text = numberOfMissed
-
+                        val thresholdText = "$numberOfMissed "
+                        _thresholdCountTv.text = thresholdText
                     }
                 }
             })
@@ -183,7 +183,8 @@ class SupervisorsFragment : FragmentWithUserObject() {
             Observer { supervisorList ->
                 supervisorList?.let {
                     updateRecyclersAndAdapters()
-                    _supervisorCountTv.text = supervisorList.size.toString()
+                    val supervisorsAmountTxt = supervisorList.size.toString() + " "
+                    _supervisorCountTv.text = supervisorsAmountTxt
                 }
             })
 
@@ -268,8 +269,6 @@ class SupervisorsFragment : FragmentWithUserObject() {
         cancelViewText: TextView, popup: PopupWindow, seekBar: IndicatorSeekBar,
         setViewText: TextView, thresholdCountPopup: TextView
     ) {
-
-
         seekBar.onSeekChangeListener = object : OnSeekChangeListener {
             override fun onSeeking(seekParams: SeekParams) {
 
@@ -277,8 +276,9 @@ class SupervisorsFragment : FragmentWithUserObject() {
                 if (numberOfMissed == DbConstants.noMissedDaysCountStr) {
                     numberOfMissed = DbConstants.noMissedDaysText
                 }
-                _thresholdCountTv.text = numberOfMissed
-                thresholdCountPopup.text = numberOfMissed
+                val thresholdText = "$numberOfMissed "
+                _thresholdCountTv.text = thresholdText
+                thresholdCountPopup.text = thresholdText
             }
 
             override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {}
