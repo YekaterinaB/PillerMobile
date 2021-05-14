@@ -118,8 +118,8 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         _searchViewModel.addedDrugSuccess.observe(
             this,
             Observer {
-                //  added drug successfully, close activity
                 if (it) {
+                    //  added drug successfully, close activity
                     finish()
                 }
             })
