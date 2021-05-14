@@ -26,9 +26,9 @@ import java.net.URL
 
 
 class DrugInfoViewModel : ViewModel() {
-    private val retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
-    private val drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
-    private val drugIntakeAPIRetrofit = ServiceBuilder.buildService(DrugIntakeAPI::class.java)
+    private val _retrofit = ServiceBuilder.buildService(CalendarAPI::class.java)
+    private val _drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
+    private val _drugIntakeAPIRetrofit = ServiceBuilder.buildService(DrugIntakeAPI::class.java)
 
     val mutableToastError: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
@@ -59,7 +59,7 @@ class DrugInfoViewModel : ViewModel() {
         drug: DrugObject,
         context: Context
     ) {
-        retrofit.deleteDrugByUser(
+        _retrofit.deleteDrugByUser(
             loggedUserObject.userId,
             loggedUserObject.currentProfile!!.profileId,
             drug.drugId
@@ -87,7 +87,7 @@ class DrugInfoViewModel : ViewModel() {
     fun deleteFutureOccurrencesOfDrug(
         loggedUserObject: UserObject, drug: DrugObject, repeatEnd: String, context: Context
     ) {
-        retrofit.deleteFutureOccurrencesOfDrugByUser(
+        _retrofit.deleteFutureOccurrencesOfDrugByUser(
             loggedUserObject.userId,
             loggedUserObject.currentProfile!!.profileId,
             drug.drugId,
@@ -119,7 +119,7 @@ class DrugInfoViewModel : ViewModel() {
 
     fun initiateDrugImage(context: Context, rxcui: String) {
         if (rxcui != "0" && !setImageFromCache(context, rxcui)) {
-            drugAPIRetrofit.getDrugImage(rxcui).enqueue(
+            _drugAPIRetrofit.getDrugImage(rxcui).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         mutableToastError.value = DbConstants.couldNotConnectServerError
@@ -182,7 +182,7 @@ class DrugInfoViewModel : ViewModel() {
     }
 
     private fun setIntakeTaken(intakeId: String, refillId: String, date: Long) {
-        drugIntakeAPIRetrofit.setIntakeTaken(intakeId, refillId, date).enqueue(
+        _drugIntakeAPIRetrofit.setIntakeTaken(intakeId, refillId, date).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not set intake."
@@ -203,7 +203,7 @@ class DrugInfoViewModel : ViewModel() {
     }
 
     private fun setIntakeNotTaken(intakeId: String, refillId: String, date: Long) {
-        drugIntakeAPIRetrofit.setIntakeNotTaken(intakeId, refillId, date).enqueue(
+        _drugIntakeAPIRetrofit.setIntakeNotTaken(intakeId, refillId, date).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     mutableToastError.value = "Could not set intake."

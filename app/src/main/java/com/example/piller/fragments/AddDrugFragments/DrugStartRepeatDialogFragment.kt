@@ -17,8 +17,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DrugStartRepeatDialogFragment(
-    private val pickedDatesList: MutableList<Calendar>,
-    private val doneCallback: (MutableList<Calendar>) -> Unit
+    private val _pickedDatesList: MutableList<Calendar>,
+    private val _doneCallback: (MutableList<Calendar>) -> Unit
 ) : BottomSheetDialogFragment() {
 
     private lateinit var calendarsAdapter: DrugObjectAdapter
@@ -31,8 +31,8 @@ class DrugStartRepeatDialogFragment(
     }
 
     private fun initListIfEmpty() {
-        if (pickedDatesList.size == 0) {
-            pickedDatesList.add(Calendar.getInstance())
+        if (_pickedDatesList.size == 0) {
+            _pickedDatesList.add(Calendar.getInstance())
             calendarsAdapter.notifyDataSetChanged()
         }
     }
@@ -48,7 +48,7 @@ class DrugStartRepeatDialogFragment(
     private fun setOnClickListeners() {
         do_repeat_start_done.setOnClickListener {
             dismiss()
-            doneCallback(pickedDatesList)
+            _doneCallback(_pickedDatesList)
         }
 
         do_repeat_start_close_btn.setOnClickListener { dismiss() }
@@ -59,13 +59,13 @@ class DrugStartRepeatDialogFragment(
     }
 
     private fun addNewRepeatStart() {
-        pickedDatesList.add(Calendar.getInstance())
+        _pickedDatesList.add(Calendar.getInstance())
         calendarsAdapter.notifyDataSetChanged()
         updateAddBtnVisibility()
     }
 
     private fun updateAddBtnVisibility() {
-        if (pickedDatesList.size <= DbConstants.maxStartRepeats) {
+        if (_pickedDatesList.size <= DbConstants.maxStartRepeats) {
             do_repeat_start_add.visibility = View.VISIBLE
         } else {
             do_repeat_start_add.visibility = View.GONE
@@ -96,12 +96,12 @@ class DrugStartRepeatDialogFragment(
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.dateTV.text = parseDateToString(pickedDatesList[position])
+            holder.dateTV.text = parseDateToString(_pickedDatesList[position])
 
             holder.dateTV.setOnClickListener {
-                showTimePickerDialog(pickedDatesList[position]) { hourOfDay, minute ->
-                    pickedDatesList[position][Calendar.HOUR_OF_DAY] = hourOfDay
-                    pickedDatesList[position][Calendar.MINUTE] = minute
+                showTimePickerDialog(_pickedDatesList[position]) { hourOfDay, minute ->
+                    _pickedDatesList[position][Calendar.HOUR_OF_DAY] = hourOfDay
+                    _pickedDatesList[position][Calendar.MINUTE] = minute
                     notifyDataSetChanged()
                 }
             }
@@ -111,14 +111,14 @@ class DrugStartRepeatDialogFragment(
                 holder.deleteItem.visibility = View.INVISIBLE
             } else {
                 holder.deleteItem.setOnClickListener {
-                    pickedDatesList.removeAt(position)
+                    _pickedDatesList.removeAt(position)
                     notifyDataSetChanged()
                     updateAddBtnVisibility()
                 }
             }
         }
 
-        override fun getItemCount(): Int = pickedDatesList.size
+        override fun getItemCount(): Int = _pickedDatesList.size
 
         private fun parseDateToString(calendar: Calendar): String {
             val date = calendar.time

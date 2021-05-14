@@ -14,7 +14,7 @@ import retrofit2.Call
 import retrofit2.Response
 
 class ProfileViewModel : ViewModel() {
-    private val daysOfWeek = 7
+    private val _daysOfWeek = 7
 
     val mutableListOfProfiles: MutableLiveData<MutableList<CalendarProfile>> by lazy {
         MutableLiveData<MutableList<CalendarProfile>>(mutableListOf())
@@ -29,12 +29,12 @@ class ProfileViewModel : ViewModel() {
 
     private lateinit var loggedEmail: String
 
-    fun getCurrentProfileName(): String {
+    private fun getCurrentProfileName(): String {
         return mutableCurrentProfile.value!!.name
     }
 
 
-    fun getListOfProfiles(): MutableList<CalendarProfile> {
+    private fun getListOfProfiles(): MutableList<CalendarProfile> {
         return mutableListOfProfiles.value!!
     }
 
@@ -76,7 +76,7 @@ class ProfileViewModel : ViewModel() {
         var profile =
             CalendarProfile(
                 mutableCurrentProfile.value!!,
-                Array(daysOfWeek) { mutableListOf<CalendarEvent>() },
+                Array(_daysOfWeek) { mutableListOf<CalendarEvent>() },
                 emptyArray()
             )
 
@@ -122,7 +122,7 @@ class ProfileViewModel : ViewModel() {
         mutableListOfProfiles.value!!.add(
             CalendarProfile(
                 profile,
-                Array(daysOfWeek) { mutableListOf<CalendarEvent>() },
+                Array(_daysOfWeek) { mutableListOf<CalendarEvent>() },
                 emptyArray()
             )
         )

@@ -47,5 +47,4 @@ interface UserAPI {
 
     @HTTP(method = DbConstants.DELETEMethod, path = "user/googleUser/{userId}", hasBody = false)
     fun deleteGoogleUser(@Path("userId") userId: String): Call<ResponseBody>
-
 }

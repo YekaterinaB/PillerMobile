@@ -81,7 +81,7 @@ class HelpFragment : FragmentWithUserObject() {
         if (transaction != null) {
             transaction.replace(
                 R.id.calender_weekly_container_fragment,
-                SettingsFragment.newInstance(_loggedUserObject)
+                SettingsFragment.newInstance(loggedUserObject)
             )
             transaction.disallowAddToBackStack()
             transaction.commit()
@@ -92,7 +92,7 @@ class HelpFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             HelpFragment().apply {
                 arguments = Bundle().apply {
-                    _loggedUserObject = loggedUser
+                    loggedUserObject = loggedUser
                 }
             }
     }

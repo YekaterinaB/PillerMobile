@@ -11,7 +11,7 @@ import com.example.piller.utilities.DbConstants
 
 
 class NumberPickerMinMax : NumberPicker {
-    private var stringItems: Array<String>? = null
+    private var _stringItems: Array<String>? = null
 
     constructor(context: Context?) : super(context)
 
@@ -47,7 +47,7 @@ class NumberPickerMinMax : NumberPicker {
                 DbConstants.defaultNumberPickerValue
             )
         }
-        stringItems = this.displayedValues
+        _stringItems = this.displayedValues
         this.minValue = minValue
         this.maxValue = maxValue
         setNumberPickerTextColor(R.color.colorPrimary)
@@ -57,15 +57,15 @@ class NumberPickerMinMax : NumberPicker {
 
     fun getItemAt(index: Int): String {
         var item = ""
-        if (index < this.stringItems?.size!!) {
-            item = this.stringItems!![index]
+        if (index < this._stringItems?.size!!) {
+            item = this._stringItems!![index]
         }
 
         return item
     }
 
     fun getSelectedItemString(): String? {
-        return stringItems?.get(this.value)
+        return _stringItems?.get(this.value)
     }
 
     private fun setNumberPickerTextColor(color: Int) {

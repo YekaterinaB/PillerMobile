@@ -10,8 +10,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.drug_occurrence_frequency_dialog.*
 
 class DrugFrequencyDialogFragment(
-    private val setNoRepeat: () -> Unit,
-    private val chooseRepeatFrequency: () -> Unit
+    private val _setNoRepeat: () -> Unit,
+    private val _chooseRepeatFrequency: () -> Unit
 ) : BottomSheetDialogFragment() {
 
     override fun onCreateView(
@@ -24,12 +24,12 @@ class DrugFrequencyDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         do_freq_close.setOnClickListener { dismiss() }
         do_freq_no_repeat.setOnClickListener {
-            setNoRepeat()
+            _setNoRepeat()
             dismiss()
         }
         do_freq_repeat_on.setOnClickListener {
             dismiss()
-            chooseRepeatFrequency()
+            _chooseRepeatFrequency()
         }
     }
 

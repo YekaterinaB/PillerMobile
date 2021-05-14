@@ -29,18 +29,18 @@ import kotlin.collections.ArrayList
 
 
 class FullViewFragment : FragmentWithUserObject() {
-    private val viewModel: FullViewViewModel by activityViewModels()
-    private val profileViewModel: ProfileViewModel by activityViewModels()
-    private lateinit var fragmentView: View
-    private lateinit var calendarView: CalendarView
-    private lateinit var loadingScreen: RelativeLayout
-    private val eventDayCircleRadius = DbConstants.EVENTDAY_DRAWABLE_CIRCLE_RADIUS
-    private var currentFirstDayOfMonth = DateUtils.getFirstDayOfMonth()
+    private val _viewModel: FullViewViewModel by activityViewModels()
+    private val _profileViewModel: ProfileViewModel by activityViewModels()
+    private lateinit var _fragmentView: View
+    private lateinit var _calendarView: CalendarView
+    private lateinit var _loadingScreen: RelativeLayout
+    private val _eventDayCircleRadius = DbConstants.EVENTDAY_DRAWABLE_CIRCLE_RADIUS
+    private var _currentFirstDayOfMonth = DateUtils.getFirstDayOfMonth()
 
     companion object {
         fun newInstance(loggedUser: UserObject) = FullViewFragment().apply {
             arguments = Bundle().apply {
-                _loggedUserObject = loggedUser
+                loggedUserObject = loggedUser
             }
         }
     }
@@ -49,28 +49,28 @@ class FullViewFragment : FragmentWithUserObject() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        fragmentView = inflater.inflate(R.layout.full_view_fragment, container, false)
+        _fragmentView = inflater.inflate(R.layout.full_view_fragment, container, false)
         initViews()
         //  create the dots that appear on the calendar
         initEvents()
         initObservers()
         setOnClickListeners()
-        return fragmentView
+        return _fragmentView
     }
 
     private fun updateEventsOnMonthChange() {
         val cal: Calendar = Calendar.getInstance()
-        cal.time = calendarView.currentPageDate.time
+        cal.time = _calendarView.currentPageDate.time
         val firstAndLastDays = DateUtils.getFirstAndLastDaysOfSpecificMonth(cal)
-        currentFirstDayOfMonth = firstAndLastDays.first
-        viewModel.updateCalendarByUser(
-            _loggedUserObject, firstAndLastDays.first, firstAndLastDays.second
+        _currentFirstDayOfMonth = firstAndLastDays.first
+        _viewModel.updateCalendarByUser(
+            loggedUserObject, firstAndLastDays.first, firstAndLastDays.second
         )
     }
 
     private fun isDateInCurrentMonth(eventDay: EventDay): Boolean {
         val cal: Calendar = Calendar.getInstance()
-        cal.time = calendarView.currentPageDate.time
+        cal.time = _calendarView.currentPageDate.time
         val firstAndLastDays = DateUtils.getFirstAndLastDaysOfSpecificMonth(cal)
         val startOfMonth = Calendar.getInstance()
         startOfMonth.timeInMillis = firstAndLastDays.first.time
@@ -89,10 +89,10 @@ class FullViewFragment : FragmentWithUserObject() {
             }
         }
 
-        calendarView.setOnPreviousPageChangeListener(listener = monthClickListener)
-        calendarView.setOnForwardPageChangeListener(listener = monthClickListener)
+        _calendarView.setOnPreviousPageChangeListener(listener = monthClickListener)
+        _calendarView.setOnForwardPageChangeListener(listener = monthClickListener)
 
-        calendarView.setOnDayClickListener(object :
+        _calendarView.setOnDayClickListener(object :
             OnDayClickListener {
             override fun onDayClick(eventDay: EventDay) {
                 //  make sure that the selected day is in the current month
@@ -109,13 +109,13 @@ class FullViewFragment : FragmentWithUserObject() {
         val sdf = SimpleDateFormat(getString(R.string.dateFormat), Locale.ENGLISH)
         val date = sdf.format(eventDay.calendar.time)
         val userBundle = Bundle()
-        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, _loggedUserObject)
+        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, loggedUserObject)
         arguments.putBundle(DbConstants.LOGGED_USER_BUNDLE, userBundle)
         arguments.putString(FullviewPopupFragment.ARG_DATE_STRING, date)
         //  we need to reduce it by 1 because the get day of month starts from 1 (and our list starts from 0..)
         arguments.putParcelableArray(
             FullviewPopupFragment.ARG_EVENTS_LIST,
-            viewModel.mutableCurrentMonthlyCalendar.value?.get(
+            _viewModel.mutableCurrentMonthlyCalendar.value?.get(
                 eventDay.calendar.get(Calendar.DAY_OF_MONTH) - 1
             )?.toTypedArray()
         )
@@ -131,8 +131,8 @@ class FullViewFragment : FragmentWithUserObject() {
     }
 
     private fun initViews() {
-        calendarView = fragmentView.findViewById(R.id.fv_calendar)
-        loadingScreen = fragmentView.findViewById(R.id.loading_screen)
+        _calendarView = _fragmentView.findViewById(R.id.fv_calendar)
+        _loadingScreen = _fragmentView.findViewById(R.id.loading_screen)
     }
 
     private fun getDrawableText(typeface: Int?, color: Int): Any {
@@ -154,7 +154,7 @@ class FullViewFragment : FragmentWithUserObject() {
         val bounds = Rect()
         val x = (bitmap.width - bounds.width()) / DbConstants.eventDayBitMapWidthFactor
         val y = (bitmap.height + bounds.height()) / DbConstants.eventDayBitMapHeightFactor
-        canvas.drawCircle(x.toFloat(), y.toFloat(), eventDayCircleRadius, paint)
+        canvas.drawCircle(x.toFloat(), y.toFloat(), _eventDayCircleRadius, paint)
 
         return BitmapDrawable(this.resources, bitmap)
     }
@@ -163,9 +163,9 @@ class FullViewFragment : FragmentWithUserObject() {
         val startDate = DateUtils.getFirstDayOfMonth()
         val endDate = DateUtils.getLastDayOfMonth()
         //  get all the events for the selected month
-        viewModel.initiateMonthEvents(
-            _loggedUserObject,
-            profileViewModel.getCurrentProfile(),
+        _viewModel.initiateMonthEvents(
+            loggedUserObject,
+            _profileViewModel.getCurrentProfile(),
             startDate,
             endDate
         )
@@ -173,7 +173,7 @@ class FullViewFragment : FragmentWithUserObject() {
 
     private fun initObservers() {
         //  when the data arrives, set a dot for each day that has at least one event
-        viewModel.mutableCurrentMonthlyCalendar.observe(
+        _viewModel.mutableCurrentMonthlyCalendar.observe(
             viewLifecycleOwner,
             androidx.lifecycle.Observer { eventsArray ->
                 eventsArray?.let {
@@ -183,26 +183,26 @@ class FullViewFragment : FragmentWithUserObject() {
                 }
             })
 
-        viewModel.showLoadingScreen.observe(
+        _viewModel.showLoadingScreen.observe(
             viewLifecycleOwner,
             androidx.lifecycle.Observer { eventsArray ->
                 eventsArray?.let {
                     if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         if (it) {
-                            loadingScreen.visibility = View.VISIBLE
+                            _loadingScreen.visibility = View.VISIBLE
                         } else {
-                            loadingScreen.visibility = View.GONE
+                            _loadingScreen.visibility = View.GONE
                         }
                     }
                 }
             })
 
-        viewModel.mutableDeleteSuccess.observe(
+        _viewModel.mutableDeleteSuccess.observe(
             viewLifecycleOwner,
             androidx.lifecycle.Observer { eventsArray ->
                 eventsArray?.let {
                     if (viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                        setEvents(viewModel.mutableCurrentMonthlyCalendar.value!!)
+                        setEvents(_viewModel.mutableCurrentMonthlyCalendar.value!!)
                     }
                 }
             })
@@ -216,7 +216,7 @@ class FullViewFragment : FragmentWithUserObject() {
             if (day.isNotEmpty()) {
                 //  for each day to add create a calendar, do not reuse the same calendar because it won't work!
                 val firstDateOfMonth = Calendar.getInstance()
-                firstDateOfMonth.time = currentFirstDayOfMonth
+                firstDateOfMonth.time = _currentFirstDayOfMonth
                 val tempCalendar: Calendar = firstDateOfMonth
                 tempCalendar.add(Calendar.DATE, i)
                 val circleBitmap =
@@ -225,7 +225,7 @@ class FullViewFragment : FragmentWithUserObject() {
             }
         }
 
-        calendarView.setEvents(eventsUI)
+        _calendarView.setEvents(eventsUI)
     }
 
     private fun getDayColor(day: MutableList<CalendarEvent>, dayDate: Date): Int {
@@ -258,13 +258,13 @@ class FullViewFragment : FragmentWithUserObject() {
             val deleteAll = bundle.getIntArray(DbConstants.DRUGSLIST)!!
             val deleteFuture = bundle.getParcelableArray(DbConstants.FUTURE_DRUGSLIST)
             if (deleteAll.isNotEmpty()) {
-                profileViewModel.currentProfileUpdated()
-                viewModel.deleteDrugs(deleteAll.toList())
+                _profileViewModel.currentProfileUpdated()
+                _viewModel.deleteDrugs(deleteAll.toList())
             }
             deleteFuture?.map { list -> list as CalendarEvent }?.let {
                 if (it.isNotEmpty()) {
-                    profileViewModel.currentProfileUpdated()
-                    viewModel.deleteFutureDrug(it)
+                    _profileViewModel.currentProfileUpdated()
+                    _viewModel.deleteFutureDrug(it)
                 }
             }
         }

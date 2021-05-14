@@ -26,20 +26,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DrugByImageFragment(private val addType: String) : Fragment() {
-    private lateinit var boxImage: ImageView
-    private lateinit var openCameraButton: ImageView
-    private val searchViewModel: DrugSearchViewModel by activityViewModels()
-    private lateinit var imageFilePath: String
-//    private val ORIENTATIONS = SparseIntArray()
-
-    //    private val MAX_DIMENSION = 640
-
-//    init {
-//        ORIENTATIONS.append(Surface.ROTATION_0, 0)
-//        ORIENTATIONS.append(Surface.ROTATION_90, 90)
-//        ORIENTATIONS.append(Surface.ROTATION_180, 180)
-//        ORIENTATIONS.append(Surface.ROTATION_270, 270)
-//    }
+    private lateinit var _boxImage: ImageView
+    private lateinit var _openCameraButton: ImageView
+    private val _searchViewModel: DrugSearchViewModel by activityViewModels()
+    private lateinit var _imageFilePath: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +44,7 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
     }
 
     private fun initListeners() {
-        openCameraButton.setOnClickListener {
+        _openCameraButton.setOnClickListener {
             if (checkCameraPermission()) {
                 openCameraIntent()
             } else {
@@ -67,8 +57,8 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
     }
 
     private fun initViews(fragmentView: View) {
-        boxImage = fragmentView.findViewById(R.id.ocr_image)
-        openCameraButton = fragmentView.findViewById(R.id.ocr_open_camera)
+        _boxImage = fragmentView.findViewById(R.id.ocr_image)
+        _openCameraButton = fragmentView.findViewById(R.id.ocr_open_camera)
     }
 
     private fun createImageFile(): File {
@@ -85,7 +75,7 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
             getString(R.string.imageNameExtension),  /* suffix */
             storageDir /* directory */
         )
-        imageFilePath = image.absolutePath
+        _imageFilePath = image.absolutePath
         //  delete this file after closing app because we don't need it anymore
         image.deleteOnExit()
         return image
@@ -121,37 +111,6 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-//    /**
-//     * Get the angle by which an image must be rotated given the device's current orientation.
-//     */
-//    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-//    @Throws(CameraAccessException::class)
-//    private fun getRotationCompensation(
-//        cameraId: String,
-//        activity: Activity,
-//        isFrontFacing: Boolean
-//    ): Int {
-//        // Get the device's current rotation relative to its "native" orientation.
-//        // Then, from the ORIENTATIONS table, look up the angle the image must be
-//        // rotated to compensate for the device's rotation.
-//        val deviceRotation = activity.windowManager.defaultDisplay.rotation
-//        var rotationCompensation = ORIENTATIONS.get(deviceRotation)
-//
-//        // Get the device's sensor orientation.
-//        val cameraManager =
-//            activity.getSystemService(AppCompatActivity.CAMERA_SERVICE) as CameraManager
-//        val sensorOrientation = cameraManager
-//            .getCameraCharacteristics(cameraId)
-//            .get(CameraCharacteristics.SENSOR_ORIENTATION)!!
-//
-//        if (isFrontFacing) {
-//            rotationCompensation = (sensorOrientation + rotationCompensation) % 360
-//        } else { // back-facing
-//            rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360
-//        }
-//        return rotationCompensation
-//    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == DbConstants.REQUEST_CAPTURE_IMAGE) {
@@ -165,36 +124,19 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
     private fun searchDrug() {
         if (addType == DbConstants.DRUG_BY_BOX) {
             //  search by box (ocr)
-            searchViewModel.searchDrugByBox(imageFilePath)
+            _searchViewModel.searchDrugByBox(_imageFilePath)
         } else {
             //  search by pill image
-            searchViewModel.searchDrugByPillImage(imageFilePath)
+            _searchViewModel.searchDrugByPillImage(_imageFilePath)
         }
     }
 
     private fun updateImage() {
-        val imageFile = File(imageFilePath)
+        val imageFile = File(_imageFilePath)
         if (imageFile.exists()) {
-            Picasso.get().load(imageFile).into(boxImage)
+            Picasso.get().load(imageFile).into(_boxImage)
         }
     }
-
-//    @SuppressLint("Recycle")
-//    private fun getPath(uri: Uri?): String {
-//        var result: String? = null
-//        val proj = arrayOf(MediaStore.Images.Media.DATA)
-//        val cursor: Cursor =
-//            requireActivity().contentResolver.query(uri!!, proj, null, null, null)!!
-//        if (cursor.moveToFirst()) {
-//            val columnIndex: Int = cursor.getColumnIndexOrThrow(proj[0])
-//            result = cursor.getString(columnIndex)
-//        }
-//        cursor.close()
-//        if (result == null) {
-//            result = "Not found"
-//        }
-//        return result
-//    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -206,17 +148,12 @@ class DrugByImageFragment(private val addType: String) : Fragment() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //  permission granted
                     openCameraIntent()
-                } else {
                 }
         }
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(addType: String) =
-            DrugByImageFragment(addType).apply {
-                arguments = Bundle().apply {
-                }
-            }
+        fun newInstance(addType: String) = DrugByImageFragment(addType)
     }
 }

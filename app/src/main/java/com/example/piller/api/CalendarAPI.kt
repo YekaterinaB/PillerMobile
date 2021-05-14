@@ -16,13 +16,6 @@ interface CalendarAPI {
         @Path(DbConstants.profileIdStr) profileId: String
     ): Call<ResponseBody>
 
-//    @PUT("calendar/{email}/{name}")
-//    fun updateCalendarByUser(
-//        @Path("email") email: String,
-//        @Path("name") name: String,
-//        @Body calendarEvent: CalendarEvent
-//    ): Call<ResponseBody>
-
     @DELETE(DbConstants.calendarURL + "{${DbConstants.userId}}")
     fun deleteCalendarByUser(
         @Path(DbConstants.userId) userId: String,

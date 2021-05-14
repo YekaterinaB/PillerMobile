@@ -19,7 +19,7 @@ import retrofit2.Response
 import java.util.*
 
 class FullViewViewModel : ViewModel() {
-    private val eventInterpreter = EventInterpreter()
+    private val _eventInterpreter = EventInterpreter()
 
     val mutableCurrentMonthlyCalendar: MutableLiveData<Array<MutableList<CalendarEvent>>> by lazy {
         MutableLiveData<Array<MutableList<CalendarEvent>>>()
@@ -126,7 +126,7 @@ class FullViewViewModel : ViewModel() {
         val jObject = JSONObject(calendarInfo.body()!!.string())
         val drugInfoList = jObject.get(DbConstants.DRUG_INFO_LIST)
         val calendarId = jObject.get(DbConstants.CALENDAR_ID).toString()
-        val monthEvents = eventInterpreter.getEventsForCalendarByDate(
+        val monthEvents = _eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate, drugInfoList as JSONArray, calendarId
         )
         setMutableMonthlyCalendar(monthEvents)

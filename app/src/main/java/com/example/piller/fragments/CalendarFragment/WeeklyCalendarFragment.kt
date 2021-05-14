@@ -29,7 +29,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
     private val _weeklyCalendarViewModel: WeeklyCalendarViewModel by activityViewModels()
     private val _profileViewModel: ProfileViewModel by activityViewModels()
 
-    private val DRUG_INFO_INTENT_ID = 1
+    private val _drugInfoIntentId = 1
 
     private lateinit var _fragmentView: View
     private lateinit var currentCalendarEvent: CalendarEvent
@@ -46,7 +46,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         initViews(_fragmentView)
         initObservers()
         _weeklyCalendarViewModel.getWeekEvents(
-            _loggedUserObject,
+            loggedUserObject,
             _profileViewModel.getCurrentProfile()
         )
 
@@ -100,14 +100,14 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
         val intent = Intent(requireContext(), DrugInfoActivity::class.java)
         intent.putExtra(DbConstants.CALENDAR_EVENT, calendarEvent)
         putLoggedUserObjectInIntent(intent)
-        startActivityForResult(intent, DRUG_INFO_INTENT_ID)
+        startActivityForResult(intent, _drugInfoIntentId)
     }
 
     companion object {
         fun newInstance(loggedUser: UserObject) =
             WeeklyCalendarFragment().apply {
                 arguments = Bundle().apply {
-                    _loggedUserObject = loggedUser
+                    loggedUserObject = loggedUser
                 }
             }
     }
@@ -145,7 +145,7 @@ class WeeklyCalendarFragment : FragmentWithUserObject() {
             }
         }
 
-        if (requestCode == DRUG_INFO_INTENT_ID) {
+        if (requestCode == _drugInfoIntentId) {
             when (resultCode) {
                 Activity.RESULT_OK -> {
                     _weeklyCalendarViewModel.deleteDrug(currentCalendarEvent)

@@ -53,11 +53,11 @@ class CalendarFragment : FragmentWithUserObject() {
         var fragment: Fragment? = null
         when (fragmentId) {
             DbConstants.WEEKLY_CALENDAR_FRAGMENT_ID -> {
-                _weeklyFragment = WeeklyCalendarFragment.newInstance(_loggedUserObject)
+                _weeklyFragment = WeeklyCalendarFragment.newInstance(loggedUserObject)
                 fragment = _weeklyFragment
             }
             DbConstants.FULL_VIEW_FRAGMENT_ID ->
-                fragment = FullViewFragment.newInstance(_loggedUserObject)
+                fragment = FullViewFragment.newInstance(loggedUserObject)
         }
         openFragment(fragment!!, fragmentId)
     }
@@ -78,7 +78,7 @@ class CalendarFragment : FragmentWithUserObject() {
     fun updateDataInFragment() {
         _profileViewModel.getCurrentProfile().setIsInitialized(false)
         _weeklyCalendarViewModel.getWeekEvents(
-            _loggedUserObject,
+            loggedUserObject,
             _profileViewModel.getCurrentProfile()
         )
         _weeklyFragment.updateRecyclersAndAdapters()
@@ -89,7 +89,7 @@ class CalendarFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             CalendarFragment().apply {
                 arguments = Bundle().apply {
-                    _loggedUserObject = loggedUser
+                    loggedUserObject = loggedUser
                 }
             }
     }

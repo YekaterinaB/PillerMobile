@@ -18,13 +18,12 @@ import retrofit2.Call
 import retrofit2.Response
 
 class WeeklyCalendarViewModel : ViewModel() {
-    private val eventInterpreter = EventInterpreter()
-    private val daysInWeek = 7
+    private val _eventInterpreter = EventInterpreter()
+    private val _daysInWeek = 7
     lateinit var calendarId: String
 
-
     val mutableCurrentWeeklyCalendar: MutableLiveData<Array<MutableList<CalendarEvent>>> by lazy {
-        MutableLiveData<Array<MutableList<CalendarEvent>>>(Array(daysInWeek) { mutableListOf<CalendarEvent>() })
+        MutableLiveData<Array<MutableList<CalendarEvent>>>(Array(_daysInWeek) { mutableListOf<CalendarEvent>() })
     }
 
     val mutableToastError: MutableLiveData<String> by lazy {
@@ -122,7 +121,7 @@ class WeeklyCalendarViewModel : ViewModel() {
         calendarId = jObject.get(DbConstants.CALENDAR_ID).toString()
         val startDate = DateUtils.getFirstDayOfWeek()
         val endDate = DateUtils.getLastDayOfWeek()
-        val weekEvents = eventInterpreter.getEventsForCalendarByDate(
+        val weekEvents = _eventInterpreter.getEventsForCalendarByDate(
             startDate, endDate,
             drugInfoList as JSONArray, calendarId
         )

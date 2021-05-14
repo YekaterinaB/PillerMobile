@@ -15,9 +15,9 @@ import kotlinx.android.synthetic.main.drug_frequency_weekly_dialog.*
 
 
 class DrugFrequencyWeeklyDialogFragment(
-    private val doneCallback: (daysCheck: Array<Boolean>) -> Unit,
-    private val backCallback: () -> Unit,
-    private var daysCheck: Array<Boolean>
+    private val _doneCallback: (daysCheck: Array<Boolean>) -> Unit,
+    private val _backCallback: () -> Unit,
+    private var _daysCheck: Array<Boolean>
 ) : BottomSheetDialogFragment() {
 
     override fun onCreateView(
@@ -31,12 +31,12 @@ class DrugFrequencyWeeklyDialogFragment(
         do_freq_week_list.layoutManager = LinearLayoutManager(context)
         do_freq_week_list.adapter = DrugObjectAdapter(getDaysList())
         do_freq_back_btn.setOnClickListener {
-            backCallback()
+            _backCallback()
             dismiss()
         }
         do_freq_done.setOnClickListener {
-            if (daysCheck.isNotEmpty()) {
-                doneCallback(daysCheck)
+            if (_daysCheck.isNotEmpty()) {
+                _doneCallback(_daysCheck)
                 dismiss()
             } else {
                 SnackBar.showToastBar(context, DbConstants.noDaysChosenError)
@@ -46,7 +46,7 @@ class DrugFrequencyWeeklyDialogFragment(
 
     private fun getDaysList(): List<Pair<String, Boolean>> {
         val dayOfWeekString = resources.getStringArray(R.array.daysName)
-        return dayOfWeekString.zip(daysCheck) { a, b -> Pair(a, b) }
+        return dayOfWeekString.zip(_daysCheck) { a, b -> Pair(a, b) }
     }
 
     private inner class ViewHolder(
@@ -73,7 +73,7 @@ class DrugFrequencyWeeklyDialogFragment(
             holder.checkBox.text = dataset[position].first
             holder.checkBox.isChecked = dataset[position].second
             holder.checkBox.setOnClickListener {
-                daysCheck[position] = holder.checkBox.isChecked
+                _daysCheck[position] = holder.checkBox.isChecked
             }
         }
 

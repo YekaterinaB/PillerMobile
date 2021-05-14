@@ -15,22 +15,22 @@ import retrofit2.Call
 import retrofit2.Response
 
 class SupervisorsViewModel : ViewModel() {
-    val _mutableSupervisorList: MutableLiveData<MutableList<Supervisor>> by lazy {
+    val mutableSupervisorList: MutableLiveData<MutableList<Supervisor>> by lazy {
         MutableLiveData<MutableList<Supervisor>>(mutableListOf())
     }
 
-    val _mutableSupervisorThreshold: MutableLiveData<Int> by lazy {
+    val mutableSupervisorThreshold: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>(DbConstants.DEFAULT_SUPERVISOR_THRESHOLD)
     }
 
-    val _mutableToastError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val mutableToastError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     fun getSupervisorsFromDB(userId: String) {
         val retrofit = ServiceBuilder.buildService(SupervisorsAPI::class.java)
         retrofit.getSupervisors(userId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = DbConstants.couldNotConnectServerError
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
@@ -38,7 +38,7 @@ class SupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        _mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
+                        mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         val jObject = JSONObject(response.body()!!.string())
                         val supervisors = jObject.get(DbConstants.supervisorsList) as JSONArray
@@ -50,9 +50,9 @@ class SupervisorsViewModel : ViewModel() {
                                     .get(DbConstants.supervisorEmail) as String
                             val isPending =
                                 supervisors.getJSONObject(i).get(DbConstants.isConfirmed) as Boolean
-                            _mutableSupervisorList.value!!.add(Supervisor(name, email, isPending))
+                            mutableSupervisorList.value!!.add(Supervisor(name, email, isPending))
                         }
-                        _mutableSupervisorList.notifyObserver()
+                        mutableSupervisorList.notifyObserver()
                         getThresholdFromDB(userId)
                     }
                 }
@@ -62,11 +62,11 @@ class SupervisorsViewModel : ViewModel() {
 
 
     private fun addSupervisorsToList(supervisorName: String, supervisorEmail: String) {
-        _mutableSupervisorList.value!!.add(
+        mutableSupervisorList.value!!.add(
             Supervisor(supervisorName, supervisorEmail, false)
         )
 
-        _mutableSupervisorList.notifyObserver()
+        mutableSupervisorList.notifyObserver()
     }
 
     fun addSupervisorsToDB(supervisorName: String, supervisorEmail: String, userId: String) {
@@ -74,7 +74,7 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.addSupervisor(userId, supervisorName, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = DbConstants.couldNotConnectServerError
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
@@ -82,7 +82,7 @@ class SupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        _mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
+                        mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         addSupervisorsToList(supervisorName, supervisorEmail)
                     }
@@ -92,13 +92,13 @@ class SupervisorsViewModel : ViewModel() {
     }
 
     private fun deleteSupervisorFromList(supervisorEmail: String) {
-        for (i in 0 until _mutableSupervisorList.value!!.size) {
-            if (_mutableSupervisorList.value!![i].getsupervisorEmail() == supervisorEmail) {
-                _mutableSupervisorList.value!!.removeAt(i)
+        for (i in 0 until mutableSupervisorList.value!!.size) {
+            if (mutableSupervisorList.value!![i].getsupervisorEmail() == supervisorEmail) {
+                mutableSupervisorList.value!!.removeAt(i)
                 break
             }
         }
-        _mutableSupervisorList.notifyObserver()
+        mutableSupervisorList.notifyObserver()
     }
 
     fun deleteSupervisorsFromDB(supervisorEmail: String, userId: String) {
@@ -106,7 +106,7 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.deleteSupervisor(userId, supervisorEmail).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = DbConstants.couldNotConnectServerError
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
@@ -114,7 +114,7 @@ class SupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        _mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
+                        mutableToastError.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
                         deleteSupervisorFromList(supervisorEmail)
                     }
@@ -129,7 +129,7 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.getThreshold(userId).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = DbConstants.couldNotConnectServerError
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
@@ -137,11 +137,11 @@ class SupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        _mutableToastError.value = DbConstants.cantGetThresholdError
+                        mutableToastError.value = DbConstants.cantGetThresholdError
                     } else {
                         val jObject = JSONObject(response.body()!!.string())
                         val threshold = jObject.get(DbConstants.threshold) as Int
-                        _mutableSupervisorThreshold.value = threshold
+                        mutableSupervisorThreshold.value = threshold
                     }
                 }
             }
@@ -160,7 +160,7 @@ class SupervisorsViewModel : ViewModel() {
         retrofit.updateThreshold(userId, threshold).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _mutableToastError.value = DbConstants.couldNotConnectServerError
+                    mutableToastError.value = DbConstants.couldNotConnectServerError
                 }
 
                 override fun onResponse(
@@ -168,9 +168,9 @@ class SupervisorsViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        _mutableToastError.value = DbConstants.cantUpdateThresholdError
+                        mutableToastError.value = DbConstants.cantUpdateThresholdError
                     } else {
-                        _mutableSupervisorThreshold.value = threshold
+                        mutableSupervisorThreshold.value = threshold
 //                        mutableToastError.value =
 //                            "Selected missed days before notification: $stringThreshold"
                     }

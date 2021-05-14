@@ -26,8 +26,8 @@ import org.json.JSONObject
 import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
+    lateinit var loadingScreen: RelativeLayout
     private var _compositeDisposable = CompositeDisposable()
-    lateinit var _loadingScreen: RelativeLayout
     private lateinit var _viewModel: LoginActivityViewModel
 
     override fun onStop() {
@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
             Observer { toastMessage ->
                 toastMessage?.let {
                     //  hide loading screen
-                    _loadingScreen.visibility = View.GONE
+                    loadingScreen.visibility = View.GONE
                     SnackBar.showToastBar(this, toastMessage)
                 }
             })
@@ -86,7 +86,7 @@ class LoginActivity : AppCompatActivity() {
         intent.putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
 
         //  hide loading screen
-        _loadingScreen.visibility = View.GONE
+        loadingScreen.visibility = View.GONE
         startActivity(intent)
     }
 
@@ -107,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
             //  run the background service (it has to run from the application for one time so it'll
             //  be able to tun when the device reboots
             AlarmScheduler.runBackgroundService(this)
-            _loadingScreen.visibility = View.VISIBLE
+            loadingScreen.visibility = View.VISIBLE
             _viewModel.loginUser(AppPreferences.email, AppPreferences.password)
         }
     }
@@ -119,7 +119,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        _loadingScreen = findViewById(R.id.loading_screen)
+        loadingScreen = findViewById(R.id.loading_screen)
     }
 
 

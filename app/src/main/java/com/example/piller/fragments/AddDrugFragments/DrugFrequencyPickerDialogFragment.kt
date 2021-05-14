@@ -13,9 +13,9 @@ import com.example.piller.utilities.DbConstants
 import kotlinx.android.synthetic.main.drug_occurrence_picker_dialog.*
 
 class DrugPickerDialogFragment(
-    private val title: String,
-    private val optionsArray: Array<String>,
-    private val optionSelected: (String) -> Unit
+    private val _title: String,
+    private val _optionsArray: Array<String>,
+    private val _optionSelected: (String) -> Unit
 ) : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,8 +26,8 @@ class DrugPickerDialogFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         do_number_chooser_list.layoutManager = LinearLayoutManager(context)
-        do_number_chooser_list.adapter = DrugObjectAdapter(optionsArray)
-        do_freq_picker_title.text = title
+        do_number_chooser_list.adapter = DrugObjectAdapter(_optionsArray)
+        do_freq_picker_title.text = _title
         do_picker_close_btn.setOnClickListener { dismiss() }
     }
 
@@ -55,7 +55,7 @@ class DrugPickerDialogFragment(
             val item = dataset[position]
             holder.text.text = item
             holder.text.setOnClickListener {
-                optionSelected(item)
+                _optionSelected(item)
                 dismiss()
             }
         }

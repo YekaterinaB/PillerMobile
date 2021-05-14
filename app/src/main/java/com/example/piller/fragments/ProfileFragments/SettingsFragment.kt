@@ -60,12 +60,12 @@ class SettingsFragment : FragmentWithUserObject() {
 
     private fun initViewModels() {
         _viewModel = ViewModelProvider(this).get(ManageAccountViewModel::class.java)
-        _viewModel._mutableEmail.value = _loggedUserObject.email
-        _viewModel._mutableUsername.value = _loggedUserObject.mainProfile?.name
+        _viewModel.mutableEmail.value = loggedUserObject.email
+        _viewModel.mutableUsername.value = loggedUserObject.mainProfile?.name
     }
 
     private fun setViewModelsObservers() {
-        _viewModel._mutableIsValidInfo.observe(viewLifecycleOwner, Observer { valid ->
+        _viewModel.mutableIsValidInfo.observe(viewLifecycleOwner, Observer { valid ->
             if (valid) {
                 _saveTextView.setTextColor(resources.getColor(R.color.colorPrimary))
             } else {
@@ -73,7 +73,7 @@ class SettingsFragment : FragmentWithUserObject() {
             }
         })
 
-        _viewModel._snackBarMessage.observe(viewLifecycleOwner, Observer { message ->
+        _viewModel.snackBarMessage.observe(viewLifecycleOwner, Observer { message ->
             run {
                 if (message.isNotEmpty()) {
                     SnackBar.showToastBar(context, message)
@@ -81,19 +81,19 @@ class SettingsFragment : FragmentWithUserObject() {
             }
         })
 
-        _viewModel._mutableUsername.observe(viewLifecycleOwner, Observer { name ->
+        _viewModel.mutableUsername.observe(viewLifecycleOwner, Observer { name ->
             _profileViewModel.mutableCurrentProfile.value?.name = name
             _profileViewModel.mutableCurrentProfile.notifyObserver()
-            _loggedUserObject.mainProfile?.name = name
+            loggedUserObject.mainProfile?.name = name
             _mainProfileNameTitle.text = name
         })
 
-        _viewModel._mutableEmail.observe(viewLifecycleOwner, Observer { email ->
-            _loggedUserObject.email = email
+        _viewModel.mutableEmail.observe(viewLifecycleOwner, Observer { email ->
+            loggedUserObject.email = email
             _mainProfileEmailTitle.text = email
         })
 
-        _viewModel._isDeleteSucceeded.observe(viewLifecycleOwner, Observer { isDelete ->
+        _viewModel.isDeleteSucceeded.observe(viewLifecycleOwner, Observer { isDelete ->
             if (isDelete) {
                 logOut()
             }
@@ -122,7 +122,7 @@ class SettingsFragment : FragmentWithUserObject() {
 
         _saveTextView.setOnClickListener {
             hideSoftKeyboard()
-            if (_viewModel._mutableIsValidInfo.value!!) {
+            if (_viewModel.mutableIsValidInfo.value!!) {
                 confirmChangesPopup()
             }
         }
@@ -148,7 +148,7 @@ class SettingsFragment : FragmentWithUserObject() {
         if (transaction != null) {
             transaction.replace(
                 R.id.calender_weekly_container_fragment,
-                HelpFragment.newInstance(_loggedUserObject)
+                HelpFragment.newInstance(loggedUserObject)
             )
             transaction.disallowAddToBackStack()
             transaction.commit()
@@ -176,11 +176,11 @@ class SettingsFragment : FragmentWithUserObject() {
         confirmViewText.setOnClickListener {
             val oldPassword = passEditText.text.toString()
             if (oldPassword.isNotEmpty()) {
-                _viewModel.deleteUser(_loggedUserObject, createHashtFromPassword(oldPassword))
+                _viewModel.deleteUser(loggedUserObject, createHashtFromPassword(oldPassword))
                 popup.dismiss()
                 changeDarkBackgroundVisibility(false)
             } else {
-                _viewModel._snackBarMessage.value = getString(R.string.passwordValueIsEmpty)
+                _viewModel.snackBarMessage.value = getString(R.string.passwordValueIsEmpty)
             }
         }
         changeDarkBackgroundVisibility(true)
@@ -207,10 +207,10 @@ class SettingsFragment : FragmentWithUserObject() {
         val email = _emailEditText.text.toString()
         val newPass = _passwordEditText.text.toString()
         val fullname = _nameEditText.text.toString()
-        _viewModel._mutableIsValidInfo.value =
-            ((_loggedUserObject.email != email && email.isNotEmpty())
+        _viewModel.mutableIsValidInfo.value =
+            ((loggedUserObject.email != email && email.isNotEmpty())
                     || (AppPreferences.password != newPass && newPass.isNotEmpty())
-                    || (fullname.isNotEmpty() && fullname != _loggedUserObject.mainProfile?.name))
+                    || (fullname.isNotEmpty() && fullname != loggedUserObject.mainProfile?.name))
     }
 
     private fun hideSoftKeyboard() {
@@ -239,14 +239,14 @@ class SettingsFragment : FragmentWithUserObject() {
             val oldPassword = passEditText.text.toString()
             if (oldPassword.isNotEmpty()) {
                 _viewModel.verifyPassword(
-                    _loggedUserObject, oldPassword,
+                    loggedUserObject, oldPassword,
                     _emailEditText.text.toString(), _passwordEditText.text.toString(),
                     _nameEditText.text.toString()
                 )
                 popup.dismiss()
                 changeDarkBackgroundVisibility(false)
             } else {
-                _viewModel._snackBarMessage.value = getString(R.string.passwordValueIsEmpty)
+                _viewModel.snackBarMessage.value = getString(R.string.passwordValueIsEmpty)
             }
         }
         changeDarkBackgroundVisibility(true)
@@ -267,10 +267,10 @@ class SettingsFragment : FragmentWithUserObject() {
 
     private fun initViews() {
         _emailEditText = _fragmentView.findViewById(R.id.edt_email_settings)
-        _emailEditText.setText(_loggedUserObject.email)
+        _emailEditText.setText(loggedUserObject.email)
 
         _nameEditText = _fragmentView.findViewById(R.id.edt_fullname_settings)
-        _nameEditText.setText(_loggedUserObject.mainProfile?.name)
+        _nameEditText.setText(loggedUserObject.mainProfile?.name)
 
         _passwordEditText = _fragmentView.findViewById(R.id.edt_password_settings)
         _passwordEditText.setText(AppPreferences.password)
@@ -296,7 +296,7 @@ class SettingsFragment : FragmentWithUserObject() {
         if (transaction != null) {
             transaction.replace(
                 R.id.calender_weekly_container_fragment,
-                ProfileFragment.newInstance(_loggedUserObject)
+                ProfileFragment.newInstance(loggedUserObject)
             )
             transaction.disallowAddToBackStack()
             transaction.commit()
@@ -308,7 +308,7 @@ class SettingsFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             SettingsFragment().apply {
                 arguments = Bundle().apply {
-                    _loggedUserObject = loggedUser
+                    loggedUserObject = loggedUser
                 }
             }
     }
