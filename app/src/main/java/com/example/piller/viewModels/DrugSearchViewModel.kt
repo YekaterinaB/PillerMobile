@@ -19,7 +19,7 @@ import retrofit2.Response
 import java.io.File
 
 class DrugSearchViewModel : ViewModel() {
-    private val drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
+    private val _drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
 
     val drugsInteractionResult: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
@@ -67,7 +67,7 @@ class DrugSearchViewModel : ViewModel() {
             showLoadingScreen.value = true
             val multipartBody = getFileAsMultiPart(imageFile)
             drugsSearchResult.value?.clear()
-            drugAPIRetrofit.findDrugByImage(multipartBody).enqueue(
+            _drugAPIRetrofit.findDrugByImage(multipartBody).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         snackBarMessage.value = DbConstants.couldNotConnectServerError
@@ -95,7 +95,7 @@ class DrugSearchViewModel : ViewModel() {
         if (drugName.isNotEmpty()) {
             showLoadingScreen.value = true
             drugsSearchResult.value?.clear()
-            drugAPIRetrofit.findDrugByName(drugName).enqueue(
+            _drugAPIRetrofit.findDrugByName(drugName).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         snackBarMessage.value = DbConstants.couldNotConnectServerError
@@ -121,7 +121,7 @@ class DrugSearchViewModel : ViewModel() {
 
     fun getInteractionList(loggedUserObject: UserObject, rxcui: Int) {
         showLoadingScreen.value = true
-        drugAPIRetrofit.findInteractionList(
+        _drugAPIRetrofit.findInteractionList(
             loggedUserObject.userId,
             loggedUserObject.currentProfile!!.profileId,
             rxcui.toString()
@@ -203,7 +203,7 @@ class DrugSearchViewModel : ViewModel() {
             showLoadingScreen.value = true
             val multipartBody = getFileAsMultiPart(imageFile)
             drugsSearchResult.value?.clear()
-            drugAPIRetrofit.findDrugByBox(multipartBody).enqueue(
+            _drugAPIRetrofit.findDrugByBox(multipartBody).enqueue(
                 object : retrofit2.Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         snackBarMessage.value = DbConstants.couldNotConnectServerError

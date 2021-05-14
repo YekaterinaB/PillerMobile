@@ -11,8 +11,8 @@ import org.json.JSONObject
 import java.util.*
 
 class EventInterpreter {
-    private val everyInterval = 1
-    private val monthsInYear = 12
+    private val _everyInterval = 1
+    private val _monthsInYear = 12
 
     fun getEventsForCalendarByDate(
         start: Date,
@@ -224,7 +224,7 @@ class EventInterpreter {
 
             }
             (occurrence.hasRepeatDay()) -> {
-                if (occurrence.repeatDay == everyInterval) {
+                if (occurrence.repeatDay == _everyInterval) {
                     isInRepeat = true
                 } else {
                     isInRepeat =
@@ -237,7 +237,7 @@ class EventInterpreter {
                 }
             }
             (occurrence.hasRepeatWeek()) -> {
-                if (occurrence.repeatWeek == everyInterval) {
+                if (occurrence.repeatWeek == _everyInterval) {
                     if (currentDate.get(Calendar.DAY_OF_WEEK) in occurrence.repeatWeekday) {
                         //  all the days of week in the list are at the same week, so we can add all of them
                         isInRepeat = true
@@ -303,12 +303,12 @@ class EventInterpreter {
                 Calendar.DAY_OF_MONTH,
                 1
             )// must set to avoid exception on set month
-            val monthSet = (month + skipMonth) % monthsInYear
+            val monthSet = (month + skipMonth) % _monthsInYear
             tempRunFromStart.set(Calendar.MONTH, monthSet)
-            if (month + skipMonth >= monthsInYear) {
+            if (month + skipMonth >= _monthsInYear) {
                 year += 1
                 tempRunFromStart.set(Calendar.YEAR, year)
-                month = (month + skipMonth) % monthsInYear
+                month = (month + skipMonth) % _monthsInYear
                 skipMonth = 0
             }
             tempRunFromStart.set(Calendar.DAY_OF_MONTH, dayOfMonth)

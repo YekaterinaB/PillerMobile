@@ -10,10 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
 
 //  the dataset is a list of pairs<question, answer>
-class HelpAdapter(private var dataSet: MutableList<Pair<String, String>>) :
+class HelpAdapter(private var _dataSet: MutableList<Pair<String, String>>) :
     RecyclerView.Adapter<HelpAdapter.ViewHolder>() {
-    private val underlineStart = 0
-    private val underlineFlags = 0
+    private val _underlineStart = 0
+    private val _underlineFlags = 0
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val question: TextView = view.findViewById(R.id.hi_question_tv)
@@ -28,14 +28,14 @@ class HelpAdapter(private var dataSet: MutableList<Pair<String, String>>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentItem = dataSet[position]
+        val currentItem = _dataSet[position]
 
         //  add the question with underline
         val content = SpannableString(currentItem.first)
-        content.setSpan(UnderlineSpan(), underlineStart, content.length, underlineFlags)
+        content.setSpan(UnderlineSpan(), _underlineStart, content.length, _underlineFlags)
         holder.question.text = content
         holder.answer.text = currentItem.second
     }
 
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = _dataSet.size
 }

@@ -16,10 +16,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class EliAdapter(
-    private var dataSet: MutableList<CalendarEvent>,
-    private val itemClickCallback: (CalendarEvent) -> Unit
+    private var _dataSet: MutableList<CalendarEvent>,
+    private val _itemClickCallback: (CalendarEvent) -> Unit
 ) : RecyclerView.Adapter<EliAdapter.ViewHolder>() {
-    private val noBackground = 0
+    private val _noBackground = 0
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val drugName: TextView = view.findViewById(R.id.wdi_drug_name)
@@ -29,7 +29,7 @@ class EliAdapter(
     }
 
     fun setData(data: MutableList<CalendarEvent>) {
-        dataSet = data
+        _dataSet = data
     }
 
     // Create new views (invoked by the layout manager)
@@ -45,7 +45,7 @@ class EliAdapter(
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        val currentItem = dataSet[position]
+        val currentItem = _dataSet[position]
         val drugObject = DrugMap.instance.getDrugObject(currentItem.calendarId, currentItem.drugId)
         viewHolder.drugName.text = drugObject.drugName
         val time = SimpleDateFormat(
@@ -53,7 +53,7 @@ class EliAdapter(
             Locale.getDefault()
         ).format(currentItem.intakeTime)
         viewHolder.intakeTime.text = time
-        viewHolder.layout.setOnClickListener { itemClickCallback(currentItem) }
+        viewHolder.layout.setOnClickListener { _itemClickCallback(currentItem) }
         setViewHolderBackgroundColor(viewHolder, currentItem)
     }
 
@@ -61,7 +61,7 @@ class EliAdapter(
         //  set the background color only if the intake time passed
         //  the next line is in order to remove the icon, because if we delete the icon stays
         //  even though it's not supposed to be there
-        viewHolder.takenStatus.setBackgroundResource(noBackground)
+        viewHolder.takenStatus.setBackgroundResource(_noBackground)
         when {
             calendarEvent.isTaken -> {
                 //  the medicine was taken - set green background (alpha is for opacity)
@@ -80,5 +80,5 @@ class EliAdapter(
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = _dataSet.size
 }

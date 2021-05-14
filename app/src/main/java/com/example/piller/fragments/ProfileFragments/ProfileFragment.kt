@@ -50,7 +50,7 @@ class ProfileFragment : FragmentWithUserObject() {
         setOnClickListeners()
         initRecyclersAndAdapters()
         initObservers()
-        updateCurrentProfile(_loggedUserObject.currentProfile!!)
+        updateCurrentProfile(loggedUserObject.currentProfile!!)
         return _fragmentView
     }
 
@@ -59,9 +59,9 @@ class ProfileFragment : FragmentWithUserObject() {
         _dimLayout = _fragmentView.findViewById(R.id.profile_dim_layout)
         val mainProfileEmailTv = _fragmentView.findViewById<TextView>(R.id.email_main_profile)
         val mainProfileNameTv = _fragmentView.findViewById<TextView>(R.id.profile_name_title_item)
-        mainProfileEmailTv.text = _loggedUserObject.email
+        mainProfileEmailTv.text = loggedUserObject.email
         mainProfileNameTv.text =
-            _loggedUserObject.mainProfile?.name ?: getString(R.string.mainSpaceUser)
+            loggedUserObject.mainProfile?.name ?: getString(R.string.mainSpaceUser)
         //remove number of supervisors
         _fragmentView.number_of_supervisors_title_item.visibility = View.INVISIBLE
         _settingsImage = _fragmentView.findViewById(R.id.settings_image_view)
@@ -106,7 +106,7 @@ class ProfileFragment : FragmentWithUserObject() {
         _profileRecycle.layoutManager = LinearLayoutManager(_fragmentView.context)
         _profileAdapter = ProfileAdapter(
             profileList,
-            _loggedUserObject.currentProfile!!.name,
+            loggedUserObject.currentProfile!!.name,
             clickOnItemListener = { updateCurrentProfile(it) },
             clickOnButtonListener = { removeProfilePopup(it) })
         _profileRecycle.adapter = _profileAdapter
@@ -116,14 +116,14 @@ class ProfileFragment : FragmentWithUserObject() {
     private fun setOnClickListeners() {
         _supervisorTitle.setOnClickListener {
             switchFragment(
-                SupervisorsFragment.newInstance(_loggedUserObject),
+                SupervisorsFragment.newInstance(loggedUserObject),
                 DbConstants.SUPERVISOR_FRAGMENT_ID
             )
         }
 
         _settingsImage.setOnClickListener {
             switchFragment(
-                SettingsFragment.newInstance(_loggedUserObject),
+                SettingsFragment.newInstance(loggedUserObject),
                 DbConstants.SETTINGS_FRAGMENT_ID
             )
         }
@@ -133,7 +133,7 @@ class ProfileFragment : FragmentWithUserObject() {
         }
 
         _profileTitle.setOnClickListener {
-            updateCurrentProfile(_loggedUserObject.mainProfile!!)
+            updateCurrentProfile(loggedUserObject.mainProfile!!)
         }
     }
 
@@ -150,7 +150,7 @@ class ProfileFragment : FragmentWithUserObject() {
 
     private fun updateCurrentProfile(profile: Profile) {
         _viewModel.setCurrentProfile(profile)
-        if (profile.name == _loggedUserObject.mainProfile!!.name) {
+        if (profile.name == loggedUserObject.mainProfile!!.name) {
             _profileTitle.setBackgroundResource(R.drawable.rounded_shape_green_edge)
         } else {
             _profileTitle.setBackgroundResource(R.drawable.rounded_shape_edit_text)
@@ -181,8 +181,8 @@ class ProfileFragment : FragmentWithUserObject() {
         }
 
         removeViewText.setOnClickListener {
-            _viewModel.deleteOneProfile(_loggedUserObject.userId, profile)
-            updateCurrentProfile(_loggedUserObject.mainProfile!!)
+            _viewModel.deleteOneProfile(loggedUserObject.userId, profile)
+            updateCurrentProfile(loggedUserObject.mainProfile!!)
             popup.dismiss()
             changeDarkBackgroundVisibility(false)
 
@@ -235,7 +235,7 @@ class ProfileFragment : FragmentWithUserObject() {
                 }
                 _viewModel.addProfileToDB(
                     profileName.text.toString(),
-                    _loggedUserObject,
+                    loggedUserObject,
                     profileRelation.text.toString()
                 )
             })
@@ -247,7 +247,7 @@ class ProfileFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             ProfileFragment().apply {
                 arguments = Bundle().apply {
-                    _loggedUserObject = loggedUser
+                    loggedUserObject = loggedUser
                 }
             }
     }

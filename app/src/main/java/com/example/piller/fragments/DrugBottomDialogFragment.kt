@@ -10,10 +10,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_drug_dialog_dialog.*
 
 class DrugBottomDialogFragment(
-    private val title: String,
-    private val buttonsTitles: Pair<String, String>,
-    private val clickOnFirstButtonListener: () -> Unit,
-    private val clickOnSecondButtonListener: () -> Unit
+    private val _title: String,
+    private val _buttonsTitles: Pair<String, String>,
+    private val _clickOnFirstButtonListener: () -> Unit,
+    private val _clickOnSecondButtonListener: () -> Unit
 ) : BottomSheetDialogFragment() {
 
     override fun onCreateView(
@@ -24,14 +24,14 @@ class DrugBottomDialogFragment(
     }
 
     private fun initViewsData() {
-        btm_dialog_title.text = title
-        btm_dialog_first_button.text = buttonsTitles.first
-        btm_dialog_second_button.text = buttonsTitles.second
+        btm_dialog_title.text = _title
+        btm_dialog_first_button.text = _buttonsTitles.first
+        btm_dialog_second_button.text = _buttonsTitles.second
     }
 
     private fun initListeners() {
-        btm_dialog_first_button.setOnClickListener { clickOnFirstButtonListener() }
-        btm_dialog_second_button.setOnClickListener { clickOnSecondButtonListener() }
+        btm_dialog_first_button.setOnClickListener { _clickOnFirstButtonListener() }
+        btm_dialog_second_button.setOnClickListener { _clickOnSecondButtonListener() }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

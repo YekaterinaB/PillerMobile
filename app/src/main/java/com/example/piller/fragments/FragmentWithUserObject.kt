@@ -7,11 +7,11 @@ import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
 
 abstract class FragmentWithUserObject : Fragment() {
-    protected lateinit var _loggedUserObject: UserObject
+    protected lateinit var loggedUserObject: UserObject
 
     protected fun putLoggedUserObjectInIntent(intent: Intent) {
         val userBundle = Bundle()
-        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, _loggedUserObject)
+        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, loggedUserObject)
         intent.putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
     }
 }

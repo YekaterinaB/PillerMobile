@@ -9,8 +9,8 @@ import com.example.piller.R
 import com.example.piller.models.DrugObject
 
 class NewDrugByNameAdapter(
-    private var dataSet: MutableList<DrugObject>,
-    private val clickOnItemListener: (Int) -> Unit
+    private var _dataSet: MutableList<DrugObject>,
+    private val _clickOnItemListener: (Int) -> Unit
 ) : RecyclerView.Adapter<NewDrugByNameAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -26,16 +26,16 @@ class NewDrugByNameAdapter(
     }
 
     fun setData(data: MutableList<DrugObject>) {
-        dataSet = data
+        _dataSet = data
     }
 
-    override fun getItemCount(): Int = dataSet.size
+    override fun getItemCount(): Int = _dataSet.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        val currentItem = dataSet[position]
+        val currentItem = _dataSet[position]
         holder.drugName.text = currentItem.drugName
-        holder.itemView.setOnClickListener { clickOnItemListener(currentItem.rxcui) }
+        holder.itemView.setOnClickListener { _clickOnItemListener(currentItem.rxcui) }
     }
 }

@@ -125,7 +125,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
                 _viewModel.addSupervisorsToDB(
                     supervisorName.text.toString(),
                     supervisorEmail.text.toString(),
-                    _loggedUserObject.userId
+                    loggedUserObject.userId
                 )
             })
             .build()
@@ -134,7 +134,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
 
 
     private fun updateRecyclersAndAdapters() {
-        _supervisorAdapter.setData(_viewModel._mutableSupervisorList.value!!)
+        _supervisorAdapter.setData(_viewModel.mutableSupervisorList.value!!)
         _supervisorAdapter.notifyDataSetChanged()
     }
 
@@ -142,7 +142,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
     private fun initRecyclersAndAdapters() {
         _supervisorRecycle = _fragmentView.findViewById(R.id.supervisors_list_of_items)
         // initiate list of profiles with recyclers and adapters
-        val supervisorList = _viewModel._mutableSupervisorList.value!!
+        val supervisorList = _viewModel.mutableSupervisorList.value!!
         _supervisorRecycle.layoutManager = LinearLayoutManager(context)
         _supervisorAdapter = SupervisorsAdapter(
             supervisorList,
@@ -155,12 +155,12 @@ class SupervisorsFragment : FragmentWithUserObject() {
     }
 
     private fun initObservers() {
-        _viewModel._mutableSupervisorThreshold.observe(viewLifecycleOwner,
+        _viewModel.mutableSupervisorThreshold.observe(viewLifecycleOwner,
             Observer { threshold ->
                 threshold?.let {
                     if (this.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         var numberOfMissed =
-                            (_viewModel._mutableSupervisorThreshold.value!!).toString()
+                            (_viewModel.mutableSupervisorThreshold.value!!).toString()
                         if (numberOfMissed == DbConstants.noMissedDaysCountStr) {
                             numberOfMissed = DbConstants.noMissedDaysText
                         }
@@ -170,7 +170,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
                 }
             })
 
-        _viewModel._mutableToastError.observe(
+        _viewModel.mutableToastError.observe(
             viewLifecycleOwner,
             Observer { toastMessage ->
                 toastMessage?.let {
@@ -178,7 +178,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
                 }
             })
 
-        _viewModel._mutableSupervisorList.observe(
+        _viewModel.mutableSupervisorList.observe(
             viewLifecycleOwner,
             Observer { supervisorList ->
                 supervisorList?.let {
@@ -212,7 +212,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
         }
 
         setViewText.setOnClickListener {
-            _viewModel.deleteSupervisorsFromDB(supervisorEmail, _loggedUserObject.userId)
+            _viewModel.deleteSupervisorsFromDB(supervisorEmail, loggedUserObject.userId)
             popup.dismiss()
             changeDarkBackgroundVisibility(false)
 
@@ -248,11 +248,11 @@ class SupervisorsFragment : FragmentWithUserObject() {
     }
 
     private fun updateMissedInPopup(seekBar: IndicatorSeekBar, thresholdCountPopup: TextView) {
-        seekBar.setProgress(_viewModel._mutableSupervisorThreshold.value!!.toFloat())
-        if (_viewModel._mutableSupervisorThreshold.value!! == DbConstants.noMissedDaysCount) {
+        seekBar.setProgress(_viewModel.mutableSupervisorThreshold.value!!.toFloat())
+        if (_viewModel.mutableSupervisorThreshold.value!! == DbConstants.noMissedDaysCount) {
             thresholdCountPopup.text = DbConstants.noMissedDaysText
         } else {
-            thresholdCountPopup.text = _viewModel._mutableSupervisorThreshold.value!!.toString()
+            thresholdCountPopup.text = _viewModel.mutableSupervisorThreshold.value!!.toString()
         }
     }
 
@@ -291,7 +291,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
 
         setViewText.setOnClickListener {
             val numberOfMissed = seekBar.progress.toString()
-            _viewModel.updateThresholdInDB(numberOfMissed, _loggedUserObject.userId)
+            _viewModel.updateThresholdInDB(numberOfMissed, loggedUserObject.userId)
             popup.dismiss()
             changeDarkBackgroundVisibility(false)
 
@@ -299,7 +299,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
     }
 
     private fun initViewModelData() {
-        _viewModel.getSupervisorsFromDB(_loggedUserObject.userId)
+        _viewModel.getSupervisorsFromDB(loggedUserObject.userId)
     }
 
     private fun onPressBack() {
@@ -307,7 +307,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
         if (transaction != null) {
             transaction.replace(
                 R.id.calender_weekly_container_fragment,
-                ProfileFragment.newInstance(_loggedUserObject)
+                ProfileFragment.newInstance(loggedUserObject)
             )
             transaction.disallowAddToBackStack()
             transaction.commit()
@@ -318,7 +318,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             SupervisorsFragment().apply {
                 arguments = Bundle().apply {
-                    _loggedUserObject = loggedUser
+                    loggedUserObject = loggedUser
                 }
             }
     }

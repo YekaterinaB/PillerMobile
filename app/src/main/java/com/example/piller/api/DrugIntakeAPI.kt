@@ -21,7 +21,4 @@ interface DrugIntakeAPI {
         @Path(DbConstants.refillId) refill_id: String,
         @Path(DbConstants.intakeDate) date: Long
     ): Call<ResponseBody>
-
-    @GET(DbConstants.drugIntakesURL + "${DbConstants.getAllIntakes}/{${DbConstants.takenId}}")
-    fun getAllDrugIntakes(@Path(DbConstants.takenId) taken_id: String): Call<ResponseBody>
 }

@@ -10,24 +10,19 @@ import com.example.piller.R
 import com.example.piller.models.Supervisor
 
 class SupervisorsAdapter(
-    private var dataSet: MutableList<Supervisor>,
-    private val clickOnDeleteButtonListener: (String) -> Unit
+    private var _dataSet: MutableList<Supervisor>,
+    private val _clickOnDeleteButtonListener: (String) -> Unit
     //private val clickOnEditButtonListener: (String,String) -> Unit
-) :
-    RecyclerView.Adapter<SupervisorsAdapter.ViewHolder>() {
-
-    /**
-     * Provide a reference to the type of views that you are using
-     * (custom ViewHolder).
-     */
+) : RecyclerView.Adapter<SupervisorsAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val supervisorEmail: TextView = view.findViewById(R.id.email_supervisor_item)
-        val supervisorConfirmationText: TextView = view.findViewById(R.id.waiting_for_confirmation_supervisor_item)
+        val supervisorConfirmationText: TextView =
+            view.findViewById(R.id.waiting_for_confirmation_supervisor_item)
         val deleteButton: ImageView = view.findViewById(R.id.trash_supervisor_item)
     }
 
     fun setData(data: MutableList<Supervisor>) {
-        dataSet = data
+        _dataSet = data
     }
 
     // Create new views (invoked by the layout manager)
@@ -43,7 +38,7 @@ class SupervisorsAdapter(
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        val currentItem = dataSet[position]
+        val currentItem = _dataSet[position]
         val email = currentItem.getsupervisorEmail()
         val isConfirmed = currentItem.getIsConfirmed()
         viewHolder.supervisorEmail.text = email
@@ -53,10 +48,10 @@ class SupervisorsAdapter(
             viewHolder.supervisorConfirmationText.visibility = View.VISIBLE
         }
 
-        viewHolder.deleteButton.setOnClickListener { clickOnDeleteButtonListener(email) }
+        viewHolder.deleteButton.setOnClickListener { _clickOnDeleteButtonListener(email) }
         //viewHolder.editButton.setOnClickListener { clickOnEditButtonListener(name,email) }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = _dataSet.size
 }

@@ -20,16 +20,16 @@ import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
 
 class FullviewPopupFragment : DialogFragment() {
-    private lateinit var dateTV: TextView
-    private lateinit var eventsList: RecyclerView
-    private lateinit var loggedUserObject: UserObject
-    private lateinit var selectedDrug: CalendarEvent
-    private var dateString: String? = null
-    private var eventsData = mutableListOf<CalendarEvent>()
-    private val drugsToDelete = mutableListOf<Int>()
-    private val futureDrugsToDelete = mutableListOf<CalendarEvent>()
-    private val DRUG_INFO_DELETE_CODE = DbConstants.DRUG_INFO_DELETE_CODE
-    private var shouldUpdateData: Boolean = false
+    private lateinit var _dateTV: TextView
+    private lateinit var _eventsList: RecyclerView
+    private lateinit var _loggedUserObject: UserObject
+    private lateinit var _selectedDrug: CalendarEvent
+    private var _dateString: String? = null
+    private var _eventsData = mutableListOf<CalendarEvent>()
+    private val _drugsToDelete = mutableListOf<Int>()
+    private val _futureDrugsToDelete = mutableListOf<CalendarEvent>()
+    private val _drugInfoDeleteCode = DbConstants.DRUG_INFO_DELETE_CODE
+    private var _shouldUpdateData: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -42,42 +42,42 @@ class FullviewPopupFragment : DialogFragment() {
     }
 
     private fun initViews(fragment: View) {
-        dateTV = fragment.findViewById(R.id.fv_popup_title_tv)
-        dateTV.text = dateString
+        _dateTV = fragment.findViewById(R.id.fv_popup_title_tv)
+        _dateTV.text = _dateString
 
-        eventsList = fragment.findViewById(R.id.fv_popup_list_tv)
-        eventsList.layoutManager = LinearLayoutManager(fragment.context)
+        _eventsList = fragment.findViewById(R.id.fv_popup_list_tv)
+        _eventsList.layoutManager = LinearLayoutManager(fragment.context)
         setEventsData()
     }
 
     private fun setEventsData() {
-        eventsList.adapter =
-            EliAdapter(eventsData.toMutableList()) { calendarEvent -> showDrugInfo(calendarEvent) }
-        eventsList.adapter?.notifyDataSetChanged()
+        _eventsList.adapter =
+            EliAdapter(_eventsData.toMutableList()) { calendarEvent -> showDrugInfo(calendarEvent) }
+        _eventsList.adapter?.notifyDataSetChanged()
     }
 
     private fun showDrugInfo(calendarEvent: CalendarEvent) {
-        selectedDrug = calendarEvent
+        _selectedDrug = calendarEvent
         val intent = Intent(requireContext(), DrugInfoActivity::class.java)
         intent.putExtra(DbConstants.CALENDAR_EVENT, calendarEvent)
         val userBundle = Bundle()
-        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, loggedUserObject)
+        userBundle.putParcelable(DbConstants.LOGGED_USER_OBJECT, _loggedUserObject)
         intent.putExtra(DbConstants.LOGGED_USER_BUNDLE, userBundle)
-        startActivityForResult(intent, DRUG_INFO_DELETE_CODE)
+        startActivityForResult(intent, _drugInfoDeleteCode)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            dateString = it.getString(ARG_DATE_STRING)
+            _dateString = it.getString(ARG_DATE_STRING)
             val a =
                 it.getParcelableArray(ARG_EVENTS_LIST)?.map { list -> list as CalendarEvent }
                     ?.toTypedArray()
             if (a != null) {
-                eventsData = a.toMutableList()
+                _eventsData = a.toMutableList()
             }
             val bundle = it.getBundle(DbConstants.LOGGED_USER_BUNDLE)
-            loggedUserObject = bundle?.getParcelable(DbConstants.LOGGED_USER_OBJECT)!!
+            _loggedUserObject = bundle?.getParcelable(DbConstants.LOGGED_USER_OBJECT)!!
         }
     }
 
@@ -95,11 +95,11 @@ class FullviewPopupFragment : DialogFragment() {
         if (data!!.hasExtra(DbConstants.TAKEN_NEW_VALUE)) {
             val newIsTaken = data.getBooleanExtra(
                 DbConstants.TAKEN_NEW_VALUE,
-                selectedDrug.isTaken
+                _selectedDrug.isTaken
             )
-            if (newIsTaken != selectedDrug.isTaken) {
-                shouldUpdateData = true
-                selectedDrug.isTaken = newIsTaken
+            if (newIsTaken != _selectedDrug.isTaken) {
+                _shouldUpdateData = true
+                _selectedDrug.isTaken = newIsTaken
                 setEventsData()
             }
         }
@@ -107,14 +107,14 @@ class FullviewPopupFragment : DialogFragment() {
         when (resultCode) {
             Activity.RESULT_OK -> {
                 val drugObj =
-                    DrugMap.instance.getDrugObject(selectedDrug.calendarId, selectedDrug.drugId)
-                drugsToDelete.add(drugObj.rxcui)
+                    DrugMap.instance.getDrugObject(_selectedDrug.calendarId, _selectedDrug.drugId)
+                _drugsToDelete.add(drugObj.rxcui)
                 removeDrugFromList()
                 setEventsData()
             }
 
             DbConstants.REMOVE_DRUG_FUTURE -> {
-                futureDrugsToDelete.add(selectedDrug)
+                _futureDrugsToDelete.add(_selectedDrug)
                 removeDrugFromList()
                 setEventsData()
             }
@@ -122,14 +122,14 @@ class FullviewPopupFragment : DialogFragment() {
     }
 
     private fun removeDrugFromList() {
-        val drugObj = DrugMap.instance.getDrugObject(selectedDrug.calendarId, selectedDrug.drugId)
-        for (index in eventsData.indices) {
+        val drugObj = DrugMap.instance.getDrugObject(_selectedDrug.calendarId, _selectedDrug.drugId)
+        for (index in _eventsData.indices) {
             val drugObjByIndex = DrugMap.instance.getDrugObject(
-                eventsData[index].calendarId,
-                eventsData[index].drugId
+                _eventsData[index].calendarId,
+                _eventsData[index].drugId
             )
             if (drugObjByIndex.rxcui == drugObj.rxcui) {
-                eventsData.removeAt(index)
+                _eventsData.removeAt(index)
                 break
             }
         }
@@ -140,10 +140,10 @@ class FullviewPopupFragment : DialogFragment() {
 
         val intent = Intent()
         val bundle = Bundle()
-        bundle.putIntArray(DbConstants.DRUGSLIST, drugsToDelete.toIntArray())
-        bundle.putParcelableArray(DbConstants.FUTURE_DRUGSLIST, futureDrugsToDelete.toTypedArray())
+        bundle.putIntArray(DbConstants.DRUGSLIST, _drugsToDelete.toIntArray())
+        bundle.putParcelableArray(DbConstants.FUTURE_DRUGSLIST, _futureDrugsToDelete.toTypedArray())
         intent.putExtra(DbConstants.DRUG_DELETES, bundle)
-        intent.putExtra(DbConstants.SHOULD_REFRESH_DATA, shouldUpdateData)
+        intent.putExtra(DbConstants.SHOULD_REFRESH_DATA, _shouldUpdateData)
         targetFragment!!.onActivityResult(
             targetRequestCode,
             DbConstants.DRUG_DELETE_POPUP,

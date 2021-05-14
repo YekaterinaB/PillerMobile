@@ -21,30 +21,29 @@ import com.example.piller.utilities.DbConstants
 import com.example.piller.viewModels.DrugSearchViewModel
 
 class DrugByNameFragment : Fragment() {
-    private lateinit var drugNameET: EditText
-    private lateinit var searchBtn: ImageButton
-    private lateinit var fragmentView: View
-    private val searchViewModel: DrugSearchViewModel by activityViewModels()
-
+    private lateinit var _drugNameET: EditText
+    private lateinit var _searchBtn: ImageButton
+    private lateinit var _fragmentView: View
+    private val _searchViewModel: DrugSearchViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        fragmentView = inflater.inflate(R.layout.fragment_new_drug_by_name, container, false)
+        _fragmentView = inflater.inflate(R.layout.fragment_new_drug_by_name, container, false)
         initViews()
         initListeners()
         initObservers()
-        return fragmentView
+        return _fragmentView
     }
 
     private fun initListeners() {
-        searchBtn.setOnClickListener {
+        _searchBtn.setOnClickListener {
             searchDrugCommand()
         }
 
-        drugNameET.setOnEditorActionListener { _, actionId, _ ->
+        _drugNameET.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 searchDrugCommand()
                 return@setOnEditorActionListener true
@@ -58,25 +57,25 @@ class DrugByNameFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchBtn.isEnabled = !(s.isNullOrEmpty() or s.isNullOrBlank())
-                searchBtn.isClickable = !(s.isNullOrEmpty() or s.isNullOrBlank())
+                _searchBtn.isEnabled = !(s.isNullOrEmpty() or s.isNullOrBlank())
+                _searchBtn.isClickable = !(s.isNullOrEmpty() or s.isNullOrBlank())
             }
         }
 
-        drugNameET.addTextChangedListener(searchTextWatcher)
+        _drugNameET.addTextChangedListener(searchTextWatcher)
     }
 
     private fun initObservers() {
-        searchViewModel.drugsSearchResult.observe(requireActivity(), Observer {
+        _searchViewModel.drugsSearchResult.observe(requireActivity(), Observer {
             setButtonsEnabled(true)
             //  set the drug name regardless of results (in case the user wants to select the drug
             //  not from the result list
-            searchViewModel.drugSearchNoResult.value = drugNameET.text.toString()
+            _searchViewModel.drugSearchNoResult.value = _drugNameET.text.toString()
         })
     }
 
     private fun searchDrug() {
-        val drugName = drugNameET.text.toString()
+        val drugName = _drugNameET.text.toString()
         if (drugName.isEmpty()) {
             activity?.let { thisActivity ->
                 SnackBar.showToastBar(thisActivity, getString(R.string.noDrugNameError))
@@ -84,20 +83,20 @@ class DrugByNameFragment : Fragment() {
                 return
             }
         }
-        searchViewModel.searchDrugByName(drugName.trim())
+        _searchViewModel.searchDrugByName(drugName.trim())
     }
 
     private fun searchDrugCommand() {
         setButtonsEnabled(false)
         //  close the keyboard when clicking search
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(fragmentView.windowToken, DbConstants.HIDE_KEYBOARD_FLAGS)
+        imm.hideSoftInputFromWindow(_fragmentView.windowToken, DbConstants.HIDE_KEYBOARD_FLAGS)
         searchDrug()
     }
 
     private fun setButtonsEnabled(enabled: Boolean) {
-        drugNameET.isEnabled = enabled
-        searchBtn.isEnabled = enabled
+        _drugNameET.isEnabled = enabled
+        _searchBtn.isEnabled = enabled
 
         // enable select button
         (activity as AddNewDrugActivity?)!!.setButtonsEnabled(enabled)
@@ -105,8 +104,8 @@ class DrugByNameFragment : Fragment() {
 
 
     private fun initViews() {
-        drugNameET = fragmentView.findViewById(R.id.nd_drug_search_et)
-        searchBtn = fragmentView.findViewById(R.id.nd_search_btn)
+        _drugNameET = _fragmentView.findViewById(R.id.nd_drug_search_et)
+        _searchBtn = _fragmentView.findViewById(R.id.nd_search_btn)
     }
 
     companion object {

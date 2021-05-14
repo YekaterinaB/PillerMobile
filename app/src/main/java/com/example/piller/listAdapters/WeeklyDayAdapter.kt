@@ -11,9 +11,9 @@ import com.example.piller.models.CalendarEvent
 import com.example.piller.models.WeeklyDay
 
 class WeeklyDayAdapter(
-    private var dataSet: MutableList<WeeklyDay>,
-    private var CalendarEventDataSet: Array<MutableList<CalendarEvent>>,
-    private val itemClickCallback: (CalendarEvent) -> Unit
+    private var _dataSet: MutableList<WeeklyDay>,
+    private var _CalendarEventDataSet: Array<MutableList<CalendarEvent>>,
+    private val _itemClickCallback: (CalendarEvent) -> Unit
 ) : RecyclerView.Adapter<WeeklyDayAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val dayName: TextView = view.findViewById(R.id.wdc_day_name)
@@ -22,7 +22,7 @@ class WeeklyDayAdapter(
     }
 
     fun setCalendarEventDataSet(data: Array<MutableList<CalendarEvent>>) {
-        CalendarEventDataSet = data
+        _CalendarEventDataSet = data
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -33,13 +33,13 @@ class WeeklyDayAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentItem = dataSet[position]
+        val currentItem = _dataSet[position]
         holder.dayName.text = currentItem.dayName
         holder.dayNumber.text = currentItem.dayNumber.toString()
         holder.calendarEventsList.layoutManager = LinearLayoutManager(holder.dayName.context)
-        val adapter = EliAdapter(CalendarEventDataSet[position], itemClickCallback)
+        val adapter = EliAdapter(_CalendarEventDataSet[position], _itemClickCallback)
         holder.calendarEventsList.adapter = adapter
     }
 
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = _dataSet.size
 }

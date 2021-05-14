@@ -12,11 +12,11 @@ import kotlinx.android.synthetic.main.drug_frequency_repeat_dialog.*
 import java.util.*
 
 class DrugFrequencyRepeatDialogFragment(
-    private val setRepeat: (DrugOccurrenceViewModel.RepeatOn, freqValue: Int) -> Unit,
-    private val backPressCallback: () -> Unit,
-    private val weeklyCallback: (DrugOccurrenceViewModel.RepeatOn, freqValue: Int) -> Unit,
-    private val defaultValue: Int = DbConstants.invalidFrequencyValue,
-    private val defaultFreqValue: DrugOccurrenceViewModel.RepeatOn = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
+    private val _setRepeat: (DrugOccurrenceViewModel.RepeatOn, freqValue: Int) -> Unit,
+    private val _backPressCallback: () -> Unit,
+    private val _weeklyCallback: (DrugOccurrenceViewModel.RepeatOn, freqValue: Int) -> Unit,
+    private val _defaultValue: Int = DbConstants.invalidFrequencyValue,
+    private val _defaultFreqValue: DrugOccurrenceViewModel.RepeatOn = DrugOccurrenceViewModel.RepeatOn.NO_REPEAT
 ) : BottomSheetDialogFragment() {
 
     override fun onCreateView(
@@ -44,15 +44,15 @@ class DrugFrequencyRepeatDialogFragment(
 
         do_freq_back_btn.setOnClickListener {
             dismiss()
-            backPressCallback()
+            _backPressCallback()
         }
 
         do_freq_done.setOnClickListener {
             val chosenFrequency = convertStringToFrequency()
             if (chosenFrequency != DrugOccurrenceViewModel.RepeatOn.WEEK) {
-                setRepeat(chosenFrequency, do_freq_repeat_number.value)
+                _setRepeat(chosenFrequency, do_freq_repeat_number.value)
             } else {
-                weeklyCallback(chosenFrequency, do_freq_repeat_number.value)
+                _weeklyCallback(chosenFrequency, do_freq_repeat_number.value)
             }
             dismiss()
         }
@@ -60,14 +60,14 @@ class DrugFrequencyRepeatDialogFragment(
 
     private fun setInitialData() {
         do_freq_repeat_number.value =
-            if (defaultValue > DbConstants.invalidFrequencyValue) defaultValue else DbConstants.defaultFrequencyValue
-        if (defaultFreqValue != DrugOccurrenceViewModel.RepeatOn.NO_REPEAT) {
+            if (_defaultValue > DbConstants.invalidFrequencyValue) _defaultValue else DbConstants.defaultFrequencyValue
+        if (_defaultFreqValue != DrugOccurrenceViewModel.RepeatOn.NO_REPEAT) {
             do_freq_repeat.value = convertEnumToIndex()
         }
     }
 
     private fun convertEnumToIndex(): Int {
-        return when (defaultFreqValue) {
+        return when (_defaultFreqValue) {
             DrugOccurrenceViewModel.RepeatOn.DAY -> DbConstants.dayEnumValue
             DrugOccurrenceViewModel.RepeatOn.WEEK -> DbConstants.weekEnumValue
             DrugOccurrenceViewModel.RepeatOn.MONTH -> DbConstants.monthEnumValue

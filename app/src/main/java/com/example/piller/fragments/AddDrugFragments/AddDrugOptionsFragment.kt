@@ -70,7 +70,7 @@ class AddDrugOptionsFragment : FragmentWithUserObject() {
         fun newInstance(loggedUser: UserObject) =
             AddDrugOptionsFragment().apply {
                 arguments = Bundle().apply {
-                    _loggedUserObject = loggedUser
+                    loggedUserObject = loggedUser
                 }
             }
     }

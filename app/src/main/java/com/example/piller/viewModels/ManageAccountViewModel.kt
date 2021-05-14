@@ -10,28 +10,27 @@ import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
 import com.example.piller.utilities.JSONMessageExtractor
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
 class ManageAccountViewModel : ViewModel() {
     private val _retrofit = ServiceBuilder.buildService(UserAPI::class.java)
 
-    val _snackBarMessage: MutableLiveData<String> by lazy {
+    val snackBarMessage: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
-    val _mutableEmail: MutableLiveData<String> by lazy {
+    val mutableEmail: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
-    val _mutableUsername: MutableLiveData<String> by lazy {
+    val mutableUsername: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
 
-    val _isDeleteSucceeded: MutableLiveData<Boolean> by lazy {
+    val isDeleteSucceeded: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
 
-    val _mutableIsValidInfo: MutableLiveData<Boolean> by lazy {
+    val mutableIsValidInfo: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
 
@@ -51,7 +50,7 @@ class ManageAccountViewModel : ViewModel() {
         _retrofit.updateEmailUsernamePassword(loggedUserObject.userId, updatedUser).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _snackBarMessage.value = DbConstants.couldNotUpdateUserError
+                    snackBarMessage.value = DbConstants.couldNotUpdateUserError
                 }
 
                 override fun onResponse(
@@ -59,13 +58,13 @@ class ManageAccountViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() != DbConstants.OKCode) {
-                        _snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
+                        snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
                     } else {
-                        _snackBarMessage.value = DbConstants.updateUserSuccessfulMessage
-                        _mutableUsername.value = updatedUser.mainProfileName
-                        _mutableEmail.value = updatedUser.email
+                        snackBarMessage.value = DbConstants.updateUserSuccessfulMessage
+                        mutableUsername.value = updatedUser.mainProfileName
+                        mutableEmail.value = updatedUser.email
                         updateAppReferences(updatedUser.email, updatedUser.password)
-                        _mutableIsValidInfo.value = false
+                        mutableIsValidInfo.value = false
                     }
                 }
             }
@@ -81,7 +80,7 @@ class ManageAccountViewModel : ViewModel() {
         _retrofit.deleteUser(loggedUserObject.userId, password).enqueue(
             object : retrofit2.Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    _snackBarMessage.value = DbConstants.couldNotDeleteUserError
+                    snackBarMessage.value = DbConstants.couldNotDeleteUserError
                 }
 
                 override fun onResponse(
@@ -89,9 +88,9 @@ class ManageAccountViewModel : ViewModel() {
                     response: Response<ResponseBody>
                 ) {
                     if (response.raw().code() == DbConstants.OKCode) {
-                        _isDeleteSucceeded.value = true
+                        isDeleteSucceeded.value = true
                     } else {
-                        _snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
+                        snackBarMessage.value = JSONMessageExtractor.getErrorMessage(response)
                     }
                 }
             }
