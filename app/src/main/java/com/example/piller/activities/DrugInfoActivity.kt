@@ -68,7 +68,6 @@ class DrugInfoActivity : ActivityWithUserObject() {
 
     private fun initListeners() {
         _drugTakenCB.setOnClickListener {
-            //  todo change the ms and seconds of _calendarEvent.intake_time.time to 0
             val drugObject =
                 DrugMap.instance.getDrugObject(_calendarEvent.calendarId, _calendarEvent.drugId)
             _viewModel.updateDrugIntake(
@@ -116,7 +115,6 @@ class DrugInfoActivity : ActivityWithUserObject() {
             this,
             Observer { success ->
                 if (success) {
-                    //  todo - show/hide loading screen
                     _viewModel.intakeUpdateSuccess.value = false
                 }
             }

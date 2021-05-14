@@ -27,14 +27,4 @@ class NotificationService : Service() {
         )
         return START_STICKY
     }
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        //  todo - remove if not used (doesn't work currently?)
-        BackgroundNotificationScheduler.createNotificationChannel(this)
-        BackgroundNotificationScheduler.scheduleNotificationsForAllProfiles(
-            this,
-            loggedUserObject
-        )
-        super.onTaskRemoved(rootIntent)
-    }
 }

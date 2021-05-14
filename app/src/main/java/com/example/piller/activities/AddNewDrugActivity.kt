@@ -169,7 +169,6 @@ class AddNewDrugActivity : ActivityWithUserObject() {
     }
 
     private fun initViews() {
-        //  TODO: change icon color to white
         _selectDrugAnywayBtn = findViewById(R.id.nd_select_anyway_btn)
         _loadingScreen = findViewById(R.id.loading_screen)
         _toolbarTitle = findViewById(R.id.nd_toolbar_title)

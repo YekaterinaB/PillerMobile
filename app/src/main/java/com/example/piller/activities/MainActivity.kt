@@ -167,11 +167,8 @@ class MainActivity : ActivityWithUserObject() {
     }
 
     override fun onBackPressed() {
-        //  todo logout user when he presses back?
-        //do not log out, just finish all
+        //  do not log out, just finish all
         if (supportFragmentManager.backStackEntryCount > DbConstants.backStackEntryCountMin) {
-//            val tag = backEntry.name
-//            val fragment = supportFragmentManager.findFragmentByTag(tag)
             supportFragmentManager.popBackStack(null, DbConstants.activityStackNoFlags)
             val index =
                 supportFragmentManager.backStackEntryCount - DbConstants.previousActivityPositionInStack
@@ -181,12 +178,6 @@ class MainActivity : ActivityWithUserObject() {
             finish()
             super.onBackPressed()
         }
-//        val intent = Intent(this@MainActivity, LoginActivity::class.java)
-//        //AppPreferences.init(this)
-//        //AppPreferences.stayLoggedIn = false
-//        startActivity(intent)
-//        finish()
-//        super.onBackPressed()
     }
 
     override fun onDestroy() {

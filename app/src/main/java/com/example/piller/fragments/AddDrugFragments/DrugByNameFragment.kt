@@ -92,7 +92,6 @@ class DrugByNameFragment : Fragment() {
         //  close the keyboard when clicking search
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(fragmentView.windowToken, DbConstants.HIDE_KEYBOARD_FLAGS)
-        //  todo check if the drug name changed from before??
         searchDrug()
     }
 

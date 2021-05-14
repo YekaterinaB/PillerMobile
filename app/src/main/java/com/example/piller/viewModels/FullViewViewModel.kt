@@ -107,8 +107,6 @@ class FullViewViewModel : ViewModel() {
                 ) {
                     if (response.raw().code() == DbConstants.OKCode) {
                         initCalenderView(response, startDate, endDate)
-                    } else {
-                        //  todo handle error
                     }
                     showLoadingScreen.value = false
                 }

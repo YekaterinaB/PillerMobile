@@ -8,6 +8,7 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piller.R
+import com.example.piller.SnackBar
 import com.example.piller.utilities.DbConstants
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.drug_frequency_weekly_dialog.*
@@ -18,8 +19,6 @@ class DrugFrequencyWeeklyDialogFragment(
     private val backCallback: () -> Unit,
     private var daysCheck: Array<Boolean>
 ) : BottomSheetDialogFragment() {
-
-    //  TODO: check if at least one day was chosen (mutable live data etc..)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,8 +35,12 @@ class DrugFrequencyWeeklyDialogFragment(
             dismiss()
         }
         do_freq_done.setOnClickListener {
-            doneCallback(daysCheck)
-            dismiss()
+            if (daysCheck.isNotEmpty()) {
+                doneCallback(daysCheck)
+                dismiss()
+            } else {
+                SnackBar.showToastBar(context, DbConstants.noDaysChosenError)
+            }
         }
     }
 

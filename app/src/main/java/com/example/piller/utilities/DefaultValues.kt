@@ -87,6 +87,7 @@ object DbConstants {
     const val defaultIntakeTime = -1L
     const val minRefill = 1
     const val maxRefill = 101
+    const val noDaysChosenError = "You must choose at least one day to repeat on!"
 
     //  login
     const val backStackEntryCountMin = 1

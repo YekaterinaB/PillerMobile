@@ -77,24 +77,6 @@ class EliAdapter(
                 viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_basic_alarm)
             }
         }
-
-        //TODO remove this
-//        if (DateUtils.isDateAfter(Date(), calendarEvent.intakeTime)) {
-//            //  the next line is in order to remove the icon, because if we delete the icon stays
-//            //  even though it's not supposed to be there
-//            viewHolder.takenStatus.setBackgroundResource(0)
-//            if (calendarEvent.isTaken) {
-//                //  the medicine was taken - set green background (alpha is for opacity)
-//                viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_check_green)
-//            } else {
-//                //  the medicine wasn't taken - set red background (alpha is for opacity)
-//                viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_exclamation_red)
-//            }
-//        } else {
-//            //  the next line is in order to remove the icon, because if we delete the icon stays
-//            //  even though it's not supposed to be there
-//            viewHolder.takenStatus.setBackgroundResource(R.drawable.ic_basic_alarm)
-//        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

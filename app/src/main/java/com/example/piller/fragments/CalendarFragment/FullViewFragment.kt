@@ -145,24 +145,16 @@ class FullViewFragment : FragmentWithUserObject() {
             )
 
         val canvas = Canvas(bitmap)
-//        val scale = this.resources.displayMetrics.density
-
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.typeface =
                 (typeface ?: Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)) as Typeface?
             this.color = color
-//            this.textSize = (size * scale).toInt().toFloat() * 2
         }
 
         val bounds = Rect()
-        //  todo - remove comments before submitting final project!
-//        text was an argument to this function
-//        paint.getTextBounds(text, 0, text.length, bounds)
         val x = (bitmap.width - bounds.width()) / DbConstants.eventDayBitMapWidthFactor
         val y = (bitmap.height + bounds.height()) / DbConstants.eventDayBitMapHeightFactor
         canvas.drawCircle(x.toFloat(), y.toFloat(), eventDayCircleRadius, paint)
-//        canvas.drawCircle(x.toFloat() + 40, y.toFloat(), 20F, paint)
-//        canvas.drawText("+5", x.toFloat() + 80, y.toFloat() + 12, paint)
 
         return BitmapDrawable(this.resources, bitmap)
     }
