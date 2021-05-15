@@ -309,12 +309,12 @@ class DrugInfoActivity : ActivityWithUserObject() {
                 getString(R.string.deleteAllOccurrences),
                 getString(R.string.deleteThisAndFutureOccurrences)
             ),
-            clickOnFirstButtonListener = {
+            _clickOnFirstButtonListener = {
                 _viewModel.deleteAllOccurrencesOfDrug(
                     loggedUserObject, drug = drugObject, context = this
                 )
             },
-            clickOnSecondButtonListener = { deleteFutureOccurrences(drugObject) }
+            _clickOnSecondButtonListener = { deleteFutureOccurrences(drugObject) }
         ).apply {
             show(supportFragmentManager, DrugBottomDialogFragment.TAG)
         }
@@ -342,8 +342,8 @@ class DrugInfoActivity : ActivityWithUserObject() {
                 getString(R.string.editAllOccurrences),
                 getString(R.string.editThisAndFutureOccurrences)
             ),
-            clickOnFirstButtonListener = { goToEditActivity(true) },
-            clickOnSecondButtonListener = {
+            _clickOnFirstButtonListener = { goToEditActivity(true) },
+            _clickOnSecondButtonListener = {
                 deleteFutureOccurrences(drugObject)
                 goToEditActivity(true)
             }

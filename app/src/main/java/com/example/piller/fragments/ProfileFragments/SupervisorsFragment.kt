@@ -146,7 +146,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
         _supervisorRecycle.layoutManager = LinearLayoutManager(context)
         _supervisorAdapter = SupervisorsAdapter(
             supervisorList,
-            clickOnDeleteButtonListener = { clickOnDeleteSupervisorButton(it) })
+            _clickOnDeleteButtonListener = { clickOnDeleteSupervisorButton(it) })
         _supervisorRecycle.adapter = _supervisorAdapter
     }
 

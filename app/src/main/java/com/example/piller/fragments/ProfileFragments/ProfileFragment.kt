@@ -107,8 +107,8 @@ class ProfileFragment : FragmentWithUserObject() {
         _profileAdapter = ProfileAdapter(
             profileList,
             loggedUserObject.currentProfile!!.name,
-            clickOnItemListener = { updateCurrentProfile(it) },
-            clickOnButtonListener = { removeProfilePopup(it) })
+            _clickOnItemListener = { updateCurrentProfile(it) },
+            _clickOnButtonListener = { removeProfilePopup(it) })
         _profileRecycle.adapter = _profileAdapter
     }
 
