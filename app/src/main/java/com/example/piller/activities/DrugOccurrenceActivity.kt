@@ -321,7 +321,7 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
         DrugPickerDialogFragment(
             title,
             dataset,
-            optionSelected = { option -> optionSelected(option) }
+            _optionSelected = { option -> optionSelected(option) }
         ).apply {
             show(supportFragmentManager, DrugPickerDialogFragment.TAG)
         }
@@ -329,11 +329,11 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
 
     private fun showDrugFreqDialog() {
         DrugFrequencyDialogFragment(
-            setNoRepeat = {
+            _setNoRepeat = {
                 updateRepeat(DrugOccurrenceViewModel.RepeatOn.NO_REPEAT)
                 _repeatOnValue = DbConstants.repeatOnDefaultValue
             },
-            chooseRepeatFrequency = { chooseRepeatFrequency() }).apply {
+            _chooseRepeatFrequency = { chooseRepeatFrequency() }).apply {
             show(supportFragmentManager, DrugFrequencyDialogFragment.TAG)
         }
     }
@@ -346,7 +346,7 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
     private fun showRepeatStartDialog() {
         DrugStartRepeatDialogFragment(
             _viewModel.repeatStartTime,
-            doneCallback = { mutableList ->
+            _doneCallback = { mutableList ->
                 _viewModel.repeatStartTime = mutableList
             }
         ).apply {
@@ -356,14 +356,14 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
 
     private fun chooseRepeatFrequency() {
         DrugFrequencyRepeatDialogFragment(
-            setRepeat = { repeatOn, freqValue ->
+            _setRepeat = { repeatOn, freqValue ->
                 updateRepeat(repeatOn)
                 _repeatOnValue = freqValue
             },
-            backPressCallback = { showDrugFreqDialog() },
-            weeklyCallback = { repeatOn, freqValue -> chooseDaysOfWeek(repeatOn, freqValue) },
-            defaultValue = _repeatOnValue,
-            defaultFreqValue = _viewModel.repeatOnEnum
+            _backPressCallback = { showDrugFreqDialog() },
+            _weeklyCallback = { repeatOn, freqValue -> chooseDaysOfWeek(repeatOn, freqValue) },
+            _defaultValue = _repeatOnValue,
+            _defaultFreqValue = _viewModel.repeatOnEnum
         ).apply {
             show(supportFragmentManager, DrugFrequencyRepeatDialogFragment.TAG)
         }
@@ -371,13 +371,13 @@ class DrugOccurrenceActivity : ActivityWithUserObject() {
 
     private fun chooseDaysOfWeek(repeat: DrugOccurrenceViewModel.RepeatOn, freqValue: Int) {
         DrugFrequencyWeeklyDialogFragment(
-            daysCheck = _viewModel.repeatCheckWeekdays,
-            doneCallback = { daysCheck ->
+            _daysCheck = _viewModel.repeatCheckWeekdays,
+            _doneCallback = { daysCheck ->
                 updateRepeat(repeat)
                 _viewModel.repeatCheckWeekdays = daysCheck
                 _repeatOnValue = freqValue
             },
-            backCallback = { chooseRepeatFrequency() }
+            _backCallback = { chooseRepeatFrequency() }
         ).apply {
             show(supportFragmentManager, DrugFrequencyWeeklyDialogFragment.TAG)
         }

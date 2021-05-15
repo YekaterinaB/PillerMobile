@@ -184,8 +184,9 @@ class AddNewDrugActivity : ActivityWithUserObject() {
         _drugOptionsList = findViewById(R.id.nd_drug_options_list)
         _drugOptionsList.layoutManager = LinearLayoutManager(this)
         _drugAdapter = NewDrugByNameAdapter(
-            mutableListOf(),
-            clickOnItemListener = { drug -> clickOnDrug(drug) })
+            mutableListOf()
+        )
+        { drug -> clickOnDrug(drug) }
 
         _drugOptionsList.adapter = _drugAdapter
     }
