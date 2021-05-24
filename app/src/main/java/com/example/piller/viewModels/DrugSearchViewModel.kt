@@ -1,5 +1,9 @@
 package com.example.piller.viewModels
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.piller.api.DrugAPI
@@ -17,6 +21,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 import java.io.File
+
 
 class DrugSearchViewModel : ViewModel() {
     private val _drugAPIRetrofit = ServiceBuilder.buildService(DrugAPI::class.java)
@@ -152,9 +157,18 @@ class DrugSearchViewModel : ViewModel() {
         val drugInterBody = JSONArray(response.body()!!.string())
         for (i in 0 until drugInterBody.length()) {
             val interaction = drugInterBody.getJSONObject(i)
-            result += "\n#" + (
-                    interaction.get(DbConstants.interaction) as JSONObject).get(DbConstants.drugName) + "\nDescription:\n" + (
-                    interaction.get(DbConstants.description) as String) + "\n"
+            val str = SpannableStringBuilder(
+                "<br><b>#" + (
+                        interaction.get(DbConstants.interaction) as JSONObject).get(DbConstants.drugName) + "</b><br><u>Description:</u><br>" + (
+                        interaction.get(DbConstants.description) as String) + "<br>"
+            )
+            str.setSpan(
+                StyleSpan(Typeface.BOLD),
+                0,
+                str.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            result += str
         }
 
         drugsInteractionResult.value = result

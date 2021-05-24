@@ -1,6 +1,8 @@
 package com.example.piller.fragments.AddDrugFragments
 
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -45,7 +47,12 @@ class InteractionPopupFragment : DialogFragment() {
     private fun initViews(fragment: View) {
         _interactionScrollViewTV = fragment.findViewById(R.id.inter_popup_list_tv)
         _interactionScrollViewTV.movementMethod = ScrollingMovementMethod()
-        _interactionScrollViewTV.text = _interactionsTxt
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            _interactionScrollViewTV.text =
+                Html.fromHtml(_interactionsTxt, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            _interactionScrollViewTV.text = Html.fromHtml(_interactionsTxt)
+        }
         _cancelButton = fragment.findViewById(R.id.cancel_interaction_popup)
         _proceedButton = fragment.findViewById(R.id.proceed_anyway_interaction_popup)
     }

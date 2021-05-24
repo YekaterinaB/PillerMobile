@@ -254,7 +254,7 @@
     <string name="fdd_second_button">Second Button</string>
     <string name="fnd_search">Search</string>
     <string name="fwd_date">TextView</string>
-    <string name="int_warning">Warning!</string>
+    <string name="int_warning">Warning! Interaction(s) found!</string>
     <string name="int_context_textview">TextView</string>
     <string name="int_cancel">Cancel</string>
     <string name="int_proceed_anyway">Proceed anyway</string>
