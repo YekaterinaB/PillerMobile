@@ -12,23 +12,20 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.piller.R
 import com.example.piller.SnackBar
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.activities.LoginActivity
+import com.example.piller.activities.MainActivity
 import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.models.UserObject
 import com.example.piller.utilities.DbConstants
-import com.example.piller.utilities.notifyObserver
 import com.example.piller.viewModels.ManageAccountViewModel
-import com.example.piller.viewModels.ProfileViewModel
+
 
 class SettingsFragment : FragmentWithUserObject() {
-    private val _profileViewModel: ProfileViewModel by activityViewModels()
-
     private lateinit var _viewModel: ManageAccountViewModel
     private lateinit var _emailEditText: EditText
     private lateinit var _passwordEditText: EditText
@@ -54,8 +51,10 @@ class SettingsFragment : FragmentWithUserObject() {
         initViews()
         setOnClickListeners()
         setViewModelsObservers()
+        (activity as MainActivity).setCurrentProfileTvVisibility(false)
         return _fragmentView
     }
+
 
 
     private fun initViewModels() {
@@ -82,8 +81,8 @@ class SettingsFragment : FragmentWithUserObject() {
         })
 
         _viewModel.mutableUsername.observe(viewLifecycleOwner, Observer { name ->
-            _profileViewModel.mutableCurrentProfile.value?.name = name
-            _profileViewModel.mutableCurrentProfile.notifyObserver()
+//            _profileViewModel.mutableCurrentProfile.value?.name = name
+//            _profileViewModel.mutableCurrentProfile.notifyObserver()
             loggedUserObject.mainProfile?.name = name
             _mainProfileNameTitle.text = name
         })
