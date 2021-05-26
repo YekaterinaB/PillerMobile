@@ -212,6 +212,8 @@ class ProfileFragment : FragmentWithUserObject() {
 
         // create pop up window for add profile
         MaterialStyledDialog.Builder(this.context)
+            .setIcon(R.drawable.ic_profile_blue)
+            .setHeaderColor(R.color.background)
             .setTitle(getString(R.string.addANewProfileTitle))
             .setCustomView(itemView)
             .setNegativeText(getString(R.string.cancel))

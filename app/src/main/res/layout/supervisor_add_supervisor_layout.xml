@@ -13,10 +13,8 @@
         android:layout_height="wrap_content"
         android:hint="@string/supervisor_supervisor_name"
         android:inputType="text"
-        android:padding="8dp"
+        android:padding="2dp"
         app:met_baseColor="@color/myTextColor"
-        app:met_iconPadding="0sp"
-        app:met_iconRight="@drawable/ic_profile"
         app:met_primaryColor="@color/myTextColor"
         app:met_textColorHint="@color/myTextColor" />
 
@@ -26,10 +24,8 @@
         android:layout_height="wrap_content"
         android:hint="@string/supervisor_supervisor_email"
         android:inputType="textEmailAddress"
-        android:padding="8dp"
+        android:padding="2dp"
         app:met_baseColor="@color/myTextColor"
-        app:met_iconPadding="0sp"
-        app:met_iconRight="@drawable/ic_profile"
         app:met_primaryColor="@color/myTextColor"
         app:met_textColorHint="@color/myTextColor" />
 </LinearLayout>

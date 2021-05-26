@@ -68,14 +68,14 @@
         app:layout_constraintTop_toBottomOf="@+id/login_button_login_screen"
         app:layout_constraintVertical_bias="0.0" />
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/or_text_view"/>
+<!--    <com.google.android.gms.common.SignInButton-->
+<!--        android:id="@+id/sign_in_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/or_text_view"/>-->
 
 <!--    <Button-->
 <!--        android:id="@+id/login_with_google"-->
@@ -95,36 +95,36 @@
 <!--        app:layout_constraintTop_toBottomOf="@+id/or_text_view" />-->
 
 
-    <TextView
-        android:id="@+id/or_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:padding="4dp"
-        android:text="OR"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_reset_password" />
+<!--    <TextView-->
+<!--        android:id="@+id/or_text_view"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:padding="4dp"-->
+<!--        android:text="OR"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/login_reset_password" />-->
 
 
-    <View
-        android:id="@+id/or_line_left"
-        style="@style/Divider.Horizontal"
-        android:layout_width="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
-        app:layout_constraintEnd_toStartOf="@+id/or_text_view"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_reset_password"/>
+<!--    <View-->
+<!--        android:id="@+id/or_line_left"-->
+<!--        style="@style/Divider.Horizontal"-->
+<!--        android:layout_width="0dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/or_text_view"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/login_reset_password"/>-->
 
 
-    <View
-        android:id="@+id/or_line_right"
-        style="@style/Divider.Horizontal"
-        android:layout_width="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/or_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/login_reset_password" />
+<!--    <View-->
+<!--        android:id="@+id/or_line_right"-->
+<!--        style="@style/Divider.Horizontal"-->
+<!--        android:layout_width="0dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/or_text_view"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/login_reset_password" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -75,8 +75,7 @@ object BackgroundNotificationScheduler {
                             jObject.getString("id"),
                             email,
                             null,
-                            null,
-                            jObject.getString("googleUser")!!.toBoolean()
+                            null
                         )
                         scheduleNotificationsForAllProfiles(context, userObject)
                     }

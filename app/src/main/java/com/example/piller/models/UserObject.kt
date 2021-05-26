@@ -10,6 +10,5 @@ class UserObject(
     @SerializedName(DbConstants.userId) var userId: String,
     @SerializedName("email") var email: String,
     @SerializedName("mainProfile") var mainProfile: Profile?,
-    @SerializedName("currentProfile") var currentProfile: Profile?,
-    @SerializedName("googleUser") var googleUser: Boolean
+    @SerializedName("currentProfile") var currentProfile: Profile?
 ) : Parcelable
