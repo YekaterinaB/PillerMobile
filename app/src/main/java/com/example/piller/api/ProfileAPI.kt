@@ -12,7 +12,7 @@ interface ProfileAPI {
     @GET(DbConstants.profileURL + "{${DbConstants.userId}}")
     fun getAllProfilesByEmail(@Path(DbConstants.userId) userId: String): Call<ResponseBody>
 
-    @PUT(DbConstants.profileURL + "${DbConstants.userId}}")
+    @PUT(DbConstants.profileURL + "{${DbConstants.userId}}")
     fun addProfileToUser(
         @Path(DbConstants.userId) userId: String,
         @Body profile: ProfileSerializable

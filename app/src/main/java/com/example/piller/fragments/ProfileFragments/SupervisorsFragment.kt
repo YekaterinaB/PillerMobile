@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.activities.MainActivity
 import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.listAdapters.SupervisorsAdapter
 import com.example.piller.models.UserObject
@@ -53,9 +54,9 @@ class SupervisorsFragment : FragmentWithUserObject() {
         initViews()
         initViewModelData()
         initObservers()
-
         setClickListeners()
         initRecyclersAndAdapters()
+        (activity as MainActivity).setCurrentProfileTvVisibility(false)
         return _fragmentView
     }
 
@@ -314,6 +315,8 @@ class SupervisorsFragment : FragmentWithUserObject() {
             transaction.commit()
         }
     }
+
+
 
     companion object {
         fun newInstance(loggedUser: UserObject) =

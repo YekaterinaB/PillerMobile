@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.piller.R
 import com.example.piller.SnackBar
+import com.example.piller.activities.MainActivity
 import com.example.piller.fragments.FragmentWithUserObject
 import com.example.piller.listAdapters.ProfileAdapter
 import com.example.piller.models.Profile
@@ -51,6 +52,7 @@ class ProfileFragment : FragmentWithUserObject() {
         initRecyclersAndAdapters()
         initObservers()
         updateCurrentProfile(loggedUserObject.currentProfile!!)
+        (activity as MainActivity).setCurrentProfileTvVisibility(true)
         return _fragmentView
     }
 
