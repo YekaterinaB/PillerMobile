@@ -19,7 +19,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.FirebaseAuth
 
 
-const val RC_SIGN_IN = 123
+//const val RC_SIGN_IN = 123
 
 class LoginFragment : Fragment() {
     lateinit var loadingScreen: RelativeLayout
@@ -27,9 +27,9 @@ class LoginFragment : Fragment() {
     private lateinit var _loginButton: Button
     private lateinit var _emailEdt: EditText
     private lateinit var _passwordEdt: EditText
-    private lateinit var _signInButton: SignInButton
-    private lateinit var _mGoogleSignInClient: GoogleSignInClient
     private val _viewModel: LoginActivityViewModel by activityViewModels()
+//    private lateinit var _signInButton: SignInButton
+//    private lateinit var _mGoogleSignInClient: GoogleSignInClient
 //    private lateinit var _auth: FirebaseAuth
 
     override fun onCreateView(
@@ -51,9 +51,9 @@ class LoginFragment : Fragment() {
         _emailEdt = _fragmentView.findViewById<View>(R.id.edt_email_login) as EditText
         _passwordEdt = _fragmentView.findViewById<View>(R.id.edt_password_login) as EditText
 
-        // Set the dimensions of the sign-in button.
-        _signInButton = _fragmentView.findViewById(R.id.sign_in_button)
-        _signInButton.setSize(SignInButton.SIZE_WIDE)
+        // Set the dimensions of the sign-in button for google.
+//        _signInButton = _fragmentView.findViewById(R.id.sign_in_button)
+//        _signInButton.setSize(SignInButton.SIZE_WIDE)
     }
 
     private fun setClickListeners() {
@@ -65,10 +65,10 @@ class LoginFragment : Fragment() {
             forgotPassword()
         }
 
-        _signInButton.setOnClickListener {
-            val signInIntent: Intent = _mGoogleSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
-        }
+//        _signInButton.setOnClickListener {
+//            val signInIntent: Intent = _mGoogleSignInClient.signInIntent
+//            startActivityForResult(signInIntent, RC_SIGN_IN)
+//        }
     }
 
     private fun loginButtonListener() {

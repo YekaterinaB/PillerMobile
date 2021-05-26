@@ -77,8 +77,7 @@ class LoginActivity : AppCompatActivity() {
             jObject.get(getString(R.string.authenticationId)).toString(),
             jObject.get(getString(R.string.authenticationEmail)).toString(),
             jObject.get(getString(R.string.authenticationProfileName)).toString(),
-            jObject.get(getString(R.string.authenticationProfileId)).toString(),
-            false
+            jObject.get(getString(R.string.authenticationProfileId)).toString()
 //            jObject.get(getString(R.string.authenticationGoogleUser)).toString().toBoolean()
         )
         val userBundle = Bundle()
@@ -94,12 +93,11 @@ class LoginActivity : AppCompatActivity() {
         userId: String,
         email: String,
         mainProfileName: String,
-        profileId: String,
-        isGoogleUser: Boolean
+        profileId: String
     ): UserObject {
         val profile = Profile(profileId, mainProfileName, getString(R.string.mainUserRelation))
         //  current profile = main profile
-        return UserObject(userId, email, profile, profile, isGoogleUser)
+        return UserObject(userId, email, profile, profile)
     }
 
     private fun stayLoggedIn() {

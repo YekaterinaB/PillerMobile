@@ -92,6 +92,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
         // create pop up window for add profile
         MaterialStyledDialog.Builder(context)
             .setIcon(R.drawable.ic_supervisor_eye)
+            .setHeaderColor(R.color.background)
             .setTitle(getString(R.string.addSupervisorWindowTitle))
             .setCustomView(itemView)
             .setNegativeText(getString(R.string.cancel))
@@ -276,14 +277,13 @@ class SupervisorsFragment : FragmentWithUserObject() {
                 if (numberOfMissed == DbConstants.noMissedDaysCountStr) {
                     numberOfMissed = DbConstants.noMissedDaysText
                 }
-                val thresholdText = "$numberOfMissed "
-                _thresholdCountTv.text = thresholdText
-                thresholdCountPopup.text = thresholdText
+                thresholdCountPopup.text = numberOfMissed
             }
 
             override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {}
             override fun onStopTrackingTouch(seekBar: IndicatorSeekBar) {}
         }
+
         cancelViewText.setOnClickListener {
             popup.dismiss()
             changeDarkBackgroundVisibility(false)
@@ -293,6 +293,7 @@ class SupervisorsFragment : FragmentWithUserObject() {
             val numberOfMissed = seekBar.progress.toString()
             _viewModel.updateThresholdInDB(numberOfMissed, loggedUserObject.userId)
             popup.dismiss()
+            _thresholdCountTv.text = numberOfMissed
             changeDarkBackgroundVisibility(false)
 
         }
