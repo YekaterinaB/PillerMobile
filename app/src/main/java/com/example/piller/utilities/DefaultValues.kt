@@ -241,7 +241,7 @@ object DbConstants {
 
     //  login
     const val existingUserEmailError = "A user with this email already exists."
-    const val successfulRegistrationMessage = "A user with this email already exists."
+    const val successfulRegistrationMessage = "User was successfully created."
     const val userDoesNotExistError = "User does not exist, check your login information."
     const val problemWithUserError = "There is a problem with user."
     const val couldNotResetPasswordError = "Could not reset password."
