@@ -204,6 +204,7 @@ object DbConstants {
     const val defaultRefillTime = "00:00"
     const val defaultPillsBeforeReminder = 1
     const val defaultPillsLeft = 0
+    const val itsTimeToRefill = "It\'s time to refill your medicine!"
 
     //  occurrence
     const val defaultRepeatYear = 0

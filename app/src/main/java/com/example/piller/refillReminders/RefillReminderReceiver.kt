@@ -3,7 +3,7 @@ package com.example.piller.refillReminders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.example.piller.R
+import com.example.piller.DrugMap
 import com.example.piller.accountManagement.AppPreferences
 import com.example.piller.models.DrugObject
 import com.example.piller.models.UserObject
@@ -15,14 +15,10 @@ class RefillReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context != null && intent != null && intent.action != null) {
             // 1
-            if (intent.action!!.equals(
-                    context.getString(R.string.action_refill_reminder),
-                    ignoreCase = true
-                )
+            if (intent.action!!.equals(DbConstants.itsTimeToRefill, ignoreCase = true)
+                && intent.extras != null
             ) {
-                if (intent.extras != null) {
-                    handleRefillDrugReminder(intent, context)
-                }
+                handleRefillDrugReminder(intent, context)
             }
         }
     }
@@ -35,8 +31,9 @@ class RefillReminderReceiver : BroadcastReceiver() {
         val bundleCalendarEvent = intent.extras!!.getBundle(DbConstants.DRUG_OBJECT)
         // 3
         if (bundleCalendarEvent != null) {
-            val drug =
+            val drugBundle =
                 bundleCalendarEvent.getParcelable<DrugObject>(DbConstants.DRUG_OBJECT)!!
+            val drug = DrugMap.instance.getDrugObject(drugBundle.calendarId, drugBundle.drugId)
             if (shouldShowNotifications(context, drug)) {
                 RefillReminderHelper.createNotification(
                     context,

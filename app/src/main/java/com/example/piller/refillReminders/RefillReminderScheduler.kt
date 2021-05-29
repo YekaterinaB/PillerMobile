@@ -52,7 +52,6 @@ object RefillReminderScheduler {
         if (!(drug.occurrence.hasRepeatEnd() && DateUtils.isDateBefore(calRepeatEnd, cal))) {
             scheduleAlarm(context, loggedUserObject, drug, alarmMgr)
         }
-
     }
 
     /**

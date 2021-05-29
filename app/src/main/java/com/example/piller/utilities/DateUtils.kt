@@ -73,7 +73,7 @@ class DateUtils {
                 //now is after the time
                 futureDate.add(Calendar.DATE, 1)
             }
-            setCalendarTime(futureDate, hour, minutes, 0)
+            setCalendarTime(futureDate, hour, minutes)
 
             return futureDate
         }
