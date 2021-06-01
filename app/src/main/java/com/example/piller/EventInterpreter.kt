@@ -19,6 +19,8 @@ class EventInterpreter {
         end: Date,
         drugList: JSONArray, calendarId: String
     ): Array<MutableList<CalendarEvent>> {
+        //  add one because we want to include all the days, e.g. start = monday end = wednesday 
+        //  so getDaysBetween will return 2 but we want 3 (monday, tuesday, wednesday)
         val daysBetween = DateUtils.getDaysBetween(start, end) + 1
         val eventList = Array(daysBetween) { mutableListOf<CalendarEvent>() }
         for (i in 0 until drugList.length()) {
