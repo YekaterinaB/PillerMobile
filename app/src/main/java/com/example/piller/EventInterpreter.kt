@@ -93,12 +93,13 @@ class EventInterpreter {
         start: Date,
         end: Date, calendarId: String
     ): MutableList<CalendarEvent> {
+        //find actual start and end times
         val calendarValuesMap = getCalendarClosestCurrent(
             start, end,
             drugObject.occurrence
         )
 
-        // check days between actual start date and the new start date
+        // closest repeat is the start time of events for specific drug
         val calendarClosestRepeat = Calendar.getInstance()
         calendarClosestRepeat.timeInMillis =
             (calendarValuesMap[DbConstants.calendarStartRepeat] as Calendar).timeInMillis
@@ -120,16 +121,17 @@ class EventInterpreter {
         val calendarRepeatEnd = calendarValuesMap[DbConstants.calendarRepeatEnd] as Calendar
         var indexDay = DateUtils.getDaysBetween(start, calendarCurrent.time)
 
+        // loop on the range to find events for drug
         while (DateUtils.isDateInRange(
                 calendarCurrent,
-                calendarValuesMap[DbConstants.calendarEnd] as Calendar,
-                calendarRepeatEnd
+                calendarValuesMap[DbConstants.calendarEnd] as Calendar, calendarRepeatEnd
             )
         ) {
+            //check if date is in the drug schedule
             val isInRepeat = isDateInRepeat(
                 drugObject.occurrence,
-                calendarValuesMap[DbConstants.calendarCurrent] as Calendar,
-                calendarClosestRepeat, onlyOnce
+                calendarValuesMap[DbConstants.calendarCurrent] as Calendar, calendarClosestRepeat,
+                onlyOnce
             )
             if (isInRepeat) {
                 //event is in repeats
@@ -180,25 +182,9 @@ class EventInterpreter {
         return result
     }
 
-//    private fun getRepeatWeekdayForCalendarEvent(
-//        repeatWeekday: List<Int>
-//    ): String {
-//        // for knowing the repeat weekdays, to make a good pending intent type
-//        val repeats: String
-//        if (repeatWeekday[0] > 0) {
-//            // repeat week is on
-//            repeats = repeatWeekday.joinToString(",")
-//        } else {
-//            repeats = DbConstants.noDayOfWeekStr
-//        }
-//        return repeats
-//    }
-
     private fun isDateInRepeat(
-        occurrence: Occurrence,
-        currentDate: Calendar,
-        calendarClosestRepeat: Calendar,
-        isOnlyRepeat: Boolean
+        occurrence: Occurrence, currentDate: Calendar,
+        calendarClosestRepeat: Calendar, isOnlyRepeat: Boolean
     ): Boolean {
         var isInRepeat = false
 
@@ -209,20 +195,14 @@ class EventInterpreter {
             }
             (occurrence.hasRepeatYear()) -> {
                 isInRepeat =
-                    setRepeatEvent(
-                        currentDate,
-                        occurrence.repeatYear,
-                        calendarClosestRepeat,
+                    isRepeatEvent(
+                        currentDate, occurrence.repeatYear, calendarClosestRepeat,
                         Calendar.YEAR
                     )
             }
             (occurrence.hasRepeatMonth()) -> {
                 isInRepeat =
-                    setRepeatEventMonth(
-                        currentDate,
-                        occurrence.repeatMonth,
-                        calendarClosestRepeat
-                    )
+                    isRepeatEventMonth(currentDate, occurrence.repeatMonth, calendarClosestRepeat)
 
             }
             (occurrence.hasRepeatDay()) -> {
@@ -230,11 +210,8 @@ class EventInterpreter {
                     isInRepeat = true
                 } else {
                     isInRepeat =
-                        setRepeatEvent(
-                            currentDate,
-                            occurrence.repeatDay,
-                            calendarClosestRepeat,
-                            Calendar.DATE
+                        isRepeatEvent(
+                            currentDate, occurrence.repeatDay, calendarClosestRepeat, Calendar.DATE
                         )
                 }
             }
@@ -246,10 +223,8 @@ class EventInterpreter {
                     }
                 } else {
                     isInRepeat =
-                        setRepeatWeekEvent(
-                            currentDate,
-                            occurrence.repeatWeek,
-                            calendarClosestRepeat,
+                        isRepeatWeekEvent(
+                            currentDate, occurrence.repeatWeek, calendarClosestRepeat,
                             occurrence.repeatWeekday
                         )
                 }
@@ -258,7 +233,7 @@ class EventInterpreter {
         return isInRepeat
     }
 
-    private fun setRepeatWeekEvent(
+    private fun isRepeatWeekEvent(
         currentDate: Calendar,
         repeat: Int,
         calendarClosestRepeat: Calendar,
@@ -280,7 +255,7 @@ class EventInterpreter {
         return isIn
     }
 
-    private fun setRepeatEventMonth(
+    private fun isRepeatEventMonth(
         currentDate: Calendar,
         repeat: Int,
         calendarClosestRepeat: Calendar
@@ -301,10 +276,8 @@ class EventInterpreter {
         tempRunFromStart.isLenient = false
         //calenderRunFromStartToCurrent.time < currentDate.time
         while (DateUtils.isDateBefore(calenderRunFromStartToCurrent, currentDate)) {
-            tempRunFromStart.set(
-                Calendar.DAY_OF_MONTH,
-                1
-            )// must set to avoid exception on set month
+            tempRunFromStart.set(Calendar.DAY_OF_MONTH, 1)
+            // must set to avoid exception on set month
             val monthSet = (month + skipMonth) % _monthsInYear
             tempRunFromStart.set(Calendar.MONTH, monthSet)
             if (month + skipMonth >= _monthsInYear) {
@@ -321,10 +294,8 @@ class EventInterpreter {
             } catch (e: Exception) {
                 // no such day in month
                 tempRunFromStart.time = calenderRunFromStartToCurrent.time
-                tempRunFromStart.set(
-                    Calendar.YEAR,
-                    year
-                ) // if was added before, returns to it again
+                // if was added before, returns to it again
+                tempRunFromStart.set(Calendar.YEAR, year)
             }
             skipMonth += repeat
 
@@ -339,7 +310,7 @@ class EventInterpreter {
         return isIn
     }
 
-    private fun setRepeatEvent(
+    private fun isRepeatEvent(
         currentDate: Calendar,
         repeat: Int,
         calendarClosestRepeat: Calendar,
