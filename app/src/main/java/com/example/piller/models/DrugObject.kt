@@ -11,7 +11,7 @@ data class DrugObject(
     @SerializedName(DbConstants.CALENDAR_ID) var calendarId: String,
     @SerializedName(DbConstants.drugName) var drugName: String,
     @SerializedName(DbConstants.rxcui) var rxcui: Int,
-    @SerializedName("taken_id") var taken_id: String = DbConstants.defaultStringValue,
+    @SerializedName(DbConstants.takenId) var taken_id: String = DbConstants.defaultStringValue,
     @SerializedName(DbConstants.occurrences) var occurrence: Occurrence = Occurrence(),
     @SerializedName(DbConstants.dose) var dose: Dose = Dose(),
     @SerializedName(DbConstants.refill) var refill: Refill = Refill()
