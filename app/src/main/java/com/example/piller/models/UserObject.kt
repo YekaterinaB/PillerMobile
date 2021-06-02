@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 class UserObject(
     @SerializedName(DbConstants.userId) var userId: String,
-    @SerializedName("email") var email: String,
-    @SerializedName("mainProfile") var mainProfile: Profile?,
-    @SerializedName("currentProfile") var currentProfile: Profile?
+    @SerializedName(DbConstants.logged_email) var email: String,
+    @SerializedName(DbConstants.main_profile) var mainProfile: Profile?,
+    @SerializedName(DbConstants.current_profile) var currentProfile: Profile?
 ) : Parcelable
